@@ -950,10 +950,11 @@ namespace SickOfIt.Playtest
                 "the bot plays to lose; the screen offers \"Return for 10 diamonds\" and the button is clicked: level 3 again, 15 diamonds, a moment of safety, the run and Grudges kept. Then dying with 15 and skipping with Escape " +
                 "(the Shaft drops him, nothing spent, run ended, Grudges gone), then dying with 5 (no offer, the drop). check events death-return <beat>", DeathReturnSeconds, "level"));
             list.Add(new PlaytestScenario(RewindFxId, $"Rewind that feels amazing (RewindFx, Docs/Story.md): level {RewindFxLevel} loaded directly (setup shortcut), played by the bot, then R held {RewindFxHold:0.0} s with the juice topped up (setup shortcut). While held: the screen effect (scanlines, colour split, tracking bar, streaks) is up, a reversed whirr loops with its pitch climbing, and the frame rate stays 30+ fps; on release the sound stops and the screen returns. check events rewind-fx <beat>; metrics rewindFx.*", RewindFxSeconds, "level"));
-            list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind (Docs/GameplayCookbook.md \"The arcade loop\"): Level 1 loaded directly with the shop reset (a setup shortcut): " +
-                "the new game's juice must be 10 s (it was 3). Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, a setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
-                "and Level 1 loads again: the cap must reach 24 s and the rewind runs 75% faster. The bot plays through real input until a clean kill pays juice back: the juice goes up by the refund and the HUD floats " +
-                "\"CLEAN KILL +0.5s\". Also logs the SURVIVED bonus if a death-rewind happens. Reports the history window. check, juice events", RewindJuiceSeconds, "level"));
+            list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind and readable HUD feedback (Docs/GameplayCookbook.md \"The arcade loop\", Docs/Story.md \"The HUD and menus\"): Level 1 loaded directly with the shop reset (setup shortcut): " +
+                "the new game's juice must be 10 s. Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
+                "and Level 1 loads again: cap 24 s, rewind 75% faster. The bot plays through real input until a clean kill pays juice back: \"CLEAN KILL +0.5s\" pops in larger over 0.3 s, holds full opacity >= 0.6 s, " +
+                "and is captured alongside the REWIND readout over Level 1's bright sky/grass; three successive rewards verify stack slots with zero overlap; then Floor 955 (dark floor, setup shortcut) plays through real input " +
+                "to a clean kill and captures the popup and REWIND readout over dark slag (at 1280x720 and 390x844; WebGL uses the desktop and phone runner devices). check, capture, juice events", RewindJuiceSeconds, "level"));
             list.Add(new PlaytestScenario(SideFloorsId, "Secret floors and gauntlets (Docs/Story.md \"Secret floors and gauntlets\", cookbook \"A secret floor\"): the eight side floors, each reached " +
                 "through real input from the door in the wall on its host floor (the Heat Stairs: Floors 910-903; the host is opened directly, a setup shortcut, with diamonds and a Grudge in hand " +
                 "so any door's cost can be paid) and played to the end. Per floor, `check` events: the door was offered (`side-door` event, its cost on the card) and taken, the cost was paid, " +
@@ -1221,8 +1222,9 @@ namespace SickOfIt.Playtest
                 "then the Shaft (a preview over the menu, setup shortcut, Yooba met) opens, its layout is checked, Visit Yooba opens his shop over it, " +
                 "Back returns to the Shaft and Continue closes it", 150, "menus"));
             list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu (in the editor and standalone also resized through 16:9, a narrow desktop, phone portrait and phone landscape; a WebGL page is never resized by the game, the runner's device sets its size: tagline whole, stickers clear, buttons 48 px), level select, settings, " +
-                "level 1's HUD, the pause menu and its settings, the Shaft (a preview over the menu, setup shortcut, with Visit Yooba beside Continue), Yooba's shop over it, and the death scene (loaded directly, a setup shortcut), no button overlaps another " +
-                "or a HUD panel, none leaves the screen, and every button is thumb-sized", 120, "menus"));
+                "level 1's HUD, the pause menu and its settings, the Shaft (a preview over the menu, setup shortcut, with Visit Yooba beside Continue), Yooba's shop over it " +
+                "(also resized to 1280x720 and 390x844: pip strips clear of each card's name, last row fully visible after a scroll to the bottom, no Decoration/Subtitle overlaps), " +
+                "and the death scene (loaded directly, a setup shortcut), no button overlaps another or a HUD panel, none leaves the screen, and every button is thumb-sized", 180, "menus"));
             list.Add(new PlaytestScenario("portal-audio", "The prologue's portal scene, by ear, on the main menu: every Overlord line, hero take, " +
                 "Hell's echo (three repeats, each deeper) and effect plays in scene order, then the Meadow's lines; any without a clip is a bug", 150, "menus", "audio"));
             list.Add(new PlaytestScenario("sound-audit", "The sound audit on the main menu: every sound in audio.json has a clip (a missing one is a bug, " +
@@ -8205,7 +8207,13 @@ namespace SickOfIt.Playtest
                 Run.Event("shop-goods", string.Join(", ", goods));
                 check("shopGoods", goods.Count > 0, $"{goods.Count} goods on the counter: {string.Join(", ", goods)}");
                 if (!string.IsNullOrEmpty(audit))
+                {
                     yield return Audit(audit, step, steps, 0.5f, progress: step > 0);
+                    if (Run.Done) yield break;
+                    // Layout scenario: the shop at desktop and phone sizes, top and scrolled-to-bottom (acceptance criteria).
+                    if (step > 0)
+                        yield return ShopLayoutSizes();
+                }
             }
 
             /// <summary>Back out of Yooba's shop: his goodbye, and the same Shaft again with Continue (and Visit Yooba) up.</summary>
@@ -9487,6 +9495,16 @@ namespace SickOfIt.Playtest
                                         $"({(portraitScreen ? "portrait: full width, top of the screen" : "landscape: fills the screen")})");
                     if (ok) Run.Event("check", $"playfield viewport {Screen.width}x{Screen.height}: ok (full width, no bars above; portrait anchored to the top)");
                     else Run.Problem(PlaytestSeverity.Bug, $"playfield viewport {Screen.width}x{Screen.height}: {vp} (top {top:0}px) does not match the layout rule");
+                }
+                if (screen.StartsWith("Main Menu") && Screen.height > Screen.width && Camera.main != null
+                    && Camera.main.TryGetComponent(out SickOfIt.Core.Device.AspectRatioController menuAspect))
+                {
+                    var vp = menuAspect.LastViewport;
+                    bool full = vp.width > 0.999f && vp.height > 0.999f && menuAspect.PortraitCoverActive;
+                    Run.Event("check", $"portrait menu {Screen.width}x{Screen.height}: " +
+                                       (full ? "fills the screen around the hero, no black bars" : $"LETTERBOXED ({vp})"));
+                    if (!full)
+                        Run.Problem(PlaytestSeverity.Bug, $"portrait menu {Screen.width}x{Screen.height} is letterboxed: {vp}");
                 }
                 Run.Event("layout", $"{screen}: {buttons} buttons and {result.Boxes.Count - buttons} panels/texts checked, " +
                                     (result.Problems.Count == 0 ? "no overlaps, all on screen and thumb-sized" : $"{result.Problems.Count} problem(s)"));

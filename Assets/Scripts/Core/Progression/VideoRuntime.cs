@@ -93,6 +93,9 @@ namespace SickOfIt.Core.Progression
             rewindKeyHeld = Keyboard.current != null && Keyboard.current.rKey.isPressed;
 
             EnsurePlaybackCamera();
+            // Portrait phones: full screen, the film a little closer, its own colours in the bands (no black bars).
+            SickOfIt.Core.Device.AspectRatioController.CoverPortrait(Camera.main, CinematicPortraitWidthShare(),
+                Camera.main != null ? Camera.main.transform.position.x : 0f);
             EnsureEventSystem();
             AutoDiscoverReferences();
             SetupPlayback();
@@ -222,6 +225,7 @@ namespace SickOfIt.Core.Progression
                     spritePlayer = videoPlayerObject.AddComponent<SpriteFramePlayer>();
                 playbackPlayers.Add(spritePlayer);
 
+                SickOfIt.Core.Device.PortraitBackdrop.Attach(videoPlayerObject.GetComponent<SpriteRenderer>(), Camera.main);
                 spritePlayer.Initialize(framesData, () =>
                 {
                     TrackVideo("play");
@@ -583,6 +587,12 @@ namespace SickOfIt.Core.Progression
         {
             var gd = GameDefinition.Instance;
             return gd != null && gd.cinematicCameraOrthoSize > 0f ? gd.cinematicCameraOrthoSize : 5f;
+        }
+
+        static float CinematicPortraitWidthShare()
+        {
+            var gd = GameDefinition.Instance;
+            return gd != null ? gd.cinematicPortraitWidthShare : 0.8f;
         }
 
         static Color CinematicBackground()

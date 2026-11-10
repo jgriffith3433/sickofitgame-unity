@@ -242,6 +242,23 @@ namespace SickOfIt.Core.Flow
             LoadAfterLate(UPGRADE_SHOP_SCENE);
         }
 
+        const string VideoPreloadOwner = "videoPreload";
+
+        /// <summary>
+        /// Starts bringing in a video's art now, while something else is on screen (New Game's house explosion), so the
+        /// intro doesn't open on a black loading cover on a phone. <see cref="LoadVideo"/> takes it over (its own acquire
+        /// finds the bundles in or arriving) and lets this hold go. Nothing to do in the editor or without a manifest.
+        /// </summary>
+        public void PreloadVideo(int videoNumber)
+        {
+            if (!useAddressables || !GameAssets.Managed)
+                return;
+            var video = GameDefinition.Instance != null ? GameDefinition.Instance.GetVideo(videoNumber) : null;
+            if (video == null)
+                return;
+            StartCoroutine(GameAssets.Acquire(VideoPreloadOwner, new[] { GameAssets.Video(video.videoName) }));
+        }
+
         public void LoadVideo(int videoNumber)
         {
             // Store video number for VideoRuntime to read on scene load
@@ -260,7 +277,7 @@ namespace SickOfIt.Core.Flow
             {
                 // The video's own; the level and death before it go (the hero stays for the next level).
                 var video = GameDefinition.Instance != null ? GameDefinition.Instance.GetVideo(videoNumber) : null;
-                Prepared(sceneName, "video", video != null ? new[] { GameAssets.Video(video.videoName) } : new string[0], null, null, new[] { "level", "death" });
+                Prepared(sceneName, "video", video != null ? new[] { GameAssets.Video(video.videoName) } : new string[0], null, null, new[] { "level", "death", VideoPreloadOwner });
             }
             else
             {

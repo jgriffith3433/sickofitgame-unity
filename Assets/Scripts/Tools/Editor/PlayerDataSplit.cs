@@ -42,6 +42,21 @@ namespace SickOfIt.Tools.Editor
         // The definition as it was before the split emptied its references (restored by End).
         static string BackupPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "GameDefinition.beforeSplit.asset");
 
+        // Addressables' startup settings as they were before Begin changed them for the player build: "property<TAB>value" per line, so
+        // End (or Recover after a crash) puts them back and the committed settings asset (LFS) is never left edited.
+        static string BootSettingsPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "Addressables.bootSettings.txt");
+
+        /// <summary>
+        /// Web requests Addressables runs at once while the player boots (its project setting was 3 and it resets the queue to it on init;
+        /// BundleDownloadManager only raises it after the menu). The boot asks for the game data, its dependencies and the core art and sound
+        /// together, so three at a time left the 4.5 MB hero sheet holding a slot the game data waited for. WebGL's own limit is 6 per host.
+        /// </summary>
+        const int BootWebRequests = 6;
+
+        // The frame-set assets (SpriteFramesData) GameDefinition references that sat in a video, death or level group, moved into the
+        // Boot group for the build: "guid<TAB>group name" per line, so End (or Recover after a crash) puts each back.
+        static string MovedPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "GameDefinition.movedEntries.txt");
+
         /// <summary>Estimated in-memory size per group; its bundle comes out at or under this (LZ4).</summary>
         public const long GroupBudgetBytes = 40L * 1024 * 1024;
 
@@ -61,9 +76,9 @@ namespace SickOfIt.Tools.Editor
             if (settings == null)
                 throw new Exception("Addressables settings are missing.");
 
-            string moved = AssetDatabase.MoveAsset(ResourcesPath, EnsureFolder());
-            if (!string.IsNullOrEmpty(moved))
-                throw new Exception($"Couldn't move {ResourcesPath} out of Resources: {moved}");
+            string moveError = AssetDatabase.MoveAsset(ResourcesPath, EnsureFolder());
+            if (!string.IsNullOrEmpty(moveError))
+                throw new Exception($"Couldn't move {ResourcesPath} out of Resources: {moveError}");
             AssetDatabase.SaveAssets();
             Directory.CreateDirectory(Path.GetDirectoryName(BackupPath));
             File.Copy(BuildPath, BackupPath, true);
@@ -83,10 +98,21 @@ namespace SickOfIt.Tools.Editor
             PlayerDataManifest.Write(settings, template, log);
 
             var byFolder = new SortedDictionary<string, List<string>>(StringComparer.Ordinal);
+            var moved = new List<string>();
             foreach (string path in AssetDatabase.GetDependencies(BuildPath, true))
             {
-                if (!Movable(settings, path))
+                bool foreignFrames = !Movable(settings, path) && FrameSetInOtherGroup(settings, path);
+                if (!foreignFrames && !Movable(settings, path))
                     continue;
+                if (foreignFrames)
+                {
+                    // A video, death or level's SpriteFramesData sits in that clip's group (Video2_Group, ...). GameDefinition references it
+                    // directly, so loading GameDefinition fetched the group's bundles (level 1-3, death 1-3 and video 1-3: 42 bundles
+                    // before the menu, budget 12). It is a few KB of numbers and label names (the frames load by label), so it rides in
+                    // the Boot group instead; keeps its address and labels, and End puts it back.
+                    var existing = settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(path));
+                    moved.Add(AssetDatabase.AssetPathToGUID(path) + "\t" + existing.parentGroup.Name);
+                }
                 // One list for all of them: GameDefinition's own dependencies (prefabs, fonts, controller textures, ...) are all loaded
                 // together before the menu, so a bundle per folder (25 of them on beta v27) only made 25 requests where one will do. The
                 // size budget below still splits the group if it ever grows.
@@ -94,6 +120,13 @@ namespace SickOfIt.Tools.Editor
                 if (!byFolder.TryGetValue(folder, out var list))
                     byFolder[folder] = list = new List<string>();
                 list.Add(path);
+            }
+
+            // Written before anything is moved, so a crash can still put them back (Recover).
+            if (moved.Count > 0)
+            {
+                File.WriteAllLines(MovedPath, moved);
+                log($"  {moved.Count} frame sets (SpriteFramesData) of videos, deaths and levels moved from their own groups into the Boot group, so GameDefinition no longer pulls those groups in.");
             }
 
             int groups = 1, assets = 0;
@@ -115,7 +148,8 @@ namespace SickOfIt.Tools.Editor
                         inGroup = 0;
                     }
                     var assetEntry = settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(path), group);
-                    assetEntry.SetAddress(path);
+                    if (!WasMoved(path, moved))
+                        assetEntry.SetAddress(path);
                     inGroup += size;
                     total += size;
                     assets++;
@@ -124,6 +158,7 @@ namespace SickOfIt.Tools.Editor
             }
 
             WriteBootScene();
+            ApplyBootSettings(settings, log);
             EditorUtility.SetDirty(settings);
             AssetDatabase.SaveAssets();
             log($"  Player data split: GameDefinition and {assets} assets it uses ({total / (1024 * 1024)} MB in memory) in {groups} Addressables groups ({GroupPrefix}*), Boot scene {BootScenePath}.");
@@ -154,6 +189,10 @@ namespace SickOfIt.Tools.Editor
             }
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings != null)
+                PutFrameSetsBack(settings, log);
+            if (settings != null)
+                RestoreBootSettings(settings, log);
+            if (settings != null)
             {
                 foreach (var group in settings.groups.Where(g => g != null && g.Name.StartsWith(GroupPrefix, StringComparison.Ordinal)).ToList())
                     settings.RemoveGroup(group);
@@ -176,7 +215,7 @@ namespace SickOfIt.Tools.Editor
         public static void Recover(Action<string> log)
         {
             bool groupsLeft = AddressableAssetSettingsDefaultObject.Settings?.groups.Any(g => g != null && g.Name.StartsWith(GroupPrefix, StringComparison.Ordinal)) ?? false;
-            if (!File.Exists(BuildPath) && !AssetDatabase.IsValidFolder(BuildFolder) && !groupsLeft)
+            if (!File.Exists(BuildPath) && !AssetDatabase.IsValidFolder(BuildFolder) && !groupsLeft && !File.Exists(MovedPath) && !File.Exists(BootSettingsPath))
                 return;
             log("  An earlier build left the player data split in place; undoing it first.");
             if (File.Exists(BuildPath) && File.Exists(ResourcesPath))
@@ -245,6 +284,97 @@ namespace SickOfIt.Tools.Editor
             definition.assetRegistry.RemoveAll(e => e != null && e.asset != null && taken.Contains(AssetDatabase.GetAssetPath(e.asset)));
             EditorUtility.SetDirty(definition);
             return taken.Count;
+        }
+
+        /// <summary>
+        /// Two of Addressables' own settings for the player build only (put back by <see cref="RestoreBootSettings"/>):
+        /// - DisableCatalogUpdateOnStartup: the build's remote catalog (ServerData/WebGL/catalog_1.0.bin) is byte for byte the player's own
+        ///   (StreamingAssets/aa/catalog.bin, same hash: they ship in one folder), but with updates on, init still asked for the remote hash
+        ///   and then the 0.9 MB catalog, parsing a second one (catalog_ files in the Resource Timing before the menu). Off, init uses the
+        ///   player's own and the game data starts about a request and a parse sooner (load.bootCatalogSeconds, load.bootDataSeconds).
+        /// - MaxConcurrentWebRequests: <see cref="BootWebRequests"/>.
+        /// Set through the properties by name: a missing one is logged and skipped, never a failed build.
+        /// </summary>
+        static void ApplyBootSettings(AddressableAssetSettings settings, Action<string> log)
+        {
+            var wanted = new (string name, object value)[] { ("DisableCatalogUpdateOnStartup", true), ("MaxConcurrentWebRequests", BootWebRequests) };
+            var before = new List<string>();
+            var targets = new List<(System.Reflection.PropertyInfo property, object value)>();
+            foreach (var (name, value) in wanted)
+            {
+                var property = typeof(AddressableAssetSettings).GetProperty(name);
+                if (property == null || !property.CanRead || !property.CanWrite)
+                {
+                    log($"  Addressables setting {name} not found; left as it is.");
+                    continue;
+                }
+                before.Add(name + "\t" + Convert.ToString(property.GetValue(settings), System.Globalization.CultureInfo.InvariantCulture));
+                targets.Add((property, value));
+            }
+            if (targets.Count == 0)
+                return;
+            // Written before anything changes, so a crash can still put them back (Recover).
+            Directory.CreateDirectory(Path.GetDirectoryName(BootSettingsPath));
+            File.WriteAllLines(BootSettingsPath, before);
+            foreach (var (property, value) in targets)
+                property.SetValue(settings, value);
+            log($"  Addressables startup: {string.Join(", ", before.Select((line, i) => line.Replace('\t', ' ') + " -> " + targets[i].value))} (put back after the build).");
+        }
+
+        static void RestoreBootSettings(AddressableAssetSettings settings, Action<string> log)
+        {
+            if (!File.Exists(BootSettingsPath))
+                return;
+            foreach (string line in File.ReadAllLines(BootSettingsPath))
+            {
+                string[] parts = line.Split('\t');
+                var property = parts.Length == 2 ? typeof(AddressableAssetSettings).GetProperty(parts[0]) : null;
+                if (property == null || !property.CanWrite)
+                    continue;
+                property.SetValue(settings, Convert.ChangeType(parts[1], property.PropertyType, System.Globalization.CultureInfo.InvariantCulture));
+            }
+            File.Delete(BootSettingsPath);
+            EditorUtility.SetDirty(settings);
+            log?.Invoke("  Addressables startup settings put back.");
+        }
+
+        /// <summary>A SpriteFramesData asset that has an Addressables entry in a group that isn't ours (a clip's own group).</summary>
+        static bool FrameSetInOtherGroup(AddressableAssetSettings settings, string path)
+        {
+            if (!path.StartsWith("Assets/", StringComparison.Ordinal) || !path.EndsWith(".asset", StringComparison.OrdinalIgnoreCase))
+                return false;
+            var entry = settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(path));
+            if (entry == null || entry.parentGroup == null || entry.parentGroup.Name.StartsWith(GroupPrefix, StringComparison.Ordinal))
+                return false;
+            return AssetDatabase.LoadAssetAtPath<SickOfIt.VideoFrameExtractor.Runtime.SpriteFramesData>(path) != null;
+        }
+
+        static bool WasMoved(string path, List<string> moved)
+        {
+            string guid = AssetDatabase.AssetPathToGUID(path);
+            return moved.Any(line => line.StartsWith(guid + "\t", StringComparison.Ordinal));
+        }
+
+        /// <summary>Puts the frame sets <see cref="Begin"/> moved into the Boot group back into the groups they came from.</summary>
+        static void PutFrameSetsBack(AddressableAssetSettings settings, Action<string> log)
+        {
+            if (!File.Exists(MovedPath))
+                return;
+            int back = 0;
+            foreach (string line in File.ReadAllLines(MovedPath))
+            {
+                string[] parts = line.Split('\t');
+                if (parts.Length != 2)
+                    continue;
+                var group = settings.FindGroup(parts[1]);
+                if (group == null || settings.FindAssetEntry(parts[0]) == null)
+                    continue;
+                settings.CreateOrMoveEntry(parts[0], group); // the entry keeps its address and labels
+                back++;
+            }
+            File.Delete(MovedPath);
+            EditorUtility.SetDirty(settings);
+            log?.Invoke($"  {back} frame sets back in their own groups.");
         }
 
         static bool Movable(AddressableAssetSettings settings, string path)

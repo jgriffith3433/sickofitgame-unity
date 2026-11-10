@@ -5,9 +5,10 @@ namespace SickOfIt.Core.Progression
 {
     /// <summary>
     /// How the game gets its Hawkes Net connection back (GhostLobby): capped exponential backoff with jitter
-    /// (2 s, 4 s, 8 s ... 60 s, each up to 25% longer), scheduled from the failure itself, never polled. A 410 Gone, or the
-    /// third 4xx in a row (other than 408/429, which are only "slow down"), ends the session's retrying: the game
-    /// asks again on the next scene load or when an online feature opens. Pure logic, no Unity objects (EditMode tests).
+    /// (2 s, 4 s, 8 s ... 60 s, each up to 25% longer), scheduled from the failure itself, never polled. The third 4xx in
+    /// a row (other than 408/429, which are only "slow down") halts the retrying: the game asks again on the next scene
+    /// load or when an online feature opens. A 410 Gone halts it for the rest of the session (GhostLobby never wakes it).
+    /// Pure logic, no Unity objects (EditMode tests).
     /// </summary>
     public sealed class NetRetry
     {

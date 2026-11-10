@@ -397,8 +397,8 @@
     "maxSegments": 12,
     "bossFill": "#B83DFF",
     "progressPlayed": "#FFF4D6F2",
-    "rewind": "#2EC4B6",
-    "rewindEmpty": "#FF5B3A",
+    "rewind": "#4CE0D2",
+    "rewindEmpty": "#FF8566",
     "marker": "#FFC93C",
     "worldBarOutline": "#1E1220",
     "landscape": {

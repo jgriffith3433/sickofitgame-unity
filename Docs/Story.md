@@ -45,7 +45,9 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 
 Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
 
-1. **Video1.** A nice afternoon. The Overlord rises over the hills; his imps drop in to loot the village.
+1. **Video1.** A nice afternoon. The Overlord rises over the hills; his imps drop in to loot the village. Since 2026-11-08 New
+   Game skips it and opens Level 1, whose first seconds tell the same beat in play (the sky opens, the imps drop in);
+   Video1 is watchable from Videos.
 2. **Level 1, the Meadow.** The hero clears the imps and the cinders. Diamonds, a first taste of rewind.
 3. **The Grudge pick** (the level's `offerUpgrades`): his first grudge. It happens before the scene, so the scene
    is never interrupted.
@@ -141,7 +143,7 @@ THE MEADOW again                           Ending
   Floor 960) and Floor 951's when the Chimney is (`Level7`-`Level10`, Floors 950-911, then Floor 910; `Level6`, the old
   Loop over 960-951, is played only from the level select). Their places' names now belong to the floors where those
   ideas are introduced.
-- **The path today** (re-pathed 2026-10-19): New Game → Video1 → Level 1, the Meadow → Video2 → **Floor 1000, The
+- **The path today** (re-pathed 2026-10-19; New Game goes straight to Level 1 since 2026-11-08, Video1 stays in Videos): New Game → Level 1, the Meadow → Video2 → **Floor 1000, The
   Landing** → Video3 (Yooba) → **Floors 999-991** → *the Sack Lift* → **Floors 960-951** → *the King's Chimney* →
   **Floors 910-902** → **Floor 901, the Slag Throne** (his Waystone) → the Shaft (Circle IX wakes up) → **Floors
   900-891** → *the Spared Demon* → **Floors 860-851** → *the Hollow Spire* → **Floors 810-802** → the level select,
@@ -1867,7 +1869,7 @@ Hell loves a show, and the announcer's cabinet is the show's frame: nothing on s
 
 - **Popups** (pause, results, the Codex, settings, the Grudge picker) fade and rise in (0.28 s) and fade out (0.16 s) instead of vanishing (`PanelAnim`, `Overlay.Create`/`Overlay.Close`).
 - **Numbers count**: the diamond counter, the shop's purse and the results' stats tick up or down to their total (`NumberTicker`); the results count one row after another.
-- **Pickups answer**: a diamond sends a "+N" up from the counter and pops it; a heart refilled pops the heart with a green "+N"; a rewind orb sends "+Ns" from the rewind bar (`HudFloaters`).
+- **Pickups and bonuses answer**: a diamond sends a "+N" up from the counter and pops it; a heart refilled pops the heart with a "+N"; a rewind orb or clean kill sends "+Ns" / "CLEAN KILL +0.5s" from the rewind bar (`HudFloaters`), and in-world bonuses and penalties rise on `WorldEffects.PopText`. Every floating popup and the HUD `REWIND` readout wear a heavy dark plum outline + drop shadow over a semi-opaque dark plum backing pill with a warm-grey rim (`#C9B8A6` subtitle family), pop in larger for the first ~0.3 s before easing to normal, hold full opacity for 0.9 s before fading, lift dark colours so they read clearly on bright meadow sky/grass and black slag alike, and stack into separate vertical slots so successive popups never overlap (playtest `rewind-juice`).
 - **Weapons**: switching drops the new name into the weapon chip with a punch of size.
 - **Bosses are introduced**: when a boss bar shows, a flash lights the screen, the boss's name lands from large, and the bar fills from empty (1.3 s) (`GameplayHud.BossIntroSeconds`).
 - **Between floors**: each new floor sweeps a band of lava light up the screen; a floor stage's results close on a black cover with the floor's number, and the next scene opens it (`ScreenTransition`; it never holds the player on black for more than 8 s).
@@ -2400,11 +2402,11 @@ idea: *Hell is repetition, and he has had enough of repetition.* (No office or w
 
 | Level | Beat |
 |---|---|
-| 1, The Meadow | He was sick of it all long before the sky opened. Then the sky opened. |
-| Floor 1000 | The bottom of Hell: same lava, same noise, same forever. He is already sick of it. |
-| Floor 999 | One floor up. He is counting out loud, and Hell is counting along. |
-| Floor 998 | They took the village. Now they take the gun. He has hands, and he is sick of being polite. |
-| Floor 997 | Imps haul his village's diamonds up a chain, sack after sack, the same sack. He has seen enough loops. |
+| 1, The Meadow | Then the sky opened. |
+| Floor 1000 | The bottom of Hell. He is already sick of it. |
+| Floor 999 | One floor up. Hell is counting along. |
+| Floor 998 | They took the village. Now they take the gun. |
+| Floor 997 | Imps haul his village's diamonds. Same sack, every loop. |
 
 Playtest `opening-beats` plays them (it is the scenario beta's review runs: Video1 played then skipped, a `beat` event and a `check beats level N` per level, `beats none repeated` last; keep its `BeatLines` in step with this table). Next floors get theirs the same way (an `onEnter` `runSequence` of `wait` + `showText`).
 

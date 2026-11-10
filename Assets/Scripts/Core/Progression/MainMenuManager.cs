@@ -118,9 +118,28 @@ namespace SickOfIt.Core.Progression
             transitionDelay = config.transitionDelay;
             PlacedSpriteBuilder.Bind(config.placedSprites);
 
-            if (!config.placeCharacter)
-                return;
+            Transform character = null;
+            if (config.placeCharacter)
+                character = PlaceCharacter(config);
+            else if (config.portraitFollowCharacter)
+                character = FindCharacter();
 
+            // Portrait phones: the menu fills the screen around the hero instead of a 16:9 strip between black bars.
+            SickOfIt.Core.Device.AspectRatioController.CoverPortrait(Camera.main, config.portraitWidthShare, config.portraitFocusX,
+                config.portraitFollowCharacter ? character : null);
+        }
+
+        private static Transform FindCharacter()
+        {
+            var transforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < transforms.Length; i++)
+                if (transforms[i] != null && transforms[i].name == "Character")
+                    return transforms[i];
+            return null;
+        }
+
+        private static Transform PlaceCharacter(MainMenuConfig config)
+        {
             var transforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < transforms.Length; i++)
             {
@@ -130,8 +149,9 @@ namespace SickOfIt.Core.Progression
                 position.x = config.characterPosition.x;
                 position.y = config.characterPosition.y;
                 transforms[i].localPosition = position;
-                break;
+                return transforms[i];
             }
+            return null;
         }
 
         private void BuildMenu()
@@ -378,12 +398,15 @@ namespace SickOfIt.Core.Progression
             else if (BundleDownloadManager.Instance != null)
                 BundleDownloadManager.Instance.StartDownloadForLevel(1);
 
+            // Straight into play (quality rule: the hook in the first 30 s is something happening, not a 60 s film):
+            // the house explodes, then Level 1, whose opening is the intro's story told in the level (the sky opens over
+            // the meadow, the imps drop in). Video1 is unlocked by InitializeNewPlayer and stays in Videos.
             StartCoroutine(TransitionThenExecute(() =>
             {
                 if (sceneLoadingManager != null)
-                    sceneLoadingManager.LoadVideo(1);
+                    sceneLoadingManager.LoadLevel(1);
                 else
-                    SceneTransitionManager.Instance.LoadVideo(1);
+                    SceneTransitionManager.Instance.LoadLevel(1);
             }));
         }
 

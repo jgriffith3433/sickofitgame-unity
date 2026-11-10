@@ -58,6 +58,10 @@ namespace SickOfIt.Data
         [Tooltip("Orthographic size for video/death cameras")]
         public float cinematicCameraOrthoSize = 2.8f;
         public Color cinematicCameraBackground = Color.black;
+        [Tooltip("Portrait phones: share of a video's or the death scene's width kept in view (1 all of it, 0 crop to the full " +
+                 "picture height). The bands above and below show the film itself, enlarged and dimmed, never black bars.")]
+        [Range(0f, 1f)]
+        public float cinematicPortraitWidthShare = 0.8f;
 
         [Header("Level Scene Layout")]
         [Tooltip("Y position of the ground collider")]

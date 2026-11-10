@@ -76,6 +76,15 @@ namespace SickOfIt.Data.Config
         public Vector2 characterPosition = new Vector2(-4.21f, -3.14f);
         public bool characterCanShoot;
 
+        [Header("Portrait Phones")]
+        [Tooltip("Share of the menu picture's width kept in view on a portrait screen (0 = the full picture height, sides cropped).")]
+        [Range(0f, 1f)]
+        public float portraitWidthShare = 0f;
+        [Tooltip("Where the portrait view is centred when it can't show the whole width (world x; the hero and the house).")]
+        public float portraitFocusX = -4.6f;
+        [Tooltip("The portrait view follows the hero as he walks.")]
+        public bool portraitFollowCharacter = true;
+
         [Tooltip("Placed sprite the hut colliders are parented under.")]
         public string houseSpriteName = "MainMenu_LeftPartOfHouse";
         public Vector3 houseBodyPosition = new Vector3(0.73f, 0.27f, 2f);

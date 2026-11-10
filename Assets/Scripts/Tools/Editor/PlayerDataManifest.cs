@@ -46,6 +46,7 @@ namespace SickOfIt.Tools.Editor
             var coreAddresses = new HashSet<string>(StringComparer.Ordinal);
             var lateAddresses = new HashSet<string>(StringComparer.Ordinal);
             long bytes = 0;
+            int foreignCount = 0;
 
             (List<int> entries, HashSet<string> include) Scope(string id)
             {
@@ -54,9 +55,13 @@ namespace SickOfIt.Tools.Editor
                 return scope;
             }
 
-            void Add(AssetManifestEntry entry, UnityEngine.Object asset)
+            void Add(AssetManifestEntry entry, UnityEngine.Object asset, bool foreign = false)
             {
-                if (addressed.Add(entry.address))
+                // An asset in a video, death or level group (Takeable's foreign case) stays where it is under its own address: it is
+                // only no longer a hard dependency of GameDefinition, so its group's bundles load with the scope that needs it.
+                if (foreign)
+                    foreignCount++;
+                else if (addressed.Add(entry.address))
                 {
                     var group = GroupFor(settings, template, groups, entry.address);
                     settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(entry.address), group).SetAddress(entry.address);
@@ -64,9 +69,9 @@ namespace SickOfIt.Tools.Editor
                 }
                 entries.Add(entry);
                 string scopeId = ScopeOf(entry.path, definition, eventSounds);
-                if (scopeId == "core")
+                if (!foreign && scopeId == "core")
                     coreAddresses.Add(entry.address);
-                else if (scopeId == LateCore)
+                else if (!foreign && scopeId == LateCore)
                     lateAddresses.Add(entry.address);
                 Scope(scopeId).entries.Add(entries.Count - 1);
             }
@@ -88,7 +93,7 @@ namespace SickOfIt.Tools.Editor
                 if (property.isArray && property.propertyType == SerializedPropertyType.Generic && property.arrayElementType == "PPtr<$Sprite>")
                 {
                     enter = false;
-                    TakeSpriteArray(settings, property, Add);
+                    TakeSpriteArray(settings, property, (e, a) => Add(e, a));
                     continue;
                 }
                 if (property.propertyType != SerializedPropertyType.ObjectReference || property.objectReferenceValue == null)
@@ -103,15 +108,15 @@ namespace SickOfIt.Tools.Editor
                 if (kind < 0)
                     continue;
                 string path = AssetDatabase.GetAssetPath(value);
-                if (!Takeable(settings, path))
+                if (!Takeable(settings, path, out string foreignAddress))
                     continue;
-                var entry = new AssetManifestEntry { path = property.propertyPath, address = path, kind = kind };
+                var entry = new AssetManifestEntry { path = property.propertyPath, address = foreignAddress ?? path, kind = kind };
                 if (kind == AssetManifestEntry.Texture)
                     entry.sliced = AssetDatabase.LoadAllAssetRepresentationsAtPath(path).OfType<Sprite>().Any();
                 else if (kind == AssetManifestEntry.Sprite)
                     entry.sprite = value.name;
                 property.objectReferenceValue = null;
-                Add(entry, value);
+                Add(entry, value, foreignAddress != null);
             }
             // The hero's and the legacy enemies' prefabs: their animation clips point at big sheets, and a prefab left in GameDefinition
             // loads all of them with it (beta v27: ~45 MB of RGBA32 sheets in ~25 bundles before the menu, and again for the menu hero's
@@ -152,6 +157,7 @@ namespace SickOfIt.Tools.Editor
             AssetDatabase.SaveAssets();
 
             int core = scopes.TryGetValue("core", out var c) ? c.entries.Count : 0;
+            log($"  On demand: {foreignCount} references to assets in the video, death and level groups (their audio, thumbnails) left out of GameDefinition's boot closure, loaded by their own addresses with their scope.");
             log($"  On demand: {prefabsTaken} prefabs whose clips use big sheets (the hero's, the legacy enemies', ...) left out of GameDefinition's boot closure.");
             log($"  On demand: {entries.Count} references to {addressed.Count} assets ({bytes / (1024 * 1024)} MB in memory) taken out of GameDefinition, " +
                 $"one bundle each in {groups.Count} {GroupPrefix}* groups; {scopes.Count} scopes, {core} references in \"core\" (loaded at boot, packed into {coreBundles} shared bundles; {lateAddresses.Count} more in \"{LateCore}\", {lateBundles} bundles, loaded behind the menu).");
@@ -194,15 +200,29 @@ namespace SickOfIt.Tools.Editor
         }
 
         /// <summary>An asset of the project that isn't in the player anyway or in someone else's Addressables group.</summary>
-        static bool Takeable(AddressableAssetSettings settings, string path)
+        static bool Takeable(AddressableAssetSettings settings, string path) => Takeable(settings, path, out _, false);
+
+        /// <summary>
+        /// As above; with <paramref name="allowForeign"/> an asset that lives in another Addressables group (a video's soundtrack in
+        /// Video2_Group, a thumbnail, a death scene's audio) is taken too: <paramref name="foreignAddress"/> is the address it has there.
+        /// Left as hard references they made GameDefinition's own load fetch those groups' bundles before the menu (phone-load: level,
+        /// death and video groups, 42 bundles against a budget of 12). They are not moved, so labels and addresses other code uses stay.
+        /// </summary>
+        static bool Takeable(AddressableAssetSettings settings, string path, out string foreignAddress, bool allowForeign = true)
         {
+            foreignAddress = null;
             if (string.IsNullOrEmpty(path) || !path.StartsWith("Assets/", StringComparison.Ordinal))
                 return false; // built-in and package assets stay with GameDefinition
             if (path.Contains("/Resources/") || path.Contains("/Editor/"))
                 return false;
             var existing = settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(path));
             // Video and background frame sheets have their own groups and labels; ours (an earlier reference) are fine.
-            return existing == null || existing.parentGroup.Name.StartsWith(GroupPrefix, StringComparison.Ordinal);
+            if (existing == null || existing.parentGroup.Name.StartsWith(GroupPrefix, StringComparison.Ordinal))
+                return true;
+            if (!allowForeign || string.IsNullOrEmpty(existing.address))
+                return false;
+            foreignAddress = existing.address;
+            return true;
         }
 
         /// <summary>What every level and scene plays with besides its own content (the old enemy and projectile configs).</summary>

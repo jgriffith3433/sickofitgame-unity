@@ -419,7 +419,7 @@ namespace SickOfIt.Gameplay
             }
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
             bool canUndo = budget == null || budget.CanRewind;
-            MenuGraphics.SetText(deathHint, canUndo ? (Application.isMobilePlatform ? Texts.deathRewindTouch : Texts.deathRewind) : Texts.deathNoJuice);
+            MenuGraphics.SetText(deathHint, canUndo ? (SickOfIt.Core.Device.TouchDevice.IsPrimary ? Texts.deathRewindTouch : Texts.deathRewind) : Texts.deathNoJuice);
             deathHint.enableVertexGradient = false;
             deathHint.color = canUndo ? style.rewind : theme.muted;
             float window = Mathf.Max(0.01f, playerHealth.DeathWindow);

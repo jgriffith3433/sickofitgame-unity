@@ -160,3 +160,40 @@ Not measured here (no Unity or build in this sandbox). Studio's change check pla
 a desktop figure (DXT, slower) is what that check sees: judge the phone figure from `phone-load@local:phone`.
 Next candidates, in order: whatever `bundle requests before the menu by group` shows beyond core/Boot/GameDefinition; move the MainMenu scene's hero
 sheets (raw RGBA32, 22.8 MB of player data) out of the scene (needs Unity to regenerate the scene); move the 6 MB of content/level JSON out of GameDefinition.
+
+## Video, death and level groups no longer ride with GameDefinition (2026-11-08, phone-load: 42 bundles / 142 requests before the menu)
+
+Delaying `BundleDownloadManager` (#301) did not move the count, because nothing downloaded them on purpose: `LoadAssetAsync<GameDefinition>` loads the
+bundles GameDefinition *depends on*, and it held direct references to assets that live in the clips' own Addressables groups (`Level1-3_Group`,
+`Death1-3_Group`, `Video1-3_Group`): each video's and death's `audio` and `thumbnail`, and the `SpriteFramesData` of every video, death and
+background layer. `PlayerDataSplit.Movable` and `PlayerDataManifest.Takeable` both skipped anything "already addressable", so those references stayed hard.
+Now (deploy only, the split's copy):
+- `PlayerDataManifest.Takeable(.., out foreignAddress)`: a Texture2D/Sprite/AudioClip reference to an asset in another group is emptied and put in the manifest
+  under the address it already has (not moved, so its labels and addresses stay); it loads with its scope (`video/<name>`, `death/<name>`, the thumbnails in `core.late`).
+- `PlayerDataSplit`: a `SpriteFramesData` in another group (a few KB, its frames load by label) is moved into the `PlayerData_Boot` group for the build, recorded in
+  `Temp/GameDefinition.movedEntries.txt` and put back by `End`/`Recover`.
+Not measured here (no Unity or build in this sandbox): the next `phone-load@local:phone` says. If bundles from those groups still show in
+`bundle requests before the menu by group`, the next suspect is a scene (MainMenu/Boot) reference, not GameDefinition.
+
+## The "76 playerdata requests" were one bundle; catalog and request queue (2026-11-09, beta c74a7ee, phone menu 20.47 s)
+
+Phone playtest r_7a4d29a65c20: menu 20.47 s = player start 5.1 + game data 9.0 (catalog 2.05) + core 0.4 + the rest; `load.menuBundleRequests` 94 with
+`playerdata` x76. Read from the published build (`catalog.bin` and the bundles of web/54, UnityPy), not guessed:
+
+- Before the menu the `PlayerData_Assets_*` groups are exactly two bundles: `core_art1` (4.5 MB: the menu hero's Idle sheet, one 1819x2048
+  texture and its ~90 sprite locations) and `core_audio1` (13 player/ui sounds, 0.2 MB); `core_late` ones start after the menu. The 76 was
+  `InternalIdTransformFunc` running once per sprite location that depends on that bundle, and `BundleFetchLog` cut names at the first
+  `_assets_`, so every `PlayerData_Assets_*` group read as "playerdata". Nothing is fetched 76 times and there is nothing left to pack together.
+  `BundleFetchLog` now counts different bundles per group (`playerdata_assets_core_art1 x1 (76 calls)`).
+- The player's own catalog and the remote one are the same file (same hash, `cmp` equal), yet `m_DisableCatalogUpdateOnStart` was false: init
+  fetched the remote hash and the 0.9 MB remote catalog and parsed a second one before the game data could start. The catalog is already
+  Addressables' binary format (`catalog.bin`, no JSON/compressed variant to switch to). `PlayerDataSplit.Begin` now sets
+  `DisableCatalogUpdateOnStartup` for the player build.
+- `m_maxConcurrentWebRequests` was 3 (Addressables resets the queue to it on init; `BundleDownloadManager` raises it only after the menu).
+  The boot asks for 4 bundles of game data and 2 of core together, so the 4.5 MB hero sheet held a slot the game data waited on. Begin now
+  sets 6 (`PlayerDataSplit.BootWebRequests`).
+- Both settings are put back by `End`/`Recover` (`Temp/Addressables.bootSettings.txt`); the committed settings asset (LFS) is never left changed.
+- Moves: `load.bootCatalogSeconds` and `load.bootDataSeconds` (expect about 0.5-1.5 s off the 9.0), `load.menuSeconds`. Not measured here (no Unity).
+- Left: the 7 s between catalog and game data is mostly the 0.8 MB boot bundle (the legacy enemies' controllers and clips GameDefinition depends
+  on) and the 6 MB of JSON being read; and `mainmenu_group` (the menu's background and explosion sheets) is fetched only as the menu scene
+  loads (about 3.4 s): prefetching it beside the game data is the next step.

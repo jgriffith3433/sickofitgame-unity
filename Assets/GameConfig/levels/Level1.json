@@ -178,9 +178,23 @@
                 "seconds": 3.0
               },
               {
+                "type": "playSound",
+                "sound": "magma_rumble"
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.8
+              },
+              {
+                "type": "flash",
+                "color": "#FF8A3D66",
+                "duration": 0.45
+              },
+              {
                 "type": "showText",
-                "text": "He was sick of it all long before the sky opened. Then the sky opened.",
-                "duration": 3.6,
+                "text": "Then the sky opened.",
+                "duration": 2.4,
                 "style": "Subtitle",
                 "color": "#C9B8A6"
               }
