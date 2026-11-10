@@ -406,31 +406,53 @@ namespace SickOfIt.Core.UI.Menus
     }
 
     /// <summary>
-    /// Short-lived words that rise from a HUD element and fade ("+3", "+1.5s"): pickup feedback. Pooled by
-    /// recycling, never more than a handful alive.
+    /// Short-lived words that rise from a HUD element and fade ("+3", "CLEAN KILL +0.5s"): pickup and bonus feedback.
+    /// Pooled by recycling, stacked into separate slots so successive popups never overlap, and backed by a semi-opaque
+    /// dark plum pill with a warm-grey rim so they read on bright sky and black slag alike.
     /// </summary>
     public sealed class HudFloaters : MonoBehaviour
     {
-        const int MaxAlive = 6;
-        const float Life = 0.9f;
+        const int MaxAlive = 8;
+        public const float Life = 1.5f;
+        /// <summary>Full opacity for at least 0.6 s before fading; the scale-pop eases from larger to normal over PopSeconds.</summary>
+        public const float HoldSeconds = 0.9f;
+        public const float PopSeconds = 0.3f;
+        const float PeakPop = 1.32f;
+        const float PillAlpha = 0.85f;
+        const float PeakPillAlpha = 0.92f;
+
+        // Warm-grey / dark-plum subtitle palette family (theme.json subtitle + Docs/Story.md beat warm-grey #C9B8A6).
+        public static readonly Color PillInk = new Color(0.08f, 0.04f, 0.1f, 1f);
+        public static readonly Color PillRimColor = new Color(0.788f, 0.722f, 0.651f, 1f);
+        static readonly Color SubtitleCream = new Color(1f, 0.957f, 0.839f, 1f);
+
+        static HudFloaters current;
 
         /// <summary>How many floaters were spawned (the playtest reads it) and the last one's text.</summary>
         public static int Spawned { get; private set; }
         public static string Last { get; private set; } = "";
-        /// <summary>Whether the last floater was spawned with a pill behind it, and the alpha that pill fades to at full strength.</summary>
+        /// <summary>Whether the last floater was spawned with a pill behind it, and the alpha that pill settles to during hold.</summary>
         public static bool LastHadPill { get; private set; }
         public static float LastPillAlpha => PillAlpha;
-        const float PillAlpha = 0.78f;
-        // The pill is fully opaque for the popup's first moment, then settles to PillAlpha before the fade.
-        const float OpaqueUntil = 0.35f;
+        /// <summary>The stacking slot of the last popup and the highest slot in use at once (the playtest checks that popups in a row never share one).</summary>
+        public static int LastSlot { get; private set; }
+        public static int MaxSlotUsed { get; private set; }
+        /// <summary>Live scale and opacity of the most recently spawned floater (0 when recycled), read by the playtest.</summary>
+        public static float LastCurrentScale { get; private set; }
+        public static float LastCurrentAlpha { get; private set; }
 
         sealed class Floater
         {
             public RectTransform Root;
+            public Image Rim;
             public Image Pill;
             public TextMeshProUGUI Text;
             public Vector3 Start;
+            public Vector2 PillSize;
             public float At;
+            public float Direction;
+            public int Slot;
+            public int SpawnIndex;
             public Color Color;
         }
 
@@ -444,32 +466,148 @@ namespace SickOfIt.Core.UI.Menus
             var floaters = parent.gameObject.AddComponent<HudFloaters>();
             floaters.parent = parent;
             floaters.font = font;
+            current = floaters;
             return floaters;
         }
 
-        /// <summary>A floater at 'from's middle, rising from it.</summary>
+        void OnEnable() => current = this;
+
+        void OnDestroy()
+        {
+            if (current == this)
+                current = null;
+        }
+
+        static float SrgbLuminance(Color c)
+        {
+            float Lin(float v) => v <= 0.03928f ? v / 12.92f : Mathf.Pow((v + 0.055f) / 1.055f, 2.4f);
+            return 0.2126f * Lin(Mathf.Clamp01(c.r)) + 0.7152f * Lin(Mathf.Clamp01(c.g)) + 0.0722f * Lin(Mathf.Clamp01(c.b));
+        }
+
+        static float WcagContrast(Color a, Color b)
+        {
+            float la = SrgbLuminance(a), lb = SrgbLuminance(b);
+            return (Mathf.Max(la, lb) + 0.05f) / (Mathf.Min(la, lb) + 0.05f);
+        }
+
+        /// <summary>
+        /// Checks 'color' against the semi-opaque dark plum pill composited over the brightest sky (pure white) and
+        /// darkest floor (pure black), lifting dark hues toward warm subtitle cream (#FFF4D6) so contrast is >= 5.5:1.
+        /// </summary>
+        public static Color EnsureReadableColor(Color color)
+        {
+            var c = new Color(color.r, color.g, color.b, 1f);
+            var pillOnBrightSky = Color.Lerp(Color.white, PillInk, PillAlpha);
+            const float minContrast = 5.5f;
+            if (WcagContrast(c, pillOnBrightSky) >= minContrast)
+                return c;
+            for (int step = 1; step <= 20; step++)
+            {
+                var lifted = Color.Lerp(c, SubtitleCream, step / 20f);
+                if (WcagContrast(lifted, pillOnBrightSky) >= minContrast)
+                    return lifted;
+            }
+            return SubtitleCream;
+        }
+
+        public static void ApplyTextOutlineAndShadow(TMP_Text text)
+        {
+            if (text == null)
+                return;
+            text.outlineWidth = 0.32f;
+            text.outlineColor = PillInk;
+            var mat = text.fontMaterial;
+            if (mat != null)
+            {
+                mat.EnableKeyword("UNDERLAY_ON");
+                mat.SetColor("_UnderlayColor", new Color(0f, 0f, 0f, 0.88f));
+                mat.SetFloat("_UnderlayOffsetX", 0.6f);
+                mat.SetFloat("_UnderlayOffsetY", -0.6f);
+                mat.SetFloat("_UnderlaySoftness", 0.15f);
+            }
+        }
+
+        /// <summary>A floater clear of 'from', rising (or stepping down near the top edge) in its own stack slot.</summary>
         public void Spawn(RectTransform from, string value, Color color, float size = 46f)
         {
-            if (from == null || !from.gameObject.activeInHierarchy)
+            if (from == null || !from.gameObject.activeInHierarchy || string.IsNullOrEmpty(value))
                 return;
+            current = this;
             if (alive.Count >= MaxAlive)
                 Recycle(alive[0]);
             var f = spare.Count > 0 ? spare.Pop() : Make();
             f.Root.gameObject.SetActive(true);
+            if (f.Text.isActiveAndEnabled && f.Text.outlineWidth < 0.3f)
+                ApplyTextOutlineAndShadow(f.Text);
             f.Text.text = value;
             f.Text.fontSize = size;
-            // A dark pill under the words so they read on bright sky as well as on dark rock.
             f.Text.ForceMeshUpdate();
-            float padX = size * 0.45f, padY = size * 0.18f;
-            f.Pill.rectTransform.sizeDelta = new Vector2(f.Text.preferredWidth + padX * 2f, size * 1.1f + padY * 2f);
-            f.Color = color;
-            f.Start = from.TransformPoint(from.rect.center);
+
+            float padX = size * 0.48f, padY = size * 0.22f;
+            var pillSize = new Vector2(f.Text.preferredWidth + padX * 2f, size * 1.12f + padY * 2f);
+            f.PillSize = pillSize;
+            f.Root.sizeDelta = pillSize;
+            f.Rim.rectTransform.sizeDelta = pillSize + new Vector2(5f, 5f);
+            f.Pill.rectTransform.sizeDelta = pillSize;
+            f.Color = EnsureReadableColor(color);
+
+            float scale = parent != null ? Mathf.Max(0.01f, parent.lossyScale.y) : 1f;
+            Vector3 basePos = from.TransformPoint(from.rect.center);
+            float marginX = (pillSize.x + 6f) * 0.5f * PeakPop * scale + 8f;
+            if (Screen.width > marginX * 2f)
+                basePos.x = Mathf.Clamp(basePos.x, marginX, Screen.width - marginX);
+
+            // Top-row HUD chips (heart, diamonds) step downward so stacks stay on screen; bottom readouts rise upward.
+            float dir = basePos.y > Screen.height * 0.72f ? -1f : 1f;
+            float anchorHalfH = from.rect.height * 0.5f * scale;
+            basePos.y += dir * (anchorHalfH + pillSize.y * 0.58f * scale + 6f);
+
+            // Successive popups in the same horizontal column take the lowest free slot, so they never overlap.
+            int slot = 0;
+            while (SlotTaken(slot, basePos.x, pillSize.x, scale))
+                slot++;
+            f.Slot = slot;
+            f.Direction = dir;
+            LastSlot = slot;
+            MaxSlotUsed = Mathf.Max(MaxSlotUsed, slot);
+
+            float stepPx = (pillSize.y * 1.28f + 8f) * scale;
+            f.Start = basePos + new Vector3(0f, dir * slot * stepPx, 0f);
+            float marginY = (pillSize.y + 6f) * 0.5f * PeakPop * scale + 8f;
+            if (Screen.height > marginY * 2f)
+                f.Start.y = Mathf.Clamp(f.Start.y, marginY, Screen.height - marginY);
+
             f.At = Time.unscaledTime;
-            f.Root.position = f.Start;
-            alive.Add(f);
             Spawned++;
+            f.SpawnIndex = Spawned;
+            f.Root.position = f.Start;
+            f.Root.localScale = new Vector3(PeakPop, PeakPop, 1f);
+            var c = f.Color;
+            c.a = 1f;
+            f.Text.color = c;
+            f.Pill.color = new Color(PillInk.r, PillInk.g, PillInk.b, PeakPillAlpha);
+            f.Rim.color = new Color(PillRimColor.r, PillRimColor.g, PillRimColor.b, 0.42f);
+            alive.Add(f);
+            SeparateLive(scale);
+
             Last = value;
+            LastCurrentScale = PeakPop;
+            LastCurrentAlpha = 1f;
             LastHadPill = f.Pill != null && f.Pill.rectTransform.sizeDelta.x > f.Text.preferredWidth;
+        }
+
+        bool SlotTaken(int slot, float x, float widthRef, float scale)
+        {
+            for (int i = 0; i < alive.Count; i++)
+            {
+                var a = alive[i];
+                if (a.Slot != slot)
+                    continue;
+                float minSepX = (a.PillSize.x + widthRef) * 0.55f * scale + 8f;
+                if (Mathf.Abs(a.Start.x - x) < minSepX)
+                    return true;
+            }
+            return false;
         }
 
         Floater Make()
@@ -479,11 +617,19 @@ namespace SickOfIt.Core.UI.Menus
             go.AddComponent<LayoutElement>().ignoreLayout = true;
             var root = (RectTransform)go.transform;
             root.sizeDelta = new Vector2(300f, 70f);
+
+            var rim = new GameObject("Rim", typeof(RectTransform)).AddComponent<Image>();
+            rim.transform.SetParent(root, false);
+            rim.raycastTarget = false;
+            MenuGraphics.Apply(rim, MenuShape.Pill, 0f);
+            rim.color = Color.clear;
+
             var pill = new GameObject("Pill", typeof(RectTransform)).AddComponent<Image>();
             pill.transform.SetParent(root, false);
             pill.raycastTarget = false;
             MenuGraphics.Apply(pill, MenuShape.Pill, 0f);
-            pill.color = new Color(0.08f, 0.04f, 0.1f, 0f);
+            pill.color = Color.clear;
+
             var textGo = new GameObject("Text", typeof(RectTransform));
             textGo.transform.SetParent(root, false);
             var text = textGo.AddComponent<TextMeshProUGUI>();
@@ -493,52 +639,159 @@ namespace SickOfIt.Core.UI.Menus
             text.fontStyle = FontStyles.Bold;
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Overflow;
-            text.outlineWidth = 0.32f;
-            text.outlineColor = new Color(0.08f, 0.04f, 0.1f, 1f);
-            // Drop shadow, as on the subtitles.
-            var mat = text.fontMaterial;
-            mat.EnableKeyword("UNDERLAY_ON");
-            mat.SetColor("_UnderlayColor", new Color(0f, 0f, 0f, 0.85f));
-            mat.SetFloat("_UnderlayOffsetX", 0.6f);
-            mat.SetFloat("_UnderlayOffsetY", -0.6f);
-            mat.SetFloat("_UnderlaySoftness", 0.15f);
             text.raycastTarget = false;
+            if (text.isActiveAndEnabled)
+                ApplyTextOutlineAndShadow(text);
             var tr = text.rectTransform;
             tr.anchorMin = Vector2.zero;
             tr.anchorMax = Vector2.one;
             tr.offsetMin = tr.offsetMax = Vector2.zero;
-            return new Floater { Root = root, Pill = pill, Text = text };
+            return new Floater { Root = root, Rim = rim, Pill = pill, Text = text };
         }
 
         void Recycle(Floater f)
         {
             alive.Remove(f);
+            if (f.SpawnIndex == Spawned)
+            {
+                LastCurrentAlpha = 0f;
+                LastCurrentScale = 0f;
+            }
             f.Root.gameObject.SetActive(false);
             spare.Push(f);
         }
 
+        static float Smooth01(float x)
+        {
+            x = Mathf.Clamp01(x);
+            return x * x * (3f - 2f * x);
+        }
+
         void Update()
         {
+            float scale = parent != null ? Mathf.Max(0.01f, parent.lossyScale.y) : 1f;
             for (int i = alive.Count - 1; i >= 0; i--)
             {
                 var f = alive[i];
-                float t = (Time.unscaledTime - f.At) / Life;
-                if (t >= 1f)
+                float age = Time.unscaledTime - f.At;
+                if (age >= Life)
                 {
                     Recycle(f);
                     continue;
                 }
+                float t = age / Life;
                 float rise = 1f - (1f - t) * (1f - t);
-                float pop = t < 0.2f ? Mathf.Lerp(0.6f, 1.15f, t / 0.2f) : Mathf.Lerp(1.15f, 1f, (t - 0.2f) / 0.8f);
+                // Larger size for the first ~0.3 s: quick scale-pop to 1.32x, then smooth ease back to 1.0x.
+                float pop = age < 0.05f
+                    ? Mathf.Lerp(0.78f, PeakPop, age / 0.05f)
+                    : age < PopSeconds
+                        ? Mathf.Lerp(PeakPop, 1f, Smooth01((age - 0.05f) / (PopSeconds - 0.05f)))
+                        : 1f;
                 var rect = f.Root;
-                rect.position = f.Start + new Vector3(0f, rise * 70f * rect.lossyScale.y * 1f, 0f);
                 rect.localScale = new Vector3(pop, pop, 1f);
+
+                Vector3 pos = f.Start + new Vector3(0f, f.Direction * rise * 42f * scale, 0f);
+                float halfW = (f.PillSize.x + 6f) * 0.5f * pop * scale + 6f;
+                float halfH = (f.PillSize.y + 6f) * 0.5f * pop * scale + 6f;
+                if (Screen.width > halfW * 2f)
+                    pos.x = Mathf.Clamp(pos.x, halfW, Screen.width - halfW);
+                if (Screen.height > halfH * 2f)
+                    pos.y = Mathf.Clamp(pos.y, halfH, Screen.height - halfH);
+                rect.position = pos;
+
+                // Full opacity for HoldSeconds (0.9 s >= 0.6 s), then smooth fade.
                 var c = f.Color;
-                c.a = t < 0.6f ? 1f : 1f - (t - 0.6f) / 0.4f;
+                c.a = age <= HoldSeconds ? 1f : 1f - Smooth01((age - HoldSeconds) / (Life - HoldSeconds));
                 f.Text.color = c;
-                float pillA = t < OpaqueUntil ? 1f : Mathf.Lerp(1f, PillAlpha, Mathf.Clamp01((t - OpaqueUntil) / 0.15f));
-                f.Pill.color = new Color(0.08f, 0.04f, 0.1f, pillA * c.a);
+                float pillA = age < PopSeconds ? Mathf.Lerp(PeakPillAlpha, PillAlpha, age / PopSeconds) : PillAlpha;
+                f.Pill.color = new Color(PillInk.r, PillInk.g, PillInk.b, pillA * c.a);
+                f.Rim.color = new Color(PillRimColor.r, PillRimColor.g, PillRimColor.b, 0.42f * c.a);
+
+                if (f.SpawnIndex == Spawned)
+                {
+                    LastCurrentScale = pop;
+                    LastCurrentAlpha = c.a;
+                }
             }
+            if (alive.Count > 1)
+                SeparateLive(scale);
+        }
+
+        /// <summary>Keeps every pair of live popups separated in screen space even while rising at different ages.</summary>
+        void SeparateLive(float scale)
+        {
+            for (int pass = 0; pass < 2; pass++)
+            {
+                for (int i = 0; i < alive.Count; i++)
+                {
+                    var a = alive[i];
+                    float aScale = a.Root.localScale.y;
+                    float aHalfW = (a.PillSize.x + 6f) * 0.5f * aScale * scale;
+                    float aHalfH = (a.PillSize.y + 6f) * 0.5f * aScale * scale;
+                    Vector3 aPos = a.Root.position;
+                    for (int j = i + 1; j < alive.Count; j++)
+                    {
+                        var b = alive[j];
+                        float bScale = b.Root.localScale.y;
+                        float bHalfW = (b.PillSize.x + 6f) * 0.5f * bScale * scale;
+                        float bHalfH = (b.PillSize.y + 6f) * 0.5f * bScale * scale;
+                        Vector3 bPos = b.Root.position;
+                        if (Mathf.Abs(aPos.x - bPos.x) >= aHalfW + bHalfW + 4f)
+                            continue;
+                        float minGap = aHalfH + bHalfH + 6f * scale;
+                        float dy = bPos.y - aPos.y;
+                        if (Mathf.Abs(dy) >= minGap)
+                            continue;
+                        float pushDir = Mathf.Abs(dy) > 0.5f ? Mathf.Sign(dy) : b.Direction;
+                        float nextY = aPos.y + pushDir * minGap;
+                        if (nextY + bHalfH + 4f > Screen.height || nextY - bHalfH - 4f < 0f)
+                            nextY = aPos.y - pushDir * minGap;
+                        bPos.y = Mathf.Clamp(nextY, bHalfH + 4f, Mathf.Max(bHalfH + 4f, Screen.height - bHalfH - 4f));
+                        b.Root.position = bPos;
+                    }
+                }
+            }
+        }
+
+        static Rect PillScreenRect(Floater f)
+        {
+            var corners = new Vector3[4];
+            f.Rim.rectTransform.GetWorldCorners(corners);
+            return Rect.MinMaxRect(
+                Mathf.Min(corners[0].x, corners[2].x),
+                Mathf.Min(corners[0].y, corners[2].y),
+                Mathf.Max(corners[0].x, corners[2].x),
+                Mathf.Max(corners[0].y, corners[2].y));
+        }
+
+        /// <summary>Fills 'rects' with the screen-space bounds of every active popup (the playtest checks non-overlap).</summary>
+        public static int GetActiveScreenRects(List<Rect> rects)
+        {
+            rects?.Clear();
+            if (current == null)
+                return 0;
+            for (int i = 0; i < current.alive.Count; i++)
+            {
+                var f = current.alive[i];
+                if (f.Root != null && f.Root.gameObject.activeInHierarchy)
+                    rects?.Add(PillScreenRect(f));
+            }
+            return current.alive.Count;
+        }
+
+        /// <summary>Screen-space bounds and text colour of the most recently spawned live popup (for contrast capture checks).</summary>
+        public static bool TryGetLastScreenRect(out Rect rect, out Color textColor)
+        {
+            rect = default;
+            textColor = Color.clear;
+            if (current == null || current.alive.Count == 0)
+                return false;
+            var f = current.alive[current.alive.Count - 1];
+            if (f.Root == null || !f.Root.gameObject.activeInHierarchy)
+                return false;
+            rect = PillScreenRect(f);
+            textColor = f.Text.color;
+            return rect.width > 1f && rect.height > 1f;
         }
     }
 }
