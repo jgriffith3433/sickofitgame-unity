@@ -59,7 +59,7 @@ A Circle is four stretches, each its own area. All share lava, cinders, imps and
    last updraft, the Door. *Sound:* a smug chuckle from ahead that grows. Out: the Slag Throne, the Magma King's arena.
 6. **Stop floors (959, 957, 952).** Rest rooms: a graffiti wall, a hot bath, a waystone shrine. ~20 s of calm each.
 - **Falls short:** long floors have routes and set pieces; between set pieces the climb can run past 10 s with only
-  bullets. Fix: every ledge-to-ledge hop (a climb of ~8 s) carries at least one of: a glint, a damned soul, a bystander
+  bullets. Fix: every ledge-to-ledge hop (an 8 s build target, 10 s hard ceiling) carries at least one of: a glint, a damned soul, a bystander
   routine, an ambient actor crossing the far background, a sound one-shot (the placement rule under *What happens*).
 
 ### Circle IX: the Cracked Road (Floors 900-801, built to 802)
@@ -175,7 +175,7 @@ Per area: interactions (at least three kinds), events on their own, ambient soun
 - **Interactions (every floor):** shoot, dodge, dash/wall-jump (once unlocked), rewind, graze for style, ladders, grapple
   (after the Hook), pick up glints, weapons and Lost Things, talk to a Climber, take a shortcut.
 - **On their own:** lava rises or sinks; stones sink by themselves in a fixed lap; geysers on a count; imps haul sacks
-  in lockstep; the Overlord's far glimpses; ash falls; far actors cross. *Placement rule:* every 8 s of climb
+  in lockstep; the Overlord's far glimpses; ash falls; far actors cross. *Placement rule:* every 8 s of climb (the build target, inside the 10 s ceiling)
   carries a one-shot sound or a moving thing; a bare ledge is a defect.
 - **Ambient:** lava bed, creaks, imp chatter; the Magma King's chuckle from 910 up.
 - **Changes:** floors count down; the lava rises over the long floors; the village's things appear (a rolling pin on 997,
@@ -246,3 +246,31 @@ Every beat above is an event first. A beat that is only a `showText` is a defect
 **The vertical slice to build first:** Floor 959 *The Rest of the Village* (a stop floor in Circle X), finished to the full
 bar: dressing, the Depot's stack as landmark, a soul loop, a rest fire, one Climber scene, an ambient bed, three
 interaction kinds, a beat told as an event.
+
+---
+
+## Review fixes (fun-reviewer verdict: strong bible, thin build)
+
+**Built vs planned.** Built: Circle X and IX routes, the Shaft map, Yooba's shop, Climbers, ghosts, stop floors. *Planned, not
+built:* the Meadow's village life (hen, mill, neighbours, dog, hay bale, cellar flight), the Shaft's falling souls, Waystone
+chimes and death marks, every Circle VIII-I area, beats 15-16. Anything under "interactions" for those is a promise.
+
+**The one rule.** Ceiling: 10 s with nothing to see, hear or do. Build target: one event per 8 s.
+Test: a playtest gap probe logs each area's events with timestamps and fails any gap over 10 s (to add to the `floors-*` runs).
+
+**Circle VIII: the Rune Bridges (first slice of the middle descent).** *Mood:* hushed, vast. *Look:* blue-lit walkways over a
+void, floating rune stones, a bridge lantern as landmark, Watchers (eyes) that follow the hero. *Sound:* a wind-over-void bed,
+chimes when a rune lights, a low pulse when a Watcher looks. *Size:* ~100 s a floor. *In:* the Shaft after Floor 801;
+*out:* the next bridge door. *Interactions:* shoot Watchers, step runes to light a path, rewind a crumbled span,
+graze a gaze beam, take a lantern to light a dark span. *Life:* lantern-bearing souls crossing on far bridges, Watchers
+blinking in sequence. *First 10 s:* the lantern appears over the void, a Watcher turns toward him, a rune chimes under his feet.
+
+**Warden entrances (heard before seen).** Each Warden's floor opens with sound from ahead for ~10 s (the Magma King's chuckle,
+the Spire Fiend's counting hum, the Bridge Wraith's bell of runes), then the door or wall changes (a throne rising, the road
+splitting, lanterns going out) before the boss bar. No entrance is a text card.
+
+**Ending beats 15-16 testing.** Floor 500's lit door and Floor 1's gate are checked by the playtest once built: the scenario logs
+the door sound, the daylight light change, and the hero's walking past as events; no text-only check.
+
+**Voice.** Beats 2 and 6 keep a warm-grey line, but each is paired with an event and a sound first; pending clips in
+`Tools/Audio/pending_clips.json` are made through Hawkes Gen before the beats are called voiced.
