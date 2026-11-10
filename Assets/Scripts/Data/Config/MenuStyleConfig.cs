@@ -433,8 +433,8 @@ namespace SickOfIt.Data.Config
 
         public Color bossFill = new Color(0.72f, 0.25f, 1f, 1f);
         public Color progressPlayed = new Color(1f, 0.96f, 0.84f, 0.95f);
-        public Color rewind = new Color(0.18f, 0.77f, 0.71f, 1f);
-        public Color rewindEmpty = new Color(1f, 0.36f, 0.23f, 1f);
+        public Color rewind = new Color(0.30f, 0.88f, 0.82f, 1f);
+        public Color rewindEmpty = new Color(1f, 0.52f, 0.40f, 1f);
         public Color marker = new Color(1f, 0.79f, 0.24f, 1f);
         [Tooltip("Dark edge around enemy health bars in the world.")]
         public Color worldBarOutline = new Color(0.12f, 0.07f, 0.13f, 1f);

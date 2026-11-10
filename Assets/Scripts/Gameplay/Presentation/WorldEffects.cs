@@ -581,60 +581,178 @@ namespace SickOfIt.Gameplay
 
         public void Flash(Color color, float duration) => world.Hud.Flash(color, duration);
 
-        /// <summary>Floats a short text up from a world point and fades it (cosmetic, real time).</summary>
+        readonly List<PopTextMotion> livePops = new List<PopTextMotion>();
+
+        /// <summary>Floats a short bonus or penalty text up from a world point on a dark pill, stacked so successive ones never overlap (cosmetic, real time).</summary>
         public void PopText(Vector2 at, string text, Color color, float size = 1f)
         {
             if (string.IsNullOrEmpty(text))
                 return;
+            for (int i = livePops.Count - 1; i >= 0; i--)
+            {
+                if (livePops[i] == null)
+                    livePops.RemoveAt(i);
+            }
             var theme = SickOfIt.Data.GameDefinition.Instance != null ? SickOfIt.Data.GameDefinition.Instance.menuTheme : null;
+            int layerId = SortingLayer.NameToID(SickOfIt.Data.SpriteLayer.Player.ToString());
+            var readable = SickOfIt.Core.UI.Menus.HudFloaters.EnsureReadableColor(color);
+
             var go = new GameObject("PopText");
             go.transform.SetParent(transform, false);
-            go.transform.position = new Vector3(at.x, at.y, -0.5f);
             var mesh = go.AddComponent<TMPro.TextMeshPro>();
-            // Same font and ink outline as the menus and HUD.
             mesh.font = SickOfIt.Core.UI.Menus.MenuGraphics.FontAsset(theme != null ? theme.font : null);
             mesh.text = text;
             mesh.alignment = TMPro.TextAlignmentOptions.Center;
             mesh.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             mesh.fontSize = 3.2f * Mathf.Max(0.2f, size);
             mesh.fontStyle = TMPro.FontStyles.Bold | TMPro.FontStyles.UpperCase;
-            mesh.color = color;
-            mesh.outlineWidth = 0.28f;
-            mesh.outlineColor = theme != null ? (Color32)theme.title.outlineColor : new Color32(30, 18, 32, 255);
-            mesh.rectTransform.sizeDelta = new Vector2(8f, 2f);
-            mesh.sortingLayerID = SortingLayer.NameToID(SickOfIt.Data.SpriteLayer.Player.ToString());
+            mesh.color = readable;
+            SickOfIt.Core.UI.Menus.HudFloaters.ApplyTextOutlineAndShadow(mesh);
+            mesh.rectTransform.sizeDelta = new Vector2(12f, 2.4f);
+            mesh.sortingLayerID = layerId;
             mesh.sortingOrder = 500;
-            go.AddComponent<PopTextMotion>().Begin(mesh);
+            mesh.ForceMeshUpdate();
+
+            Vector2 pref = mesh.GetPreferredValues(text);
+            float padX = 0.24f * Mathf.Max(0.4f, size), padY = 0.10f * Mathf.Max(0.4f, size);
+            float pillH = Mathf.Max(0.36f, pref.y + padY * 2f);
+            float pillW = Mathf.Max(pillH * 1.2f, pref.x + padX * 2f);
+
+            // Semi-opaque dark plum backing pill with a warm-grey rim (9-sliced MenuShape.Pill scaled cleanly to world units).
+            var pillSprite = SickOfIt.Core.UI.Menus.MenuGraphics.Shape(SickOfIt.Data.Config.MenuShape.Pill, 0f);
+            SpriteRenderer rimSr = null, pillSr = null;
+            if (pillSprite != null)
+            {
+                const float spriteWorldH = 1.32f;
+                float rimH = pillH + 0.05f, rimW = pillW + 0.05f;
+                var rimGo = new GameObject("Rim");
+                rimGo.transform.SetParent(go.transform, false);
+                float rimScale = rimH / spriteWorldH;
+                rimGo.transform.localScale = new Vector3(rimScale, rimScale, 1f);
+                rimSr = rimGo.AddComponent<SpriteRenderer>();
+                rimSr.sprite = pillSprite;
+                rimSr.drawMode = SpriteDrawMode.Sliced;
+                rimSr.size = new Vector2(spriteWorldH * (rimW / rimH), spriteWorldH);
+                rimSr.sortingLayerID = layerId;
+                rimSr.sortingOrder = 498;
+
+                var pillGo = new GameObject("Pill");
+                pillGo.transform.SetParent(go.transform, false);
+                float pillScale = pillH / spriteWorldH;
+                pillGo.transform.localScale = new Vector3(pillScale, pillScale, 1f);
+                pillSr = pillGo.AddComponent<SpriteRenderer>();
+                pillSr.sprite = pillSprite;
+                pillSr.drawMode = SpriteDrawMode.Sliced;
+                pillSr.size = new Vector2(spriteWorldH * (pillW / pillH), spriteWorldH);
+                pillSr.sortingLayerID = layerId;
+                pillSr.sortingOrder = 499;
+            }
+
+            // Stack successive popups upward in free slots so bursts on the hero never overlap.
+            int slot = 0;
+            while (WorldSlotTaken(slot, at.x, pillW))
+                slot++;
+            float stepY = pillH * 1.35f + 0.08f;
+            Vector3 startPos = new Vector3(at.x, at.y + slot * stepY, -0.5f);
+            go.transform.position = startPos;
+            go.transform.localRotation = Quaternion.identity;
+
+            var motion = go.AddComponent<PopTextMotion>();
+            motion.Begin(mesh, pillSr, rimSr, startPos, pillW, pillH, slot, livePops);
+            livePops.Add(motion);
+        }
+
+        bool WorldSlotTaken(int slot, float x, float width)
+        {
+            for (int i = 0; i < livePops.Count; i++)
+            {
+                var p = livePops[i];
+                if (p != null && p.Slot == slot && Mathf.Abs(p.StartX - x) < (p.Width + width) * 0.55f + 0.12f)
+                    return true;
+            }
+            return false;
         }
 
         sealed class PopTextMotion : MonoBehaviour
         {
-            const float Duration = 0.9f;
-            TMPro.TextMeshPro mesh;
-            Color start;
-            float age;
-            float tilt;
+            const float Duration = SickOfIt.Core.UI.Menus.HudFloaters.Life;
+            const float HoldSeconds = SickOfIt.Core.UI.Menus.HudFloaters.HoldSeconds;
+            const float PopSeconds = SickOfIt.Core.UI.Menus.HudFloaters.PopSeconds;
+            const float PeakPop = 1.32f;
+            const float PillAlpha = 0.85f;
+            const float PeakPillAlpha = 0.92f;
 
-            public void Begin(TMPro.TextMeshPro text)
+            TMPro.TextMeshPro mesh;
+            SpriteRenderer pill, rim;
+            List<PopTextMotion> ownerList;
+            Vector3 startPos;
+            Color startColor;
+            float age;
+            public float StartX => startPos.x;
+            public float Width { get; private set; }
+            public float Height { get; private set; }
+            public int Slot { get; private set; }
+
+            public void Begin(TMPro.TextMeshPro text, SpriteRenderer pillRenderer, SpriteRenderer rimRenderer,
+                Vector3 origin, float width, float height, int slot, List<PopTextMotion> list)
             {
                 mesh = text;
-                start = text.color;
-                tilt = (Random.value - 0.5f) * 16f;
+                pill = pillRenderer;
+                rim = rimRenderer;
+                startPos = origin;
+                startColor = text.color;
+                Width = width;
+                Height = height;
+                Slot = slot;
+                ownerList = list;
+                ApplyVisual(0f);
+            }
+
+            void OnDestroy() => ownerList?.Remove(this);
+
+            static float Smooth01(float x)
+            {
+                x = Mathf.Clamp01(x);
+                return x * x * (3f - 2f * x);
             }
 
             void Update()
             {
                 age += Time.unscaledDeltaTime;
-                transform.position += Vector3.up * (0.9f * Time.unscaledDeltaTime);
-                // Pop in big, settle, then fade.
-                float pop = age < 0.12f ? Mathf.Lerp(0.4f, 1.25f, age / 0.12f) : Mathf.Lerp(1.25f, 1f, Mathf.Clamp01((age - 0.12f) / 0.15f));
-                transform.localScale = Vector3.one * pop;
-                transform.localRotation = Quaternion.Euler(0f, 0f, tilt * Mathf.Clamp01(1f - age * 2f));
-                var c = start;
-                c.a = start.a * Mathf.Clamp01((Duration - age) / 0.35f);
-                mesh.color = c;
                 if (age >= Duration)
+                {
                     Destroy(gameObject);
+                    return;
+                }
+                ApplyVisual(age);
+            }
+
+            void ApplyVisual(float tAge)
+            {
+                float t = tAge / Duration;
+                float rise = 1f - (1f - t) * (1f - t);
+                transform.position = startPos + Vector3.up * (rise * 0.65f);
+                // Larger size for the first ~0.3 s with a quick scale-pop and smooth ease to normal; always positive scale.
+                float pop = tAge < 0.05f
+                    ? Mathf.Lerp(0.78f, PeakPop, tAge / 0.05f)
+                    : tAge < PopSeconds
+                        ? Mathf.Lerp(PeakPop, 1f, Smooth01((tAge - 0.05f) / (PopSeconds - 0.05f)))
+                        : 1f;
+                transform.localScale = new Vector3(pop, pop, 1f);
+                transform.localRotation = Quaternion.identity;
+
+                float alpha = tAge <= HoldSeconds ? 1f : 1f - Smooth01((tAge - HoldSeconds) / (Duration - HoldSeconds));
+                var c = startColor;
+                c.a = alpha;
+                if (mesh != null)
+                    mesh.color = c;
+                float pillA = tAge < PopSeconds ? Mathf.Lerp(PeakPillAlpha, PillAlpha, tAge / PopSeconds) : PillAlpha;
+                var ink = SickOfIt.Core.UI.Menus.HudFloaters.PillInk;
+                var rimCol = SickOfIt.Core.UI.Menus.HudFloaters.PillRimColor;
+                if (pill != null)
+                    pill.color = new Color(ink.r, ink.g, ink.b, pillA * alpha);
+                if (rim != null)
+                    rim.color = new Color(rimCol.r, rimCol.g, rimCol.b, 0.42f * alpha);
             }
         }
 
