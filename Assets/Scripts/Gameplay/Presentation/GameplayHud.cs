@@ -540,11 +540,17 @@ namespace SickOfIt.Gameplay
                 int points = roguelite.GetPoints();
                 if (points != shownPoints)
                 {
+                    bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
                     if (shownPoints >= 0 && points > shownPoints)
                     {
                         diamondsPopAt = Time.unscaledTime;
                         Sfx.Play(Sfx.Events.pickupDiamond);
                         floaters?.Spawn(diamondsRoot, $"+{points - shownPoints}", theme.accent);
+                    }
+                    else if (shownPoints >= 0 && points < shownPoints && !rewinding)
+                    {
+                        diamondsPopAt = Time.unscaledTime;
+                        floaters?.Spawn(diamondsRoot, $"-{shownPoints - points}", style.rewindEmpty);
                     }
                     if (shownPoints < 0)
                         diamondsTicker.Snap(points);
@@ -987,6 +993,8 @@ namespace SickOfIt.Gameplay
             bool empty = !budget.CanRewind;
             MenuGraphics.SetText(rewindLabel, empty ? "Rewind empty" : $"Rewind {budget.Juice:0.0}s");
             rewindLabel.enableVertexGradient = false;
+            if (rewindLabel.isActiveAndEnabled && rewindLabel.outlineWidth < 0.3f)
+                HudFloaters.ApplyTextOutlineAndShadow(rewindLabel);
             rewindLabel.color = HudFloaters.EnsureReadableColor(empty ? style.rewindEmpty : style.rewind);
             if (rewindPill != null)
             {

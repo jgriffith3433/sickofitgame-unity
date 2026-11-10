@@ -381,6 +381,8 @@ namespace SickOfIt.Playtest
                     budget.Rewarded += onDarkReward;
                     budget.Configure(Mathf.Max(1f, budget.Max - 3f), budget.Max, 1f);
                     var darkWorld = GameplayWorld.Instance;
+                    if (darkWorld != null && darkWorld.Player != null)
+                        darkWorld.Spawn("cinder", darkWorld.Player.Position + new Vector2(2.6f, 0.2f), null);
                     int rewardsBefore = darkWorld.Hud.RewardsShown;
                     yield return PlayLevel(darkLevel, 0f, now => null, 0f, 1f, 20f,
                         until: () => darkRefund && darkWorld.Hud.RewardsShown > rewardsBefore);
@@ -404,6 +406,15 @@ namespace SickOfIt.Playtest
                     }
                     if (darkRefund)
                     {
+                        yield return WaitReal(HudFloaters.Life + 0.05f);
+                        if (Run.Done)
+                            yield break;
+                        budget = RewindBudget.Instance;
+                        if (budget != null)
+                        {
+                            budget.Configure(Mathf.Max(1f, budget.Max - 3f), budget.Max, 1f);
+                            budget.Reward(0.5f, "CLEAN KILL");
+                        }
                         yield return WaitReal(0.12f);
                         yield return RewindJuiceCapturePass("Dark floor CLEAN KILL", "rewindJuice.dark");
                         yield return WaitReal(0.55f);
