@@ -27,6 +27,12 @@ namespace SickOfIt.Core.Addressables
         public const string Core = "core";
         /// <summary>The Addressables label on every bundle of the "core" scope (PlayerDataManifest.PackCore): GameDefinitionBoot prefetches it.</summary>
         public const string CoreLabel = "soi.core";
+        /// <summary>
+        /// The Addressables label on every entry of <c>MainMenu_Group</c> (PlayerDataSplit.LabelMenuGroup): GameDefinitionBoot
+        /// prefetches it beside the game data so the MainMenu scene's background and explosion sheets are already cached
+        /// when the scene loads (phone-load: that scene took ~3.4 s waiting on them).
+        /// </summary>
+        public const string MenuLabel = "soi.menu";
         public const string Hero = "hero";
         /// <summary>The art only screens after the main menu read (select cards, Shaft, Yooba, shop): loaded behind the menu.</summary>
         public const string LateCore = "core.late";
