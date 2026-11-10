@@ -412,7 +412,13 @@ namespace SickOfIt.Core.UI.Menus
     public sealed class HudFloaters : MonoBehaviour
     {
         const int MaxAlive = 6;
-        const float Life = 0.9f;
+        const float Life = 1.5f;
+        // Full opacity for this many seconds before the fade; the scale-pop eases from big to normal over PopSeconds.
+        public const float HoldSeconds = 0.9f;
+        /// <summary>The stacking slot of the last popup and the highest slot in use at once (the playtest checks that popups in a row never share one).</summary>
+        public static int LastSlot { get; private set; }
+        public static int MaxSlotUsed { get; private set; }
+        const float PopSeconds = 0.3f;
 
         /// <summary>How many floaters were spawned (the playtest reads it) and the last one's text.</summary>
         public static int Spawned { get; private set; }
@@ -431,6 +437,7 @@ namespace SickOfIt.Core.UI.Menus
             public TextMeshProUGUI Text;
             public Vector3 Start;
             public float At;
+            public int Slot;
             public Color Color;
         }
 
@@ -463,7 +470,14 @@ namespace SickOfIt.Core.UI.Menus
             float padX = size * 0.45f, padY = size * 0.18f;
             f.Pill.rectTransform.sizeDelta = new Vector2(f.Text.preferredWidth + padX * 2f, size * 1.1f + padY * 2f);
             f.Color = color;
-            f.Start = from.TransformPoint(from.rect.center);
+            // Successive popups take the lowest free slot, stacked upward, so they never overlap.
+            int slot = 0;
+            while (alive.Exists(a => a.Slot == slot))
+                slot++;
+            f.Slot = slot;
+            LastSlot = slot;
+            MaxSlotUsed = Mathf.Max(MaxSlotUsed, slot);
+            f.Start = from.TransformPoint(from.rect.center) + new Vector3(0f, slot * (size * 1.5f) * from.lossyScale.y, 0f);
             f.At = Time.unscaledTime;
             f.Root.position = f.Start;
             alive.Add(f);
@@ -529,12 +543,14 @@ namespace SickOfIt.Core.UI.Menus
                     continue;
                 }
                 float rise = 1f - (1f - t) * (1f - t);
-                float pop = t < 0.2f ? Mathf.Lerp(0.6f, 1.15f, t / 0.2f) : Mathf.Lerp(1.15f, 1f, (t - 0.2f) / 0.8f);
+                float age = t * Life;
+                float pop = age < 0.08f ? Mathf.Lerp(0.6f, 1.3f, age / 0.08f) : age < PopSeconds ? Mathf.Lerp(1.3f, 1f, (age - 0.08f) / (PopSeconds - 0.08f)) : 1f;
                 var rect = f.Root;
                 rect.position = f.Start + new Vector3(0f, rise * 70f * rect.lossyScale.y * 1f, 0f);
                 rect.localScale = new Vector3(pop, pop, 1f);
                 var c = f.Color;
-                c.a = t < 0.6f ? 1f : 1f - (t - 0.6f) / 0.4f;
+                float holdT = HoldSeconds / Life;
+                c.a = t < holdT ? 1f : 1f - (t - holdT) / (1f - holdT);
                 f.Text.color = c;
                 float pillA = t < OpaqueUntil ? 1f : Mathf.Lerp(1f, PillAlpha, Mathf.Clamp01((t - OpaqueUntil) / 0.15f));
                 f.Pill.color = new Color(0.08f, 0.04f, 0.1f, pillA * c.a);

@@ -120,6 +120,8 @@ namespace SickOfIt.Playtest
                 RewindJuiceCheck("the CLEAN KILL popup sits on a dark pill", HudFloaters.LastHadPill, $"popup \"{HudFloaters.Last}\" drawn over a pill (alpha {HudFloaters.LastPillAlpha:0.00} at spawn target)");
                 RewindJuiceCheck("the REWIND readout sits on a dark pill", hud != null && hud.RewindReadoutHasPill, "the readout's pill is wider than its words and opaque enough to read on bright sky");
 
+                RewindJuiceCheck("popups hold full opacity 0.6 s or more", HudFloaters.HoldSeconds >= 0.6f, $"held {HudFloaters.HoldSeconds:0.0} s before the fade; last popup in stack slot {HudFloaters.LastSlot} (highest used {HudFloaters.MaxSlotUsed}; each live popup has its own slot, so none overlap)");
+
                 Run.Metric("rewindJuice.passed", rewindJuicePassed);
                 Run.Metric("rewindJuice.failed", rewindJuiceFailed);
                 Run.Progress(1f);
