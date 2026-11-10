@@ -391,6 +391,8 @@ namespace SickOfIt.Playtest
                     if (Run.Done)
                         yield break;
 
+                    RewindJuiceCheck("clean kill triggered over dark floor", darkRefund,
+                        darkRefund ? $"{darkWhat}: real clean kill" : $"{darkWhat}: bot missed; forcing a CLEAN KILL reward for capture");
                     if (!darkRefund)
                     {
                         budget = RewindBudget.Instance;
@@ -399,9 +401,9 @@ namespace SickOfIt.Playtest
                             budget.Configure(Mathf.Max(1f, budget.Max - 3f), budget.Max, 1f);
                             budget.Reward(0.5f, "CLEAN KILL");
                             darkRefund = true;
+                            yield return WaitReal(0.08f);
                         }
                     }
-                    RewindJuiceCheck("clean kill triggered over dark floor", darkRefund, $"{darkWhat}: cleanKill={darkRefund}");
                     if (darkRefund)
                     {
                         yield return WaitReal(HudFloaters.Life + 0.05f);
