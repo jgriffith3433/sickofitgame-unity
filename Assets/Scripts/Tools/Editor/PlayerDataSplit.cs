@@ -46,6 +46,11 @@ namespace SickOfIt.Tools.Editor
         // End (or Recover after a crash) puts them back and the committed settings asset (LFS) is never left edited.
         static string BootSettingsPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "Addressables.bootSettings.txt");
 
+        // Guids in MainMenu_Group that Begin labelled soi.menu (one per line); End clears that label so the permanent group is unchanged.
+        static string MenuLabelPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "Addressables.menuLabel.txt");
+
+        const string MainMenuGroupName = "MainMenu_Group";
+
         /// <summary>
         /// Web requests Addressables runs at once while the player boots (its project setting was 3 and it resets the queue to it on init;
         /// BundleDownloadManager only raises it after the menu). The boot asks for the game data, its dependencies and the core art and sound
@@ -159,6 +164,7 @@ namespace SickOfIt.Tools.Editor
 
             WriteBootScene();
             ApplyBootSettings(settings, log);
+            LabelMenuGroup(settings, log);
             EditorUtility.SetDirty(settings);
             AssetDatabase.SaveAssets();
             log($"  Player data split: GameDefinition and {assets} assets it uses ({total / (1024 * 1024)} MB in memory) in {groups} Addressables groups ({GroupPrefix}*), Boot scene {BootScenePath}.");
@@ -193,6 +199,8 @@ namespace SickOfIt.Tools.Editor
             if (settings != null)
                 RestoreBootSettings(settings, log);
             if (settings != null)
+                ClearMenuLabel(settings, log);
+            if (settings != null)
             {
                 foreach (var group in settings.groups.Where(g => g != null && g.Name.StartsWith(GroupPrefix, StringComparison.Ordinal)).ToList())
                     settings.RemoveGroup(group);
@@ -215,12 +223,62 @@ namespace SickOfIt.Tools.Editor
         public static void Recover(Action<string> log)
         {
             bool groupsLeft = AddressableAssetSettingsDefaultObject.Settings?.groups.Any(g => g != null && g.Name.StartsWith(GroupPrefix, StringComparison.Ordinal)) ?? false;
-            if (!File.Exists(BuildPath) && !AssetDatabase.IsValidFolder(BuildFolder) && !groupsLeft && !File.Exists(MovedPath) && !File.Exists(BootSettingsPath))
+            if (!File.Exists(BuildPath) && !AssetDatabase.IsValidFolder(BuildFolder) && !groupsLeft && !File.Exists(MovedPath) && !File.Exists(BootSettingsPath) && !File.Exists(MenuLabelPath))
                 return;
             log("  An earlier build left the player data split in place; undoing it first.");
             if (File.Exists(BuildPath) && File.Exists(ResourcesPath))
                 AssetDatabase.DeleteAsset(BuildPath); // the checkout's copy in Resources is the real one
             End(log);
+        }
+
+        /// <summary>
+        /// Labels every entry of <see cref="MainMenuGroupName"/> with <see cref="GameAssets.MenuLabel"/> for this player build
+        /// only, so <see cref="GameDefinitionBoot"/> can prefetch the menu's background and explosion sheets beside the game
+        /// data (they used to download only as the MainMenu scene loaded, ~3.4 s of the phone-load budget). Guids written to
+        /// <see cref="MenuLabelPath"/>; <see cref="ClearMenuLabel"/> puts the permanent group back.
+        /// </summary>
+        static void LabelMenuGroup(AddressableAssetSettings settings, Action<string> log)
+        {
+            var group = settings.FindGroup(MainMenuGroupName);
+            if (group == null)
+            {
+                log($"  Main menu group {MainMenuGroupName} not found; soi.menu prefetch skipped.");
+                return;
+            }
+            settings.AddLabel(GameAssets.MenuLabel);
+            var labelled = new List<string>();
+            foreach (var entry in group.entries)
+            {
+                if (entry == null)
+                    continue;
+                if (!entry.labels.Contains(GameAssets.MenuLabel))
+                    entry.SetLabel(GameAssets.MenuLabel, true, true);
+                // Every entry we leave labelled, so End clears them even if a prior Begin crashed mid-way.
+                labelled.Add(entry.guid);
+            }
+            Directory.CreateDirectory(Path.GetDirectoryName(MenuLabelPath));
+            File.WriteAllLines(MenuLabelPath, labelled);
+            log($"  Main menu: labelled {labelled.Count} entries in {MainMenuGroupName} as {GameAssets.MenuLabel} (boot prefetches them; put back after the build).");
+        }
+
+        static void ClearMenuLabel(AddressableAssetSettings settings, Action<string> log)
+        {
+            if (!File.Exists(MenuLabelPath))
+                return;
+            int cleared = 0;
+            foreach (string guid in File.ReadAllLines(MenuLabelPath))
+            {
+                if (string.IsNullOrEmpty(guid))
+                    continue;
+                var entry = settings.FindAssetEntry(guid);
+                if (entry == null || !entry.labels.Contains(GameAssets.MenuLabel))
+                    continue;
+                entry.SetLabel(GameAssets.MenuLabel, false, true);
+                cleared++;
+            }
+            File.Delete(MenuLabelPath);
+            EditorUtility.SetDirty(settings);
+            log?.Invoke($"  Main menu: cleared {GameAssets.MenuLabel} from {cleared} entries.");
         }
 
         /// <summary>
