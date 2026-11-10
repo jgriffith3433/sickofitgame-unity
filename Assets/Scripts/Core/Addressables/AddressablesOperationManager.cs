@@ -868,7 +868,10 @@ namespace SickOfIt.Core.Addressables
 
         private void RegisterBundle(IResourceLocation loc, string label, Dictionary<string, RemoteBundle> byUrl, List<RemoteBundle> ordered)
         {
-            string url = AddressablesAPI.ResourceManager.TransformInternalId(loc);
+            BundleFetchLog.BeginResolve();
+            string url;
+            try { url = AddressablesAPI.ResourceManager.TransformInternalId(loc); }
+            finally { BundleFetchLog.EndResolve(); }
             if (string.IsNullOrEmpty(url)) url = loc.InternalId;
 
             if (!byUrl.TryGetValue(url, out var bundle))
