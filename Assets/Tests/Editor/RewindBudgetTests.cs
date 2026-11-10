@@ -27,7 +27,7 @@ namespace SickOfIt.Tests.Editor
             Assert.AreEqual(0.3f, HudFloaters.PopSeconds, 0.05f);
             Assert.Greater(HudFloaters.Life, HudFloaters.HoldSeconds);
 
-            var hudStyle = new HudStyleConfig();
+            var hudStyle = new MenuHudStyle();
             var pillOnSky = Color.Lerp(Color.white, HudFloaters.PillInk, HudFloaters.LastPillAlpha);
             var pillOnSlag = Color.Lerp(Color.black, HudFloaters.PillInk, HudFloaters.LastPillAlpha);
             foreach (var raw in new[] { hudStyle.rewind, hudStyle.rewindEmpty, hudStyle.healthFill, new Color(0.15f, 0.1f, 0.2f, 1f) })
