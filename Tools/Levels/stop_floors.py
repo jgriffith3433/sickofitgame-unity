@@ -276,7 +276,7 @@ def graffiti():
         {'entity': 'paradeSoul', 'at': [9.0, WALK_Y + 0.7], 'id': 'villager2'},
         {'entity': 'paradeSoul', 'at': [11.8, WALK_Y + 0.7], 'id': 'villager3'},
     ]
-    life = [wait(2.0), {'type': 'playSound', 'sound': 'lava_bubble'}, emit('stop:graffiti:life:fire')]
+    life = [wait(2.0), {'type': 'playSound', 'sound': 'lava_bubble'}, emit('stop:graffiti:life'), emit('stop:graffiti:life:fire')]
     for n in range(7):
         a, b = (1.2, 4.0) if n % 2 == 0 else (4.0, 1.2)
         life += [wait(4.0), {'type': 'walkEntityTo', 'target': 'villager1', 'anchor': 'World', 'x': a, 'speed': 1.3},
@@ -287,16 +287,16 @@ def graffiti():
     rules.append(rule('village: a day of small life', section('stop'), seq(*life)))
     hen_zone, hay_zone, fire_zone = zone(2.6, WALK_Y + 1.0, 2.0, 2.0), zone(7.4, WALK_Y + 1.0, 2.0, 2.0), zone(-0.2, WALK_Y + 1.0, 2.0, 2.0)
     rules += [
-        rule('village: the hen startles', hen_zone, seq({'type': 'playSound', 'sound': 'lava_bubble'}, {'type': 'cameraShake', 'amount': 0.05, 'duration': 0.2},
+        rule('village: the hen startles', hen_zone, seq({'type': 'playSound', 'sound': 'lava_bubble'}, {'type': 'cameraShake', 'intensity': 0.05, 'duration': 0.2},
              {'type': 'walkEntityTo', 'target': 'hen', 'anchor': 'World', 'x': 3.8, 'speed': 3.0}, emit('stop:graffiti:interact:hen'))),
         rule('village: the hay', hay_zone, seq({'type': 'popText', 'text': '+1', 'color': '#FFD27A', 'at': [7.4, 3.4]}, spawn('diamond', (7.4, WALK_Y + 1.4)),
              emit('stop:graffiti:interact:hay'))),
         rule('village: warm by the fire', fire_zone, seq({'type': 'heal', 'target': {'player': True}, 'amount': 1},
              {'type': 'popText', 'text': '+1 heart', 'color': '#7FE0D0', 'at': [-0.2, 3.4]}, emit('stop:graffiti:interact:fire'))),
         rule('village: the Depot', zone(5.2, WALK_Y + 1.0, 2.2, 2.0),
-             seq({'type': 'cameraShake', 'amount': 0.08, 'duration': 0.5}, {'type': 'playSound', 'sound': 'lava_bubble'},
+             seq({'type': 'cameraShake', 'intensity': 0.08, 'duration': 0.5}, {'type': 'playSound', 'sound': 'lava_bubble'},
                  wait(0.8), say(f, 'depot', 'soul', 'Everything the village owned. Take nothing.', '[whispering] Everything the village owned. [pause] Take nothing.', 3.2, SOUL),
-                 emit('stop:graffiti:beat:depot'))),
+                 emit('stop:graffiti:beat'), emit('stop:graffiti:beat:depot'))),
     ]
     return dict(floor=f, key='graffiti', name="Hell's Graffiti", circle='emberWastes', walk=walk, props=props, rules=rules,
                 titlePrompt="[shouting] Floor nine fifty-nine! [pause] Hell's Graffiti!", clear="HELL'S GRAFFITI: READ",
