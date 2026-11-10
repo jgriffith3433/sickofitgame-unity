@@ -266,7 +266,18 @@ def graffiti():
         rules.append(rule(f'graffiti {i + 1}', zone(x, WALK_Y + 1.0, 3.0, 2.2), seq(*steps)))
     rules.insert(0, rule('graffiti: first look', section('stop'),
                          seq(wait(1.6), say(f, 'walls', 'hero', 'Somebody had time.', '[flat] Somebody had time.', 2.4))))
-    return dict(floor=f, key='graffiti', name="Hell's Graffiti", circle='emberWastes', walk=walk, props=[], rules=rules,
+    # the living bar: souls and a fire along the wall, a one-shot every ~4 s, a gap probe signal every 4 s
+    props = [{'entity': 'campFire', 'at': [-2.4 + 2 * STEP, WALK_Y + 0.5], 'id': 'wallFire'}]
+    for i, dx in enumerate([3, 6, 9, 11]):
+        props.append({'entity': 'damnedSoul', 'at': [-2.4 + dx * STEP + 0.4, WALK_Y + 1.0 + 0.1 * (i % 2)], 'id': f'reader{i}'})
+    beats = []
+    for i in range(30):
+        beats += [wait(4.0), {'type': 'playSound', 'sound': ('lava_bubble', 'lava_burst')[i % 2]}, emit('stop:graffiti:life')]
+    rules.append(rule('graffiti: ambient bed', section('stop'), seq(*beats)))
+    rules.append(rule('graffiti: the last carving shakes', zone(-2.4 + 11 * STEP, WALK_Y + 1.0, 3.0, 2.2),
+                      seq(wait(0.3), {'type': 'cameraShake', 'intensity': 0.1, 'duration': 0.6},
+                          {'type': 'playSound', 'sound': 'vo_mk_chuckle'}, emit('stop:graffiti:beat'))))
+    return dict(floor=f, key='graffiti', name="Hell's Graffiti", circle='emberWastes', walk=walk, props=props, rules=rules,
                 titlePrompt="[shouting] Floor nine fifty-nine! [pause] Hell's Graffiti!", clear="HELL'S GRAFFITI: READ",
                 clearPrompt="[shouting] Hell's Graffiti... READ!")
 

@@ -114,7 +114,7 @@
             {
               "entity": "graffiti1",
               "at": [
-                -0.5999999999999999,
+                -0.6,
                 1.65
               ],
               "scale": [
@@ -125,7 +125,7 @@
             {
               "entity": "ledge",
               "at": [
-                1.2000000000000002,
+                1.2,
                 1.65
               ],
               "scale": [
@@ -136,7 +136,7 @@
             {
               "entity": "graffiti2",
               "at": [
-                3.0000000000000004,
+                3.0,
                 1.65
               ],
               "scale": [
@@ -147,7 +147,7 @@
             {
               "entity": "ledge",
               "at": [
-                4.800000000000001,
+                4.8,
                 1.65
               ],
               "scale": [
@@ -202,7 +202,7 @@
             {
               "entity": "graffiti5",
               "at": [
-                13.799999999999999,
+                13.8,
                 1.65
               ],
               "scale": [
@@ -224,7 +224,7 @@
             {
               "entity": "graffiti6",
               "at": [
-                17.400000000000002,
+                17.4,
                 1.65
               ],
               "scale": [
@@ -235,13 +235,53 @@
             {
               "entity": "ledge",
               "at": [
-                19.200000000000003,
+                19.2,
                 1.65
               ],
               "scale": [
                 0.9,
                 1
               ]
+            },
+            {
+              "entity": "campFire",
+              "at": [
+                1.2,
+                2.15
+              ],
+              "id": "wallFire"
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                3.4,
+                2.65
+              ],
+              "id": "reader0"
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                8.8,
+                2.75
+              ],
+              "id": "reader1"
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                14.2,
+                2.65
+              ],
+              "id": "reader2"
+            },
+            {
+              "entity": "damnedSoul",
+              "at": [
+                17.8,
+                2.75
+              ],
+              "id": "reader3"
             }
           ]
         },
@@ -382,7 +422,7 @@
         "when": {
           "type": "playerInZone",
           "center": [
-            -0.5999999999999999,
+            -0.6,
             2.65
           ],
           "size": [
@@ -413,7 +453,7 @@
         "when": {
           "type": "playerInZone",
           "center": [
-            3.0000000000000004,
+            3.0,
             2.65
           ],
           "size": [
@@ -504,7 +544,7 @@
         "when": {
           "type": "playerInZone",
           "center": [
-            13.799999999999999,
+            13.8,
             2.65
           ],
           "size": [
@@ -531,7 +571,7 @@
         "when": {
           "type": "playerInZone",
           "center": [
-            17.400000000000002,
+            17.4,
             2.65
           ],
           "size": [
@@ -568,7 +608,7 @@
                 "entity": "diamond",
                 "anchor": "World",
                 "at": [
-                  17.400000000000002,
+                  17.4,
                   3.25
                 ],
                 "facePlayer": false
@@ -576,6 +616,421 @@
               {
                 "type": "emit",
                 "signal": "stop:graffiti:diamond"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "graffiti: ambient bed",
+        "when": {
+          "type": "sectionReached",
+          "section": "stop"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "wait",
+                "seconds": 4.0
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_burst"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:life"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "graffiti: the last carving shakes",
+        "when": {
+          "type": "playerInZone",
+          "center": [
+            17.4,
+            2.65
+          ],
+          "size": [
+            3.0,
+            2.2
+          ],
+          "anchor": "World"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.3
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.1,
+                "duration": 0.6
+              },
+              {
+                "type": "playSound",
+                "sound": "vo_mk_chuckle"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:beat"
               }
             ]
           }
