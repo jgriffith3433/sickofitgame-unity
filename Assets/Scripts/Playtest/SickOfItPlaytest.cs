@@ -944,7 +944,8 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(TapJumpId, $"Touch jump on the finger going down: level {TapJumpLevel} loaded directly (setup shortcut), no bot. A virtual touchscreen taps the middle of the screen " +
                 $"{TapJumpTaps} times (30-120 ms down; every tenth tap is down and up inside one frame; every twentieth has the frame stall 150 ms with the finger down): each tap must make exactly one jump. " +
                 "Then a tap while R rewinds must not be latched and must not jump when the rewind ends. Check events, tapJump.* metrics", TapJumpSeconds, "level"));
-            list.Add(new PlaytestScenario(TouchControlsId, "Touch controls: a desktop run shows no touch UI; with the touch UI on (setup shortcut) level 2 shows a move stick outside the playfield, first-run hints, a 48+ px rewind button; a virtual finger drags the stick and the hero walks, a second finger holds rewind while the first still drags, a flick up jumps, and the hints go once used and are remembered. Check events touch-controls <beat>, touch.* metrics", TouchControlsSeconds, "level"));
+            list.Add(new PlaytestScenario(TouchControlsId, "Touch controls: a desktop run shows no touch UI; with the touch UI on (setup shortcut) level 2 shows a move stick (portrait: control strip below the playfield with a faint ~30% idle outline; landscape: floats under the thumb and fades while untouched), first-run hints, a 48+ px rewind button; a virtual finger drags the stick and the hero walks, a second finger holds rewind while the first still drags, a flick up jumps, and the hints go once used and are remembered. In the editor/standalone also resized to phone portrait and landscape. Check events touch-controls <beat>, touch.* metrics", TouchControlsSeconds, "level"));
+            list.Add(new PlaytestScenario(MenuTouchLayoutId, "Main-menu stickers and phone touch controls together: the main menu's NOW WITH REWIND / NOW WITH GHOSTS stickers audited clear of each other and the buttons at 1920x1080, 1280x720, 1024x768, phone portrait and landscape (window resize in the editor/standalone; WebGL keeps the runner's device size), then the touch-controls scenario (stick fade/float, move, rewind, jump). check events for main menu sticker / touch-controls", MenuTouchLayoutSeconds, "menus", "level"));
             list.Add(new PlaytestScenario(DeathRestartId, "Flow between attempts: the Landing's Waystone reached (setup shortcut), level 3 loaded directly, the bot plays to lose four times. Each death screen shows a quip under the title (varied: never the same twice running, 2+ different over the four) and an Again! button; pressing it with the mouse starts the next attempt in under 1 s of real time. Then level 3 is cleared by the bot: the results screen lists Time (m:ss) and Clean Kills. check events death-restart <beat>; metrics deathRestart.*", DeathRestartSeconds, "level"));
             list.Add(new PlaytestScenario(DeathReturnId, "The death screen's Return offer (Docs/Story.md \"Waystones and runs\"): the Landing's Waystone reached (setup shortcut), level 3 loaded directly with 25 diamonds and a Grudge, " +
                 "the bot plays to lose; the screen offers \"Return for 10 diamonds\" and the button is clicked: level 3 again, 15 diamonds, a moment of safety, the run and Grudges kept. Then dying with 15 and skipping with Escape " +
@@ -1221,7 +1222,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario("menus", "Tap to play, then level select, videos, Yooba's shop and settings (Sound off/on, Music -/+) each open and close, " +
                 "then the Shaft (a preview over the menu, setup shortcut, Yooba met) opens, its layout is checked, Visit Yooba opens his shop over it, " +
                 "Back returns to the Shaft and Continue closes it", 150, "menus"));
-            list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu (in the editor and standalone also resized through 16:9, a narrow desktop, phone portrait and phone landscape; a WebGL page is never resized by the game, the runner's device sets its size: tagline whole, stickers clear, buttons 48 px), level select, settings, " +
+            list.Add(new PlaytestScenario("layout", "Phone layout check (run with device \"phone\", 390x844): on the main menu (in the editor and standalone also resized through 16:9, 1280x720, 1024x768, a tall narrow window, phone portrait and phone landscape; a WebGL page is never resized by the game, the runner's device sets its size: tagline whole, stickers clear, buttons 48 px), level select, settings, " +
                 "level 1's HUD, the pause menu and its settings, the Shaft (a preview over the menu, setup shortcut, with Visit Yooba beside Continue), Yooba's shop over it " +
                 "(also resized to 1280x720 and 390x844: pip strips clear of each card's name, last row fully visible after a scroll to the bottom, no Decoration/Subtitle overlaps), " +
                 "and the death scene (loaded directly, a setup shortcut), no button overlaps another or a HUD panel, none leaves the screen, and every button is thumb-sized", 180, "menus"));
@@ -1381,6 +1382,8 @@ namespace SickOfIt.Playtest
                 yield return session.TapJumpRun();
             else if (id == TouchControlsId)
                 yield return session.TouchControlsRun();
+            else if (id == MenuTouchLayoutId)
+                yield return session.MenuTouchLayoutRun();
             else if (id == SideFloorsId || id == GauntletsId)
                 yield return session.SideFloorsRun(id == GauntletsId, at);
             else if (id == ReplayModesId)
@@ -9346,9 +9349,9 @@ namespace SickOfIt.Playtest
             static bool CanResizeWindow => Application.platform != RuntimePlatform.WebGLPlayer;
 
             /// <summary>
-            /// The main menu at 16:9, a narrow desktop window, phone portrait and phone landscape (a window resize, a setup
-            /// shortcut: the runner's device is one size). Each size is audited: tagline whole, stickers clear of buttons,
-            /// buttons 48 px tall at phone size. The original size is restored afterwards.
+            /// The main menu at 16:9, 1280x720, 1024x768, a tall narrow window, phone portrait and phone landscape (a window
+            /// resize, a setup shortcut: the runner's device is one size). Each size is audited: tagline whole, stickers clear
+            /// of buttons and each other, buttons 48 px tall at phone size. The original size is restored afterwards.
             /// </summary>
             IEnumerator MainMenuSizes()
             {
@@ -9360,8 +9363,8 @@ namespace SickOfIt.Playtest
                 int w0 = Screen.width, h0 = Screen.height;
                 var sizes = new (string name, int w, int h)[]
                 {
-                    ("16:9 desktop", 1920, 1080), ("small desktop", 1280, 720), ("narrow desktop", 760, 900),
-                    ("phone portrait", 390, 844), ("phone landscape", 844, 390),
+                    ("16:9 desktop", 1920, 1080), ("small desktop", 1280, 720), ("narrow desktop", 1024, 768),
+                    ("tall narrow", 760, 900), ("phone portrait", 390, 844), ("phone landscape", 844, 390),
                 };
                 foreach (var size in sizes)
                 {
