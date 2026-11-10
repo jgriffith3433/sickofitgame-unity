@@ -662,6 +662,10 @@
               },
               {
                 "type": "emit",
+                "signal": "stop:graffiti:life"
+              },
+              {
+                "type": "emit",
                 "signal": "stop:graffiti:life:fire"
               },
               {
@@ -980,7 +984,7 @@
               },
               {
                 "type": "cameraShake",
-                "amount": 0.05,
+                "intensity": 0.05,
                 "duration": 0.2
               },
               {
@@ -1108,7 +1112,7 @@
             "steps": [
               {
                 "type": "cameraShake",
-                "amount": 0.08,
+                "intensity": 0.08,
                 "duration": 0.5
               },
               {
@@ -1125,6 +1129,10 @@
                 "duration": 3.2,
                 "style": "Subtitle",
                 "color": "#B9C4D0"
+              },
+              {
+                "type": "emit",
+                "signal": "stop:graffiti:beat"
               },
               {
                 "type": "emit",
