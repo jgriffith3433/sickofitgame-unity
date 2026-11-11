@@ -746,7 +746,19 @@ namespace SickOfIt.Playtest
         // The scenario list comes from the levels, so it waits for a player build's GameDefinition bundle.
         static void RegisterNow()
         {
-            HawkesPlaytest.Register(Product, Scenarios(), Bot, IsReady, StopActive);
+            PlaytestScenario[] scenarios;
+            try { scenarios = Scenarios(); }
+            catch (Exception e)
+            {
+                // A throw while the list is built (it reads every level) must not leave the page with no contract at all: the runner would skip every scenario.
+                Debug.LogException(e);
+                scenarios = new[]
+                {
+                    new PlaytestScenario("smoke", "Boot, main menu, New Game, level 1 for 30 s with a rewind and a pause", 55, "smoke"),
+                    new PlaytestScenario(FloorsId, "The first four floors (Floors 1000-997): teach, finale, payoff, deaths per floor (fallback entry)", FloorsSeconds, "level"),
+                };
+            }
+            HawkesPlaytest.Register(Product, scenarios, Bot, IsReady, StopActive);
             WatchStartPoint();
             HawkesPlaytest.Finished -= OnFinished;
             HawkesPlaytest.Finished += OnFinished;
