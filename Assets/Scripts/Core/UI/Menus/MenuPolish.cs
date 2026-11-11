@@ -312,7 +312,29 @@ namespace SickOfIt.Core.UI.Menus
             loadingText.fontStyle = FontStyles.Bold;
             loadingText.color = new Color(1f, 0.93f, 0.8f, 0.85f);
             loadingText.raycastTarget = false;
+
+            // The hero stepping off: a small figure walks the track as the level comes in (progress is where he stands, no digits).
+            var walker = MenuGraphics.NewRect("Hero", track.rectTransform);
+            walker.anchorMin = walker.anchorMax = new Vector2(0f, 0.5f);
+            walker.pivot = new Vector2(0.5f, 0f);
+            walker.sizeDelta = new Vector2(30f, 52f);
+            hero = walker;
+            var cloak = MenuGraphics.NewImage(walker, "Cloak", new Color(1f, 0.5f, 0.15f, 1f));
+            cloak.raycastTarget = false;
+            MenuGraphics.Place(cloak.rectTransform, new Vector2(0.5f, 0f), new Vector2(0f, 0f), new Vector2(26f, 34f));
+            var head = MenuGraphics.NewImage(walker, "Head", new Color(1f, 0.93f, 0.8f, 1f));
+            head.raycastTarget = false;
+            MenuGraphics.Place(head.rectTransform, new Vector2(0.5f, 0f), new Vector2(0f, 34f), new Vector2(20f, 18f));
         }
+
+        RectTransform hero;
+
+        /// <summary>The words under the walking hero (themed, never "LOADING" or a percentage; the playtest reads them).</summary>
+        public const string LoadingWords = "HERE WE GO AGAIN";
+        /// <summary>The loading widget is on screen (its alpha above a tenth), and where the hero stands along it (0..1).</summary>
+        public static bool LoadingVisible => instance != null && instance.loadingGroup != null && instance.loadingGroup.alpha > 0.1f;
+        public static float LoadingHeroAt => instance != null ? instance.loadingShown : 0f;
+        public static string LoadingLabel => instance != null && instance.loadingText != null ? instance.loadingText.text : "";
 
         /// <summary>
         /// Something is loading behind the cover (a floor's art and sound: GameAssets): closes the cover if it is open and
@@ -380,7 +402,13 @@ namespace SickOfIt.Core.UI.Menus
             // The bar eases toward the progress (bundles arrive in steps) and fades in after a moment (a quick load shows none).
             loadingShown = Mathf.MoveTowards(loadingShown, loadingProgress, Time.unscaledDeltaTime * 1.5f);
             barFill.rectTransform.anchorMax = new Vector2(loadingShown, 1f);
-            loadingText.text = $"LOADING  {Mathf.RoundToInt(loadingShown * 100f)}%";
+            loadingText.text = LoadingWords;
+            if (hero != null)
+            {
+                // He steps off along the track: his place is the progress, a small bob is his walk.
+                hero.anchorMin = hero.anchorMax = new Vector2(loadingShown, 0.5f);
+                hero.anchoredPosition = new Vector2(0f, 8f + Mathf.Abs(Mathf.Sin(now * 9f)) * 6f);
+            }
             float wantLoading = loading && now - startAt > 0.3f ? labelGroup.alpha : 0f;
             loadingGroup.alpha = Mathf.MoveTowards(loadingGroup.alpha, wantLoading, Time.unscaledDeltaTime * 4f);
             if (!loading && loadingGroup.alpha <= 0f)
