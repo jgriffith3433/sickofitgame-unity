@@ -323,6 +323,34 @@
             "type": "runSequence",
             "steps": [
               {
+                "type": "spawn",
+                "entity": "teachGlow",
+                "anchor": "Camera",
+                "at": [
+                  0.0,
+                  1.2
+                ],
+                "id": "teach999",
+                "facePlayer": false
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble",
+                "volume": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:glow"
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:cue"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              },
+              {
                 "type": "cameraShake",
                 "intensity": 0.12,
                 "duration": 0.4
@@ -340,12 +368,7 @@
               {
                 "type": "setCounter",
                 "name": "lavaSpeed",
-                "value": 0.8
-              },
-              {
-                "type": "playMusic",
-                "clip": "Audio/Music/wastes_push.ogg",
-                "volume": 0.85
+                "value": 0.5
               },
               {
                 "type": "showText",
@@ -430,6 +453,15 @@
                 "style": "Banner",
                 "sound": "vo_f999_clear",
                 "color": "#FFD27A"
+              },
+              {
+                "type": "playSound",
+                "sound": "sting_rank_a",
+                "volume": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:payoff"
               },
               {
                 "type": "wait",
@@ -660,6 +692,98 @@
                 ]
               }
             ]
+          }
+        ]
+      },
+      {
+        "name": "first4: finale rising lava",
+        "when": {
+          "type": "sectionReached",
+          "section": "chase"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "floors:999:finale"
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.9
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.6
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:tint"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              }
+            ]
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.9
           }
         ]
       }

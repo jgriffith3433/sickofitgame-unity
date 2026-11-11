@@ -203,26 +203,28 @@
           "lead": 0.4,
           "spawns": [
             {
-              "entity": "ledge",
+              "entity": "sinkingStone",
               "at": [
                 19.0,
                 8.1
               ],
               "scale": [
-                1.0,
+                0.9,
                 1
-              ]
+              ],
+              "id": "stone7"
             },
             {
-              "entity": "ledge",
+              "entity": "sinkingStone",
               "at": [
                 16.8,
                 9.4
               ],
               "scale": [
-                1.0,
+                0.9,
                 1
-              ]
+              ],
+              "id": "stone8"
             },
             {
               "entity": "sinkingStone",
@@ -237,15 +239,16 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "sinkingStone",
               "at": [
                 21.2,
                 12.0
               ],
               "scale": [
-                1.0,
+                0.9,
                 1
-              ]
+              ],
+              "id": "stone9"
             },
             {
               "entity": "ledge",
@@ -403,6 +406,15 @@
                 "color": "#FFD27A"
               },
               {
+                "type": "playSound",
+                "sound": "sting_rank_b",
+                "volume": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "floors:1000:payoff"
+              },
+              {
                 "type": "wait",
                 "seconds": 2.6
               },
@@ -414,6 +426,140 @@
                 "type": "setCounter",
                 "name": "cleared",
                 "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "first4: teach sinking stones",
+        "when": {
+          "type": "sectionReached",
+          "section": "slope"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 1.5
+              },
+              {
+                "type": "spawn",
+                "entity": "teachGlow",
+                "anchor": "Camera",
+                "at": [
+                  1.4,
+                  1.0
+                ],
+                "id": "teach1000",
+                "facePlayer": false
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble",
+                "volume": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "floors:1000:glow"
+              },
+              {
+                "type": "emit",
+                "signal": "floors:1000:cue"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "first4: finale sinking stones",
+        "when": {
+          "type": "sectionReached",
+          "section": "bank"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "floors:1000:finale"
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.9
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.6
+              },
+              {
+                "type": "flash",
+                "color": "#FF8A3D40",
+                "duration": 2.6
+              },
+              {
+                "type": "emit",
+                "signal": "floors:1000:tint"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF8A3D40",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF8A3D40",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF8A3D40",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF8A3D40",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF8A3D40",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
               }
             ]
           }

@@ -2715,3 +2715,12 @@ with something to spend and nothing owned, Yooba whispers "Psst! The glowing one
 pending in `Tools/Audio/pending_clips.json`) and the first affordable ware's card glows; buying it, or his saying it, ends that for good.
 Canon: Yooba never says what a ware costs him; the card says it plainly because the hero is sick of guessing.
 
+
+
+## The first four floors teach
+
+Hell's first four floors are a lesson the hero is too tired to enjoy. Each one hands him one new way to die, shows it to him
+alone and slow (the glow he has learned to read, a sound he will learn to dread), lets him make friends with it, then ends with
+the whole floor leaning on it: the music turns, the screen heats up and the Show cheers him through. 1000 is the floor itself
+(sinking stones), 999 the lava that follows him, 998 the village's sparks, 997 the imps who carry what he lost. No new creatures:
+only what the bestiary already holds, taught in order. Table and design: Docs/LevelDesign.md "The first four floors: teach, then finale".
