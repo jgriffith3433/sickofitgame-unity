@@ -582,6 +582,37 @@ namespace SickOfIt.Core.Input
             : heroRenderer = animator.TryGetComponent(out SpriteRenderer r) ? r : animator.GetComponentInChildren<SpriteRenderer>();
         private SpriteRenderer heroRenderer;
 
+        /// <summary>
+        /// The main menu's hero is spawned at runtime (MainMenuManager) instead of sitting in the scene: gives him the menu's camera and
+        /// whether he may shoot, the fields MainMenuSceneGenerator wired on the scene's copy (the camera, the shooting switch and the
+        /// MobileController's move/fire sticks and input manager, found under <paramref name="mobileController"/>). Runs after Awake and
+        /// OnEnable, so the jump subscription OnEnable would have made is made here.
+        /// </summary>
+        public void BindMenuHero(Camera camera, bool canShoot, GameObject mobileController)
+        {
+            if (camera != null)
+                mainCamera = camera;
+            enableShooting = canShoot;
+            if (mobileController == null)
+                return;
+            foreach (var analog in mobileController.GetComponentsInChildren<Analog>(true))
+            {
+                if (analog.gameObject.name.Contains("Move"))
+                    moveAnalog = analog;
+                else if (analog.gameObject.name.Contains("Fire"))
+                    fireAnalog = analog;
+            }
+            var input = mobileController.GetComponentInChildren<GameInputManager>(true);
+            if (input != null && input != gameInputManager)
+            {
+                if (gameInputManager != null)
+                    gameInputManager.OnJumpPressed -= OnJumpRequested;
+                gameInputManager = input;
+                if (isActiveAndEnabled)
+                    gameInputManager.OnJumpPressed += OnJumpRequested;
+            }
+        }
+
         private void OnEnable()
         {
             Active = this;

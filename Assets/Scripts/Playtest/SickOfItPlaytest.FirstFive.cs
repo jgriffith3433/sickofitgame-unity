@@ -178,6 +178,11 @@ namespace SickOfIt.Playtest
                 Run.Metric("firstFive.menuSeconds", menuAt);
                 Run.Event("first-five", $"menu at {menuAt:0.00}s after page open ({Screen.width}x{Screen.height}, {(firstFivePhone ? "phone" : "desktop")})");
 
+                // The deploy takes the hero out of the player build's menu scene (it was most of the phone's first download) and the menu
+                // puts him back at runtime: he must be on screen, so that move can't remove him for good.
+                string heroProblem = MenuHeroProblem();
+                FirstFiveCheck("heroOnMenu", heroProblem == null, heroProblem ?? "the hero stands on the menu");
+
                 var labels = GameDefinition.Instance.mainMenuConfig.labels;
                 int choices = FindButton("Hell Loop") != null ? 1 : 0;
                 FirstFiveCheck("noDifficultyCard", choices == 0, choices == 0
