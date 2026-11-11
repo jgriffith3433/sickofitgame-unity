@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using MobileControllerFramework;
+using SickOfIt.Data;
 using UnityEngine.InputSystem.EnhancedTouch;
 using ETouch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
@@ -52,11 +53,15 @@ namespace SickOfIt.Core.Input
         {
             EnhancedTouchSupport.Enable();
             ETouch.onFingerDown += OnFingerDown;
+            ETouch.onFingerMove += OnFingerMove;
+            ETouch.onFingerUp += OnFingerUp;
         }
 
         private void OnDisable()
         {
             ETouch.onFingerDown -= OnFingerDown;
+            ETouch.onFingerMove -= OnFingerMove;
+            ETouch.onFingerUp -= OnFingerUp;
             EnhancedTouchSupport.Disable();
         }
 
@@ -68,6 +73,48 @@ namespace SickOfIt.Core.Input
                 return;
             // The controller drops it during a rewind.
             gameInputManager.RequestJump();
+            // A finger that goes down on the right half may turn into a dash swipe (it never touches the move stick).
+            if (position.x >= Screen.width * 0.5f)
+            {
+                swipeFinger = finger.index;
+                swipeStart = position;
+                swipeStartTime = Time.unscaledTime;
+            }
+        }
+
+        private int swipeFinger = -1;
+        private Vector2 swipeStart;
+        private float swipeStartTime;
+
+        /// <summary>
+        /// A swipe that starts on the right half of the screen dashes the way it points (player.json moves.dash.touchSwipe): a
+        /// mostly sideways drag of swipeFraction of the short side inside swipeSeconds. One dash per finger.
+        /// </summary>
+        private void OnFingerMove(Finger finger)
+        {
+            if (finger.index != swipeFinger)
+                return;
+            var player = PlayerController.Active;
+            var moves = GameDefinition.Instance != null && GameDefinition.Instance.player != null ? GameDefinition.Instance.player.moves : null;
+            if (player == null || moves == null || !moves.dash.touchSwipe)
+                return;
+            Vector2 drag = finger.currentTouch.screenPosition - swipeStart;
+            if (Time.unscaledTime - swipeStartTime > moves.dash.swipeSeconds)
+            {
+                swipeFinger = -1;
+                return;
+            }
+            float need = moves.dash.swipeFraction * Mathf.Min(Screen.width, Screen.height);
+            if (Mathf.Abs(drag.x) < need || Mathf.Abs(drag.x) < Mathf.Abs(drag.y))
+                return;
+            swipeFinger = -1;
+            player.RequestDash(Mathf.Sign(drag.x));
+        }
+
+        private void OnFingerUp(Finger finger)
+        {
+            if (finger.index == swipeFinger)
+                swipeFinger = -1;
         }
 
         private bool IsPositionInExcludedRegion(Vector2 screenPosition)

@@ -1173,7 +1173,10 @@
     "defaultStateName": "Idle"
   },
   "shadowSprite": null,
-  "moveSpeed": 2.0,
+  "moveSpeed": 3.8,
+  "accelSeconds": 0.06,
+  "stopSeconds": 0.04,
+  "jumpCutFactor": 0.5,
   "jumpForce": 9.0,
   "gravityScale": 1.8,
   "groundCheckDistance": 0.2,
@@ -1199,6 +1202,12 @@
       "enabled": true,
       "unlockFlag": "move:dash",
       "unlockWhen": [],
+      "startUnlocked": true,
+      "upgradeAirDashes": 1,
+      "upgradeCooldown": 0.6,
+      "touchSwipe": true,
+      "swipeFraction": 0.08,
+      "swipeSeconds": 0.3,
       "distance": 2.6,
       "duration": 0.16,
       "invulnerableSeconds": 0.26,
@@ -1243,7 +1252,7 @@
   },
   "colliderRadius": 0.3,
   "hasInvincibilityFrames": true,
-  "invincibilityDuration": 5.0,
+  "invincibilityDuration": 1.2,
   "returnCostDiamonds": 10,
   "returnInvincibleSeconds": 1.5,
   "dropThroughForce": 5.0,
@@ -1646,12 +1655,11 @@
     {
       "id": "slimedLining",
       "title": "Slimed Lining",
-      "description": "Yooba slimed the inside of your coat. Shove off and slide a few steps, untouchable for a blink. Shift (or the Dash button). It takes a moment to dry.",
+      "description": "Yooba slimed the inside of your coat. A second dash in the air, and it dries faster.",
       "costsPerLevel": [40],
       "maxLevel": 1,
       "effect": "Dash",
-      "amountPerLevel": 1,
-      "requires": ["level:4"]
+      "amountPerLevel": 1
     }
   ]
 }

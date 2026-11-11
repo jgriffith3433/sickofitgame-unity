@@ -2121,6 +2121,13 @@ Hell is repetition, and by Floor 998 the hero has been hit by the same bolt ofte
 learns to do about it, both small, both his own (2026-10-25). Neither makes him a hero; they make him a man who is slightly harder to hit and
 slightly better at leaving.
 
+**Quicker, from the first second (2026-11-11).** A man who has fallen through ten Circles has been running from worse than imps. He now runs
+at 3.8 units a second (a screen in about 2.7 s), eases into a run and out of it in a blink, and a short tap on Jump is a hop. The coat
+already slides on Level 1 (the dash is his from the start; "Oh. It slides. Nobody said it slides." is the first time), and a hit stings
+rather than excuses him: 1.2 s of grace on Normal (Assist 2.0, Hard 0.9, Hell Loop 0.7), not 5. Yooba's Slimed Lining is now the upgrade: a
+second dash in the air and a coat that dries in 0.6 s. The hitbox dot shows on Level 1 and Floors 1000-999 until the player picks a side
+in Settings. On a touch screen a swipe on the right half dashes; on Android a phone buzzes a hair for a hit, a graze or a kill.
+
 **The dash (Yooba's Slimed Lining).** The slime does the work. Once the hero has lost the launcher on Floor 998 and has nothing left to
 hide behind, Yooba puts a slick of himself in the inside of the coat: shove off the floor and the coat carries him a few steps (2.6 units, a
 sixth of a second) with nothing able to touch him while it does, bolts included: they pass through and fly on. Then it needs a moment to dry (0.9

@@ -257,7 +257,7 @@ namespace SickOfIt.Playtest
                 var c = world.PlayerController;
                 var roguelite = RogueliteManager.Instance;
 
-                // 1. Locked: Yooba doesn't sell it yet (level 4 not cleared), and Shift does nothing.
+                // 1. The dash is his from the first second (player.json moves.dash.startUnlocked); Yooba's good is only an upgrade (a second air dash).
                 SickOfIt.Data.Config.UpgradeDefinition good = null;
                 foreach (var upgrade in RogueliteManager.ShopCatalog)
                     if (upgrade != null && upgrade.id == DashGood)
@@ -265,12 +265,13 @@ namespace SickOfIt.Playtest
                 MoveCheck("Yooba has the dash good", good != null && good.Effect == SickOfIt.Data.Config.ShopEffect.Dash, good != null ? $"{good.title}, {good.costsPerLevel[0]} diamonds" : "no good with id " + DashGood);
                 if (good == null)
                     yield break;
-                MoveCheck("the dash good is hidden until Floor 998 is cleared", !good.IsForSale(0), "requires " + string.Join(",", good.requires));
+                MoveCheck("the dash is his before buying anything", c.DashUnlocked && !c.DashUpgraded, $"unlocked {c.DashUnlocked}, upgraded {c.DashUpgraded}");
                 yield return MovesWalkTo(-4.5f);
                 int dashesBefore = dashCount;
                 yield return PressDash(1);
                 yield return MovesFor(0.4f);
-                MoveCheck("Shift does nothing while it is locked", !c.DashUnlocked && dashCount == dashesBefore && !c.IsDashing, $"unlocked {c.DashUnlocked}, dashes {dashCount - dashesBefore}");
+                MoveCheck("Shift dashes with nothing bought", dashCount == dashesBefore + 1, $"dashes {dashCount - dashesBefore}");
+                yield return MovesFor(1.0f);
 
                 // 2. Unlock it the way a player does: clear Floor 998, earn the diamonds, buy it from Yooba (the diamonds and the clear are setup shortcuts).
                 GameProgressManager.Instance.SetLevelCompleted(4);
@@ -279,7 +280,7 @@ namespace SickOfIt.Playtest
                 bool bought = roguelite.TryPurchase(good);
                 MoveCheck("the purchase goes through", bought && roguelite.GetUpgradeLevel(DashGood) == 1, $"level {roguelite.GetUpgradeLevel(DashGood)}");
                 world.Moves.Arm(roguelite);
-                MoveCheck("the dash is his", c.DashUnlocked && UnlockFlags.Has(HeroMoves.DashFlag), $"unlocked {c.DashUnlocked}, flag {UnlockFlags.Has(HeroMoves.DashFlag)}");
+                MoveCheck("the dash is his and upgraded", c.DashUnlocked && c.DashUpgraded && UnlockFlags.Has(HeroMoves.DashFlag), $"unlocked {c.DashUnlocked}, upgraded {c.DashUpgraded}, flag {UnlockFlags.Has(HeroMoves.DashFlag)}");
                 Run.Progress(0.1f);
 
                 // 3. A bolt with no dash hurts (the control).

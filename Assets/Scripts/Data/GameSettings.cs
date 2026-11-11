@@ -39,6 +39,10 @@ namespace SickOfIt.Data
         public static bool HighContrastBullets { get => Get("HighContrast", 0f) > 0.5f; set => Set("HighContrast", value ? 1f : 0f); }
         public static bool ReducedFlash { get => Get("ReducedFlash", 0f) > 0.5f; set => Set("ReducedFlash", value ? 1f : 0f); }
         public static bool ReducedShake { get => Get("ReducedShake", 0f) > 0.5f; set => Set("ReducedShake", value ? 1f : 0f); }
+        /// <summary>Levels (Level 1, Floors 1000 and 999) whose hitbox dot is on by default, until the player picks a side in Settings.</summary>
+        public const int HitboxDotDefaultLevels = 3;
+        /// <summary>The dot shows on this level: the player's own choice if they made one, else on for the first three floors.</summary>
+        public static bool HitboxDotFor(int levelNumber) => PlayerPrefs.HasKey(Prefix + "HitboxDot") ? HitboxDot : levelNumber <= HitboxDotDefaultLevels;
         public static bool HitboxDot { get => Get("HitboxDot", 0f) > 0.5f; set => Set("HitboxDot", value ? 1f : 0f); }
         // On by default: a quiet tick at the edge where something is about to come in (game.json incomingWarnings).
         public static bool IncomingWarnings { get => Get("IncomingWarnings", 1f) > 0.5f; set => Set("IncomingWarnings", value ? 1f : 0f); }

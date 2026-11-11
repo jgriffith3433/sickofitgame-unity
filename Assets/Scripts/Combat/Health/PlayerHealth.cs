@@ -166,7 +166,7 @@ namespace SickOfIt.Combat.Health
             onHealthChanged?.Invoke(currentHealth);
 
             if (hasInvincibilityFrames)
-                invincibilityTimer = invincibilityDuration + invincibilityBonus;
+                invincibilityTimer = invincibilityDuration * SickOfIt.Data.Difficulty.Grace + invincibilityBonus;
 
             // Play SFX via PlayerController
             if (controller != null)
