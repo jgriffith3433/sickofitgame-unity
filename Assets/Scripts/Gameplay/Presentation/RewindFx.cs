@@ -28,6 +28,7 @@ namespace SickOfIt.Gameplay
         readonly Image[] streak = new Image[Streaks];
         readonly float[] streakSeed = new float[Streaks];
         AudioSource source;
+        float reportedPitch;
         AudioClip reversed;
         float intensity;
         float rewindingFor;
@@ -227,7 +228,10 @@ namespace SickOfIt.Gameplay
                     source.loop = true;
                     source.volume = 0f;
                     source.pitch = PitchStart;
+                    reportedPitch = PitchStart;
                     source.Play();
+                    // Studio's audio probe: the rewind whoosh starts (its pitch then climbs with the scrub).
+                    SickOfIt.Core.Audio.AudioProbeBridge.Report(LoopSound, SickOfIt.Data.Config.Bus.Sfx, PitchStart, 0.55f);
                 }
                 target = 0.55f * GameSettings.SfxVolume * SickOfIt.Core.Audio.AudioBuses.Gain(SickOfIt.Data.Config.Bus.Sfx);
             }
@@ -237,6 +241,12 @@ namespace SickOfIt.Gameplay
                 // The pitch climbs the longer it runs (a rewind winding up) and drops back with the stop.
                 float climb = 1f - Mathf.Exp(-rewindingFor / PitchRamp);
                 source.pitch = Mathf.Lerp(PitchStart, PitchEnd, climb);
+                // The probe hears the scrub's pitch as it climbs, one report per 0.3 step (never per frame).
+                if (rewinding && source.pitch >= reportedPitch + 0.3f)
+                {
+                    reportedPitch = source.pitch;
+                    SickOfIt.Core.Audio.AudioProbeBridge.Report(LoopSound, SickOfIt.Data.Config.Bus.Sfx, reportedPitch, 0.55f);
+                }
                 source.volume = volume;
                 if (!rewinding && volume <= 0.001f)
                     source.Stop();
