@@ -102,6 +102,33 @@ def fade(n, out=True):
     return curve[:, None]
 
 
+def make_exact(audio, spec, energy, flux, bands, fps, total):
+    """A layer cut to exactly 'exactLength' seconds (its base loop's length), so the two stay in step. Starts where the
+    seam matches best; a take with no room for the bar after the end fades its own end into its start instead."""
+    length = int(round(spec["exactLength"] * RATE))
+    xf = spec.get("crossfade", 0.25)
+    k = int(xf * RATE)
+    window = int(6 * fps)
+    last = total - spec["exactLength"] - xf - spec.get("tailGuard", 1.0)
+    best = (-2.0, 0.0)
+    for start in np.arange(spec.get("skipIntro", 0.0), max(last, 0.0) + 1e-9, 0.05):
+        s, e = int(start * fps), int((start + spec["exactLength"]) * fps)
+        if e + window >= len(bands):
+            break
+        score = 0.4 * corr(flux[s:s + window], flux[e:e + window]) + 0.6 * corr(bands[s:s + window], bands[e:e + window])
+        if score > best[0]:
+            best = (score, float(start))
+    score, start = best
+    s0 = int(start * RATE)
+    if last < 0:
+        loop = audio[:length].copy()
+        loop[-k:] = loop[-k:] * fade(k) + audio[:k] * fade(k, out=False)
+        return loop, f"layer fitted to {length / RATE:.3f} s from the take's start, end faded into its start"
+    loop = audio[s0:s0 + length].copy()
+    loop[:k] = loop[:k] * fade(k, out=False) + audio[s0 + length:s0 + length + k] * fade(k)
+    return loop, f"layer {start:.2f}-{start + length / RATE:.2f} s of {total:.1f} s: exactly {length / RATE:.3f} s, seam match {score:.2f}"
+
+
 def make_loop(audio, spec):
     bpm = spec["bpm"]
     beats_per_bar = spec.get("beatsPerBar", 4)
@@ -115,6 +142,9 @@ def make_loop(audio, spec):
     tail_guard = spec.get("tailGuard", 4.0)  # the take's own ending (often a fade) stays out of the loop
     skip = spec.get("skipIntro", 4.0)
     window = int(6 * fps)
+
+    if spec.get("exactLength"):
+        return make_exact(audio, spec, energy, flux, bands, fps, total)
 
     # The take's real tempo: the beat period near the asked bpm that best repeats the onsets.
     best_period, best_score = None, -1
