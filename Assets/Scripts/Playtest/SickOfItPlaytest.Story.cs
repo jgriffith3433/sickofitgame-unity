@@ -28,7 +28,7 @@ namespace SickOfIt.Playtest
         {
             int storyFailed, storyTextOnly;
 
-            void StoryCheck(string beat, bool ok, string detail)
+            void BeatCheck(string beat, bool ok, string detail)
             {
                 if (ok) { Run.Event("check", $"story {beat}: ok ({detail})"); return; }
                 storyFailed++;
@@ -36,7 +36,7 @@ namespace SickOfIt.Playtest
                 Run.Problem(PlaytestSeverity.Bug, $"story {beat}: {detail}");
             }
 
-            sealed class StoryWatch
+            sealed class BeatWatch
             {
                 public readonly List<string> Beats = new List<string>();
                 public readonly List<string> Skipped = new List<string>();
@@ -51,7 +51,7 @@ namespace SickOfIt.Playtest
             }
 
             /// <summary>Plays a level's first seconds with the stick held right, logging what the telemetry and the HUD show.</summary>
-            IEnumerator StoryWatchLevel(int level, string name, StoryWatch watch, bool drive)
+            IEnumerator StoryWatchLevel(int level, string name, BeatWatch watch, bool drive)
             {
                 var load = LoadLevel(level);
                 if (load != null)
@@ -143,7 +143,7 @@ namespace SickOfIt.Playtest
                 {
                     int level = StoryLevels[i];
                     string name = StoryNames[i];
-                    var watch = new StoryWatch();
+                    var watch = new BeatWatch();
                     var world0 = GameplayWorld.Instance;
                     yield return StoryWatchLevel(level, name, watch, drive: true);
                     if (Run.Done) yield break;
@@ -154,12 +154,12 @@ namespace SickOfIt.Playtest
 
                     if (isFloor)
                     {
-                        StoryCheck($"{name} plays a beat", hasBeat, hasBeat ? watch.Beats[0] : "no storyBeat event");
-                        StoryCheck($"{name} says a voiced line", hasBeat && watch.VoicedCaptions >= 1, $"{watch.VoicedCaptions} voiced caption(s)");
-                        StoryCheck($"{name} shakes the camera and the hero reacts", watch.Reactions.Count >= 1, $"reactions {string.Join("/", watch.Reactions)}");
-                        StoryCheck($"{name} keeps the caption to one short line", watch.CaptionOneLine, watch.CaptionDetail);
-                        StoryCheck($"{name} caption is clear of the hero", watch.CaptionClear, watch.CaptionDetail);
-                        StoryCheck($"{name} locks input at most {StoryMaxLockSeconds} s", watch.LongestLock <= StoryMaxLockSeconds, $"longest lock {watch.LongestLock:0.00} s");
+                        BeatCheck($"{name} plays a beat", hasBeat, hasBeat ? watch.Beats[0] : "no storyBeat event");
+                        BeatCheck($"{name} says a voiced line", hasBeat && watch.VoicedCaptions >= 1, $"{watch.VoicedCaptions} voiced caption(s)");
+                        BeatCheck($"{name} shakes the camera and the hero reacts", watch.Reactions.Count >= 1, $"reactions {string.Join("/", watch.Reactions)}");
+                        BeatCheck($"{name} keeps the caption to one short line", watch.CaptionOneLine, watch.CaptionDetail);
+                        BeatCheck($"{name} caption is clear of the hero", watch.CaptionClear, watch.CaptionDetail);
+                        BeatCheck($"{name} locks input at most {StoryMaxLockSeconds} s", watch.LongestLock <= StoryMaxLockSeconds, $"longest lock {watch.LongestLock:0.00} s");
                     }
                     // A caption is text only when it has no voice under it and no beat event around it.
                     int textOnly = watch.SilentCaptions > 0 && !hasBeat ? watch.SilentCaptions : 0;
@@ -184,20 +184,20 @@ namespace SickOfIt.Playtest
                         yield return WaitReal(0.9f);
                         input.TouchUp(f, at + new Vector2(-r * 0.9f, 0f));
                         float x1 = hero.transform.position.x;
-                        StoryCheck($"{name} hero stays under touch control after the beat", world.Now >= world.InputLockedUntil && Mathf.Abs(x1 - x0) > 0.3f, $"x {x0:0.00} -> {x1:0.00}");
+                        BeatCheck($"{name} hero stays under touch control after the beat", world.Now >= world.InputLockedUntil && Mathf.Abs(x1 - x0) > 0.3f, $"x {x0:0.00} -> {x1:0.00}");
                     }
                     Run.Progress((i + 1f) / (StoryLevels.Length + 1f));
                 }
 
                 // A quick retry of the floors does not replay the beats: Floor 1000 again.
-                var retry = new StoryWatch();
+                var retry = new BeatWatch();
                 yield return StoryWatchLevel(StoryLevels[1], "Floor 1000 (retry)", retry, drive: false);
                 if (Run.Done) yield break;
-                StoryCheck("retry does not replay the beat", retry.Beats.Count == 0 && retry.Skipped.Count >= 1,
+                BeatCheck("retry does not replay the beat", retry.Beats.Count == 0 && retry.Skipped.Count >= 1,
                     $"beats {retry.Beats.Count}, skipped {retry.Skipped.Count}, captions {retry.Captions.Count}");
 
                 Run.Metric("quality.textOnlyBeats", storyTextOnly);
-                StoryCheck("no text-only beats (Level 1 and Floors 1000-997)", storyTextOnly == 0, $"{storyTextOnly} caption(s) with no voice and no event");
+                BeatCheck("no text-only beats (Level 1 and Floors 1000-997)", storyTextOnly == 0, $"{storyTextOnly} caption(s) with no voice and no event");
                 GameplayHud.TouchUiForced = false;
                 Run.Progress(1f);
                 End(storyFailed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
