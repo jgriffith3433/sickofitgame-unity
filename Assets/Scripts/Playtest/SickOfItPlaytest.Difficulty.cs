@@ -71,14 +71,14 @@ namespace SickOfIt.Playtest
                         picked = level;
                 }
                 FtueProgress.PendingDifficulty = picked;
-                yield return ClickUntil(labels.newGame, effect, 30f);
+                yield return ClickUntil(NewGameLabel(labels), effect, 30f);
             }
 
             /// <summary>Every New Game click in the other scenarios: straight into play at Normal (no difficulty card).</summary>
             IEnumerator ClickNewGame(Func<bool> effect)
             {
                 var labels = GameDefinition.Instance.mainMenuConfig.labels;
-                yield return ClickUntil(labels.newGame, effect, 30f);
+                yield return ClickUntil(NewGameLabel(labels), effect, 30f);
             }
 
             readonly Dictionary<string, float> shotSpeedSum = new Dictionary<string, float>();
@@ -177,7 +177,7 @@ namespace SickOfIt.Playtest
                 // 1. New Game goes straight in at Normal (no card). Pick Your Hell lives in Settings.
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
-                yield return ClickUntil(labels.newGame, () => LevelRunning(1) || Object.FindAnyObjectByType<VideoRuntime>() != null, 30f);
+                yield return ClickUntil(NewGameLabel(labels), () => LevelRunning(1) || Object.FindAnyObjectByType<VideoRuntime>() != null, 30f);
                 if (Run.Done) yield break;
                 DiffCheck("New Game skips the difficulty card", FindButton("Hell Loop") == null && Difficulty.Current == DifficultyLevel.Normal,
                     $"Hell Loop button {(FindButton("Hell Loop") != null ? "shown" : "absent")}, Difficulty.Current={Difficulty.Current}");

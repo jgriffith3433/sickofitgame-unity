@@ -43,6 +43,8 @@ namespace SickOfIt.Data.Config
         QuestRemind,
         /// <summary>All three found: he pays the reward.</summary>
         QuestDone,
+        /// <summary>The first visit with something affordable: he points at the one ware that glows (said once).</summary>
+        ShopRecommend,
     }
 
     /// <summary>One of Yooba's portrait loops: a sprite sheet cut into equal cells, read left to right, top to bottom.</summary>

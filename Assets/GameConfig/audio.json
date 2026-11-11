@@ -3451,6 +3451,22 @@
       "cooldown": 0.5
     },
     {
+      "id": "vo_yooba_shop_pick",
+      "kind": "Voice",
+      "prompt": "[whispers] Psst! The glowing one. [giggles] You can afford it. Start there.",
+      "durationSeconds": 0,
+      "promptInfluence": 0.3,
+      "loop": false,
+      "voice": "yooba",
+      "voiceId": "",
+      "clip": "",
+      "generatedFrom": "",
+      "volume": 1,
+      "pitchVariation": 0,
+      "maxVoices": 1,
+      "cooldown": 0.5
+    },
+    {
       "id": "vo_yooba_shop_bye",
       "kind": "Voice",
       "prompt": "Bye bye! Don't die! [giggles] Well, do. But come back.",

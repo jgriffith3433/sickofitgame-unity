@@ -278,3 +278,8 @@ the door sound, the daylight light change, and the hero's walking past as events
 
 **Voice.** Beats 2 and 6 keep a warm-grey line, but each is paired with an event and a sound first; pending clips in
 `Tools/Audio/pending_clips.json` are made through Hawkes Gen before the beats are called voiced.
+
+**The menu and the counter (2026-11-11).** *Who lives here:* the hero idling on the meadow is the first screen; Yooba appears on it only
+as a button, after the first diamonds. *What happens:* each new button is announced by a NEW! burst; Yooba's first visit is a whispered, glowing
+pointer at the one ware the hero can buy. *Landmark:* the glowing card. Details in Docs/Story.md.
+

@@ -111,7 +111,7 @@ namespace SickOfIt.Playtest
                     yield return TapSoundPrompt();
                     var labels = GameDefinition.Instance.mainMenuConfig.labels;
                     float tapped = Time.realtimeSinceStartup;
-                    yield return TouchTapButton(labels.newGame, 30f);
+                    yield return TouchTapButton(NewGameLabel(labels), 30f);
                     if (Run.Done) yield break;
                     yield return Run.Until(() => LevelRunning(1) || Object.FindAnyObjectByType<VideoRuntime>() != null, 60f, "Level 1 or its film after the tap");
                     if (Run.Done) yield break;

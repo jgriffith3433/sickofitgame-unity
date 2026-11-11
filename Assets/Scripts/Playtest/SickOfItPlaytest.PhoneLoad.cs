@@ -175,9 +175,9 @@ namespace SickOfIt.Playtest
                     // Buttons up: the moment the menu offers New Game.
                     yield return Run.Until(() =>
                     {
-                        if (FindButton(labels.newGame) == null)
-                            Object.FindAnyObjectByType<MainMenuManager>()?.ShowPageHolding(labels.newGame);
-                        var b = FindButton(labels.newGame);
+                        if (FindButton(NewGameLabel(labels)) == null)
+                            Object.FindAnyObjectByType<MainMenuManager>()?.ShowPageHolding(NewGameLabel(labels));
+                        var b = FindButton(NewGameLabel(labels));
                         return b != null && b.IsInteractable();
                     }, 60f, "the New Game button");
                     if (Run.Done) yield break;
@@ -200,7 +200,7 @@ namespace SickOfIt.Playtest
                         stray == null ? "no \"%\" or LOADING text with the buttons up" : $"the menu showed \"{stray}\"");
 
                     // Press New Game (a real click) and time it to Level 1 taking input.
-                    var button = FindButton(labels.newGame);
+                    var button = FindButton(NewGameLabel(labels));
                     int coversBefore = ScreenTransition.Covers;
                     float pressed = Time.realtimeSinceStartup;
                     yield return ClickButton(button, "New Game (phone-load press " + (run + 1) + ")");

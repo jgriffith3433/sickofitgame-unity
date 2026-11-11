@@ -1019,6 +1019,7 @@ namespace SickOfIt.Playtest
                 "Level 1 starts with their perks in the hero's hands (totals, full bubbles, plates, bombs and gasps, slower enemy shots, a cheaper rewind), the 8+ new Grudges are granted one by one and each adds its perk, " +
                 "then the bot plays and the perks that fire (crit, bubble pop, plate, slip, fat diamond, burp, bomb, gasp) are logged as `perk` events. Each beat is a check event", ShopGoodsSeconds, "level"));
             list.Add(new PlaytestScenario(ShopBalanceId, "Yooba's health line: a fresh save with the line's price (setup shortcut), ten Goo Plasters bought with real clicks (+2 hearts each, ~430 diamonds, the purse ends at 0), Level 1 starts with 25 hearts and the HUD health bar is one smooth bar with its count, wide enough to read (run it on 1920x1080 and a 390x844 phone). The other goods' prices are logged. Each beat is a check event", 120, "menus"));
+            list.Add(new PlaytestScenario(StagedMenuId, "The staged main menu and Yooba's tabbed counter: a brand-new save's menu has at most three buttons (Play, Settings, Rage Quit where a page can quit), the first diamonds bring Visit Yooba with a NEW sticker that goes when pressed, Pick a Level, Rewatch Stuff and the Codex wait for Floor 1000 and the replay cards for the first Waystone; in the shop every card leads with its effect in numbers (the joke name and quip second), the wares sit on Body / Rewind / Loot tabs with six cards a page, the ones the hero can buy are marked, Yooba points at one glowing ware with a voiced line on the first visit, and the layout is audited per tab at the runner's size (1280x720 and 390x844 in the editor); then a returning save shows every button it had, with no stickers, and New Game's reset takes none away (setup shortcuts: the fresh save, the first diamonds, the returning save). Each beat is a check event", 240, "menus"));
             list.Add(new PlaytestScenario(ShopWeaponsId, "Yooba's weapon goods: the shop hides Slimed Knuckles, Stretchy Wraps and Keep Weapons while no weapon is unlocked, shows them once the fists are, Keep Weapons and Slimed Knuckles bought with real clicks make Yooba accuse the hero of stealing from him (a ShopBuyWeapon line, voiced), and a run ending keeps the fists only with Keep Weapons bought (setup shortcuts: the unlock, the run end). Each beat is a check event", 120, "menus"));
             list.Add(new PlaytestScenario(YoobaAliveId, "Yooba's living shop (Docs/Story.md, \"Yooba's shop\"), clicked with the virtual mouse: the shelf starts with one jar and nine gaps, " +
                 "fills as floors are cleared (setup shortcuts: levels marked cleared, deaths counted) and Yooba points out each new ware, asks for the Lost Things quest, reacts to the deaths " +
@@ -1490,6 +1491,8 @@ namespace SickOfIt.Playtest
                 yield return session.ShopBalance();
             else if (id == ShopWeaponsId)
                 yield return session.ShopWeapons();
+            else if (id == StagedMenuId)
+                yield return session.StagedMenu();
             else if (id == YoobaAliveId)
                 yield return session.YoobaAlive();
             else if (id == "climb")
@@ -10105,6 +10108,7 @@ namespace SickOfIt.Playtest
             /// <summary>Clicks the button labeled 'text' with the virtual mouse until 'effect' is true (one retry).</summary>
             IEnumerator ClickUntil(string text, Func<bool> effect, float timeout)
             {
+                text = StagedMenuLabel(text);
                 for (int attempt = 0; attempt < 2 && !Run.Done; attempt++)
                 {
                     MenuButton button = null;
@@ -10114,6 +10118,7 @@ namespace SickOfIt.Playtest
                             // The main menu is in pages: turn to the one holding this button.
                             if (FindButton(text) == null)
                                 Object.FindAnyObjectByType<MainMenuManager>()?.ShowPageHolding(text);
+                            RevealStagedButton(text);
                             return (button = FindButton(text)) != null && button.IsInteractable();
                         }, timeout, $"the \"{text}\" button");
                     else

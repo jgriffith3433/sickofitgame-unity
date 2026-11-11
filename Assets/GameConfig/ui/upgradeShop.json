@@ -79,22 +79,22 @@
       }
     },
     "list": {
-      "anchor": [0.5, 0.475],
+      "anchor": [0.5, 0.46],
       "offset": [0.0, 0.0],
-      "size": [1700.0, 460.0],
+      "size": [1700.0, 420.0],
       "direction": "Grid",
-      "columns": 0,
+      "columns": 3,
       "spacing": [28.0, 16.0],
-      "itemSize": [360.0, 198.0],
+      "itemSize": [530.0, 198.0],
       "portrait": {
         "use": true,
-        "anchor": [0.5, 0.48],
+        "anchor": [0.5, 0.464],
         "offset": [0.0, 0.0],
-        "size": [980.0, 1180.0],
+        "size": [980.0, 940.0],
         "direction": "Grid",
-        "columns": 1,
-        "spacing": [24.0, 20.0],
-        "itemSize": [900.0, 280.0]
+        "columns": 2,
+        "spacing": [24.0, 16.0],
+        "itemSize": [478.0, 300.0]
       }
     },
     "backAnchor": [0.0, 0.0],
@@ -103,34 +103,6 @@
     "statsAnchor": [1.0, 1.0],
     "statsOffset": [-40.0, -40.0],
     "decorations": [
-      {
-        "text": "No\ntabs!",
-        "style": "caption",
-        "fontSize": 20.0,
-        "textColor": "#1E1220",
-        "shape": "Burst",
-        "sprite": null,
-        "fill": "#FF5B3A",
-        "borderColor": "#1E1220",
-        "borderWidth": 5.0,
-        "size": [108.0, 108.0],
-        "anchor": [0.85, 0.832],
-        "offset": [0.0, 0.0],
-        "rotation": 10.0,
-        "motion": {
-          "type": "Pulse",
-          "amount": 0.06,
-          "speed": 1.1,
-          "phase": 0.0
-        },
-        "portrait": {
-          "use": false,
-          "hide": true,
-          "anchor": [0.5, 0.5],
-          "offset": [0.0, 0.0],
-          "size": [0.0, 0.0]
-        }
-      },
       {
         "text": "♦ = the village's diamonds. The imps took them. Shoot them back out.",
         "style": "caption",
@@ -153,7 +125,7 @@
         },
         "portrait": {
           "use": true,
-          "hide": false,
+          "hide": true,
           "anchor": [0.5, 0.13],
           "offset": [0.0, 0.0],
           "size": [948.0, 82.0]
@@ -177,5 +149,10 @@
   },
   "buyFormat": "Buy ♦ {0}",
   "maxedText": "Maxed out",
-  "comingSoonText": "Coming soon"
+  "comingSoonText": "Coming soon",
+  "affordableFormat": "Can buy ♦ {0}",
+  "tabBody": "Body",
+  "tabRewind": "Rewind",
+  "tabLoot": "Loot",
+  "pageFormat": "{0}/{1}"
 }

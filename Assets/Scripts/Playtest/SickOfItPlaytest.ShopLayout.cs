@@ -90,12 +90,21 @@ namespace SickOfIt.Playtest
                 Run.Event("check", $"{scene}: shortest visible card {shortest:0} px ({(tallEnough ? "at least 48 px" : "UNDER 48 px")})");
                 if (!tallEnough)
                     Run.Problem(PlaytestSeverity.Bug, $"{scene}: shop cards are {shortest:0} px tall, under 48");
+                // Phone: two columns of three rows, six cards a page (the tabs hold the rest).
+                int visibleCards = 0;
+                foreach (Transform child in scroll.content)
+                    if (child.gameObject.activeSelf)
+                        visibleCards++;
+                Run.Metric("shop.visibleCards", visibleCards);
+                Run.Event("check", $"{scene}: {visibleCards} cards on the page ({(visibleCards <= 6 ? "at most 6" : "MORE THAN 6")})");
+                if (visibleCards > 6)
+                    Run.Problem(PlaytestSeverity.Bug, $"{scene}: {visibleCards} shop cards at once, more than 6");
                 if (MenuScreen.Portrait)
                 {
                     int columns = ShopColumns(scroll);
-                    Run.Event("check", $"{scene}: portrait columns {columns} ({(columns == 1 ? "single column" : "NOT single column")})");
-                    if (columns != 1)
-                        Run.Problem(PlaytestSeverity.Bug, $"{scene}: portrait shop is {columns} columns, want 1");
+                    Run.Event("check", $"{scene}: portrait columns {columns} ({(columns <= 2 ? "at most two columns" : "TOO MANY columns")})");
+                    if (columns > 2)
+                        Run.Problem(PlaytestSeverity.Bug, $"{scene}: portrait shop is {columns} columns, want at most 2");
                 }
                 yield return Audit(scene + " bottom", 0, 0, 0.4f, progress: false);
             }
