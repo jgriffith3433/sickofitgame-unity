@@ -73,6 +73,8 @@ namespace SickOfIt.Core.Progression
         private void OnDestroy()
         {
             GhostLobby.MenuOpen = false;
+            // A level's own load (started at the press) holds the same bundles, so this only lets go of the menu's share.
+            SickOfIt.Core.Addressables.GameAssets.Release(MenuHeroOwner);
         }
 
         // "N climbing now": other players on a level, from the ghost lobby (hidden offline, in the Editor and at 0).
@@ -127,6 +129,126 @@ namespace SickOfIt.Core.Progression
             // Portrait phones: the menu fills the screen around the hero instead of a 16:9 strip between black bars.
             SickOfIt.Core.Device.AspectRatioController.CoverPortrait(Camera.main, config.portraitWidthShare, config.portraitFocusX,
                 config.portraitFollowCharacter ? character : null);
+
+            // The player build's scene has no hero (PlayerDataSplit takes him out so his raw sheets stay out of SickOfIt.data):
+            // he walks in from the Addressables bundles as soon as they are in, and the portrait camera starts following him then.
+            if (character == null && config.placeCharacter)
+                StartCoroutine(SpawnMenuHero(config));
+        }
+
+        /// <summary>Who holds the menu hero's bundles (GameAssets owner); let go when the menu scene goes.</summary>
+        private const string MenuHeroOwner = "menuHero";
+
+        /// <summary>The hero the menu spawned (null while he is still on his way, or when the scene carries him).</summary>
+        public Transform MenuHero { get; private set; }
+
+        /// <summary>
+        /// The hero's renderer on the menu, whoever placed him (the scene, the stand-in or the spawned prefab); null while he is not there.
+        /// The phone-load playtest checks he is on screen, so removing him from the player build can't go unseen.
+        /// </summary>
+        public SpriteRenderer MenuHeroRenderer()
+        {
+            var hero = MenuHero != null ? MenuHero : FindCharacter();
+            return hero != null ? hero.GetComponentInChildren<SpriteRenderer>(true) : null;
+        }
+
+        /// <summary>
+        /// Puts the hero on the meadow the way MainMenuSceneGenerator.PlaceCharacter does: an instance of player.playerPrefab under the
+        /// scene's content root, at characterPosition, with the menu's camera and shooting switch. In a player build the prefab is
+        /// not in GameDefinition: only its own bundles (Character.prefab, its controller, clips and the Idle/Walk/Jump/Fall/Fire
+        /// sheets: scope "hero.menu") load here, never the hero's whole scope, which waits for a level. They are ~20 MB, so until they
+        /// are in he stands there as his Idle sheet from the core bundles (a <see cref="MenuHeroStandIn"/>): the menu never opens on an
+        /// empty meadow, however slow the line.
+        /// </summary>
+        private IEnumerator SpawnMenuHero(MainMenuConfig config)
+        {
+            var gd = GameDefinition.Instance;
+            if (gd == null || gd.player == null)
+                yield break;
+            var camera = Camera.main;
+            var parent = camera != null ? camera.transform.parent : null; // the scene's "Content" root, where the camera sits too
+            var position = new Vector3(config.characterPosition.x, config.characterPosition.y, 0f);
+
+            GameObject standIn = null;
+            if (gd.player.playerPrefab == null)
+            {
+                standIn = MenuHeroStandIn.Create(gd.player, parent, position);
+                if (standIn != null)
+                {
+                    MenuHero = standIn.transform;
+                    SickOfIt.Core.Device.AspectRatioController.CoverPortrait(camera, config.portraitWidthShare, config.portraitFocusX,
+                        config.portraitFollowCharacter ? MenuHero : null);
+                }
+                if (SickOfIt.Core.Addressables.GameAssets.Knows(SickOfIt.Core.Addressables.GameAssets.MenuHero))
+                    yield return SickOfIt.Core.Addressables.GameAssets.Acquire(MenuHeroOwner, new[] { SickOfIt.Core.Addressables.GameAssets.MenuHero });
+            }
+            var prefab = gd.player.playerPrefab;
+            if (prefab == null)
+            {
+                Debug.LogWarning("[MainMenu] No hero prefab to place on the menu" + (standIn != null ? "; the stand-in stays." : "."));
+                yield break;
+            }
+
+            var hero = Instantiate(prefab, parent, false);
+            hero.name = "Character";
+            hero.transform.localPosition = position;
+            var controller = hero.GetComponentInChildren<SickOfIt.Core.Input.PlayerController>(true);
+            if (controller != null)
+                controller.BindMenuHero(camera, config.characterCanShoot, gameObject);
+            if (standIn != null)
+                Destroy(standIn);
+            MenuHero = hero.transform;
+            SickOfIt.Core.Device.AspectRatioController.CoverPortrait(camera, config.portraitWidthShare, config.portraitFocusX,
+                config.portraitFollowCharacter ? MenuHero : null);
+        }
+
+        /// <summary>
+        /// The menu's hero before his prefab has downloaded: a SpriteRenderer set up like the prefab's Graphics child (scale, layer,
+        /// facing) playing the Idle sheet from the "core" scope (player.spriteSheet), which the boot already loaded. No physics,
+        /// no input, nothing saved; replaced by the real hero in place.
+        /// </summary>
+        private sealed class MenuHeroStandIn : MonoBehaviour
+        {
+            private Sprite[] frames;
+            private SpriteRenderer sr;
+            private float fps = 12f;
+
+            public static GameObject Create(PlayerConfig player, Transform parent, Vector3 localPosition)
+            {
+                var gd = GameDefinition.Instance;
+                var frames = player.spriteSheet != null && gd != null ? gd.SpritesOf(player.spriteSheet) : null;
+                if (frames == null || frames.Length == 0)
+                    return null;
+                var root = new GameObject("Character");
+                root.transform.SetParent(parent, false);
+                root.transform.localPosition = localPosition;
+                var graphics = new GameObject("Graphics");
+                graphics.transform.SetParent(root.transform, false);
+                float scale = player.spriteScale > 0f ? player.spriteScale : 0.25f;
+                graphics.transform.localScale = new Vector3(-scale, scale, scale); // the prefab's: the sheets face the other way
+                var renderer = graphics.AddComponent<SpriteRenderer>();
+                renderer.sprite = frames[0];
+                SpriteLayers.Apply(renderer, SpriteLayer.Player, SpriteLayers.Character);
+                var standIn = root.AddComponent<MenuHeroStandIn>();
+                standIn.frames = frames;
+                standIn.sr = renderer;
+                var states = player.animationConfig != null ? player.animationConfig.states : null;
+                if (states != null)
+                {
+                    foreach (var state in states)
+                    {
+                        if (state != null && state.stateName == "Idle" && state.fps > 0)
+                            standIn.fps = state.fps;
+                    }
+                }
+                return root;
+            }
+
+            private void Update()
+            {
+                if (sr != null && frames != null && frames.Length > 0)
+                    sr.sprite = frames[Mathf.FloorToInt(Time.unscaledTime * fps) % frames.Length];
+            }
         }
 
         private static Transform FindCharacter()

@@ -220,3 +220,32 @@ only (guids in `Temp/Addressables.menuLabel.txt`, cleared by `End`/`Recover`), a
 - **Playtest `phone-load`** step 4d: three New Game presses, each after 5 s on the menu, timed to Level 1 accepting input (`load.pressToPlaySeconds`, median checked
   <= 3 s), the menu scanned for "%"/LOADING text, the transition checked for the themed words (`check` events `phone-load press to play`, `themed transition`,
   `menu shows no percentage`). Keep core vs core.late as they are: the warm-up never touches the menu's 20 s budget (it starts after the menu is up).
+
+## The menu hero leaves the player data (2026-11-11, phone twin: 33.5 MB before gameplay, limit 20)
+
+Phone first-five (390x844, 4x CPU, slow-4g): `SickOfIt.data.unityweb` 22.8 MB + `SickOfIt.wasm.unityweb` 10.5 MB + framework 0.1 MB = 33.5 MB, and
+167 s to gameplay (33.5 MB at slow-4g's ~1.6 Mbps is exactly that: the clock stops once the player itself is in). No Addressables bundle is in the
+top five, so the earlier menu passes (core, late core, prefetch) were never the problem. The 22.8 MB is the **MainMenu scene's own hero**: MainMenu.unity is
+a build-settings scene (Video, Level and Death are Addressables scenes), and its Character prefab instance references the controller, clips and five 3624x4080
+hero sheets, which a scene always carries in the player: as raw RGBA32 (the 2048 cap gives 1819x2048 and 1819 is not a multiple of 4, so neither DXT nor ASTC
+applies), ~74 MB in memory. Two changes, both in the deploy, nothing hand-edited:
+
+1. **The scene's hero is taken out for the player build** (`PlayerDataSplit.StripMenuHero`, called by `Begin`; `RestoreMenuScene` in `End`/`Recover`
+   copies `Temp/MainMenu.beforeSplit.unity` back byte for byte, so the committed scene still has him and the editor never changes). It opens MainMenu.unity
+   through the editor API, destroys the outermost prefab instance of every `PlayerController` and saves; the log says how many and whether the scene still
+   depends on `Assets/Art/Sprites/Player/*.png` (a WARNING if it does). `MainMenuManager.SpawnMenuHero` places him at runtime when the scene has none:
+   *at once* a `MenuHeroStandIn` (his Idle sheet from `player.spriteSheet`, scope `core`, scaled and sorted like the prefab's Graphics child, no physics),
+   then, when the scope `hero.menu` (`GameAssets.MenuHero`: only the `player.playerPrefab` entry, written by `PlayerDataManifest`; its bundle brings the
+   controller, clips and the five sheets, not the hero's whole scope) is in, the real prefab at the same place, wired like `MainMenuSceneGenerator.PlaceCharacter`
+   (`PlayerController.BindMenuHero`: the menu camera, `characterCanShoot`, the MobileController's sticks and input manager). The portrait camera follows whichever
+   stands there. `MainMenuManager` owns the load (GameAssets owner `menuHero`, released in `OnDestroy`; a level's own load holds the same bundles).
+2. **The hero sheets import at 2040 px** (`HeroSheetImport`, an `AssetPostprocessor` on `Assets/Art/Sprites/Player/`: no sheet or .meta changes, the sheets are
+   LFS): 3624x4080 becomes 1812x2040, both multiples of 4, so desktop bundles get DXT and phones ASTC (about a quarter of the size; the 4-5 MB raw bundles and the
+   14.9 MB RGBA32 in memory shrink) at the same on-screen size.
+
+Expected for the phone twin: player data ~3-5 MB (what the hero's raw sheets left of the 22.8), wasm 10.5, framework 0.1: **~14-16 MB before gameplay (limit 20)**.
+Not measured here (no Unity or build in this sandbox): beta's next `first-five@local:phone` says (`phone.mbBeforeGameplay`). The 20 s limit is a different matter: the
+10.5 MB wasm alone is ~52 s at slow-4g, so seconds-to-gameplay needs a smaller wasm (code stripping, fewer assemblies), not this change.
+Checks: `phone-load` (`hero on the menu`: a sprite drawn inside the camera's view within 20 s of the buttons; `playable hero on the menu`: the real controller is
+there by the end of the warm-up; metrics `load.menuHeroSeconds`, `load.menuHeroPlayableSeconds`) and `first-five` (`heroOnMenu`), so taking him out can never
+remove him unseen. If the build log says the scene still depends on hero sheets, the strip failed: read the line before it.

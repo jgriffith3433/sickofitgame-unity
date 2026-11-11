@@ -34,6 +34,12 @@ namespace SickOfIt.Core.Addressables
         /// </summary>
         public const string MenuLabel = "soi.menu";
         public const string Hero = "hero";
+        /// <summary>
+        /// Only the hero's prefab (and so its controller, clips and the five sheets they use), for the main menu's own hero
+        /// (MainMenuManager.SpawnMenuHero): the player build's MainMenu scene no longer carries him (PlayerDataSplit), so he
+        /// would otherwise sit in SickOfIt.data as raw RGBA32. Written by PlayerDataManifest.
+        /// </summary>
+        public const string MenuHero = "hero.menu";
         /// <summary>The art only screens after the main menu read (select cards, Shaft, Yooba, shop): loaded behind the menu.</summary>
         public const string LateCore = "core.late";
         public static string Level(string levelName) => "level/" + levelName;

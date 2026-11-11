@@ -51,6 +51,12 @@ namespace SickOfIt.Tools.Editor
 
         const string MainMenuGroupName = "MainMenu_Group";
 
+        /// <summary>The scene the boot opens first; it is in the player's own data, so whatever it references rides in SickOfIt.data.</summary>
+        public const string MainMenuScenePath = "Assets/Scenes/MainMenu.unity";
+
+        // MainMenu.unity as it was before <see cref="StripMenuHero"/> took the hero out: End (or Recover after a crash) copies it back byte for byte.
+        static string MenuSceneBackupPath => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "MainMenu.beforeSplit.unity");
+
         /// <summary>
         /// Web requests Addressables runs at once while the player boots (its project setting was 3 and it resets the queue to it on init;
         /// BundleDownloadManager only raises it after the menu). The boot asks for the game data, its dependencies and the core art and sound
@@ -162,6 +168,7 @@ namespace SickOfIt.Tools.Editor
                 EditorUtility.UnloadUnusedAssetsImmediate();
             }
 
+            StripMenuHero(log);
             WriteBootScene();
             ApplyBootSettings(settings, log);
             LabelMenuGroup(settings, log);
@@ -193,6 +200,7 @@ namespace SickOfIt.Tools.Editor
                     log?.Invoke($"  WARNING: re-importing the game config after the split failed ({e.Message}); the next import restores it.");
                 }
             }
+            RestoreMenuScene(log);
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings != null)
                 PutFrameSetsBack(settings, log);
@@ -223,12 +231,84 @@ namespace SickOfIt.Tools.Editor
         public static void Recover(Action<string> log)
         {
             bool groupsLeft = AddressableAssetSettingsDefaultObject.Settings?.groups.Any(g => g != null && g.Name.StartsWith(GroupPrefix, StringComparison.Ordinal)) ?? false;
-            if (!File.Exists(BuildPath) && !AssetDatabase.IsValidFolder(BuildFolder) && !groupsLeft && !File.Exists(MovedPath) && !File.Exists(BootSettingsPath) && !File.Exists(MenuLabelPath))
+            if (!File.Exists(BuildPath) && !AssetDatabase.IsValidFolder(BuildFolder) && !groupsLeft && !File.Exists(MovedPath) && !File.Exists(BootSettingsPath) && !File.Exists(MenuLabelPath) && !File.Exists(MenuSceneBackupPath))
                 return;
             log("  An earlier build left the player data split in place; undoing it first.");
             if (File.Exists(BuildPath) && File.Exists(ResourcesPath))
                 AssetDatabase.DeleteAsset(BuildPath); // the checkout's copy in Resources is the real one
             End(log);
+        }
+
+        /// <summary>
+        /// Takes the hero (the Character prefab instance) out of MainMenu.unity for the player build. The scene is in the player's own
+        /// data, so its hero dragged the Character prefab's controller, clips and five 3624x4080 sheets into SickOfIt.data as raw RGBA32
+        /// (22.8 MB of the 33.5 MB a phone fetched before gameplay; the sheets are not addressable-only: a scene's references always
+        /// ride in the player). Edited through the editor API, never by hand in the LFS scene file; <see cref="RestoreMenuScene"/> puts
+        /// the file back byte for byte, so the committed scene still has its hero. MainMenuManager.SpawnMenuHero places him at runtime
+        /// from the "hero.menu" bundles (PlayerDataManifest). Returns how many heroes were taken out.
+        /// </summary>
+        static int StripMenuHero(Action<string> log)
+        {
+            string full = Path.Combine(Path.GetDirectoryName(Application.dataPath), MainMenuScenePath);
+            if (!File.Exists(full))
+            {
+                log($"  {MainMenuScenePath} not found; the menu hero stays wherever the build finds him.");
+                return 0;
+            }
+            Directory.CreateDirectory(Path.GetDirectoryName(MenuSceneBackupPath));
+            File.Copy(full, MenuSceneBackupPath, true); // before anything is touched, so a crash can still put it back (Recover)
+            int removed = 0;
+            try
+            {
+                var scene = EditorSceneManager.OpenScene(MainMenuScenePath, OpenSceneMode.Single);
+                var heroes = new List<GameObject>();
+                foreach (var controller in UnityEngine.Object.FindObjectsByType<SickOfIt.Core.Input.PlayerController>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                {
+                    if (controller == null || controller.gameObject.scene != scene)
+                        continue;
+                    // The PlayerController is on the prefab's root ("Character"); never climb to the scene's own roots.
+                    var hero = controller.gameObject;
+                    if (PrefabUtility.IsPartOfPrefabInstance(hero))
+                        hero = PrefabUtility.GetOutermostPrefabInstanceRoot(hero);
+                    if (!heroes.Contains(hero))
+                        heroes.Add(hero);
+                }
+                foreach (var hero in heroes)
+                {
+                    UnityEngine.Object.DestroyImmediate(hero);
+                    removed++;
+                }
+                if (removed > 0)
+                {
+                    EditorSceneManager.MarkSceneDirty(scene);
+                    if (!EditorSceneManager.SaveScene(scene))
+                        throw new Exception("Couldn't save " + MainMenuScenePath);
+                }
+                int sheets = AssetDatabase.GetDependencies(MainMenuScenePath, true)
+                    .Count(d => d.StartsWith("Assets/Art/Sprites/Player/", StringComparison.Ordinal) && d.EndsWith(".png", StringComparison.OrdinalIgnoreCase));
+                log($"  Main menu: {removed} hero instance(s) taken out of {MainMenuScenePath} for the player build (spawned at runtime from the \"hero.menu\" bundles); " +
+                    $"the scene still depends on {sheets} hero sheets{(sheets > 0 ? " (WARNING: they will ride in SickOfIt.data)" : "")}.");
+            }
+            catch (Exception e)
+            {
+                log($"  WARNING: taking the hero out of {MainMenuScenePath} failed ({e.Message}); the scene is put back and keeps its hero (the player data stays heavy).");
+                removed = 0;
+            }
+            if (removed == 0)
+                RestoreMenuScene(log);
+            return removed;
+        }
+
+        /// <summary>Puts MainMenu.unity back as <see cref="StripMenuHero"/> found it.</summary>
+        static void RestoreMenuScene(Action<string> log)
+        {
+            if (!File.Exists(MenuSceneBackupPath))
+                return;
+            string full = Path.Combine(Path.GetDirectoryName(Application.dataPath), MainMenuScenePath);
+            File.Copy(MenuSceneBackupPath, full, true);
+            File.Delete(MenuSceneBackupPath);
+            AssetDatabase.ImportAsset(MainMenuScenePath, ImportAssetOptions.ForceUpdate);
+            log?.Invoke($"  {MainMenuScenePath} restored with its hero.");
         }
 
         /// <summary>
