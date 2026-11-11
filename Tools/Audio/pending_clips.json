@@ -1,17 +1,4 @@
 {
   "comment": "Voice lines whose prompts are in audio.json but whose clips are not made yet (no voice budget). sound_audit.py and SoundClipTests skip them; once a clip exists the id is dropped here by `stop_floors.py --wire`.",
-  "ids": [
-    "vo_stop959_depot",
-    "vo_dr_lava_a",
-    "vo_dr_lava_b",
-    "vo_dr_boss_a",
-    "vo_dr_boss_b",
-    "vo_dr_bite_a",
-    "vo_dr_bite_b",
-    "vo_dr_bolt_a",
-    "vo_dr_bolt_b",
-    "vo_dr_other_a",
-    "vo_dr_other_b",
-    "vo_yooba_shop_pick"
-  ]
+  "ids": []
 }
