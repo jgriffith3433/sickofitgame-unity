@@ -122,12 +122,13 @@ namespace SickOfIt.Core.Device
         /// Levels call this before they size their backgrounds: on a portrait screen the camera then fills it (no letterbox)
         /// and shows more height at the same width, instead of a 16:9 strip in the middle. The menu, videos and the death scene use <see cref="CoverPortrait"/>.
         /// </summary>
-        public static void FillPortrait(Camera camera)
+        public static void FillPortrait(Camera camera, float portraitZoom = 1f)
         {
             if (camera == null || !camera.TryGetComponent(out AspectRatioController controller) || !controller.enabled)
                 return;
             controller.fillPortrait = true;
             controller.coverPortrait = false;
+            controller.portraitZoom = Mathf.Clamp(portraitZoom, 0.25f, 1f);
             controller.landscapeOrthoSize = camera.orthographic ? camera.orthographicSize : 0f;
             controller.UpdateCameraRect();
         }
@@ -157,6 +158,14 @@ namespace SickOfIt.Core.Device
             controller.portraitFocus = focus;
             controller.UpdateCameraRect();
         }
+
+        // Share of the playfield's world width a portrait phone shows (1 = all of it); the camera follows the hero when below 1.
+        private float portraitZoom = 1f;
+        /// <summary>Half the width of the landscape picture, in world units: how far a zoomed portrait camera can look to either side of its home.</summary>
+        public float PictureHalfWidth => landscapeOrthoSize * (targetAspectWidth / targetAspectHeight);
+        /// <summary>True while a portrait screen is zoomed in on the playfield (the camera should follow the hero sideways).</summary>
+        public bool PortraitZoomed => fillPortrait && portraitZoom < 0.999f && cam != null && cam.rect.width > 0.999f
+            && (float)Screen.width / Mathf.Max(1, Screen.height) < targetAspectWidth / targetAspectHeight;
 
         /// <summary>True while a portrait screen shows the full-screen framing <see cref="CoverPortrait"/> set (the playtest reads it).</summary>
         public bool PortraitCoverActive => portraitCoverActive;
@@ -216,7 +225,7 @@ namespace SickOfIt.Core.Device
                     height = Mathf.Max(height, Mathf.Min(top, screenAspect / targetAspect));
                     cam.rect = new Rect(0f, top - height, 1f, height);
                     float viewportAspect = screenAspect / height;
-                    cam.orthographicSize = landscapeOrthoSize * targetAspect / viewportAspect;
+                    cam.orthographicSize = landscapeOrthoSize * targetAspect / viewportAspect * portraitZoom;
                 }
                 else
                 {

@@ -175,7 +175,9 @@ namespace SickOfIt.Core.Progression
             SetupContainers();
             SetupGameClock();
             SetupAudio();
-            SickOfIt.Core.Device.AspectRatioController.FillPortrait(SceneCamera());
+            // A phone in portrait shows a narrower slice of a one-screen or following arena so the hero and threats read; travel and scroll floors keep their width.
+            bool zoomsIn = script == null || script.world.camera == CameraMode.Static || script.world.camera == CameraMode.Follow;
+            SickOfIt.Core.Device.AspectRatioController.FillPortrait(SceneCamera(), zoomsIn ? PortraitZoomShare : 1f);
             SetupBackgrounds();
             SpawnPlacedSprites();
             StartExperience();
