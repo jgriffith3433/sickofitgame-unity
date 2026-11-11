@@ -287,6 +287,9 @@ namespace SickOfIt.Core.Progression
                 PlayerPrefs.SetInt(GloatTurnKey, turn + 1);
                 PlayerPrefs.Save();
             }
+            // The persistent record and the next unlock: always on the screen, even on a first death with no diamonds.
+            bool newBest = BestFloorRecord.Note(runStop.FromFloor);
+            BestFloorRecord.Build(menu, runStop.FromFloor, newBest);
             NextGoalCard.BuildForDeath(menu, this, runStop.FromFloor, YoobaProgress.Deaths);
             Debug.Log($"[Death] \"{title}\"" + (gloat != null ? $", the announcer: \"{gloat.text}\" ({gloat.sound})" : "")
                       + (runEnded ? $"; the run is over: back to the Waystone on FLOOR {runStop.Waystone}, then level {runStop.NextLevel}" : $"; level {levelNumber} again"));
