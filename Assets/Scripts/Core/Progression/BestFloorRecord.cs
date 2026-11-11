@@ -1,5 +1,6 @@
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 using TMPro;
 using UnityEngine;
 
