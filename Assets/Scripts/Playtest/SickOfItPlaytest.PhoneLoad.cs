@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 using SickOfIt.Core.Addressables;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.Progression;
+using SickOfIt.Core.UI.Menus;
+using SickOfIt.Data;
+using SickOfIt.Gameplay;
+using TMPro;
 using Object = UnityEngine.Object;
 
 namespace SickOfIt.Playtest
@@ -18,7 +22,7 @@ namespace SickOfIt.Playtest
         /// was downloaded by then, and the frame rate on the menu and in Level 1 (30+ fps). Run it with device "phone".
         /// </summary>
         public const string PhoneLoadId = "phone-load";
-        const float PhoneLoadSeconds = 150f;
+        const float PhoneLoadSeconds = 300f;
         const float PhoneLoadMenuBudget = 20f;
         const float PhoneLoadMinFps = 30f;
         // The menu needs the core art and sound (2-3 shared bundles), the Boot dependencies (1) and GameDefinition (1): a dozen is generous.
@@ -128,6 +132,113 @@ namespace SickOfIt.Playtest
                 float worst = sampler.Samples > 0 ? sampler.Worst : average;
                 Object.Destroy(go);
                 result(average, worst);
+            }
+
+
+            const int PressRuns = 3;
+            const float PressWaitSeconds = 5f;
+            const float PressBudgetSeconds = 3f;
+
+            /// <summary>Digits-and-percent or "LOADING" text on screen right now (the menu's old indicator, or a bare loading bar).</summary>
+            static string LoadingTextOnScreen()
+            {
+                foreach (var text in Object.FindObjectsByType<TextMeshProUGUI>(FindObjectsSortMode.None))
+                {
+                    if (text == null || !text.isActiveAndEnabled || string.IsNullOrEmpty(text.text))
+                        continue;
+                    if (text.canvasRenderer != null && text.canvasRenderer.GetAlpha() <= 0.05f)
+                        continue;
+                    string t = text.text;
+                    if (t.Contains("%") || t.IndexOf("LOADING", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                        return t;
+                }
+                return null;
+            }
+
+            static bool AcceptingInput(int level)
+            {
+                var world = GameplayWorld.Instance;
+                return LevelRunning(level) && !(world.Now < world.InputLockedUntil);
+            }
+
+            IEnumerator PhonePressRuns()
+            {
+                var labels = GameDefinition.Instance.mainMenuConfig.labels;
+                var seconds = new System.Collections.Generic.List<float>();
+                for (int run = 0; run < PressRuns && !Run.Done; run++)
+                {
+                    if (run > 0)
+                    {
+                        yield return ToMainMenu();
+                        if (Run.Done) yield break;
+                    }
+                    // Buttons up: the moment the menu offers New Game.
+                    yield return Run.Until(() =>
+                    {
+                        if (FindButton(labels.newGame) == null)
+                            Object.FindAnyObjectByType<MainMenuManager>()?.ShowPageHolding(labels.newGame);
+                        var b = FindButton(labels.newGame);
+                        return b != null && b.IsInteractable();
+                    }, 60f, "the New Game button");
+                    if (Run.Done) yield break;
+                    float buttonsAt = Time.realtimeSinceStartup;
+                    float glintStart = BundleDownloadUI.GlintShownAt;
+
+                    // How long the menu's glint stays up after the buttons (it is a glint, never a percentage).
+                    string stray = null;
+                    while (!Run.Done && Time.realtimeSinceStartup - buttonsAt < PressWaitSeconds)
+                    {
+                        stray = stray ?? LoadingTextOnScreen();
+                        yield return null;
+                    }
+                    if (Run.Done) yield break;
+                    stray = stray ?? LoadingTextOnScreen();
+                    float glintUp = BundleDownloadUI.GlintVisible ? -1f
+                        : (BundleDownloadUI.GlintGoneAt > 0f ? BundleDownloadUI.GlintGoneAt - buttonsAt : 0f);
+                    Run.Event("load", $"press run {run + 1}: menu glint {(BundleDownloadUI.GlintVisible ? "still up" : $"gone {glintUp:0.0} s after the buttons")} at 5 s, warm active {GameAssets.WarmActive}");
+                    LoadCheck($"menu shows no percentage (run {run + 1})", stray == null,
+                        stray == null ? "no \"%\" or LOADING text with the buttons up" : $"the menu showed \"{stray}\"");
+
+                    // Press New Game (a real click) and time it to Level 1 taking input.
+                    var button = FindButton(labels.newGame);
+                    int coversBefore = ScreenTransition.Covers;
+                    float pressed = Time.realtimeSinceStartup;
+                    yield return ClickButton(button, "New Game (phone-load press " + (run + 1) + ")");
+                    bool sawBar = false, bareBar = false, covered = false;
+                    string barLabel = "";
+                    float barProgressMax = 0f;
+                    while (!Run.Done && !AcceptingInput(1) && Time.realtimeSinceStartup - pressed < 90f)
+                    {
+                        covered |= ScreenTransition.Covered;
+                        if (ScreenTransition.LoadingVisible)
+                        {
+                            sawBar = true;
+                            barLabel = ScreenTransition.LoadingLabel;
+                            barProgressMax = Mathf.Max(barProgressMax, ScreenTransition.LoadingHeroAt);
+                            if (barLabel.Contains("%") || barLabel.IndexOf("LOADING", System.StringComparison.OrdinalIgnoreCase) >= 0 || barLabel != ScreenTransition.LoadingWords)
+                                bareBar = true;
+                        }
+                        yield return null;
+                    }
+                    float took = Time.realtimeSinceStartup - pressed;
+                    if (Run.Done) yield break;
+                    seconds.Add(took);
+                    Run.Metric($"load.pressToPlaySeconds.run{run + 1}", took);
+                    Run.Event("load", $"press run {run + 1}: New Game to Level 1 taking input in {took:0.0} s; " +
+                                      $"cover {covered}, transition bar {(sawBar ? $"shown (\"{barLabel}\", hero walked to {barProgressMax * 100f:0}%)" : "never needed")}");
+                    LoadCheck($"themed transition (run {run + 1})", !bareBar,
+                        bareBar ? $"a bare loading bar showed (\"{barLabel}\")" : (sawBar ? $"the hero stepping off with progress, \"{barLabel}\"" : "the level was in before any bar was needed"));
+                    Run.Progress(0.3f + 0.15f * (run + 1) / PressRuns);
+                    // Let the level breathe, then leave it for the next press (the first run's save stays: New Game resets it again).
+                    yield return WaitReal(1.5f);
+                }
+                if (seconds.Count == 0)
+                    yield break;
+                seconds.Sort();
+                float median = seconds[seconds.Count / 2];
+                Run.Metric("load.pressToPlaySeconds", median);
+                LoadCheck("press to play", median <= PressBudgetSeconds,
+                    $"median {median:0.0} s of {seconds.Count} runs ({string.Join(", ", seconds.ConvertAll(x => x.ToString("0.0")))}) from New Game, pressed after {PressWaitSeconds:0} s on the menu, to Level 1 accepting input; budget {PressBudgetSeconds:0} s");
             }
 
             /// <summary>
@@ -261,6 +372,11 @@ namespace SickOfIt.Playtest
                     Run.Metric("load.warmSeconds", GameAssets.WarmSeconds);
                     LoadCheck("level bundles warmed behind the menu", GameAssets.WarmDone, $"the hero and Level 1 bundles were fetched in {GameAssets.WarmSeconds:0.0} s while the menu idled");
                 }
+
+                // 4d. A player's Start: after 5 s on the menu, New Game to Level 1 accepting input, three times (median), with the
+                // menu's indicator gone and a themed transition (never a bare LOADING bar).
+                yield return PhonePressRuns();
+                if (Run.Done) yield break;
 
                 // 5. Level 1 (setup shortcut: loaded directly), its bundles loaded on demand, then 30 s of play by the bot.
                 float levelAsked = Time.realtimeSinceStartup;

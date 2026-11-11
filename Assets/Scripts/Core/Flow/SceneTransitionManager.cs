@@ -179,6 +179,8 @@ namespace SickOfIt.Core.Flow
             // The screen goes black while the assets come in, with a bar: the first owner's share is the first half
             // (the hero, usually in already), the second's the rest.
             bool both = firstOwner != null && secondOwner != null;
+            // The menu's low-priority warm-up stops asking; this takes over at full speed (the bundles it fetched are in the cache).
+            GameAssets.CancelWarm();
             // The art of the screens after the menu normally came in behind it long ago; if not, it is first.
             if (!GameAssets.LateReady)
             {
