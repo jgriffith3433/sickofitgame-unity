@@ -322,7 +322,7 @@ namespace SickOfIt.Gameplay
         bool hintShown;
         int lastHealth = -1;
 
-        static string RewindKeyText => SickOfIt.Core.Device.TouchDevice.IsPrimary ? "Hold: rewind" : "Hold R: rewind";
+        static string RewindKeyText => SickOfIt.Core.Device.TouchDevice.IsPrimary ? "Rewind" : "Hold R";
 
         void BuildRewind()
         {
