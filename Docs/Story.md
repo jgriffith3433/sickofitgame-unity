@@ -2661,3 +2661,7 @@ In the game: the menu is its own band in the same room (z 0; a level is its numb
 ## Rewind that feels amazing (RewindFx)
 
 Rewind is the hook, so holding R turns the picture into a tape being wound back: scanlines crawl up the screen, the edges split into cyan and magenta, a tracking bar sweeps up and speed streaks trail off to the right, over the old teal wash. A reversed tape whirr loops (the `rewind_start` clip played backwards) and its pitch climbs the longer the rewind runs; on release it fades out and the stop click lands. Reduced Flash halves it and stops the wobble. `Gameplay/Presentation/RewindFx.cs`, presentation only (nothing saved or rewound); playtest `rewind-fx`.
+
+## The first rewind (Level 1)
+
+The Meadow teaches rewind by happening to the hero: the sky opens at about 4 s, imps build steadily, and at about 30 s a ring of embers closes on him that nobody can dodge (`stagedRewind`). Time drops to a fifth, the rewind button swells and pulses, and he mutters "Hold R." (`vo_hero_cmp_hold_r`). Holding it undoes the hit; he says "Noted." The replay then throws a single dodgeable ember. One caption at a time, six words at most. The title card is a small corner tag.

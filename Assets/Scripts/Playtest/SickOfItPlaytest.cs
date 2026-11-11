@@ -951,6 +951,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(DeathReturnId, "The death screen's Return offer (Docs/Story.md \"Waystones and runs\"): the Landing's Waystone reached (setup shortcut), level 3 loaded directly with 25 diamonds and a Grudge, " +
                 "the bot plays to lose; the screen offers \"Return for 10 diamonds\" and the button is clicked: level 3 again, 15 diamonds, a moment of safety, the run and Grudges kept. Then dying with 15 and skipping with Escape " +
                 "(the Shaft drops him, nothing spent, run ended, Grudges gone), then dying with 5 (no offer, the drop). check events death-return <beat>", DeathReturnSeconds, "level"));
+            list.Add(new PlaytestScenario(FirstRewindId, "Level 1's first minute as the tutorial: a shot crossing within 8 s, 4+ enemies by 25 s, neighbours moving, the meadow bed, the staged unavoidable volley (time to ~20%, pulsing rewind button 64+ px on a 390x844 touch phone, the hero's voiced 'Hold R.'), the press rewinding, a relief line, never two captions. check events first-rewind <beat>", FirstRewindSeconds, "level"));
             list.Add(new PlaytestScenario(RewindFxId, $"Rewind that feels amazing (RewindFx, Docs/Story.md): level {RewindFxLevel} loaded directly (setup shortcut), played by the bot, then R held {RewindFxHold:0.0} s with the juice topped up (setup shortcut). While held: the screen effect (scanlines, colour split, tracking bar, streaks) is up, a reversed whirr loops with its pitch climbing, and the frame rate stays 30+ fps; on release the sound stops and the screen returns. check events rewind-fx <beat>; metrics rewindFx.*", RewindFxSeconds, "level"));
             list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind and readable HUD feedback (Docs/GameplayCookbook.md \"The arcade loop\", Docs/Story.md \"The HUD and menus\"): Level 1 loaded directly with the shop reset (setup shortcut): " +
                 "the new game's juice must be 10 s. Then Yooba's rewind goods are bought through the shop's own purchase (diamonds given first, setup shortcut: Loop Jar x5, Bottomless Jar x2, Quick Unwind x3) " +
@@ -1379,6 +1380,8 @@ namespace SickOfIt.Playtest
                 yield return session.DeathRestartRun();
             else if (id == RewindJuiceId)
                 yield return session.RewindJuiceRun();
+            else if (id == FirstRewindId)
+                yield return session.FirstRewindRun();
             else if (id == RewindFxId)
                 yield return session.RewindFxRun();
             else if (id == SpawnEdgeId)

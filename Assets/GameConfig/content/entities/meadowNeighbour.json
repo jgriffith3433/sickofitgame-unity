@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "extends": "cheerSoul",
+  "tags": ["village", "neighbour"],
+  "visual": { "color": "#FFFFFF" },
+  "abilities": [
+    { "type": "lifetime", "seconds": 90 }
+  ]
+}

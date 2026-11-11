@@ -274,6 +274,9 @@ namespace SickOfIt.Gameplay
 
         void ApplyStickFade(float alpha)
         {
+            // The staged volley is never under the float stick: it hides while the first rewind is taught (portrait's ring is below the playfield).
+            if (SickOfIt.Gameplay.Content.FirstRewindStage.Pulsing && !MenuScreen.Portrait)
+                alpha = 0f;
             stickVisualAlpha = alpha;
             if (stickRing != null)
                 stickRing.color = new Color(1f, 0.96f, 0.84f, alpha);

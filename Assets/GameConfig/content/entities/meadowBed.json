@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": ["village", "ambientBed"],
+  "body": { "radius": 0.1, "solid": false },
+  "visual": {
+    "placeholderColor": "#00000000",
+    "placeholderSize": 0.01,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": -50,
+    "hurtFlash": false,
+    "deathPop": false
+  },
+  "healthBar": { "show": false },
+  "abilities": [ { "type": "lifetime", "seconds": 600 } ],
+  "sounds": { "loopSound": "meadow_bed" }
+}

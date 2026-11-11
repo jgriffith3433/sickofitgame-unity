@@ -27,6 +27,7 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 - **Size:** ~2 min (30 s of calm, imp raid, the portal scene ≤10 s locked, skippable).
 - **In/out:** New Game (no Video1, no difficulty card) lands here; out through the fire portal into the Shaft plunge on a
   first run (Video2 stays in Rewatch Stuff).
+- **First minute, as built (Nov 11):** the corner tag "PROLOGUE: THE MEADOW" (no title card); a loop bed `meadow_bed` on the `meadowBed` entity; neighbours (`meadowNeighbour`) strolling, then running when the sky opens at ~4 s; imps build 2 by 8 s and 4+ by 25 s with embers crossing the screen; thatch cinders; at ~30 s the staged first rewind (`stagedRewind`: an undodgeable ring of embers, time to 20%, the rewind button grows and pulses, the hero says "Hold R.", after the rewind "Noted."). Still missing: a hen, the mill and a cart (no art yet).
 - **Falls short today:** the first 20 s are mostly the hero and sky; village life (neighbours, a cart, chickens, washing
   line) is thin. Needs the *Meadow's morning* below.
 
