@@ -654,7 +654,7 @@
         "onEnter": [
           {
             "type": "showText",
-            "text": "Oh, he's lasering the village. Cool. Cool cool cool.",
+            "text": "",
             "duration": 3.5,
             "sound": "vo_meadow_laser",
             "style": "Subtitle"
@@ -790,7 +790,7 @@
         "onEnter": [
           {
             "type": "showText",
-            "text": "He's leaving. Through a hole in the sky. With our diamonds.",
+            "text": "",
             "duration": 3.5,
             "sound": "vo_meadow_leaving",
             "style": "Subtitle"
