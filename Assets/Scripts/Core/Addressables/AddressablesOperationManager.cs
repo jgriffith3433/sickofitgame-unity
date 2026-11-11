@@ -641,29 +641,39 @@ namespace SickOfIt.Core.Addressables
 
             activeSceneHandles.Remove(sceneName);
 
-            var unloadHandle = AddressablesAPI.UnloadSceneAsync(sceneHandle);
+            // autoReleaseHandle false: with the default the operation's handle is released the moment it completes, so the
+            // IsValid() check after the wait always failed and warned "became invalid" on every healthy unload.
+            AsyncOperationHandle<UnityEngine.ResourceManagement.ResourceProviders.SceneInstance> unloadHandle;
+            try
+            {
+                unloadHandle = AddressablesAPI.UnloadSceneAsync(sceneHandle, false);
+            }
+            catch (System.Exception e)
+            {
+                // The scene was already unloaded (a Single load took it): nothing left to wait for.
+                Log($"[SCENE] '{sceneName}' was already unloaded: {e.Message}");
+                onComplete?.Invoke(true);
+                yield break;
+            }
 
-            // Check if the unload operation handle is valid before waiting on it
             if (!unloadHandle.IsValid())
             {
-                Debug.LogWarning($"Unload handle for scene '{sceneName}' is invalid - scene may have been unloaded already");
-                onComplete?.Invoke(true); // Consider this success since scene is gone
+                Log($"[SCENE] Unload handle for '{sceneName}' is not valid: the scene is already gone");
+                onComplete?.Invoke(true);
                 yield break;
             }
 
             yield return unloadHandle;
 
-            // Check again if handle became invalid during the wait (race condition)
-            if (!unloadHandle.IsValid())
-            {
-                Debug.LogWarning($"Unload handle for scene '{sceneName}' became invalid during unload - scene may have been unloaded already");
-                onComplete?.Invoke(true); // Consider success since scene is gone
-                yield break;
-            }
-
-            bool success = unloadHandle.Status == AsyncOperationStatus.Succeeded;
+            bool success = unloadHandle.IsValid() && unloadHandle.Status == AsyncOperationStatus.Succeeded;
             if (success) Log($"Unloaded scene '{sceneName}'");
-            else Debug.LogError($"Failed to unload scene '{sceneName}': {unloadHandle.OperationException}");
+            else Debug.LogError($"Failed to unload scene '{sceneName}': {(unloadHandle.IsValid() ? unloadHandle.OperationException : null)}");
+
+            if (unloadHandle.IsValid())
+            {
+                try { AddressablesAPI.Release(unloadHandle); }
+                catch (System.Exception e) { Log($"[SCENE] Warning releasing unload handle for '{sceneName}': {e.Message}"); }
+            }
 
             onComplete?.Invoke(success);
         }

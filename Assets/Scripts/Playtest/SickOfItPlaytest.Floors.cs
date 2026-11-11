@@ -83,6 +83,7 @@ namespace SickOfIt.Playtest
                         }
                         string p = $"floors:{floor}:";
                         int deathsBefore = deaths;
+                        int sceneLoads = 0, mostLoadsToOpen = 0;
                         float stillMax = 0f, stillSince = -1f, stillSpot = 0f;
                         Vector2 stillAt = Vector2.zero;
                         bool shotTeach = false, shotFinale = false, glowOk = false, glowSeen = false, tintDrawn = false;
@@ -93,7 +94,14 @@ namespace SickOfIt.Playtest
                             floorSignals.Clear();
                             floorMusic.Clear();
                             shotTeach = shotFinale = false;
+                            int loadsBefore = SickOfIt.Core.Addressables.AddressablesSceneLoader.LoadsStarted;
                             yield return OpenLevel(n, attempt);
+                            // A retry is a few scene loads (the death scene, the level). More is the Level <-> Death reload loop
+                            // that froze this scenario after the first retry.
+                            int opened = SickOfIt.Core.Addressables.AddressablesSceneLoader.LoadsStarted - loadsBefore;
+                            sceneLoads += opened;
+                            mostLoadsToOpen = Mathf.Max(mostLoadsToOpen, opened);
+                            Run.Event("floors", $"floor {floor} try {attempt}: {opened} scene load(s) to reach the level ({SickOfIt.Core.Addressables.AddressablesSceneLoader.LoadsJoined} joined, {SickOfIt.Core.Addressables.AddressablesSceneLoader.LoadsQueued} queued so far)");
                             if (Run.Done || !openedLevel)
                                 break;
                             yield return PlayLevel(n, 260f, now =>
@@ -172,6 +180,8 @@ namespace SickOfIt.Playtest
                             FloorsCheck($"{label} finale lasts 15-20 s (10-35 s allowed)", span >= 10f && span <= 35f, $"{span:0.0} s from the finale to the landing", PlaytestSeverity.Warning);
                         }
                         FloorsCheck($"{label} has no stuck spot over 5 s", stillMax <= 5f, $"longest still {stillMax:0.0} s");
+                        // The death scene, the level and one replay of either at most: more is a Level <-> Death reload loop (the page hung after a retry).
+                        FloorsCheck($"{label} every try opens in 4 scene loads or fewer (no Level/Death reload loop)", mostLoadsToOpen <= 4, $"{sceneLoads} scene load(s) over the tries, the most for one try {mostLoadsToOpen}");
                     }
                     Run.Metric("floors.finalesReached", reached);
                     FloorsCheck("every floor's finale is reached", reached == FloorsList.Length, $"{reached} of {FloorsList.Length}");
