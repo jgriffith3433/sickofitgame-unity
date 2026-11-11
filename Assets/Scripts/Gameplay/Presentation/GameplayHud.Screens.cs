@@ -319,10 +319,9 @@ namespace SickOfIt.Gameplay
             }
 
             // The next goal: what the diamonds are for, the bar filled with the ones just earned.
-            var nextGoal = SickOfIt.Core.Progression.NextGoal.Pick(world.Stage != null && world.Stage.HasFloors ? world.Stage.Floor : 0);
-            if (nextGoal != null)
-                SickOfIt.Core.Progression.NextGoalCard.Build(menu, inner, nextGoal, MenuPlacement.At(0.2f, 0.13f, 0f, 0f, 540f, 140f),
-                    MenuPlacement.At(0.5f, 0.268f, 0f, 0f, 900f, 130f), null, null, 1.4f);
+            // Built through Core's bridge — Gameplay cannot name SickOfIt.Core.Progression (circular asmdef).
+            int goalFloor = world.Stage != null && world.Stage.HasFloors ? world.Stage.Floor : 0;
+            NextGoalBridge.BuildResultsCard?.Invoke(menu, inner, goalFloor);
 
             var go = theme.button.Clone();
             go.size = new Vector2(420f, 100f);
@@ -478,7 +477,7 @@ namespace SickOfIt.Gameplay
             if (pointsAtStart < 0 && RogueliteManager.Instance != null)
             {
                 pointsAtStart = RogueliteManager.Instance.GetPoints();
-                SickOfIt.Core.Progression.NextGoal.RunStartPoints = pointsAtStart;
+                NextGoalBridge.RunStartPoints = pointsAtStart;
             }
             UpdateHurtFeedback();
             UpdateDeath();
