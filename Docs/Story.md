@@ -1644,9 +1644,9 @@ the picks and the trims are recorded in `Tools/Audio/music.json` and made by `To
   Wastes' push track until theirs are wired.
 - **The Meadow's own music** (Level 1): not the old background film's sound but a track of its own: **"A nice day"**, a warm plucked
   figure over a soft drone in D major (`meadow_calm`, level `music`), which plays while the village goes about its morning. When the sky
-  opens (the rumble, the shake, the neighbours running) the music **turns**: `playMusic` brings in the raid, the Wastes' push track
-  for now (`meadow_raid` is to make: the same tune with double kicks and alarms, `music_manifest.json` `interim`). `meadow_calm` is a synthesised
-  stand-in until Hawkes Gen's take replaces it. The nice day lasts 6 s before the sky opens.
+  opens (the rumble, the shake, the neighbours running) the music **turns**: `playMusic` brings in `meadow_raid`, the same tune in D minor at 128 BPM
+  with double kicks, shredding and alarms. Both are Hawkes Gen `audio.music` takes (best of three each, cut into seamless loops by `music-mix.py`;
+  `meadow_calm` is 84 BPM in D major with plucked guitar and a soft flute). The nice day lasts 6 s before the sky opens.
 - **Rewinding bends the music.** A held rewind fades the normal track out and brings in **the same track, slowed like a tape dragged backward and
   low-passed** (`StageMusic`: pitch 0.85 sliding to 0.6, a 700 Hz low-pass, 0.12 s in, 0.15 s out), started and stopped by the clock's
   `OnRewindStarted` / `OnRewindStopped` events (telemetry `musicRewind`). The normal track is back the moment the rewind ends.

@@ -454,6 +454,37 @@
       "tailGuard": 1,
       "crossfade": 0.25,
       "out": "Assets/Audio/Music/throne_stair_layer.ogg"
+    },
+    {
+      "id": "meadow_calm",
+      "job": "j_16d95404756f",
+      "asset": "a_fe53c9b9b56e8c01",
+      "take": "calm1.mp3",
+      "why": "Of three takes it is the warmest and most acoustic (plucked guitar and flute, lowest spectral centroid) and its seam matches best (0.51 against 0.23 and 0.15); 84 BPM, D major, no drums, no vocals. Level 1's calm before the sky opens.",
+      "mode": "loop",
+      "bpm": 84,
+      "minSeconds": 24,
+      "maxSeconds": 32,
+      "phraseBars": 2,
+      "skipIntro": 0.5,
+      "tailGuard": 4,
+      "crossfade": 0.25,
+      "out": "Assets/Audio/Music/meadow_calm.ogg"
+    },
+    {
+      "id": "meadow_raid",
+      "job": "j_8deba7139c07",
+      "asset": "a_b727643f232c493d",
+      "take": "raid2.mp3",
+      "why": "The Meadow tune turned raid, D minor, 128 BPM. Take 1 has a near-silent second (a dropout) and the worst seam, take 3 breathes; take 2 holds a steady full-tilt energy (a raid runs minutes, like wastes_push), has the best seam (0.54) and its tempo is nearest 128.",
+      "mode": "loop",
+      "bpm": 128,
+      "minSeconds": 40,
+      "maxSeconds": 56,
+      "skipIntro": 0.5,
+      "tailGuard": 4,
+      "crossfade": 0.25,
+      "out": "Assets/Audio/Music/meadow_raid.ogg"
     }
   ]
 }

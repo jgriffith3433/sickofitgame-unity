@@ -140,8 +140,8 @@ namespace SickOfIt.Playtest
                         AdaptiveCheck("floor music starts within 1 s of the level opening", afterPlay <= 1f, $"{afterPlay:0.00} s after the level began ({afterTap:0.0} s after the New Game tap, loading included)");
                     }
                     // Calm first, then the raid: the sky opens and the music turns.
-                    yield return Run.Until(() => AdaptiveFirst(0, "wastes_push", "script") >= 0, 30f, "the music to turn to the raid");
-                    int raid = AdaptiveFirst(0, "wastes_push", "script");
+                    yield return Run.Until(() => AdaptiveFirst(0, "meadow_raid", "script") >= 0, 30f, "the music to turn to the raid");
+                    int raid = AdaptiveFirst(0, "meadow_raid", "script");
                     if (raid >= 0 && start >= 0)
                     {
                         float calm = adaptiveMusic[raid].game - adaptiveMusic[0].game;
