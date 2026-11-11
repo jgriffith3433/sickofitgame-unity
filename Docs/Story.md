@@ -2280,6 +2280,12 @@ Voice: the hero's lines and the announcer's call are made (`vo_hero_hint_<elite>
 until their voices are made. Art: specs in `Assets/GameConfig/art/<id>.json` for all sixteen, not generated (GPU priced, not approved); until then each wears its
 base creature's art, tinted and larger (rule 5). Test arena `content/scenes/eliteArena.json`, playtest `elites` (~40 min: the arena, then the four floors).
 
+## The chase, seen on a rewind (2026-11-11)
+
+Not only on the far ledges: when the hero dies and undoes it, rewinding past the death, the Overlord's silhouette climbs out of
+the top of the screen, eyes red, a low hum rising. He is always ahead; time backward is the only way to see his back. A rewind
+that undoes no death shows nothing. (`OverlordEscape`; world bible "The chase".)
+
 ## The Overlord on the far ledge (eight glimpses, Circles X and IX, built 2026-10-25)
 
 J (2026-10-25): *"Give the Overlord (2 voice lines today) at least 8 mid-floor appearances across Circles X and IX."* Until now he is in Video1, the
