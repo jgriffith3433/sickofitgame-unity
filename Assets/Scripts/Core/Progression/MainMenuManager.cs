@@ -163,43 +163,56 @@ namespace SickOfIt.Core.Progression
             var list = menu.AddList(config.layout.list, menu.Theme.button.size);
             entries.Clear();
 
+            // The menu only shows what the player has met (MenuReveal): a brand-new save sees Play, Settings and Rage Quit; the rest
+            // arrives with the progress that earns it, each with a one-time NEW sticker.
+            MenuReveal.BeginMenu();
             // Continue: the current run, where it left off. New Run: a fresh run from the highest Waystone reached
-            // (Docs/Story.md, "Waystones and runs"). New Game: everything from the Meadow again.
+            // (Docs/Story.md, "Waystones and runs"). New Game: everything from the Meadow again. First run: just Play.
             int currentLevel = RunFlow.ContinueLevel();
             int totalLevels = GameProgressManager.Instance.GetTotalLevels();
-            if (config.showContinueButton && currentLevel <= totalLevels)
-                Add(list, string.Format(labels.continueGame, currentLevel), OnContinueClicked);
-            int waystone = WaystoneProgress.Highest;
-            if (waystone > 0 && RunFlow.LevelFrom(waystone) > 0)
-                Add(list, string.Format(System.Globalization.CultureInfo.InvariantCulture, labels.newRun,
-                    waystone.ToString("N0", System.Globalization.CultureInfo.InvariantCulture)), OnNewRunClicked);
-            if (config.showNewGameButton)
-                Add(list, labels.newGame, OnNewGameClicked);
+            bool firstRun = MenuReveal.IsFirstRun;
+            if (firstRun)
+            {
+                Add(list, labels.play, OnNewGameClicked);
+            }
+            else
+            {
+                if (config.showContinueButton && currentLevel <= totalLevels)
+                    Add(list, string.Format(labels.continueGame, currentLevel), OnContinueClicked);
+                int waystone = WaystoneProgress.Highest;
+                if (waystone > 0 && RunFlow.LevelFrom(waystone) > 0)
+                    Add(list, string.Format(System.Globalization.CultureInfo.InvariantCulture, labels.newRun,
+                        waystone.ToString("N0", System.Globalization.CultureInfo.InvariantCulture)), OnNewRunClicked);
+                if (config.showNewGameButton)
+                    Add(list, labels.newGame, OnNewGameClicked);
+            }
             // The replay modes (Docs/Story.md, "Again"): each opens a card with its best / table / cycle and a Play button.
             var replay = gd != null ? gd.replay : null;
             if (replay != null && replay.enabled)
             {
                 var replayLabels = replay.labels ?? new ReplayLabels();
-                if (ReplayModes.NewGamePlusOpen)
+                if (ReplayModes.NewGamePlusOpen && MenuReveal.Unlocked(MenuReveal.NewGamePlus))
                     Add(list, replayLabels.newGamePlus,
-                        () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.NewGamePlus, "new_game_plus"));
-                Add(list, replayLabels.endless, () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.Endless, "endless"));
-                Add(list, replayLabels.daily, () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.Daily, "daily"));
+                        () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.NewGamePlus, "new_game_plus"), MenuReveal.NewGamePlus);
+                if (MenuReveal.Unlocked(MenuReveal.Endless))
+                    Add(list, replayLabels.endless, () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.Endless, "endless"), MenuReveal.Endless);
+                if (MenuReveal.Unlocked(MenuReveal.Daily))
+                    Add(list, replayLabels.daily, () => OpenReplay(SickOfIt.Gameplay.ReplayPanelKind.Daily, "daily"), MenuReveal.Daily);
             }
-            if (config.showLevelSelectButton)
-                Add(list, labels.levelSelect, OnLevelSelectClicked);
-            if (config.showVideosButton)
-                Add(list, labels.videos, OnVideosClicked);
-            if (config.showUpgradeShopButton)
-                Add(list, labels.shop, OnUpgradeShopClicked);
+            if (config.showLevelSelectButton && MenuReveal.Unlocked(MenuReveal.LevelSelect))
+                Add(list, labels.levelSelect, OnLevelSelectClicked, MenuReveal.LevelSelect);
+            if (config.showVideosButton && MenuReveal.Unlocked(MenuReveal.Videos))
+                Add(list, labels.videos, OnVideosClicked, MenuReveal.Videos);
+            if (config.showUpgradeShopButton && MenuReveal.Unlocked(MenuReveal.Shop))
+                Add(list, labels.shop, OnUpgradeShopClicked, MenuReveal.Shop);
             var codex = gd != null ? gd.codex : null;
-            if (codex != null && codex.enabled && codex.showOnMainMenu)
+            if (codex != null && codex.enabled && codex.showOnMainMenu && MenuReveal.Unlocked(MenuReveal.Codex))
                 Add(list, codex.buttonLabel, () =>
                 {
                     Picked("codex");
                     SickOfIt.Gameplay.CodexPanel.Show(menu, () => AnalyticsManager.Screen("menu"));
                     AnalyticsManager.Screen("codex");
-                });
+                }, MenuReveal.Codex);
             if (config.showSettingsButton)
                 Add(list, labels.settings, () =>
                 {
@@ -230,6 +243,30 @@ namespace SickOfIt.Core.Progression
                 menu.AddChip(string.Format(menu.Theme.pointsFormat, RogueliteManager.Instance.GetPoints()));
         }
 
+        /// <summary>
+        /// Playtest setup shortcut: every button earned and seen (an old save's menu), the menu rebuilt. Scenarios that predate the
+        /// staged menu use it to reach the shop or the pickers without playing for them; the staging has its own scenario.
+        /// </summary>
+        public void RevealEverythingForPlaytest()
+        {
+            MenuReveal.UnlockAll();
+            RebuildMenu();
+        }
+
+        /// <summary>Playtest setup: builds the menu again from the save as it stands now (what opening the main menu would show).</summary>
+        public void RebuildForPlaytest() => RebuildMenu();
+
+        private void RebuildMenu()
+        {
+            if (menu != null)
+                Destroy(menu.gameObject);
+            menu = null;
+            climbingChip = null;
+            climbingShown = -1;
+            stickers.Clear();
+            BuildMenu();
+        }
+
         /// <summary>Analytics: which main menu button was pressed.</summary>
         private static void Picked(string option) => AnalyticsManager.Choice("main_menu", option);
 
@@ -237,14 +274,42 @@ namespace SickOfIt.Core.Progression
         private const int ButtonsPerPage = 6;
         private const string MoreLabel = "More >";
         private const string FirstPageLabel = "< Back";
-        private readonly List<KeyValuePair<string, Action>> entries = new List<KeyValuePair<string, Action>>();
+        private sealed class Entry
+        {
+            public string Text;
+            public Action OnClick;
+            /// <summary>The <see cref="MenuReveal"/> id a button wears a NEW sticker for, or null.</summary>
+            public string RevealId;
+        }
+        private readonly List<Entry> entries = new List<Entry>();
         private readonly List<List<GameObject>> pageSlots = new List<List<GameObject>>();
         private readonly List<string> pageLabels = new List<string>();
 
-        private void Add(RectTransform list, string text, Action onClick)
+        private void Add(RectTransform list, string text, Action onClick, string revealId = null)
         {
-            entries.Add(new KeyValuePair<string, Action>(text, onClick));
+            entries.Add(new Entry { Text = text, OnClick = onClick, RevealId = revealId });
         }
+
+        /// <summary>The main menu's buttons on show, by their words (the playtest reads it; a button on another page counts).</summary>
+        public List<string> ButtonLabels()
+        {
+            var labels = new List<string>();
+            foreach (var entry in entries)
+                labels.Add(entry.Text);
+            return labels;
+        }
+
+        /// <summary>Ids of the buttons wearing a NEW sticker now.</summary>
+        public List<string> NewStickerIds()
+        {
+            var ids = new List<string>();
+            foreach (var pair in stickers)
+                if (pair.Value != null)
+                    ids.Add(pair.Key);
+            return ids;
+        }
+
+        private readonly Dictionary<string, RectTransform> stickers = new Dictionary<string, RectTransform>();
 
         private void BuildPages(RectTransform list)
         {
@@ -256,9 +321,22 @@ namespace SickOfIt.Core.Progression
                 var slots = new List<GameObject>();
                 for (int i = p * ButtonsPerPage; i < Mathf.Min(entries.Count, (p + 1) * ButtonsPerPage); i++)
                 {
-                    var button = menu.AddButton(list, entries[i].Key, menu.Theme.button, entries[i].Value);
+                    var entry = entries[i];
+                    var press = entry.OnClick;
+                    var revealId = entry.RevealId;
+                    var button = menu.AddButton(list, entry.Text, menu.Theme.button, () =>
+                    {
+                        if (revealId != null)
+                        {
+                            MenuReveal.Acknowledge(revealId);
+                            stickers.Remove(revealId);
+                        }
+                        press();
+                    });
                     slots.Add(button.transform.parent.gameObject);
-                    pageLabels.Add(entries[i].Key + "|" + p);
+                    pageLabels.Add(entry.Text + "|" + p);
+                    if (revealId != null && MenuReveal.IsNew(revealId))
+                        stickers[revealId] = MenuMarks.AddNewSticker(menu, button);
                 }
                 if (pages > 1)
                 {

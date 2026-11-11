@@ -631,6 +631,8 @@ namespace SickOfIt.Data.Config
     {
         [Tooltip("{0} = the level it continues from.")]
         public string continueGame = "Continue (Level {0})";
+        [Tooltip("The one big button of a brand-new save (it starts a New Game).")]
+        public string play = "Play";
         public string newGame = "New Game";
         [Tooltip("Starts a new run at the highest Waystone reached (Grudges reset); {0} = its floor.")]
         public string newRun = "New Run (Floor {0})";

@@ -285,6 +285,16 @@
       "once": false
     },
     {
+      "moment": "ShopRecommend",
+      "floor": 0,
+      "sound": "vo_yooba_shop_pick",
+      "text": "Psst! The glowing one. You can afford it. Start there.",
+      "clip": "talk",
+      "reply": "",
+      "replyText": "",
+      "once": true
+    },
+    {
       "moment": "ShopBuyWeapon",
       "floor": 0,
       "sound": "vo_yooba_weapon_thief",

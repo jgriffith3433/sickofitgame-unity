@@ -2682,3 +2682,22 @@ Rewind is the hook, so holding R turns the picture into a tape being wound back:
 ## The first rewind (Level 1)
 
 The Meadow teaches rewind by happening to the hero: the sky opens at about 4 s, imps build steadily, and at about 30 s a ring of embers closes on him that nobody can dodge (`stagedRewind`). Time drops to a fifth, the rewind button swells and pulses, and he mutters "Hold R." (`vo_hero_cmp_hold_r`). Holding it undoes the hit; he says "Noted." The replay then throws a single dodgeable ember. One caption at a time, six words at most. The title card is a small corner tag.
+
+## The menu only shows what you have met, and the shop reads at a glance (built 2026-11-11)
+
+**Why.** A stranger on the first menu used to meet a wall of nine buttons and a counter of thirty-five goods with joke names. Now the
+first menu is the hero idling on the meadow with Play, Settings and Rage Quit (in a browser Rage Quit only appears after a real rage quit, as before). Everything else arrives with the thing that earns it, wearing a one-time NEW! burst, the same comic sticker as
+"Now with rewind!": **Visit Yooba** after the first diamonds (the slime he is: he turns up when there is something to spend), **Pick a Level**,
+**Rewatch Stuff** and the **Codex** once Floor 1000 is cleared, **Endless Floor**, the **Daily Challenge** and **New Game+** after the first
+Waystone. Play is a New Game on a brand-new save; after that the button is Continue, with New Game beside it. A reveal is kept for good
+(`MenuReveal`, prefs `Menu_Unlocked`/`Menu_Seen`): New Game wipes the climb, never what he has unlocked; a save from before this change gets
+every button it qualifies for and no stickers.
+
+**The counter.** Yooba's wares sit on three tabs, Body (hearts, jumps, speed, plates, bubbles, dodge, burps), Rewind (jars, unwinding, crumbs,
+thrift) and Loot (diamond pull and value, shot damage and speed, crits, bombs, fists, Keep Weapons), six cards a page. Each card leads with
+what it does in numbers, made from the ware's effect and per-level amount ("+2 hearts", "+8% move speed", "+0.4 s per clean kill"); the
+joke name and his quip come second, smaller. A ware the hero can pay for says "CAN BUY" in green and puts a ♦ on its tab. On the first visit
+with something to spend and nothing owned, Yooba whispers "Psst! The glowing one. You can afford it. Start there." (`vo_yooba_shop_pick`, clip
+pending in `Tools/Audio/pending_clips.json`) and the first affordable ware's card glows; buying it, or his saying it, ends that for good.
+Canon: Yooba never says what a ware costs him; the card says it plainly because the hero is sick of guessing.
+

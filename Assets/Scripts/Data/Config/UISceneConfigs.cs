@@ -164,5 +164,13 @@ namespace SickOfIt.Data.Config
         public string buyFormat = "BUY ♦ {0}";
         public string maxedText = "MAXED OUT";
         public string comingSoonText = "COMING SOON";
+        [Tooltip("The price line of a ware the hero can pay for now (it is also marked and its tab gets a ♦). {0} = cost.")]
+        public string affordableFormat = "CAN BUY ♦ {0}";
+        [Tooltip("Yooba's counter has three tabs; at most six wares show at once, the rest are on the next page.")]
+        public string tabBody = "Body";
+        public string tabRewind = "Rewind";
+        public string tabLoot = "Loot";
+        [Tooltip("{0} = this page, {1} = pages.")]
+        public string pageFormat = "{0}/{1}";
     }
 }

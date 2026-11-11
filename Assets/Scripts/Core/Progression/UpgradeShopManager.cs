@@ -24,7 +24,22 @@ namespace SickOfIt.Core.Progression
         private TextMeshProUGUI pointsChip;
         private NumberTicker pointsTicker;
         private TextMeshProUGUI healthChip;
-        private readonly List<(UpgradeDefinition def, MenuCardView view)> cards = new List<(UpgradeDefinition, MenuCardView)>();
+        private sealed class ShopEntry
+        {
+            public UpgradeDefinition def;
+            public MenuCardView view;
+            public ShopTab tab;
+            public bool forSale;
+            public bool affordable;
+        }
+        private readonly List<ShopEntry> cards = new List<ShopEntry>();
+        private ShopTab activeTab = ShopTab.Body;
+        private int page;
+        private readonly MenuButton[] tabButtons = new MenuButton[3];
+        private MenuButton prevButton, nextButton;
+        private TextMeshProUGUI pageText;
+        private string recommendedId;
+        private YoobaLine recommendLine;
         private bool leaving;
         private YoobaPortrait yooba;
         private TextMeshProUGUI yoobaSubtitle;
@@ -106,16 +121,21 @@ namespace SickOfIt.Core.Progression
                 if (upgrade == null)
                     continue;
                 var def = upgrade;
+                // The card leads with what the ware does, in numbers (ShopCardText); the joke name and Yooba's quip come second.
+                string effectText = ShopCardText.Effect(def);
                 var view = MenuCard.Add(menu, list, new MenuCardData
                 {
                     Caption = "",
-                    Badge = def.iconArt != null || string.IsNullOrEmpty(def.icon) ? null : def.icon,
-                    Icon = def.iconArt,
-                    Title = def.title,
-                    Description = def.description,
+                    Title = string.IsNullOrEmpty(effectText) ? def.title : effectText,
+                    Description = string.IsNullOrEmpty(effectText) ? def.description : ShopCardText.NameAndQuip(def),
                     Status = "",
                 }, () => Buy(def), cardStyle);
-                cards.Add((def, view));
+                if (view.Description != null)
+                {
+                    view.Description.overflowMode = TextOverflowModes.Ellipsis;
+                    view.Description.fontStyle = FontStyles.Normal;
+                }
+                cards.Add(new ShopEntry { def = def, view = view, tab = ShopCardText.TabOf(def.Effect) });
             }
 
             healthChip = menu.AddChip("");
@@ -128,8 +148,12 @@ namespace SickOfIt.Core.Progression
                 menu.AddButtonAt(new Vector2(1f, 0f), new Vector2(-170f, 80f), $"+{config.debugPointsAmount} ♦ (debug)",
                     menu.Theme.smallButton, OnAddPointsDebugClicked);
             }
+            AddTabsAndPaging();
             AddYooba(gd);
+            ChooseRecommendation();
             RefreshUI();
+            if (recommendedId != null)
+                ShowCard(recommendedId);
             AddShelfAndQuest(gd);
             if (yooba != null)
                 openingTalk = StartCoroutine(OpeningLines());
@@ -238,6 +262,10 @@ namespace SickOfIt.Core.Progression
                 queue.Add(counted[counted.Count - 1]);
             }
 
+            // First visit with something to spend: he points at the glowing card.
+            if (recommendLine != null && recommendedId != null)
+                queue.Insert(0, recommendLine);
+
             // Let the welcome finish first.
             yield return null;
             while (yooba != null && yooba.Speaking)
@@ -334,23 +362,199 @@ namespace SickOfIt.Core.Progression
             MenuGraphics.SetText(yoobaSubtitle, text ?? "");
         }
 
-        /// <summary>The card of an upgrade that is for sale (for the playtest's virtual mouse), or null.</summary>
+        /// <summary>
+        /// The card of an upgrade that is for sale (for the playtest's virtual mouse), or null. Turns to the tab and page that holds it first.
+        /// </summary>
         public MenuButton CardButton(string id)
         {
-            foreach (var (def, view) in cards)
-                if (def != null && def.id == id && view.Button.transform.parent.gameObject.activeSelf)
-                    return view.Button;
+            foreach (var entry in cards)
+            {
+                if (entry.def == null || entry.def.id != id || !entry.forSale)
+                    continue;
+                ShowCard(id);
+                return entry.view.Button;
+            }
             return null;
         }
 
-        /// <summary>The ids of the goods on show, in order (the playtest reads it).</summary>
+        /// <summary>The ids of the goods for sale, in order, whatever tab or page they are on (the playtest reads it).</summary>
         public List<string> ShownIds()
         {
             var ids = new List<string>();
-            foreach (var (def, view) in cards)
-                if (def != null && view.Button.transform.parent.gameObject.activeSelf)
-                    ids.Add(def.id);
+            foreach (var entry in cards)
+                if (entry.def != null && entry.forSale)
+                    ids.Add(entry.def.id);
             return ids;
+        }
+
+        /// <summary>The ids on the page showing now.</summary>
+        public List<string> PageIds()
+        {
+            var ids = new List<string>();
+            foreach (var entry in cards)
+                if (entry.def != null && entry.forSale && entry.view.Button.transform.parent.gameObject.activeSelf)
+                    ids.Add(entry.def.id);
+            return ids;
+        }
+
+        public ShopTab ActiveTab => activeTab;
+        public int Page => page;
+        public int PageCount => PagesOf(activeTab);
+        /// <summary>The ware Yooba pointed at on this first visit (glowing), or null.</summary>
+        public string RecommendedId => recommendedId;
+        /// <summary>The card of this ware shows the glow frame now.</summary>
+        public bool IsGlowing(string id)
+        {
+            foreach (var entry in cards)
+                if (entry.def != null && entry.def.id == id)
+                    return entry.view.Button.transform.parent.Find(MenuMarks.GlowName) != null;
+            return false;
+        }
+        /// <summary>The ware's card as it reads now: effect line, name and quip, price line (the playtest checks the effect leads).</summary>
+        public bool TryReadCard(string id, out string effect, out string description, out string status)
+        {
+            effect = description = status = "";
+            foreach (var entry in cards)
+            {
+                if (entry.def == null || entry.def.id != id)
+                    continue;
+                effect = entry.view.Title != null ? entry.view.Title.text : "";
+                description = entry.view.Description != null ? entry.view.Description.text : "";
+                status = entry.view.Status != null ? entry.view.Status.text : "";
+                return true;
+            }
+            return false;
+        }
+        public bool IsAffordable(string id)
+        {
+            foreach (var entry in cards)
+                if (entry.def != null && entry.def.id == id)
+                    return entry.forSale && entry.affordable;
+            return false;
+        }
+        public MenuButton TabButton(ShopTab tab) => tabButtons[(int)tab];
+        public MenuButton NextPageButton => nextButton;
+
+        /// <summary>Turns to the tab and page that holds this ware.</summary>
+        public void ShowCard(string id)
+        {
+            foreach (var entry in cards)
+            {
+                if (entry.def == null || entry.def.id != id || !entry.forSale)
+                    continue;
+                int index = 0;
+                foreach (var other in cards)
+                {
+                    if (other == entry)
+                        break;
+                    if (other.forSale && other.tab == entry.tab)
+                        index++;
+                }
+                activeTab = entry.tab;
+                page = index / ShopCardText.CardsPerPage;
+                RefreshUI();
+                return;
+            }
+        }
+
+        private int CountIn(ShopTab tab)
+        {
+            int n = 0;
+            foreach (var entry in cards)
+                if (entry.forSale && entry.tab == tab)
+                    n++;
+            return n;
+        }
+
+        private int PagesOf(ShopTab tab) => Mathf.Max(1, Mathf.CeilToInt(CountIn(tab) / (float)ShopCardText.CardsPerPage));
+
+        // ─── Tabs, pages and the first-visit pick ───
+
+        private string TabName(ShopTab tab) => tab == ShopTab.Body ? config.tabBody : tab == ShopTab.Rewind ? config.tabRewind : config.tabLoot;
+
+        private void AddTabsAndPaging()
+        {
+            const float tabY = 0.715f, portraitTabY = 0.775f;
+            var style = menu.Theme.smallButton.Clone();
+            style.size = new Vector2(300f, 64f);
+            var tabs = (ShopTab[])Enum.GetValues(typeof(ShopTab));
+            for (int i = 0; i < tabs.Length; i++)
+            {
+                var tab = tabs[i];
+                float x = (i - 1) * 330f;
+                tabButtons[i] = menu.AddButtonAt(new Vector2(0.5f, tabY), new Vector2(x, 0f), TabName(tab), style, () => SetTab(tab), null,
+                    MenuPlacement.At(0.5f, portraitTabY, x, 0f, 300f, 124f));
+            }
+            var navStyle = menu.Theme.smallButton.Clone();
+            navStyle.size = new Vector2(100f, 64f);
+            prevButton = menu.AddButtonAt(new Vector2(0.5f, tabY), new Vector2(610f, 0f), "<", navStyle, () => TurnPage(-1), null,
+                MenuPlacement.At(0.5f, 0f, -260f, 340f, 200f, 124f));
+            nextButton = menu.AddButtonAt(new Vector2(0.5f, tabY), new Vector2(810f, 0f), ">", navStyle, () => TurnPage(1), null,
+                MenuPlacement.At(0.5f, 0f, 260f, 340f, 200f, 124f));
+            pageText = menu.AddText(menu.Root, "PageNumber", "", menu.Theme.caption, new Vector2(0.5f, tabY), new Vector2(710f, 0f),
+                new Vector2(100f, 64f), out _, 30f);
+            // On a tall screen the page text sits between its two buttons under the list.
+            MenuResponsive.Track((RectTransform)pageText.transform.parent, MenuResponsive.From(new Vector2(0.5f, tabY), new Vector2(710f, 0f), new Vector2(100f, 64f)),
+                MenuPlacement.At(0.5f, 0f, 0f, 340f, 200f, 124f), MenuElementKind.Text, menu.Responsive);
+        }
+
+        private void SetTab(ShopTab tab)
+        {
+            if (activeTab == tab && page == 0)
+                return;
+            activeTab = tab;
+            page = 0;
+            RefreshUI();
+        }
+
+        private void TurnPage(int step)
+        {
+            int pages = PagesOf(activeTab);
+            if (pages <= 1)
+                return;
+            page = (page + step + pages) % pages;
+            RefreshUI();
+        }
+
+        /// <summary>
+        /// First visit with something to spend (and nothing owned yet): Yooba picks the first ware the hero can pay for. It glows, its tab is
+        /// opened, and his voiced line points at it (once; it is saved as said when he says it, or when it is bought).
+        /// </summary>
+        private void ChooseRecommendation()
+        {
+            if (yoobaConfig == null || !yoobaConfig.enabled)
+                return;
+            var line = YoobaPortrait.PickNew(YoobaMoment.ShopRecommend);
+            if (line == null)
+                return;
+            var roguelite = RogueliteManager.Instance;
+            foreach (var entry in cards)
+                if (entry.def != null && roguelite.GetUpgradeLevel(entry.def.id) > 0)
+                    return;
+            foreach (var entry in cards)
+            {
+                var def = entry.def;
+                if (def == null || def.Effect == ShopEffect.None || !def.IsForSale(0) || !roguelite.CanAfford(def))
+                    continue;
+                recommendedId = def.id;
+                recommendLine = line;
+                MenuMarks.AddGlow(menu, entry.view.Button);
+                activeTab = entry.tab;
+                return;
+            }
+        }
+
+        private void ClearRecommendation()
+        {
+            if (recommendedId == null)
+                return;
+            foreach (var entry in cards)
+                if (entry.def != null && entry.def.id == recommendedId)
+                    MenuMarks.Remove(entry.view.Button.transform.parent, MenuMarks.GlowName);
+            if (recommendLine != null)
+                YoobaProgress.MarkSaid(recommendLine.sound);
+            recommendedId = null;
+            recommendLine = null;
         }
 
         /// <summary>Refresh all UI elements to reflect current state.</summary>
@@ -371,11 +575,13 @@ namespace SickOfIt.Core.Progression
             MenuGraphics.SetText(healthChip, string.Format(menu.Theme.healthFormat,
                 roguelite.GetCumulativeHealth(totalLevels), roguelite.GetMaxHealth()));
 
-            foreach (var (def, view) in cards)
+            foreach (var entry in cards)
             {
-                bool forSale = def.IsForSale(roguelite.GetUpgradeLevel(def.id));
-                view.Button.transform.parent.gameObject.SetActive(forSale);
-                if (!forSale)
+                var def = entry.def;
+                var view = entry.view;
+                entry.forSale = def.IsForSale(roguelite.GetUpgradeLevel(def.id));
+                entry.affordable = false;
+                if (!entry.forSale)
                     continue;
                 if (def.Effect == ShopEffect.None)
                 {
@@ -396,10 +602,52 @@ namespace SickOfIt.Core.Progression
                 else
                 {
                     bool affordable = roguelite.CanAfford(def);
-                    view.SetStatus(string.Format(config.buyFormat, cost), affordable ? menu.Theme.accent : menu.Theme.muted);
+                    entry.affordable = affordable;
+                    // A ware the hero can pay for now says so in the accent colour, in words, and lifts its tab (a ♦).
+                    view.SetStatus(string.Format(affordable ? config.affordableFormat : config.buyFormat, cost),
+                        affordable ? menu.Theme.positive : menu.Theme.muted);
                     // With Yooba at the counter a card you can't afford still answers (he tells you so).
                     view.Button.interactable = affordable || yooba != null;
                 }
+            }
+            ApplyTabAndPage();
+        }
+
+        /// <summary>Shows the active tab's page (six cards at most) and labels the tabs: the open one with a dot, one with something to buy with a ♦.</summary>
+        private void ApplyTabAndPage()
+        {
+            int pages = PagesOf(activeTab);
+            page = Mathf.Clamp(page, 0, pages - 1);
+            var tabs = (ShopTab[])Enum.GetValues(typeof(ShopTab));
+            var seen = new int[tabs.Length];
+            foreach (var entry in cards)
+            {
+                bool show = false;
+                if (entry.forSale && entry.tab == activeTab)
+                {
+                    int index = seen[(int)entry.tab]++;
+                    show = index >= page * ShopCardText.CardsPerPage && index < (page + 1) * ShopCardText.CardsPerPage;
+                }
+                entry.view.Button.transform.parent.gameObject.SetActive(show);
+            }
+            for (int i = 0; i < tabs.Length; i++)
+            {
+                if (tabButtons[i] == null)
+                    continue;
+                bool anyAffordable = false;
+                foreach (var entry in cards)
+                    if (entry.forSale && entry.tab == tabs[i] && entry.affordable)
+                        anyAffordable = true;
+                tabButtons[i].SetText((tabs[i] == activeTab ? "● " : "") + TabName(tabs[i]) + (anyAffordable ? " ♦" : ""));
+            }
+            bool paged = pages > 1;
+            foreach (var nav in new[] { prevButton, nextButton })
+                if (nav != null)
+                    nav.transform.parent.gameObject.SetActive(paged);
+            if (pageText != null)
+            {
+                pageText.transform.parent.gameObject.SetActive(paged);
+                MenuGraphics.SetText(pageText, string.Format(config.pageFormat, page + 1, pages));
             }
         }
 
@@ -422,6 +670,8 @@ namespace SickOfIt.Core.Progression
             });
             if (bought)
             {
+                if (def.id == recommendedId)
+                    ClearRecommendation();
                 SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.upgradePick);
                 bool weaponGood = def.Effect == ShopEffect.KeepWeapons || def.Effect == ShopEffect.MeleeDamage || def.Effect == ShopEffect.MeleeReach;
                 YoobaSay(weaponGood ? YoobaMoment.ShopBuyWeapon : YoobaMoment.ShopBuy, true, weaponGood ? null : def.id);

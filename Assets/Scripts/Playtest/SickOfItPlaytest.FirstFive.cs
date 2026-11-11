@@ -183,7 +183,7 @@ namespace SickOfIt.Playtest
                     ? "no Pick Your Hell before New Game" : "Pick Your Hell already open");
                 Run.Metric("firstFive.choicesBeforePlay", choices);
 
-                yield return ClickUntil(labels.newGame, () => LevelRunning(1) || Object.FindAnyObjectByType<VideoRuntime>() != null, 30f);
+                yield return ClickUntil(NewGameLabel(labels), () => LevelRunning(1) || Object.FindAnyObjectByType<VideoRuntime>() != null, 30f);
                 if (Run.Done) yield break;
                 FirstFiveCheck("noDifficultyAfterNewGame", FindButton("Hell Loop") == null && Difficulty.Current == DifficultyLevel.Normal,
                     $"Difficulty.Current={Difficulty.Current}");
