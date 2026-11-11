@@ -91,6 +91,7 @@ namespace SickOfIt.Gameplay
         public MeleeSwingFx SwingFx { get; private set; }
         /// <summary>The hit-freeze, hit flash and squash, the hero's recoil and the glows (game.json "feel"; presentation only).</summary>
         public GameFeel Feel { get; private set; }
+        public WorldLighting Lighting { get; private set; }
 
         readonly List<Entity> live = new List<Entity>();
         readonly List<Entity> tickList = new List<Entity>();
@@ -211,6 +212,7 @@ namespace SickOfIt.Gameplay
             Effects.Init(this, setup.Music, setup.Script?.world, setup.BackgroundRoot);
             Hud = GameplayHud.Create(this);
             Feel = GameFeel.Create(this);
+            Lighting = WorldLighting.Create(this);
 
             if (setup.Player != null)
                 WrapPlayer(setup.Player);

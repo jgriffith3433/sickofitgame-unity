@@ -1926,6 +1926,26 @@ touches the simulation or the rewind, and all of it is tuned in `game.json` `fee
   (`Glow`), not 2D lights: the game runs the built-in renderer, and on WebGL a few dozen batched quads cost far less than a lighting
   pass. At most 48 on screen at once.
 
+## Every floor has its own light (built 2026-11-11)
+
+Hell is not one red cave. The Meadow and Floors 1000–997 each wear their own mood of light (Docs/lighting.md; `game.json`
+`lighting`; playtest `lighting`), in the Dead Cells sense: torchlight and glowing pools on hand-painted walls, a grade per
+place.
+
+| Place | Grade |
+|---|---|
+| The Meadow | Warm dusk that turns red when the sky opens |
+| Floor 1000 | Sulphur orange |
+| Floor 999 | Furnace red |
+| Floor 998 | Bone grey-violet |
+| Floor 997 | Obsidian with magenta highlights |
+
+The built-in renderer has no URP volumes: a camera fullscreen grade (bloom on emissive at threshold ≈ 1, vignette, colour
+grade, film grain on desktop) sits on top of a multiply darkness layer, and additive light sprites (lava flicker, warm
+torches, a rim on the hero, a small light on enemy bullets) punch through it within about 2 units. A phone tier (touch +
+short side ≤ 500 px) runs bloom at half resolution, drops grain, and caps lights at 8 so 390×844 holds 30+ fps. Rewind's
+scanlines and glitch stay on the letterbox / frame, off the playfield.
+
 ## Sound that never grates (takes, ducking, beds) (built 2026-11-11)
 
 Every verb sounds like something: a shot, a hit, a kill, a graze, a diamond, a jump, a landing, a dash, a rewind going and stopping. Each

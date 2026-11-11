@@ -89,6 +89,8 @@ namespace SickOfIt.Data
         public IncomingWarningsConfig incomingWarnings = new IncomingWarningsConfig();
         [Tooltip("Hit-freeze, hit flash and squash, the hero's recoil, and glows (Docs/Story.md, \"The feel of a hit\").")]
         public FeelConfig feel = new FeelConfig();
+        [Tooltip("Per-floor colour grades and local lights (Docs/lighting.md; Meadow and Floors 1000-997).")]
+        public LightingConfig lighting = new LightingConfig();
         [Tooltip("Endless Floor, the Daily Challenge and New Game Plus (Docs/Story.md, \"Again\").")]
         public ReplayConfig replay = new ReplayConfig();
 

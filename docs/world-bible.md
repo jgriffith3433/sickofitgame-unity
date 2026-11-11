@@ -22,6 +22,8 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 
 ### The Meadow (Level 1, Floor 0, built)
 - **Mood:** a nice, dull afternoon that is about to end. Warm, bright, then fire.
+- **Light (Nov 11):** warm dusk grade (`meadow`) that turns raid-red when the burning bed starts; soft dusk pool and a hero
+  rim so he reads on the bright sky (Docs/lighting.md).
 - **Look and sound:** green hills, the village's thatch, a single path; Video1's footage as the sky layer. Bed: wind, a far
   rooster, a mill creaking. Then the Overlord's hum, lasers, burning thatch.
 - **Music (Nov 11):** its own track, not the film's audio: "A nice day", a plucked D-major figure over a soft drone with a soft flute (`meadow_calm`, 84 BPM), which turns to its raid (`meadow_raid`: the same tune in D minor, 128 BPM, double kicks and alarms) the moment the sky opens (`playMusic`, 6 s in). Rewinding bends whatever is playing (slowed, low-passed) and it snaps back on release.
@@ -52,10 +54,13 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 A Circle is four stretches, each its own area. All share lava, cinders, imps and the climb.
 
 1. **The Landing and the Slag Falls (Floors 1000-996).** *Mood:* bewildered arrival, then dread with jokes. *Look:* a
-   lava river bank, sinking stones, rafts, the carved landing with the floor number, lava falls and geysers. *Sound:* lava
-   bubbling bed, stone creak, geyser one-shots; Floor 1000's bed is its `ambientSound` `ambience_floor1000` (a low lava rumble, bubbling and popping, long creaks of stone) on the Ambience bus. *Size:* 5 floors, ~8 min. *In:* Video2 drops him; *out:* the Shaft.
+   lava river bank, sinking stones, rafts, the carved landing with the floor number, lava falls and geysers. *Light (Nov 11):*
+   Floor 1000 sulphur orange, Floor 999 furnace red; lava pools flicker light onto platforms within 2 units
+   (Docs/lighting.md). *Sound:* lava bubbling bed, stone creak, geyser one-shots; Floor 1000's bed is its `ambientSound`
+   `ambience_floor1000` (a low lava rumble, bubbling and popping, long creaks of stone) on the Ambience bus. *Size:* 5 floors, ~8 min. *In:* Video2 drops him; *out:* the Shaft.
 2. **The Spill and the Imp Run (998-997).** *Mood:* looted, wrecked. *Look:* the village's wreckage dragged through Hell,
-   the baker's cart, sack imps on hauling chains. *Sound:* chain clank, imp chatter, a wailing cart wheel.
+   the baker's cart, sack imps on hauling chains. *Light (Nov 11):* Floor 998 bone grey-violet, Floor 997 obsidian with
+   magenta highlights and magenta bullet lights. *Sound:* chain clank, imp chatter, a wailing cart wheel.
 3. **The Foreman's Pile (996-991).** *Mood:* industrious, nasty. Ledges, chain lifts, crumbling stones, a collapsing
    bridge; ends in the Imp Foreman's climbing arena. *Out:* the Sack Lift (a 20-diamond fare) or the long way.
 4. **The Depot stretch (960-951).** *Mood:* a looted village rebuilt wrong. *Look:* The Depot's stacks, the Rest of the
