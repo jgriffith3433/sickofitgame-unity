@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "body": {
+    "radius": 0.4,
+    "solid": false
+  },
+  "visual": {
+    "scale": 0.2,
+    "color": "#FFD27A",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Glow",
+          "spriteSheet": "Art/Effects/Warn/Warn_orb.png",
+          "fps": 16,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Glow"
+    }
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "lifetime",
+      "seconds": 1.8
+    }
+  ],
+  "tags": [
+    "teachGlow"
+  ]
+}

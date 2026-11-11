@@ -408,6 +408,27 @@ Where the portal spits out everything that falls through: the lava sea, the vill
 imps hauling the stolen diamonds up out of it. The stretch teaches the toolkit one piece a floor and ends on the imp
 who runs the hauling.
 
+#### The first four floors: teach, then finale *(2026-11-11)*
+
+Floors 1000-997 are a four-beat lesson, floor by floor (Super Mario 3D Land's introduce, develop, twist, finale; Downwell's
+new enemy alone one stage before it matters). Each floor has **one new threat**, taken from what the bestiary already has
+(no new art):
+
+| Floor | New threat | Teach: alone, slow, glow + cue | Combine with earlier threats | Finale (the last ~15 s, from this section) |
+|---|---|---|---|---|
+| 1000 The Landing | sinking stones | glow over the first stone, `lava_bubble`; stone 1 alone, nothing else on the floor | the river's drift and the bank's climb (stones over lava) | `bank`: its three plain ledges become stones; only the last ledge is solid |
+| 999 Only 999 To Go | rising lava | glow in the playfield, `magma_rumble`, 1.2 s later it starts at 0.5 (slow) | stones and ladders over the rising lava, then the lava wave along the shelf | `chase`: the lava wave at 0.9 |
+| 998 The Spill | the cinder | glow in the river section, `slag_drip`; the first cinder comes alone out of the hay | cinders over the wreckage river, the rain and the climbing lava of the jam | `spire`: extra cinder waves on top of the rain, fans and sparks |
+| 997 Imp Run | the sack imps' chains | glow in the opening ledges, `chain_cut`; the first imp swings alone, slowly | imps over cinders and sparks, then two in rhythm | `liftStop`: five imps over every gap with the rain and cinders |
+
+Every finale is the same four things so the player can feel the floor change: a **music change** (`playMusic` the push track,
+Floor 999's push now starts here, not at the rise), a **screen-wide tint** (six flash pulses in the floor's colour, ~15 s), a
+shake, and the threat at full intensity; the landing then plays a **payoff stinger** (`sting_rank_b`, `a`, `a`, `s`) as the Shaft's
+Grudge pick opens. The glow is the `teachGlow` entity (the Warn orb, 1.8 s, a Neutral non-solid marker) spawned on the **camera**
+at x within the middle of the screen and y above centre, so on a 390x844 phone it sits in the playfield above the touch stick, never under
+the thumb (the stick lives in the control strip below the playfield in portrait, bottom-left in landscape). Written by
+`Tools/Levels/first_floors.py` (`--check` runs with no Unity; run it after the floor writers). Playtest `floors`.
+
 #### Floor 1000: The Landing
 
 - **New:** sinking stones.
@@ -449,8 +470,7 @@ who runs the hauling.
   hiccups and a loop shard drops. It goes straight back to counting.
 - **Rewind:** if the lava gets him, a rewind pulls it back down the wall with him.
 - **Feel:** the rise starts with a medium shake and the long low rumble; the roar climbs with the lava, loudest on the
-  chase. Slow motion the first time he leaves a stone just as the lava closes over it. Push music from the rise to the
-  landing.
+  chase. Slow motion the first time he leaves a stone just as the lava closes over it. Push music starts on the chase (the finale; see "The first four floors").
 - **Lines:** Announcer (title): *"FLOOR NINE HUNDRED NINETY-NINE! ONLY NINE HUNDRED NINETY-NINE TO GO!"* Hero:
   *"You said that already."* Lava starts: announcer *"THE LAVA'S RISING! CLIMB, LITTLE MAN!"*; hero: *"It's
   following me. Of course."*
