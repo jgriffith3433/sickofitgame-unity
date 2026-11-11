@@ -641,6 +641,42 @@
               }
             ]
           }
+        ],
+        "rules": [
+          {
+            "name": "THE FIRST SALVO: Hell's welcome, undone with R",
+            "when": {
+              "type": "after",
+              "seconds": 12.0
+            },
+            "do": [
+              {
+                "type": "playSound",
+                "sound": "lava_bubble",
+                "volume": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.1,
+                "duration": 0.3
+              },
+              {
+                "type": "emit",
+                "signal": "floors:1000:salvo"
+              },
+              {
+                "type": "stagedRewind",
+                "shot": "stagedEmber",
+                "distance": 2.4,
+                "speed": 5.5,
+                "slowScale": 0.2,
+                "line": "vo_hero_cmp_hold_r",
+                "lineText": "Hold R.",
+                "reliefLine": "vo_hero_cmp_noted",
+                "reliefText": "Noted."
+              }
+            ]
+          }
         ]
       }
     ]

@@ -447,6 +447,7 @@ the thumb (the stick lives in the control strip below the playfield in portrait,
 - **Surprise:** the fleeing imp's sack catches on the chain and a diamond drops out of it; it glints on the landing's
   edge (the first glint: the village's own). And straight up, if he looks, a red speck at the top of the sky.
 - **Rewind:** the first hot bath shows *Hold R*; the stone comes back up with him on it.
+- **The first salvo (2026-11-11):** about 12 s in, Hell's welcome: a `lava_bubble`, a small shake and a ring of embers (`stagedRewind`, the same staging as the Meadow's) closes on him on whatever stone he stands. Time drops to a fifth, the rewind button pulses, he says *Hold R.*; holding it takes the salvo back and he says *Noted.* The replay throws one ember he can jump. So the rewind pays off inside the floor's first 30 s, on the floor that is about the floor going wrong. Playtest `floors` (hit time, button 44+ px on touch, the rewind, the relief).
 - **Feel:** no pushes, no push music. A small shake as each stone takes his weight; no slow motion (nothing to miss).
   The roar is low and wide, the whole sea, with a hiss on every sink; it drops away on the bank.
 - **Lines:** Announcer: *"FLOOR ONE THOUSAND! THE LANDING!"* Hero (first stone sinks): *"Even the floor wants me
