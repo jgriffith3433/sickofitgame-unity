@@ -951,6 +951,7 @@ namespace SickOfIt.Playtest
                 "Then a tap while R rewinds must not be latched and must not jump when the rewind ends. Check events, tapJump.* metrics", TapJumpSeconds, "level"));
             list.Add(new PlaytestScenario(TouchControlsId, "Touch controls: a desktop run shows no touch UI; with the touch UI on (setup shortcut) level 2 shows a move stick (portrait: control strip below the playfield with a faint ~30% idle outline; landscape: floats under the thumb and fades while untouched), first-run hints, a 48+ px rewind button; a virtual finger drags the stick and the hero walks, a second finger holds rewind while the first still drags, a flick up jumps, and the hints go once used and are remembered. In the editor/standalone also resized to phone portrait and landscape. Check events touch-controls <beat>, touch.* metrics", TouchControlsSeconds, "level"));
             list.Add(new PlaytestScenario(MenuTouchLayoutId, "Main-menu stickers and phone touch controls together: the main menu's NOW WITH REWIND / NOW WITH GHOSTS stickers audited clear of each other and the buttons at 1920x1080, 1280x720, 1024x768, phone portrait and landscape (window resize in the editor/standalone; WebGL keeps the runner's device size), then the touch-controls scenario (stick fade/float, move, rewind, jump). check events for main menu sticker / touch-controls", MenuTouchLayoutSeconds, "menus", "level"));
+            list.Add(new PlaytestScenario(AgainPhoneId, "Death to play without a load (run on device \"phone\", 390x844, touch): the bot plays level 3 to lose ten times; each Again! is a finger tap. Median of the first three taps to play under 1 s, no loading cover, no frame over 250 ms, the next-floor warm owner never held after an arrival. check events again-phone <beat>; metrics againPhone.*", AgainPhoneSeconds, "level"));
             list.Add(new PlaytestScenario(DeathRestartId, "Flow between attempts: the Landing's Waystone reached (setup shortcut), level 3 loaded directly, the bot plays to lose four times. Each death screen shows a quip under the title (varied: never the same twice running, 2+ different over the four) and an Again! button; pressing it with the mouse starts the next attempt in under 1 s of real time. Then level 3 is cleared by the bot: the results screen lists Time (m:ss) and Clean Kills. check events death-restart <beat>; metrics deathRestart.*", DeathRestartSeconds, "level"));
             list.Add(new PlaytestScenario(DeathReturnId, "The death screen's Return offer (Docs/Story.md \"Waystones and runs\"): the Landing's Waystone reached (setup shortcut), level 3 loaded directly with 25 diamonds and a Grudge, " +
                 "the bot plays to lose; the screen offers \"Return for 10 diamonds\" and the button is clicked: level 3 again, 15 diamonds, a moment of safety, the run and Grudges kept. Then dying with 15 and skipping with Escape " +
@@ -1382,6 +1383,8 @@ namespace SickOfIt.Playtest
                 yield return session.DeathReturnRun();
             else if (id == DeathRestartId)
                 yield return session.DeathRestartRun();
+            else if (id == AgainPhoneId)
+                yield return session.AgainPhoneRun();
             else if (id == RewindJuiceId)
                 yield return session.RewindJuiceRun();
             else if (id == FirstRewindId)

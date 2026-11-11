@@ -113,7 +113,7 @@ namespace SickOfIt.Core.Addressables
         /// <summary>
         /// Load and activate a scene, unloading the previous gameplay scene
         /// </summary>
-        public void LoadScene(string sceneName, System.Action onComplete = null)
+        public void LoadScene(string sceneName, System.Action onComplete = null, bool fast = false)
         {
             if (isLoading)
             {
@@ -124,7 +124,7 @@ namespace SickOfIt.Core.Addressables
                 return;
             }
 
-            StartCoroutine(LoadSceneAsync(sceneName, true, onComplete));
+            StartCoroutine(LoadSceneAsync(sceneName, !fast, onComplete, fast));
         }
 
         public void LoadLevel(int levelNumber, System.Action onComplete = null)
@@ -137,7 +137,8 @@ namespace SickOfIt.Core.Addressables
             LoadScene($"Video{videoNumber}", onComplete);
         }
 
-        private IEnumerator LoadSceneAsync(string sceneName, bool showLoadingUI, System.Action onComplete)
+        /// <summary>fast: a retry of a level whose assets GameAssets holds (Again!): no loading screen and no UnloadUnusedAssets/GC passes (the death scene's arrival ran them; what the scene held is still held).</summary>
+        private IEnumerator LoadSceneAsync(string sceneName, bool showLoadingUI, System.Action onComplete, bool fast = false)
         {
             isLoading = true;
             bool shouldHideLoadingScreen = false;
@@ -201,19 +202,22 @@ namespace SickOfIt.Core.Addressables
                     // that can prevent the GC from collecting the underlying operation objects.
                     AddressablesOperationManager.Instance.CancelAllLabelLoads();
 
-                    // --- First cleanup pass ---
-                    yield return Resources.UnloadUnusedAssets();
-                    System.GC.Collect();
+                    if (!fast)
+                    {
+                        // --- First cleanup pass ---
+                        yield return Resources.UnloadUnusedAssets();
+                        System.GC.Collect();
 
-                    // Yield a frame so the engine can process deferred native deallocations
-                    // (texture upload buffers, GL resource cleanup, bundle unload finalization).
-                    yield return null;
+                        // Yield a frame so the engine can process deferred native deallocations
+                        // (texture upload buffers, GL resource cleanup, bundle unload finalization).
+                        yield return null;
 
-                    // --- Second cleanup pass ---
-                    // Catches assets that only became unused after the first pass freed their
-                    // dependants (e.g., materials no longer referencing destroyed textures).
-                    yield return Resources.UnloadUnusedAssets();
-                    System.GC.Collect();
+                        // --- Second cleanup pass ---
+                        // Catches assets that only became unused after the first pass freed their
+                        // dependants (e.g., materials no longer referencing destroyed textures).
+                        yield return Resources.UnloadUnusedAssets();
+                        System.GC.Collect();
+                    }
                 }
 
                 // A reload unloads the old copy first, so only one scene by that name is ever loaded. An empty holder
@@ -297,8 +301,11 @@ namespace SickOfIt.Core.Addressables
                     yield return StartCoroutine(UnloadSceneAsync(currentGameplayScene));
 
                     // Final cleanup pass — catch anything the scene unload freed
-                    yield return Resources.UnloadUnusedAssets();
-                    System.GC.Collect();
+                    if (!fast)
+                    {
+                        yield return Resources.UnloadUnusedAssets();
+                        System.GC.Collect();
+                    }
                 }
 
                 // Activate new scene content (after old scene memory is freed).
