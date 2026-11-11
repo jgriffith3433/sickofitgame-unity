@@ -178,6 +178,9 @@ namespace SickOfIt.Gameplay
         static readonly MenuHudLayout DefaultLandscape = MenuHudLayout.Landscape();
         static readonly MenuHudLayout DefaultPortrait = MenuHudLayout.Portrait();
 
+        /// <summary>On a phone held sideways the rewind button sits low in the right thumb's reach, not in the top corner.</summary>
+        static readonly MenuPlacement TouchLandscapeRewind = MenuPlacement.At(1f, 0f, -150f, 220f, 180f, 180f);
+
         /// <summary>The landscape placements, each falling back to the built-in one when the theme leaves it off.</summary>
         MenuHudLayout Landscape => landscapeLayout ??= Merge(style.landscape, DefaultLandscape);
         MenuHudLayout landscapeLayout;
@@ -374,7 +377,7 @@ namespace SickOfIt.Gameplay
                 hoverRotation = 8f,
             };
             rewindButton = menu.AddButtonAt(place.anchor, place.offset, "\u25C4\u25C4", buttonStyle, null);
-            Lay(rewindButton.transform.parent, l => l.rewind, MenuElementKind.Button);
+            Lay(rewindButton.transform.parent, l => TouchUiOn && ReferenceEquals(l, Landscape) ? TouchLandscapeRewind : l.rewind, MenuElementKind.Button);
             rewindButton.Pressed += SickOfIt.Core.Rewind.RewindInput.Begin;
             rewindButton.Released += SickOfIt.Core.Rewind.RewindInput.End;
             // Keep it out of keyboard/gamepad navigation, so arrow keys never select it mid-fight.

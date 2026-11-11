@@ -23,7 +23,7 @@ namespace SickOfIt.Gameplay
     {
         const string StickMovedKey = "TouchStickMoved";
         const string StickRewoundKey = "TouchStickRewound";
-        const float MinRewindPixels = 48f;
+        const float MinRewindPixels = 88f;
         /// <summary>Idle outline alpha (30%): faint enough that shots behind the landscape stick stay readable.</summary>
         const float IdleOutlineAlpha = 0.3f;
         /// <summary>How fast the stick fades between idle and held.</summary>
@@ -286,15 +286,17 @@ namespace SickOfIt.Gameplay
                 stickFill.color = new Color(0.12f, 0.07f, 0.13f, 0.55f * held);
             if (stickKnob != null)
                 stickKnob.color = new Color(1f, 0.96f, 0.84f, 0.85f * held);
+            // Portrait: the strip always shows its two sides (◄ left, ► right) so the zones read at a glance.
+            float arrowAlpha = Mathf.Max(held, MenuScreen.Portrait ? 0.55f : 0f);
             if (stickArrowL != null)
             {
                 var c = stickArrowL.color;
-                stickArrowL.color = new Color(c.r, c.g, c.b, held);
+                stickArrowL.color = new Color(c.r, c.g, c.b, arrowAlpha);
             }
             if (stickArrowR != null)
             {
                 var c = stickArrowR.color;
-                stickArrowR.color = new Color(c.r, c.g, c.b, held);
+                stickArrowR.color = new Color(c.r, c.g, c.b, arrowAlpha);
             }
             // Idle ring is smaller; it grows to full size under the thumb.
             if (stickRingRect != null)
