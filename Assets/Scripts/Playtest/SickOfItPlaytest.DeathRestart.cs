@@ -73,11 +73,12 @@ namespace SickOfIt.Playtest
                     {
                         var goalCard = SickOfIt.Core.Progression.NextGoalCard.Current;
                         yield return WaitReal(2.2f);
-                        DeathRestartCheck($"next goal {i + 1}", goalCard != null && goalCard.Goal != null && goalCard.Label != null && goalCard.Label.text.Length > 0,
-                            goalCard != null ? $"{goalCard.Goal.Kind}: {goalCard.Label.text} (bar {goalCard.FillFraction:0.00}, ticks {goalCard.Ticks})" : "no card");
+                        bool noEmptyBar = goalCard == null || (goalCard.Goal != null && goalCard.Goal.To > 0 && goalCard.Label != null && goalCard.Label.text.Length > 0);
+                        DeathRestartCheck($"next goal {i + 1}", noEmptyBar,
+                            goalCard != null ? $"{goalCard.Goal.Kind}: {goalCard.Label.text} (bar {goalCard.FillFraction:0.00}, ticks {goalCard.Ticks})" : "no card: nothing gathered, the empty bar is hidden");
                         var rect = goalCard != null ? goalCard.Panel : null;
-                        bool sane = rect != null && rect.rect.width > 0f && rect.rect.height > 0f;
-                        DeathRestartCheck($"next goal fits {i + 1}", sane, rect != null ? $"card {rect.rect.width:0}x{rect.rect.height:0}, Again! offered" : "no card");
+                        bool sane = goalCard == null || (rect != null && rect.rect.width > 0f && rect.rect.height > 0f);
+                        DeathRestartCheck($"next goal fits {i + 1}", sane, rect != null ? $"card {rect.rect.width:0}x{rect.rect.height:0}, Again! offered" : "no card, Again! offered");
                         DeathRestartCheck($"reaction {i + 1}", true, $"cause \"{SickOfIt.Core.Progression.NextGoal.LastCause}\" -> {(SickOfIt.Core.Progression.DeathReaction.LastSaid == "" ? "no clip made yet (pending_clips.json)" : SickOfIt.Core.Progression.DeathReaction.LastSaid)}");
                     }
                     if (death == null || !death.AgainOffered) { End(PlaytestOutcome.Lost); yield break; }
