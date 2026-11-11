@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "extends": "fireball",
+  "tags": ["stagedEmber"],
+  "abilities": [
+    { "type": "projectile", "damage": 1 },
+    { "type": "lifetime", "seconds": 2.2 }
+  ]
+}

@@ -310,6 +310,7 @@ namespace SickOfIt.Gameplay
         // ─── Rewind: a labeled hold button (top-right), a rewinding overlay, and a hint on the first hit ───
 
         MenuButton rewindButton;
+        bool rewindPulseWas;
         RectTransform rewindRoot;
         TextMeshProUGUI rewindKey;
         Image rewindTint;
@@ -423,6 +424,15 @@ namespace SickOfIt.Gameplay
                 rewindRoot.gameObject.SetActive(canRewind);
             if (!rewinding)
                 rewindButton.interactable = hasJuice && !locked;
+
+            // The staged first rewind (Level 1): the button grows and pulses, unscaled time (the world is in slow motion).
+            bool pulse = SickOfIt.Gameplay.Content.FirstRewindStage.Pulsing;
+            if (pulse || rewindPulseWas)
+            {
+                float k = pulse ? 1.55f + 0.2f * Mathf.Sin(Time.unscaledTime * 8f) : 1f;
+                rewindRoot.localScale = new Vector3(k, k, 1f);
+                rewindPulseWas = pulse;
+            }
             MenuGraphics.SetText(rewindKey, locked ? Texts.rewindLocked : hasJuice ? RewindKeyText : "Out of juice");
             rewindKey.enableVertexGradient = false;
             rewindKey.color = hasJuice && !locked ? new Color(1f, 0.96f, 0.84f, 1f) : style.rewindEmpty;

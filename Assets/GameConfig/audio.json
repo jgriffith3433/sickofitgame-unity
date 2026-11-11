@@ -18392,6 +18392,21 @@
       "pitchVariation": 0,
       "maxVoices": 1,
       "cooldown": 0.5
+    },
+    {
+      "id": "meadow_bed",
+      "kind": "Effect",
+      "prompt": "A calm village meadow in the afternoon: soft wind through grass, a far-off rooster, a hen clucking now and then, a wooden mill creaking slowly, with a faint far crackle of fire under it. Seamless loop, no music, no melody.",
+      "durationSeconds": 12,
+      "promptInfluence": 0.5,
+      "loop": true,
+      "voice": "",
+      "voiceId": "",
+      "clip": "Audio/Generated/thatch_burst.mp3",
+      "volume": 0.25,
+      "pitchVariation": 0,
+      "maxVoices": 1,
+      "cooldown": 0.1
     }
   ]
 }

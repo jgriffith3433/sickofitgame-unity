@@ -236,18 +236,61 @@
         "name": "niceDay",
         "onEnter": [
           {
-            "type": "showText",
-            "text": "PROLOGUE: THE MEADOW",
-            "duration": 2.5,
-            "sound": "vo_meadow_title",
-            "color": "#FFD27A"
+            "type": "objectiveText",
+            "text": "PROLOGUE: THE MEADOW"
+          },
+          {
+            "type": "spawn",
+            "entity": "meadowBed",
+            "anchor": "Camera",
+            "at": [
+              0,
+              0
+            ],
+            "facePlayer": false
+          },
+          {
+            "type": "spawn",
+            "entity": "meadowNeighbour",
+            "anchor": "Camera",
+            "at": [
+              -5.6,
+              -2.0
+            ],
+            "facePlayer": false,
+            "id": "nb1"
+          },
+          {
+            "type": "spawn",
+            "entity": "meadowNeighbour",
+            "anchor": "Camera",
+            "at": [
+              5.6,
+              -2.0
+            ],
+            "facePlayer": false,
+            "id": "nb2"
+          },
+          {
+            "type": "walkEntityTo",
+            "target": "nb1",
+            "anchor": "Camera",
+            "x": -1.2,
+            "speed": 0.8
+          },
+          {
+            "type": "walkEntityTo",
+            "target": "nb2",
+            "anchor": "Camera",
+            "x": 2.6,
+            "speed": 0.7
           },
           {
             "type": "runSequence",
             "steps": [
               {
                 "type": "wait",
-                "seconds": 3.0
+                "seconds": 3.5
               },
               {
                 "type": "playSound",
@@ -264,20 +307,28 @@
                 "duration": 0.45
               },
               {
-                "type": "showText",
-                "text": "Then the sky opened.",
-                "duration": 2.4,
-                "style": "Subtitle",
-                "color": "#C9B8A6"
+                "type": "walkEntityTo",
+                "target": "nb1",
+                "anchor": "Camera",
+                "x": -8.0,
+                "speed": 3.2
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "nb2",
+                "anchor": "Camera",
+                "x": 8.0,
+                "speed": 3.2
               }
             ]
           }
         ],
         "rules": [
           {
+            "name": "sky opens",
             "when": {
               "type": "after",
-              "seconds": 6.0
+              "seconds": 4.0
             },
             "do": [
               {
@@ -292,9 +343,10 @@
         "name": "imps",
         "rules": [
           {
+            "name": "first imp",
             "when": {
               "type": "after",
-              "seconds": 1.5
+              "seconds": 1.0
             },
             "do": [
               {
@@ -305,17 +357,41 @@
                   4.4,
                   -2.0
                 ],
+                "facePlayer": false,
                 "tags": [
                   "wave"
                 ]
               }
-            ],
-            "name": "first imp, alone"
+            ]
           },
           {
+            "name": "ember crosses",
             "when": {
               "type": "after",
-              "seconds": 8.0
+              "seconds": 2.2
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "stagedEmber",
+                "anchor": "Camera",
+                "at": [
+                  6.0,
+                  -1.0
+                ],
+                "facePlayer": false,
+                "velocity": [
+                  -4.5,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "name": "second imp",
+            "when": {
+              "type": "after",
+              "seconds": 3.0
             },
             "do": [
               {
@@ -326,17 +402,68 @@
                   -4.4,
                   -2.0
                 ],
+                "facePlayer": false,
                 "tags": [
                   "wave"
                 ]
               }
-            ],
-            "name": "second imp, other side"
+            ]
           },
           {
+            "name": "runner right",
             "when": {
               "type": "after",
-              "seconds": 14.0
+              "seconds": 1.5
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "meadowNeighbour",
+                "anchor": "Camera",
+                "at": [
+                  -5.6,
+                  -2.0
+                ],
+                "facePlayer": false,
+                "id": "nb3"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "nb3",
+                "anchor": "Camera",
+                "x": 8.0,
+                "speed": 3.4
+              }
+            ]
+          },
+          {
+            "name": "ember, other side",
+            "when": {
+              "type": "after",
+              "seconds": 5.5
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "stagedEmber",
+                "anchor": "Camera",
+                "at": [
+                  -6.0,
+                  -0.6
+                ],
+                "facePlayer": false,
+                "velocity": [
+                  4.5,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "name": "third imp",
+            "when": {
+              "type": "after",
+              "seconds": 7.0
             },
             "do": [
               {
@@ -347,6 +474,100 @@
                   4.2,
                   -2.0
                 ],
+                "facePlayer": false,
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "fourth imp",
+            "when": {
+              "type": "after",
+              "seconds": 9.5
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [
+                  -4.2,
+                  0.6
+                ],
+                "facePlayer": false,
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "first thatch",
+            "when": {
+              "type": "after",
+              "seconds": 11.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "cinderThatch",
+                "anchor": "Camera",
+                "at": [
+                  4.6,
+                  0.5
+                ],
+                "facePlayer": false,
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "runner left",
+            "when": {
+              "type": "after",
+              "seconds": 11.5
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "meadowNeighbour",
+                "anchor": "Camera",
+                "at": [
+                  5.6,
+                  -2.0
+                ],
+                "facePlayer": false,
+                "id": "nb4"
+              },
+              {
+                "type": "walkEntityTo",
+                "target": "nb4",
+                "anchor": "Camera",
+                "x": -8.0,
+                "speed": 3.4
+              }
+            ]
+          },
+          {
+            "name": "fifth imp",
+            "when": {
+              "type": "after",
+              "seconds": 13.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [
+                  -4.4,
+                  -2.0
+                ],
+                "facePlayer": false,
                 "tags": [
                   "wave"
                 ]
@@ -356,20 +577,58 @@
                 "entity": "imp",
                 "anchor": "Camera",
                 "at": [
-                  -4.2,
-                  0.6
+                  4.4,
+                  -2.0
                 ],
+                "facePlayer": false,
                 "tags": [
                   "wave"
                 ]
               }
-            ],
-            "name": "two imps"
+            ]
           },
           {
+            "name": "ember volley",
             "when": {
               "type": "after",
-              "seconds": 20.0
+              "seconds": 15.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "stagedEmber",
+                "anchor": "Camera",
+                "at": [
+                  6.0,
+                  -1.2
+                ],
+                "facePlayer": false,
+                "velocity": [
+                  -4.5,
+                  0.0
+                ]
+              },
+              {
+                "type": "spawn",
+                "entity": "stagedEmber",
+                "anchor": "Camera",
+                "at": [
+                  6.0,
+                  -0.4
+                ],
+                "facePlayer": false,
+                "velocity": [
+                  -4.0,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "name": "to laser",
+            "when": {
+              "type": "after",
+              "seconds": 17.0
             },
             "do": [
               {
@@ -460,9 +719,52 @@
             "name": "cinder and imp"
           },
           {
+            "name": "sixth imp",
             "when": {
               "type": "after",
-              "seconds": 14.0
+              "seconds": 2.0
+            },
+            "do": [
+              {
+                "type": "spawn",
+                "entity": "imp",
+                "anchor": "Camera",
+                "at": [
+                  4.4,
+                  -2.0
+                ],
+                "facePlayer": false,
+                "tags": [
+                  "wave"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "THE FIRST REWIND",
+            "when": {
+              "type": "after",
+              "seconds": 9.0
+            },
+            "do": [
+              {
+                "type": "stagedRewind",
+                "shot": "stagedEmber",
+                "distance": 2.4,
+                "speed": 5.5,
+                "slowScale": 0.2,
+                "line": "vo_hero_cmp_hold_r",
+                "lineText": "Hold R.",
+                "reliefLine": "vo_hero_cmp_noted",
+                "reliefText": "Noted."
+              }
+            ]
+          },
+          {
+            "name": "on",
+            "when": {
+              "type": "after",
+              "seconds": 16.0
             },
             "do": [
               {
