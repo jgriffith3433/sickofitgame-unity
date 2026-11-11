@@ -38,6 +38,29 @@ namespace SickOfIt.Core.Addressables
         private string pendingSceneName;
         private readonly List<System.Action> pendingCallbacks = new List<System.Action>();
 
+        // A request for what is already loading (same scene, same level / video / death) is that load, not another one after it:
+        // it joins, and its callback is called when the load ends. Without this a retry, the death scene's own reload and a
+        // runner's load each replayed the scene one after another (Level and Death unloading several times in 0.2 s).
+        private string loadingKey;
+
+        /// <summary>Scene loads started, requests that joined one already running and requests queued behind one (for the playtest: a retry is a few loads, never a loop).</summary>
+        public static int LoadsStarted { get; private set; }
+        public static int LoadsJoined { get; private set; }
+        public static int LoadsQueued { get; private set; }
+        private readonly List<System.Action> joinedCallbacks = new List<System.Action>();
+
+        /// <summary>The scene and the choice that makes it what it is: the level number, the video or the death config the scene reads on load.</summary>
+        private static string RequestKey(string sceneName)
+        {
+            switch (sceneName)
+            {
+                case "Level": return $"Level:{PlayerPrefs.GetInt("CurrentLevelNumber", 0)}:{GameAssets.PendingLevelScene}";
+                case "Video": return $"Video:{PlayerPrefs.GetInt("CurrentVideoNumber", 0)}";
+                case "Death": return $"Death:{PlayerPrefs.GetString("CurrentDeathConfig", "")}";
+                default: return sceneName;
+            }
+        }
+
         // Base scenes that should be unloaded when entering gameplay
         private static readonly string[] BASE_SCENES = { "MainMenu", "LevelSelection", "VideoSelection" };
 
@@ -117,8 +140,23 @@ namespace SickOfIt.Core.Addressables
         {
             if (isLoading)
             {
+                if (RequestKey(sceneName) == loadingKey)
+                {
+                    // The newest request is the one already loading: whatever was queued behind it is older and dropped.
+                    Debug.Log($"[AddressablesSceneLoader] '{sceneName}' is already loading: joined it");
+                    LoadsJoined++;
+                    if (onComplete != null) joinedCallbacks.Add(onComplete);
+                    if (pendingSceneName != null)
+                    {
+                        joinedCallbacks.AddRange(pendingCallbacks);
+                        pendingCallbacks.Clear();
+                        pendingSceneName = null;
+                    }
+                    return;
+                }
                 // Rejecting it left the death screen up for good (the reload after a death was dropped): queue it.
                 Debug.LogWarning($"Already loading a scene. Queued request for: {sceneName}");
+                LoadsQueued++;
                 pendingSceneName = sceneName;
                 if (onComplete != null) pendingCallbacks.Add(onComplete);
                 return;
@@ -141,6 +179,8 @@ namespace SickOfIt.Core.Addressables
         private IEnumerator LoadSceneAsync(string sceneName, bool showLoadingUI, System.Action onComplete, bool fast = false)
         {
             isLoading = true;
+            LoadsStarted++;
+            loadingKey = RequestKey(sceneName);
             bool shouldHideLoadingScreen = false;
 
             try
@@ -327,7 +367,21 @@ namespace SickOfIt.Core.Addressables
             {
                 // Always reset the loading flag, even if an exception occurs
                 isLoading = false;
+                loadingKey = null;
+                FlushJoined();
                 PlayPendingRequest();
+            }
+        }
+
+        private void FlushJoined()
+        {
+            if (joinedCallbacks.Count == 0) return;
+            var callbacks = joinedCallbacks.ToArray();
+            joinedCallbacks.Clear();
+            foreach (var callback in callbacks)
+            {
+                try { callback?.Invoke(); }
+                catch (System.Exception e) { Debug.LogException(e); }
             }
         }
 

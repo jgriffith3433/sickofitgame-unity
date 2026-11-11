@@ -55,6 +55,7 @@ namespace SickOfIt.Core.Flow
         public void LoadMainMenu()
         {
             // Back at the menu nothing of a level, video or death is needed (GameAssets keeps only "core").
+            loadSerial++; // a level, video or death still on its way is replaced by the menu
             ReleaseAll();
             // Always load MainMenu normally (not via Addressables) as it's part of the base build
             SceneManager.LoadScene(MAIN_MENU_SCENE);
@@ -184,13 +185,21 @@ namespace SickOfIt.Core.Flow
         /// </summary>
         void Prepared(string sceneName, string firstOwner, string[] firstScopes, string secondOwner, string[] secondScopes, string[] release, bool fast = false)
         {
+            // Single flight: this request is now the newest, so any older one still bringing its assets in stops (it would
+            // release owners and ask the loader for a second scene a moment after this one: the Level <-> Death reload loop).
+            int serial = ++loadSerial;
             if (!GameAssets.Managed)
             {
                 AddressablesSceneLoader.Instance.LoadScene(sceneName, null, fast);
                 return;
             }
-            StartCoroutine(PrepareThenLoad(sceneName, firstOwner, firstScopes, secondOwner, secondScopes, release, fast));
+            StartCoroutine(PrepareThenLoad(sceneName, serial, firstOwner, firstScopes, secondOwner, secondScopes, release, fast));
         }
+
+        /// <summary>The newest scene request's number. A request whose number is no longer this one has been replaced and does nothing more.</summary>
+        int loadSerial;
+
+        bool Superseded(int serial) => serial != loadSerial;
 
         /// <summary>True while the Shaft screen is up (set by ShaftScreen, which lives in the Progression assembly that depends on Core).</summary>
         public static bool ShaftCovering;
@@ -213,7 +222,7 @@ namespace SickOfIt.Core.Flow
             return true;
         }
 
-        IEnumerator PrepareThenLoad(string sceneName, string firstOwner, string[] firstScopes, string secondOwner, string[] secondScopes, string[] release, bool fast = false)
+        IEnumerator PrepareThenLoad(string sceneName, int serial, string firstOwner, string[] firstScopes, string secondOwner, string[] secondScopes, string[] release, bool fast = false)
         {
             // The screen goes black while the assets come in, with a bar: the first owner's share is the first half
             // (the hero, usually in already), the second's the rest.
@@ -225,6 +234,7 @@ namespace SickOfIt.Core.Flow
             {
                 Cover(0f);
                 yield return GameAssets.EnsureLate(p => Cover(p * 0.3f));
+                if (Superseded(serial)) yield break;
             }
             // Everything already in (the intro preloaded it): no cover, no bar.
             bool inAlready = GameAssets.Managed && AllLoaded(firstScopes) && AllLoaded(secondScopes);
@@ -232,6 +242,7 @@ namespace SickOfIt.Core.Flow
             {
                 if (firstOwner != null) yield return GameAssets.Acquire(firstOwner, firstScopes);
                 if (secondOwner != null) yield return GameAssets.Acquire(secondOwner, secondScopes);
+                if (Superseded(serial)) yield break;
                 foreach (string owner in release)
                     GameAssets.Release(owner);
                 AddressablesSceneLoader.Instance.LoadScene(sceneName, null, fast);
@@ -239,9 +250,15 @@ namespace SickOfIt.Core.Flow
             }
             Cover(0f);
             if (firstOwner != null)
+            {
                 yield return GameAssets.Acquire(firstOwner, firstScopes, p => Cover(both ? p * 0.3f : p));
+                if (Superseded(serial)) yield break;
+            }
             if (secondOwner != null)
+            {
                 yield return GameAssets.Acquire(secondOwner, secondScopes, p => Cover(both ? 0.3f + p * 0.7f : p));
+                if (Superseded(serial)) yield break;
+            }
             Cover(1f);
             foreach (string owner in release)
                 GameAssets.Release(owner);
@@ -251,16 +268,18 @@ namespace SickOfIt.Core.Flow
         /// <summary>Loads a base-build screen that reads the late core's art (select cards, shop) once it is in.</summary>
         void LoadAfterLate(string sceneName)
         {
+            loadSerial++; // a level, video or death still on its way is replaced by this screen
             if (GameAssets.LateReady)
                 SceneManager.LoadScene(sceneName);
             else
-                StartCoroutine(LateThenLoad(sceneName));
+                StartCoroutine(LateThenLoad(sceneName, loadSerial));
         }
 
-        IEnumerator LateThenLoad(string sceneName)
+        IEnumerator LateThenLoad(string sceneName, int serial)
         {
             Cover(0f);
             yield return GameAssets.EnsureLate(p => Cover(p));
+            if (Superseded(serial)) yield break;
             Cover(1f);
             SceneManager.LoadScene(sceneName);
         }
