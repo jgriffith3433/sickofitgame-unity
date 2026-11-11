@@ -150,6 +150,8 @@ namespace SickOfIt.Core.Progression
             layout.title.show = false;
             layout.subtitle.show = false;
             var menu = SickOfIt.Core.UI.Menus.MenuCanvas.Create("DeathUI", theme, layout, gameObject);
+            // Super Hexagon: nothing fades in, every button is solid and live from the first frame.
+            menu.EntranceOverride = new SickOfIt.Data.Config.MenuEntrance { type = SickOfIt.Data.Config.MenuEntranceType.None, delay = 0f, stagger = 0f, duration = 0f };
             var style = menu.Theme.button.Clone();
             style.size = new Vector2(340f, 92f);
             string label = menu.Theme.texts != null ? menu.Theme.texts.rageQuit : "Rage Quit";
@@ -565,6 +567,12 @@ namespace SickOfIt.Core.Progression
 
         private void Update()
         {
+            // Again! on the keyboard, live from the first frame (Enter or Space; R stays the rewind).
+            var kb = Keyboard.current;
+            if (kb != null && againButton != null && AgainPressedAt < 0f
+                && (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame))
+                OnAgain();
+
             if (deathCompleted)
             {
                 // Waiting on the feedback card: Escape goes on without it.
