@@ -18,6 +18,48 @@ namespace SickOfIt.Playtest
         /// <summary>The fast restart's budget (real seconds from the click to the next level running).</summary>
         const float AgainBudgetSeconds = 1f;
 
+        /// <summary>
+        /// Watches the hero's death window: the frame it opens on (the hit that leaves him at 0) and the 2 real seconds after it, and keeps
+        /// the longest frame (<c>Time.unscaledDeltaTime</c>, so the hit-freeze doesn't hide it). Read-only, no polling outside its own Update.
+        /// </summary>
+        sealed class LastHitHitchProbe : MonoBehaviour
+        {
+            public const float BudgetMs = 100f;
+            const float WatchSeconds = 2f;
+            float watchUntil = -1f;
+            bool armed;
+            SickOfIt.Combat.Health.PlayerHealth health;
+
+            public bool Measured { get; private set; }
+            public float WorstMs { get; private set; }
+
+            public void Begin() { armed = true; Measured = false; WorstMs = 0f; watchUntil = -1f; health = null; }
+
+            void Update()
+            {
+                if (!armed)
+                    return;
+                if (health == null)
+                {
+                    var world = GameplayWorld.Instance;
+                    if (world != null && world.Player != null)
+                        health = world.Player.GetComponentInChildren<SickOfIt.Combat.Health.PlayerHealth>();
+                    return;
+                }
+                if (watchUntil < 0f)
+                {
+                    if (health.DeathTimeLeft < 0f)
+                        return;
+                    watchUntil = Time.unscaledTime + WatchSeconds;
+                    Measured = true;
+                }
+                if (Time.unscaledTime <= watchUntil)
+                    WorstMs = Mathf.Max(WorstMs, Time.unscaledDeltaTime * 1000f);
+                else
+                    armed = false;
+            }
+        }
+
         sealed partial class Session
         {
             int deathRestartPassed, deathRestartFailed;
@@ -56,11 +98,17 @@ namespace SickOfIt.Playtest
                 var quips = new List<string>();
                 int repeats = 0;
                 const int deaths = 4;
+                var hitch = new GameObject("[LastHitHitchProbe]").AddComponent<LastHitHitchProbe>();
                 for (int i = 0; i < deaths; i++)
                 {
                     roguelite.SetPoints(0);
+                    hitch.Begin();
                     yield return DeathReturnDie(level, 0);
                     if (Run.Done) yield break;
+                    // The 2 s after the hit that left him at 0 (his last life): no frame over 100 ms (criterion for the phone run at 390x844).
+                    DeathRestartCheck($"last-life hit {i + 1}", hitch.Measured && hitch.WorstMs <= LastHitHitchProbe.BudgetMs,
+                        hitch.Measured ? $"worst frame {hitch.WorstMs:0} ms in the 2 s after the hit (budget {LastHitHitchProbe.BudgetMs:0} ms), the death overlay and the death screen both came" : "the hit that left him at 0 was never seen");
+                    Run.Metric("deathRestart.lastHitWorstFrameMs." + (i + 1), hitch.WorstMs);
                     var death = DeathRuntime.Current;
                     string quip = death != null ? death.QuipText : "";
                     bool fresh = quips.Count == 0 || quips[quips.Count - 1] != quip;
@@ -101,6 +149,7 @@ namespace SickOfIt.Playtest
                     DeathRestartCheck($"restart {i + 1}", took < AgainBudgetSeconds, $"Again! to level {next} running in {took:0.00} s (budget {AgainBudgetSeconds:0.0} s)");
                     Run.Progress(0.05f + 0.15f * (i + 1));
                 }
+                UnityEngine.Object.Destroy(hitch.gameObject);
                 var distinct = new HashSet<string>(quips);
                 DeathRestartCheck("varied", distinct.Count >= 2 && repeats == 0, $"{distinct.Count} different quips over {deaths} deaths: {string.Join(" / ", quips)}");
 
