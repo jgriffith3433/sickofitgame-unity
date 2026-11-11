@@ -258,7 +258,7 @@
     overlay.id = 'hawkes-tap';
     overlay.setAttribute('role', 'button');
     overlay.setAttribute('aria-label', 'Tap to play');
-    overlay.innerHTML = '<h1>SICK OF IT</h1><button type="button">Tap to play</button><p>Sound on. Hell is loud.</p>';
+    overlay.innerHTML = '<h1>SICK OF IT</h1><button type="button">Tap to play</button>';
     document.body.appendChild(overlay);
     overlay.addEventListener('click', onTap);
     // touchend counts as a gesture on iOS (touchstart doesn't); preventDefault stops the follow-up mouse

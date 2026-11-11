@@ -468,14 +468,16 @@ namespace SickOfIt.Core.Progression
             RogueliteManager.Instance.ResetAllRogueliteData();
             GameProgressManager.Instance.InitializeNewPlayer();
             FtueProgress.BeginNewGame();
+            // The climb starts on tap: Floor 1000 (level 2) is the first thing played; the Meadow stays in Pick a Level.
             PlayerPrefs.SetInt("Level_1_Visited", 1);
-            PlayerPrefs.SetInt("ReturnToLevel", 1);
+            PlayerPrefs.SetInt("HighestLevelReached", 2);
+            PlayerPrefs.SetInt("ReturnToLevel", 2);
             PlayerPrefs.Save();
 
             if (bundleDownloadManager != null)
-                bundleDownloadManager.StartDownloadForLevel(1);
+                bundleDownloadManager.StartDownloadForLevel(2);
             else if (BundleDownloadManager.Instance != null)
-                BundleDownloadManager.Instance.StartDownloadForLevel(1);
+                BundleDownloadManager.Instance.StartDownloadForLevel(2);
 
             // Straight into play (quality rule: the hook in the first 30 s is something happening, not a 60 s film):
             // the house explodes, then Level 1, whose opening is the intro's story told in the level (the sky opens over
@@ -483,10 +485,10 @@ namespace SickOfIt.Core.Progression
             StartCoroutine(TransitionThenExecute(() =>
             {
                 if (sceneLoadingManager != null)
-                    sceneLoadingManager.LoadLevel(1);
+                    sceneLoadingManager.LoadLevel(2);
                 else
-                    SceneTransitionManager.Instance.LoadLevel(1);
-            }, 1));
+                    SceneTransitionManager.Instance.LoadLevel(2);
+            }, 2));
         }
 
         /// <summary>
