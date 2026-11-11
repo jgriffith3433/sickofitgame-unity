@@ -227,6 +227,23 @@ namespace SickOfIt.Core.Progression
         private void OnEnable()
         {
             GameContent.Changed += OnContentChanged;
+            GameplayTelemetry.Recorded += OnPhaseRecorded;
+        }
+
+        /// <summary>
+        /// Past the floor's midpoint (the phase event, never polled) the next floor's bundles start coming in behind the play
+        /// (phones only: <see cref="SceneTransitionManager.WarmNextLevel"/>), so the Shaft's drop has little or nothing left to wait for.
+        /// </summary>
+        private void OnPhaseRecorded(GameplayTelemetry log, GameplayTelemetry.Event e)
+        {
+            if (e.Kind != "phase" || gameplayWorld == null || log == null || log.World != gameplayWorld || script == null || !string.IsNullOrEmpty(SceneId))
+                return;
+            int count = script.phases != null ? script.phases.Count : 0;
+            if (count == 0 || e.Value * 2 < count - 1)
+                return;
+            int next = NextLevel();
+            if (next > 0)
+                SceneTransitionManager.Instance.WarmNextLevel(next);
         }
 
         private void OnDisable()
@@ -234,6 +251,7 @@ namespace SickOfIt.Core.Progression
             if (Current == this)
                 Current = null;
             GameContent.Changed -= OnContentChanged;
+            GameplayTelemetry.Recorded -= OnPhaseRecorded;
             if (playerHealth != null)
                 playerHealth.DeathStood -= OnDeathStood;
             // Leaving with the level still open (a script's exit, a reload): analytics counts it as left.

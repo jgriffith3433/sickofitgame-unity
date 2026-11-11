@@ -67,7 +67,34 @@ namespace SickOfIt.Core.Flow
                 GameAssets.Release(owner);
         }
 
-        public void LoadLevel(int levelNumber)
+        /// <summary>Again! after a death: the same level, its assets still held, so no cover and no cleanup passes in front of play.</summary>
+        public void RetryLevel(int levelNumber) => LoadLevel(levelNumber, true);
+
+        public void LoadLevel(int levelNumber) => LoadLevel(levelNumber, false);
+
+        const string LevelWarmOwner = "levelNext";
+        int warmedLevel = -1;
+
+        /// <summary>
+        /// Past a floor's midpoint (the phase event, no polling): brings the next floor's bundles in behind the play, on phones only
+        /// (elsewhere they come with the load). Held by its own owner so the current floor keeps its art; <see cref="LoadLevel"/> takes
+        /// it over (the level owner's acquire finds the bundles in) and lets this hold go, which releases nothing the new floor uses.
+        /// </summary>
+        public void WarmNextLevel(int levelNumber)
+        {
+            if (!useAddressables || !GameAssets.Managed || levelNumber <= 0 || warmedLevel == levelNumber)
+                return;
+            if (!SickOfIt.Core.Device.TouchDevice.IsPrimary)
+                return;
+            warmedLevel = levelNumber;
+            Debug.Log($"[Warm] level {levelNumber}'s bundles start in behind the play");
+            StartCoroutine(GameAssets.Acquire(LevelWarmOwner, LevelScopes(levelNumber)));
+        }
+
+        /// <summary>The warmed floor's bundles are all in (for the playtest).</summary>
+        public bool NextLevelWarm(int levelNumber) => warmedLevel == levelNumber && AllLoaded(LevelScopes(levelNumber));
+
+        void LoadLevel(int levelNumber, bool fast)
         {
             // Store level number for LevelRuntime to read on scene load
             PlayerPrefs.SetInt("CurrentLevelNumber", levelNumber);
@@ -90,12 +117,13 @@ namespace SickOfIt.Core.Flow
                     wanted.Add(GameAssets.Level(level.levelName));
                 if (!string.IsNullOrEmpty(GameAssets.PendingLevelScene))
                     wanted.Add(GameAssets.Scene(GameAssets.PendingLevelScene));
-                Prepared(sceneName, "hero", new[] { GameAssets.Hero }, "level", wanted.ToArray(), new[] { "video", "death" });
+                Prepared(sceneName, "hero", new[] { GameAssets.Hero }, "level", wanted.ToArray(), new[] { "video", "death", LevelWarmOwner }, fast);
             }
             else
             {
                 SceneManager.LoadScene(sceneName);
             }
+            warmedLevel = -1;
         }
 
         Coroutine preload;
@@ -154,14 +182,22 @@ namespace SickOfIt.Core.Flow
         /// Loads an Addressables scene once its assets are in (GameAssets): each (owner, scopes) acquired, then the owners in
         /// <paramref name="release"/> let go. A build without managed assets loads it at once.
         /// </summary>
-        void Prepared(string sceneName, string firstOwner, string[] firstScopes, string secondOwner, string[] secondScopes, string[] release)
+        void Prepared(string sceneName, string firstOwner, string[] firstScopes, string secondOwner, string[] secondScopes, string[] release, bool fast = false)
         {
             if (!GameAssets.Managed)
             {
-                AddressablesSceneLoader.Instance.LoadScene(sceneName);
+                AddressablesSceneLoader.Instance.LoadScene(sceneName, null, fast);
                 return;
             }
-            StartCoroutine(PrepareThenLoad(sceneName, firstOwner, firstScopes, secondOwner, secondScopes, release));
+            StartCoroutine(PrepareThenLoad(sceneName, firstOwner, firstScopes, secondOwner, secondScopes, release, fast));
+        }
+
+        /// <summary>The loading cover and bar, except under the Shaft's drop: that animation is the cover then (it closes when the scene is in).</summary>
+        static void Cover(float progress)
+        {
+            if (SickOfIt.Core.Progression.ShaftScreen.Current != null)
+                return;
+            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(progress);
         }
 
         static bool AllLoaded(string[] scopes)
@@ -174,7 +210,7 @@ namespace SickOfIt.Core.Flow
             return true;
         }
 
-        IEnumerator PrepareThenLoad(string sceneName, string firstOwner, string[] firstScopes, string secondOwner, string[] secondScopes, string[] release)
+        IEnumerator PrepareThenLoad(string sceneName, string firstOwner, string[] firstScopes, string secondOwner, string[] secondScopes, string[] release, bool fast = false)
         {
             // The screen goes black while the assets come in, with a bar: the first owner's share is the first half
             // (the hero, usually in already), the second's the rest.
@@ -184,8 +220,8 @@ namespace SickOfIt.Core.Flow
             // The art of the screens after the menu normally came in behind it long ago; if not, it is first.
             if (!GameAssets.LateReady)
             {
-                SickOfIt.Core.UI.Menus.ScreenTransition.Loading(0f);
-                yield return GameAssets.EnsureLate(p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(p * 0.3f));
+                Cover(0f);
+                yield return GameAssets.EnsureLate(p => Cover(p * 0.3f));
             }
             // Everything already in (the intro preloaded it): no cover, no bar.
             bool inAlready = GameAssets.Managed && AllLoaded(firstScopes) && AllLoaded(secondScopes);
@@ -195,15 +231,15 @@ namespace SickOfIt.Core.Flow
                 if (secondOwner != null) yield return GameAssets.Acquire(secondOwner, secondScopes);
                 foreach (string owner in release)
                     GameAssets.Release(owner);
-                AddressablesSceneLoader.Instance.LoadScene(sceneName);
+                AddressablesSceneLoader.Instance.LoadScene(sceneName, null, fast);
                 yield break;
             }
-            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(0f);
+            Cover(0f);
             if (firstOwner != null)
-                yield return GameAssets.Acquire(firstOwner, firstScopes, p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(both ? p * 0.3f : p));
+                yield return GameAssets.Acquire(firstOwner, firstScopes, p => Cover(both ? p * 0.3f : p));
             if (secondOwner != null)
-                yield return GameAssets.Acquire(secondOwner, secondScopes, p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(both ? 0.3f + p * 0.7f : p));
-            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(1f);
+                yield return GameAssets.Acquire(secondOwner, secondScopes, p => Cover(both ? 0.3f + p * 0.7f : p));
+            Cover(1f);
             foreach (string owner in release)
                 GameAssets.Release(owner);
             AddressablesSceneLoader.Instance.LoadScene(sceneName);
@@ -220,9 +256,9 @@ namespace SickOfIt.Core.Flow
 
         IEnumerator LateThenLoad(string sceneName)
         {
-            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(0f);
-            yield return GameAssets.EnsureLate(p => SickOfIt.Core.UI.Menus.ScreenTransition.Loading(p));
-            SickOfIt.Core.UI.Menus.ScreenTransition.Loading(1f);
+            Cover(0f);
+            yield return GameAssets.EnsureLate(p => Cover(p));
+            Cover(1f);
             SceneManager.LoadScene(sceneName);
         }
 
