@@ -413,6 +413,12 @@ namespace SickOfIt.Gameplay
             }
         }
 
-        void Report(AudioClip clip, string why) => world?.Telemetry?.Record("music", clip != null ? clip.name : "", 0, why);
+        void Report(AudioClip clip, string why)
+        {
+            world?.Telemetry?.Record("music", clip != null ? clip.name : "", 0, why);
+            // Studio's audio probe: the looping music bed starting counts as a sound start.
+            if (clip != null)
+                SickOfIt.Core.Audio.AudioProbeBridge.Report(clip.name, SickOfIt.Data.Config.Bus.Music, 1f, Mathf.Max(0.01f, volume));
+        }
     }
 }
