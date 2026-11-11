@@ -290,6 +290,72 @@
             }
           ]
         }
+      ],
+      "props": [
+        {
+          "name": "the sea's red glow, climbing",
+          "shape": "Glow",
+          "color": "#FF4A1A66",
+          "size": [
+            5.0,
+            3.4
+          ],
+          "sizeVariation": 0.25,
+          "across": -4.2,
+          "parallax": 0.1,
+          "spacing": 7.0,
+          "chance": 0.9,
+          "layer": "Background2",
+          "sortingOrder": 0
+        },
+        {
+          "name": "tally marks scratched in the rock",
+          "shape": "Block",
+          "color": "#2B1510",
+          "size": [
+            0.07,
+            0.55
+          ],
+          "sizeVariation": 0.15,
+          "across": -1.4,
+          "parallax": 0.25,
+          "spacing": 1.6,
+          "chance": 0.8,
+          "layer": "Background2",
+          "sortingOrder": 3
+        },
+        {
+          "name": "the counted wall",
+          "shape": "Block",
+          "color": "#3A1D14",
+          "size": [
+            1.1,
+            2.6
+          ],
+          "sizeVariation": 0.2,
+          "across": -2.8,
+          "parallax": 0.2,
+          "spacing": 9.0,
+          "chance": 0.7,
+          "layer": "Background2",
+          "sortingOrder": 2
+        },
+        {
+          "name": "rising ash",
+          "shape": "Glow",
+          "color": "#7A2E1A55",
+          "size": [
+            1.4,
+            1.8
+          ],
+          "sizeVariation": 0.3,
+          "across": 1.2,
+          "parallax": 0.4,
+          "spacing": 5.0,
+          "chance": 0.6,
+          "layer": "Background2",
+          "sortingOrder": 5
+        }
       ]
     },
     "objective": {
