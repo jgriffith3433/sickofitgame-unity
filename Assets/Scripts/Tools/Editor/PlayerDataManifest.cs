@@ -292,6 +292,9 @@ namespace SickOfIt.Tools.Editor
                     string id = definition.audio.sounds[index].id;
                     if (!eventSounds.Contains(id))
                         return "sound/" + id;
+                    // The extra takes of a sound (SoundDef.takes) are never needed before the menu's first click: behind the menu.
+                    if (path.IndexOf(".takes.", StringComparison.Ordinal) >= 0)
+                        return LateCore;
                     // The menu only clicks, hovers and lets its own hero move; the rest of the events (voices, pickups, rewind,
                     // banners, stings) first play in a level, which waits for the late core, so they load behind the menu.
                     return id.StartsWith("ui_", StringComparison.Ordinal) || id.StartsWith("player_", StringComparison.Ordinal) ? "core" : LateCore;

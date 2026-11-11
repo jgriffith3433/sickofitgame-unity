@@ -1,16 +1,21 @@
 using UnityEngine;
 using SickOfIt.Data;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Core.Audio
 {
     /// <summary>
-    /// Keeps a music source at its authored volume times the player's Music setting, also when the setting
-    /// changes mid-song. Set music volumes through <see cref="Set"/> instead of AudioSource.volume.
+    /// Keeps a music source at its authored volume times the player's Music setting and the Music bus (its trim and the
+    /// duck under voice lines, <see cref="AudioBuses"/>), also when either changes mid-song. Set music volumes through
+    /// <see cref="Set"/> instead of AudioSource.volume.
     /// </summary>
     public sealed class MusicVolume : MonoBehaviour
     {
         float authored = 1f;
         AudioSource source;
+
+        /// <summary>The source this binder keeps (the playtest reads its volume to check the duck).</summary>
+        public AudioSource Source => source;
 
         public static void Set(AudioSource source, float authoredVolume)
         {
@@ -31,13 +36,26 @@ namespace SickOfIt.Core.Audio
             return source.TryGetComponent<MusicVolume>(out var binder) ? binder.authored : source.volume;
         }
 
-        void OnEnable() => GameSettings.Changed += Apply;
-        void OnDisable() => GameSettings.Changed -= Apply;
+        /// <summary>The volume a music source plays at right now: authored x the Music setting x the Music bus (duck included).</summary>
+        public static float Effective(float authoredVolume) => Mathf.Clamp01(authoredVolume * GameSettings.MusicVolume * AudioBuses.Gain(Bus.Music));
+
+        void OnEnable()
+        {
+            GameSettings.Changed += Apply;
+            AudioBuses.Changed += Apply;
+            Apply();
+        }
+
+        void OnDisable()
+        {
+            GameSettings.Changed -= Apply;
+            AudioBuses.Changed -= Apply;
+        }
 
         void Apply()
         {
             if (source != null)
-                source.volume = Mathf.Clamp01(authored * GameSettings.MusicVolume);
+                source.volume = Effective(authored);
         }
     }
 }

@@ -116,7 +116,7 @@ namespace SickOfIt.Playtest
                         if (bedAt < 0f && e.DefId == "meadowBed")
                         {
                             bedAt = now;
-                            Run.Event("sound", $"ambient bed: meadow_bed loops on the meadowBed entity at {now:0.0} s");
+                            Run.Event("sound", $"ambient bed: the meadowBed marker is up at {now:0.0} s; the bed itself is the level's ambientSound \"{SickOfIt.Core.Audio.AmbienceBed.Current}\" on the Ambience bus");
                         }
                     }
                     if (now <= 25.5f)

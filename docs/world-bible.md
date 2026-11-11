@@ -25,10 +25,11 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 - **Look and sound:** green hills, the village's thatch, a single path; Video1's footage as the sky layer. Bed: wind, a far
   rooster, a mill creaking. Then the Overlord's hum, lasers, burning thatch.
 - **Music (Nov 11):** its own track, not the film's audio: "A nice day", a plucked D-major figure over a soft drone with a soft flute (`meadow_calm`, 84 BPM), which turns to its raid (`meadow_raid`: the same tune in D minor, 128 BPM, double kicks and alarms) the moment the sky opens (`playMusic`, 6 s in). Rewinding bends whatever is playing (slowed, low-passed) and it snaps back on release.
+- **Sound (Nov 11):** every verb has three takes that never repeat in a row (`player_shoot`, `hit_pop` + `kill_pop` layered on the enemy's own sounds, `graze_tick`, `pickup_diamond`, jump, land, dash, rewind start and stop), Music ducks 8 dB under each voice line, and the bed sits on its own Ambience bus (Docs/SoundAudit.md "Takes, buses and beds").
 - **Size:** ~2 min (30 s of calm, imp raid, the portal scene ≤10 s locked, skippable).
 - **In/out:** New Game (no Video1, no difficulty card) lands here; out through the fire portal into the Shaft plunge on a
   first run (Video2 stays in Rewatch Stuff).
-- **First minute, as built (Nov 11):** the corner tag "PROLOGUE: THE MEADOW" (no title card); a loop bed `meadow_bed` on the `meadowBed` entity; neighbours (`meadowNeighbour`) strolling, then running when the sky opens at ~4 s; imps build 2 by 8 s and 4+ by 25 s with embers crossing the screen; thatch cinders; at ~30 s the staged first rewind (`stagedRewind`: an undodgeable ring of embers, time to 20%, the rewind button grows and pulses, the hero says "Hold R.", after the rewind "Noted."). Still missing: a hen, the mill and a cart (no art yet).
+- **First minute, as built (Nov 11):** the corner tag "PROLOGUE: THE MEADOW" (no title card); its ambient bed is the level's `ambientSound` (`ambience_meadow_calm`: wind, a far rooster, a mill creaking; the `meadowBed` entity is only a marker now) which cross-fades to `ambience_meadow_burning` (roaring fire, a village alarm bell struck out of time, a frightened rooster) when the sky opens at 5.5 s (`setAmbience`); neighbours (`meadowNeighbour`) strolling, then running when the sky opens at ~4 s; imps build 2 by 8 s and 4+ by 25 s with embers crossing the screen; thatch cinders; at ~30 s the staged first rewind (`stagedRewind`: an undodgeable ring of embers, time to 20%, the rewind button grows and pulses, the hero says "Hold R.", after the rewind "Noted."). Still missing: a hen, the mill and a cart (no art yet).
 - **Falls short today:** the first 20 s are mostly the hero and sky; village life (neighbours, a cart, chickens, washing
   line) is thin. Needs the *Meadow's morning* below.
 
@@ -52,7 +53,7 @@ A Circle is four stretches, each its own area. All share lava, cinders, imps and
 
 1. **The Landing and the Slag Falls (Floors 1000-996).** *Mood:* bewildered arrival, then dread with jokes. *Look:* a
    lava river bank, sinking stones, rafts, the carved landing with the floor number, lava falls and geysers. *Sound:* lava
-   bubbling bed, stone creak, geyser one-shots. *Size:* 5 floors, ~8 min. *In:* Video2 drops him; *out:* the Shaft.
+   bubbling bed, stone creak, geyser one-shots; Floor 1000's bed is its `ambientSound` `ambience_floor1000` (a low lava rumble, bubbling and popping, long creaks of stone) on the Ambience bus. *Size:* 5 floors, ~8 min. *In:* Video2 drops him; *out:* the Shaft.
 2. **The Spill and the Imp Run (998-997).** *Mood:* looted, wrecked. *Look:* the village's wreckage dragged through Hell,
    the baker's cart, sack imps on hauling chains. *Sound:* chain clank, imp chatter, a wailing cart wheel.
 3. **The Foreman's Pile (996-991).** *Mood:* industrious, nasty. Ledges, chain lifts, crumbling stones, a collapsing

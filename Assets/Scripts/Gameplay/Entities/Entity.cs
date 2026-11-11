@@ -794,6 +794,9 @@ namespace SickOfIt.Gameplay
                 invulnerableUntil = Now + Def.invincibilityTime;
             if (Def.visual.hurtFlash)
                 FlashFor(0.1f, Color.white);
+            // A hero shot landing on an enemy: a short layered pop in the same moment as the enemy's own hurt sound.
+            if (Team == Team.Enemy && maxHealth > 0 && final > 0 && (hasHitFrom || (source != null && source.Team == Team.Player)))
+                SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.enemyHit);
             if (maxHealth > 0 && (float)health / maxHealth <= Def.sounds.hurtThreshold)
             {
                 if (Def.sounds.hurt.Count > 0)
@@ -882,6 +885,9 @@ namespace SickOfIt.Gameplay
             {
                 if (Def.onDeath.Count > 0)
                     RunActions(Def.onDeath, 0);
+                // The kill pop lands with the enemy's own death sound, so the kill is felt in one layered moment.
+                if (maxHealth > 0 && Team == Team.Enemy)
+                    SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.killPop);
                 if (Def.sounds.death.Count > 0)
                 {
                     var clip = Def.sounds.death[random.Range(0, Def.sounds.death.Count)];
