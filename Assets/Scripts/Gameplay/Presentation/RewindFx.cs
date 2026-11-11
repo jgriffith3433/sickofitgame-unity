@@ -154,10 +154,14 @@ namespace SickOfIt.Gameplay
             return reversed;
         }
 
+        /// <summary>True while a beat runs: no scanlines, colour split or tracking bar over the play area.</summary>
+        public static bool BeatHidden;
+
         void Update()
         {
             var clock = GameClock.Instance;
-            bool rewinding = clock != null && clock.IsRewinding;
+            // A beat (Docs/beats.md) keeps the tape look off the play area.
+            bool rewinding = clock != null && clock.IsRewinding && !BeatHidden;
             float dt = Time.unscaledDeltaTime;
             intensity = Mathf.MoveTowards(intensity, rewinding ? 1f : 0f, dt * (rewinding ? 9f : 5f));
             rewindingFor = rewinding ? rewindingFor + dt : 0f;
