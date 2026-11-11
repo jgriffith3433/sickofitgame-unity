@@ -44,7 +44,16 @@ namespace SickOfIt.Core.Progression
         }
 
         /// <summary>The Shaft on screen now, or null.</summary>
-        public static ShaftScreen Current { get; private set; }
+        static ShaftScreen current;
+        public static ShaftScreen Current
+        {
+            get => current;
+            private set
+            {
+                current = value;
+                SceneTransitionManager.ShaftCovering = value != null;
+            }
+        }
 
         /// <summary>What the Shaft did, for the playtest and the log: (kind, detail), e.g. ("band", "...") or ("climb", "from 1000 to 991").</summary>
         public static event Action<string, string> Reported;

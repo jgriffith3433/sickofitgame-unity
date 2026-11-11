@@ -192,10 +192,13 @@ namespace SickOfIt.Core.Flow
             StartCoroutine(PrepareThenLoad(sceneName, firstOwner, firstScopes, secondOwner, secondScopes, release, fast));
         }
 
+        /// <summary>True while the Shaft screen is up (set by ShaftScreen, which lives in the Progression assembly that depends on Core).</summary>
+        public static bool ShaftCovering;
+
         /// <summary>The loading cover and bar, except under the Shaft's drop: that animation is the cover then (it closes when the scene is in).</summary>
         static void Cover(float progress)
         {
-            if (SickOfIt.Core.Progression.ShaftScreen.Current != null)
+            if (ShaftCovering)
                 return;
             SickOfIt.Core.UI.Menus.ScreenTransition.Loading(progress);
         }
