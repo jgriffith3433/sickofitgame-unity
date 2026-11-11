@@ -225,21 +225,25 @@
 
   // ─── The prompt ────────────────────────────────────────────────
 
+  // One look with the game: black, orange and cyan, Arial (the game's one UI font), the lava sea along the bottom.
   var css =
     '#hawkes-tap{position:fixed;top:0;left:0;right:0;bottom:0;z-index:8000;display:flex;flex-direction:column;' +
-    'align-items:center;justify-content:center;background:radial-gradient(circle at 50% 45%,#3a0d12 0%,#12070c 60%,#07040a 100%);' +
-    'color:#fff;font-family:"Arial Black","Arial Bold",Arial,sans-serif;text-align:center;cursor:pointer;' +
+    'align-items:center;justify-content:center;' +
+    'background:linear-gradient(to bottom,#08040a 0%,#08040a 55%,#5c1505 88%,#ff7318 100%);' +
+    'color:#fff;font-family:Arial,Helvetica,sans-serif;font-weight:bold;text-align:center;cursor:pointer;' +
     '-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:manipulation;' +
     'padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);' +
     'transition:opacity .25s ease}' +
+    '#hawkes-tap:after{content:"";position:absolute;left:0;right:0;bottom:12%;height:3px;background:#ffb347;' +
+    'box-shadow:0 0 14px 2px #ff7318;pointer-events:none}' +
     '#hawkes-tap.gone{opacity:0;pointer-events:none}' +
-    '#hawkes-tap h1{font-size:clamp(34px,11vmin,110px);letter-spacing:.04em;line-height:1;color:#ffd23f;' +
-    'text-shadow:0 .06em 0 #b3261e,0 .12em .3em rgba(0,0,0,.6);transform:rotate(-3deg)}' +
+    '#hawkes-tap h1{font-size:clamp(34px,11vmin,110px);letter-spacing:.04em;line-height:1;color:#ff8a1f;' +
+    'text-transform:uppercase;text-shadow:0 .06em 0 #07040a,0 .12em .3em rgba(0,0,0,.6);transform:rotate(-3deg)}' +
     '#hawkes-tap>*{margin:1.5vmin 0}' +
-    '#hawkes-tap button{font:inherit;font-size:clamp(22px,6vmin,52px);color:#1a0b06;background:#ffd23f;border:0;' +
-    'border-radius:999px;padding:.45em 1.4em;min-height:56px;box-shadow:0 .14em 0 #b3261e,0 .3em .8em rgba(0,0,0,.5);' +
+    '#hawkes-tap button{font:inherit;font-size:clamp(22px,6vmin,52px);color:#07040a;background:#ff8a1f;border:0;' +
+    'border-radius:999px;padding:.45em 1.4em;min-height:56px;min-width:56px;box-shadow:0 0 0 .08em #07040a,0 0 0 .14em #4ce0d2,0 .3em .8em rgba(0,0,0,.5);' +
     'cursor:pointer;animation:hawkes-tap-pulse 1.4s ease-in-out infinite}' +
-    '#hawkes-tap p{font-family:Arial,sans-serif;font-size:clamp(14px,3.2vmin,24px);color:rgba(255,255,255,.75);padding:0 6vw}' +
+    '#hawkes-tap p{font-size:clamp(14px,3.2vmin,24px);color:#4ce0d2;padding:0 6vw}' +
     '@keyframes hawkes-tap-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}' +
     '@media (prefers-reduced-motion:reduce){#hawkes-tap button{animation:none}}';
 

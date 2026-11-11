@@ -120,6 +120,14 @@ namespace SickOfIt.Core.Progression
             transitionDelay = config.transitionDelay;
             PlacedSpriteBuilder.Bind(config.placedSprites);
 
+            // The first screen is the lava world (black, orange, cyan), not the old meadow: the meadow video and the house are
+            // hidden, and the house's explosion with them (Play goes straight to the load, which has its own lava cover).
+            var camera0 = Camera.main;
+            MenuLavaBackdrop.Build(camera0 != null ? camera0.transform.parent : null);
+            if (explodeRoot != null)
+                explodeRoot.SetActive(false);
+            explodeRoot = null;
+
             Transform character = null;
             if (config.placeCharacter)
                 character = PlaceCharacter(config);

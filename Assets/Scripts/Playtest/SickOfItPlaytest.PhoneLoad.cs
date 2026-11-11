@@ -384,6 +384,12 @@ namespace SickOfIt.Playtest
                 LoadCheck("hero on the menu", heroProblem == null,
                     heroProblem == null ? $"his sprite is drawn on the menu {Time.realtimeSinceStartup - heroAsked:0.0} s after the buttons" : heroProblem);
 
+                // The first screen is the lava world (art cohesion): the lava backdrop is up, the meadow video and house are off.
+                var lava = GameObject.Find(SickOfIt.Core.Progression.MenuLavaBackdrop.Name);
+                var meadow = GameObject.Find("MainMenu_Background1");
+                LoadCheck("menu is the lava world", lava != null && meadow == null,
+                    lava == null ? "the lava backdrop is missing from the menu" : meadow != null ? "the meadow video is still drawn" : "lava backdrop up, no meadow");
+
                 // 4b. The art for the screens after the menu (select cards, Shaft, Yooba, shop) arrives behind it, not before it.
                 if (GameAssets.Managed && GameAssets.Knows(GameAssets.LateCore))
                 {
