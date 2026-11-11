@@ -102,57 +102,57 @@
       {
         "text": "Now with\nrewind!",
         "style": "caption",
-        "fontSize": 24.0,
+        "fontSize": 22.0,
         "textColor": "#1E1220",
         "shape": "Burst",
         "sprite": null,
         "fill": "#FFC93C",
         "borderColor": "#1E1220",
         "borderWidth": 6.0,
-        "size": [220.0, 220.0],
-        "anchor": [0.93, 0.53],
+        "size": [168.0, 168.0],
+        "anchor": [0.945, 0.62],
         "offset": [0.0, 0.0],
         "rotation": 14.0,
         "motion": {
           "type": "Pulse",
-          "amount": 0.06,
+          "amount": 0.04,
           "speed": 1.2,
           "phase": 0.0
         },
         "portrait": {
           "use": true,
           "hide": false,
-          "anchor": [0.78, 0.745],
+          "anchor": [0.92, 0.91],
           "offset": [0.0, 0.0],
-          "size": [0.0, 0.0]
+          "size": [112.0, 112.0]
         }
       },
       {
         "text": "Now with\nghosts!",
         "style": "caption",
-        "fontSize": 24.0,
+        "fontSize": 22.0,
         "textColor": "#1E1220",
         "shape": "Burst",
         "sprite": null,
         "fill": "#BFE6FF",
         "borderColor": "#1E1220",
         "borderWidth": 6.0,
-        "size": [220.0, 220.0],
-        "anchor": [0.93, 0.25],
+        "size": [168.0, 168.0],
+        "anchor": [0.945, 0.14],
         "offset": [0.0, 0.0],
         "rotation": -12.0,
         "motion": {
           "type": "Pulse",
-          "amount": 0.06,
+          "amount": 0.04,
           "speed": 1.2,
           "phase": 0.5
         },
         "portrait": {
           "use": true,
           "hide": false,
-          "anchor": [0.22, 0.745],
+          "anchor": [0.08, 0.91],
           "offset": [0.0, 0.0],
-          "size": [0.0, 0.0]
+          "size": [112.0, 112.0]
         }
       }
     ],
