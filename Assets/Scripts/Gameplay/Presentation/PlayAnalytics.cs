@@ -222,6 +222,8 @@ namespace SickOfIt.Gameplay
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
             if (budget != null) props["juice"] = Round(budget.Juice);
             if (!string.IsNullOrEmpty(play.Boss)) props["boss"] = play.Boss;
+            SickOfIt.Core.Progression.NextGoal.LastCause = play.LastHitBy ?? "";
+            SickOfIt.Core.Progression.NextGoal.LastBoss = play.Boss ?? "";
             AnalyticsManager.Death(play.Level, string.IsNullOrEmpty(play.LastHitBy) ? "unknown" : play.LastHitBy, props);
             if (!string.IsNullOrEmpty(play.Boss) && !play.BossOver)
             {

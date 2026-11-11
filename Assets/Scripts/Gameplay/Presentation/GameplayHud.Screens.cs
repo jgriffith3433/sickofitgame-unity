@@ -318,6 +318,12 @@ namespace SickOfIt.Gameplay
                 extraMotion.EntranceDelay = 1.5f;
             }
 
+            // The next goal: what the diamonds are for, the bar filled with the ones just earned.
+            var nextGoal = SickOfIt.Core.Progression.NextGoal.Pick(world.Stage != null && world.Stage.HasFloors ? world.Stage.Floor : 0);
+            if (nextGoal != null)
+                SickOfIt.Core.Progression.NextGoalCard.Build(menu, inner, nextGoal, MenuPlacement.At(0.2f, 0.13f, 0f, 0f, 540f, 140f),
+                    MenuPlacement.At(0.5f, 0.268f, 0f, 0f, 900f, 130f), null, null, 1.4f);
+
             var go = theme.button.Clone();
             go.size = new Vector2(420f, 100f);
             menu.AddButtonAt(new Vector2(0.5f, 0.1f), Vector2.zero, Texts.continueText, go, () =>
@@ -470,7 +476,10 @@ namespace SickOfIt.Gameplay
         void UpdateScreens()
         {
             if (pointsAtStart < 0 && RogueliteManager.Instance != null)
+            {
                 pointsAtStart = RogueliteManager.Instance.GetPoints();
+                SickOfIt.Core.Progression.NextGoal.RunStartPoints = pointsAtStart;
+            }
             UpdateHurtFeedback();
             UpdateDeath();
             UpdatePauseKeys();

@@ -285,6 +285,7 @@ namespace SickOfIt.Core.Progression
                 PlayerPrefs.SetInt(GloatTurnKey, turn + 1);
                 PlayerPrefs.Save();
             }
+            NextGoalCard.BuildForDeath(menu, this, runStop.FromFloor, YoobaProgress.Deaths);
             Debug.Log($"[Death] \"{title}\"" + (gloat != null ? $", the announcer: \"{gloat.text}\" ({gloat.sound})" : "")
                       + (runEnded ? $"; the run is over: back to the Waystone on FLOOR {runStop.Waystone}, then level {runStop.NextLevel}" : $"; level {levelNumber} again"));
         }
