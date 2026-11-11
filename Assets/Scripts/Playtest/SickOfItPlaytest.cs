@@ -311,7 +311,7 @@ namespace SickOfIt.Playtest
         public const int MechanicsLevel = 1;
         const float MechanicsSeconds = 150f;
 
-        /// <summary>The level whose level-N scenario also watches the portal scene at its end (Level1.json, phases portalBeam to portalClose) and Video2 after it.</summary>
+        /// <summary>The level whose level-N scenario also watches the portal scene at its end (Level1.json, phases portalBeam to portalClose) and the first-run Shaft plunge (Video2 stays in Rewatch).</summary>
         public const int PortalLevel = 1;
 
         /// <summary>The video-2 scenario: the video it watches and the timeline overlay it checks (the hero falling down the fire tunnel).</summary>
@@ -323,7 +323,8 @@ namespace SickOfIt.Playtest
         /// starts straight after the Shaft that follows the one before). Docs/Story.md, "Level numbers".
         /// </summary>
         static readonly (int video, int level)[] StoryPath =
-            { (1, 1), (2, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14), (0, 15), (0, 16), (0, 17),
+            // First run: no Video1 before Level 1, no Video2 before Floor 1000 (Shaft plunge instead; Docs/Story.md "First five minutes").
+            { (0, 1), (0, 2), (3, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14), (0, 15), (0, 16), (0, 17),
               (0, 18), (0, 19), (0, 20), (0, 21), (0, 22), (0, 23), (0, 24), (0, 25), (0, 26), (0, 27), (0, 28), (0, 29), (0, 30), (0, 31) };
         /// <summary>
         /// Circle X's played route (Docs/LevelDesign.md, "The route through Circle X"): its shortcuts by level, the floor each lets him
@@ -767,7 +768,7 @@ namespace SickOfIt.Playtest
                 string what = $"Level {n} ({name}), started directly (setup shortcut) with the save a player arriving there has (the start-at save)";
                 if (n == PortalLevel)
                 {
-                    what += ", then its ending, the portal scene, checked beat by beat: after the Grudge pick the Overlord's beam is telegraphed by a charge glow and " +
+                    what += ", then its ending, the portal scene, checked beat by beat: after TOAST (no Grudge; that waits until Floor 1000) the Overlord's beam is telegraphed by a charge glow and " +
                             "comes down as a burning column with an impact burst on the background's fire hole (where the footage's laser hit, wherever the hero stands), the ground tears open into a swirling fire portal " +
                             "(the one from Video2) right on top of the background's fire (screen captures before and after), that loops while he's there and flares shut to a scorch at the end, " +
                             "he walks to it by himself from his side, the lines and the echo play with subtitles, " +
@@ -902,7 +903,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(StyleId, $"Style (Docs/Story.md \"Style\"): level {StyleLevel} loaded directly and played by the bot through real input; the graze distance is widened (setup shortcut). " +
                 "A graze sparks (the meter pops and fills), a rewind right after one takes the credit back (graze count and meter fall; `graze-undone` event), the announcer and crowd lines fire on a streak (`style-line`), " +
                 "tiers pay (`style-payout`); then the results screen is opened with the hits zeroed (setup shortcut): a rank S/A/B/C (`rank` event), saved as the floor's best, and the no-hit line said. Each beat is a check event", StyleSeconds, "level"));
-            list.Add(new PlaytestScenario(DifficultyId, "Difficulty and accessibility (Docs/Story.md \"How sick of it are you?\"): New Game opens a card with Assist, Normal, Hard and Hell Loop (real clicks; Back returns); " +
+            list.Add(new PlaytestScenario(DifficultyId, "Difficulty and accessibility (Docs/Story.md \"How sick of it are you?\"): New Game starts at Normal with no card; Settings > Pick Your Hell offers Assist, Normal, Hard and Hell Loop (real clicks; Back returns); " +
                 "the settings' Accessibility page toggles bullet outlines, high-contrast bullets, reduced flash, reduced shake, the hitbox dot and aim assist and each is saved in PlayerPrefs; the bot clears Level 1 on Assist and on Normal " +
                 "(enemy shot speed measured on both: Assist's are slower, `shot-speed` events); then plays reckless on Hell Loop with every option on: the first hit lands for twice Normal's damage, shots have a rim and one colour, " +
                 "the dot shows, shake and flash are dimmed, aim assist bends a near-miss onto an enemy. Each beat is a check event", DifficultySeconds, "level"));
@@ -1196,6 +1197,10 @@ namespace SickOfIt.Playtest
                 "retries on a growing timer, the menu's quiet offline chip, Level 1 played through, a 410 stops the retries, then the server returns and the game is online again with no reload. Each beat is a check event", NetOutageSeconds, "menus"));
             list.Add(new PlaytestScenario(IntroSkipId, "The intro film (Video1, loaded directly: setup shortcut): it plays or the game moves on within 2 s (no black wait), " +
                 "the on-screen buttons are 48+ px tall, and one click on empty screen skips it within 1 s. Each beat is a check event", IntroSkipSeconds, "menus"));
+            list.Add(new PlaytestScenario(FirstFiveId, "First five minutes (Docs/Story.md \"First five minutes\"): fresh save, New Game with no difficulty card, play from what is on " +
+                "screen for 5 minutes; reports seconds from page open to menu / first move / first hit / first rewind, the longest locked or non-interactive stretch " +
+                "(portal, Shaft, results) with its name, and choice screens before play. One tap skips the portal and the Shaft plunge; Video2 stays unlocked for Rewatch. " +
+                "Run desktop and at 390x844. check events first-five <beat>; firstFive.* metrics", FirstFiveSeconds, "smoke"));
             list.Add(new PlaytestScenario(PhoneLoadId, "How fast and light the game opens (Docs/BuildSize.md; run it on device \"phone\"): no input until the main menu " +
                 "opens by itself; the page's loading bar fills to 100% and goes away, the boot's bar moves with its percentage to 100%, the main menu is up within " +
                 $"{PhoneLoadMenuBudget:0} s of the page opening, what was downloaded by then (files, bundles, MB), then {PhoneLoadMinFps:0}+ fps on the menu and over " +
@@ -1328,6 +1333,8 @@ namespace SickOfIt.Playtest
                 yield return session.NetOutageRun();
             else if (id == IntroSkipId)
                 yield return session.IntroSkipRun();
+            else if (id == FirstFiveId)
+                yield return session.FirstFiveRun();
             else if (id == PhoneLoadId)
                 yield return session.PhoneLoadRun();
             else if (id == Video3Id)
@@ -1968,7 +1975,7 @@ namespace SickOfIt.Playtest
                     if (load != null)
                         yield return load;
                 }
-                // Level 1 ends in the portal scene: watch it beat by beat, then follow the game on into Video2.
+                // Level 1 ends in the portal scene: watch it beat by beat, then follow the game on into the Shaft plunge (Video2 skipped on a first run).
                 portal = n == PortalLevel ? new PortalWatch() : null;
                 if (portal != null)
                     CheckPortalData(definition.GetLevel(n));
@@ -3170,12 +3177,14 @@ namespace SickOfIt.Playtest
                     yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
                 if (Run.Done) yield break;
                 Run.Progress(0.9f);
+                var config = GameDefinition.Instance.GetLevel(n);
+                int nextVideo = config != null ? config.nextVideoNumber : 0;
+                // Level 1's Video2 is skipped on the story path; the Shaft plunge (WatchClimb) leads to Floor 1000.
+                bool skipVideoToPlunge = n == 1 && nextVideo > 0
+                    && GameDefinition.Instance.shaft != null && nextVideo == GameDefinition.Instance.shaft.plungeAfterVideo;
+                int nextLevel = config != null && (config.nextVideoNumber <= 0 || skipVideoToPlunge) ? (skipVideoToPlunge ? n + 1 : config.nextLevelNumber) : 0;
                 yield return WatchClimb(n, check);
                 if (Run.Done) yield break;
-
-                var config = GameDefinition.Instance.GetLevel(n);
-                int nextLevel = config != null && config.nextVideoNumber <= 0 ? config.nextLevelNumber : 0;
-                int nextVideo = config != null ? config.nextVideoNumber : 0;
                 yield return Run.Until(() => ShaftScreen.Current == null && (Object.FindAnyObjectByType<VideoRuntime>() != null
                                                                              || Object.FindAnyObjectByType<LevelSelectionManager>() != null
                                                                              || GameplayWorld.Instance != null && GameplayWorld.Instance != left),
@@ -3220,9 +3229,11 @@ namespace SickOfIt.Playtest
                     tookShortcutTo = 0;
                     if (n > first)
                     {
-                        // A video the story puts here (Video3, Hell's Ad Break, after Floor 1000): watch a moment, skip it, pass Yooba's hello.
+                        // A video the story puts here (Video3 after Floor 1000). Level 1's Video2 is skipped on a first run.
                         var before = definition.GetLevel(n - 1);
-                        if (before != null && before.nextVideoNumber > 0)
+                        bool expectVideo = before != null && before.nextVideoNumber > 0
+                            && !(before.nextVideoNumber == definition.shaft?.plungeAfterVideo && n - 1 == 1);
+                        if (expectVideo)
                         {
                             yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null || NewWorld(previous) != null, 60f, $"video {before.nextVideoNumber} to start");
                             if (Run.Done) yield break;
@@ -5294,7 +5305,7 @@ namespace SickOfIt.Playtest
             static readonly string[] PortalBeats =
             {
                 "pickFirst", "locked", "bgFire", "telegraph", "beamCharge", "beamHit", "beamColumn", "impactBurst", "portalOpen", "onSpot", "overFire", "inputIgnored", "portalTearOpen",
-                "walkArrived", "curiousAnim", "shoutAnim", "lines", "turned", "grabbedAnim", "portalSwirl", "pulledIn", "yooba", "slurped", "portalFlare",
+                "walkArrived", "curiousAnim", "shoutAnim", "lines", "grabbedAnim", "portalSwirl", "pulledIn", "yooba", "slurped", "portalFlare",
                 "closed", "black", "untouched", "levelComplete", "video2",
             };
 
@@ -5303,7 +5314,6 @@ namespace SickOfIt.Playtest
             {
                 ("portal:beamHit", "Mm. ... Stay.", "vo_portal_overlord_stay"),
                 ("portal:line:hole", "That's a hole.", "vo_portal_hole_1"),
-                ("portal:line:source", "So that's where they keep coming from.", "vo_portal_source_1"),
                 ("portal:line:hello", "Hello?", "vo_portal_hello_1"),
                 ("portal:line:echo", "...hello? ...hello? ...hello?", "vo_portal_echo"),
                 ("portal:line:nope", "Nope.", "vo_portal_nope_1"),
@@ -5610,7 +5620,8 @@ namespace SickOfIt.Playtest
                             portal.Health = player.GetComponentInChildren<PlayerHealth>();
                             portal.HealthAtStart = portal.Health != null ? portal.Health.CurrentHealth : 0;
                             bool picker = world.Hud != null && world.Hud.PickerOpen;
-                            PortalCheck("pickFirst", portal.Picked && !picker, $"the Grudge pick came first (picked={portal.Picked}, picker open={picker})");
+                            // First run: the Grudge pick moved to after Floor 1000 (Docs/Story.md "First five minutes").
+                            PortalCheck("pickFirst", !portal.Picked && !picker, $"no Grudge before the portal (picked={portal.Picked}, picker open={picker})");
                             bool locked = now < world.InputLockedUntil;
                             PortalCheck("locked", locked && world.RewindLocked,
                                 $"input locked={locked}, rewind locked={world.RewindLocked}; hero at x={portal.StartX:0.00}, hp {portal.HealthAtStart}; no keys from the bot from here");
@@ -5850,7 +5861,7 @@ namespace SickOfIt.Playtest
                         // The scene sets the level's "cleared" counter: a clear without it is a skipped ending.
                         portal.Failed++;
                         Run.Problem(PlaytestSeverity.Bug, "portal scene: level 1 completed without the scene starting (no \"portal:locked\"); " +
-                                                          "the Grudge pick must lead into it, never straight to the results");
+                                                          "TOAST must lead into it, never straight to the results");
                     }
                     else
                         Run.Problem(PlaytestSeverity.Warning, $"portal scene: the bot didn't reach it (level 1 {lastOutcome})");
@@ -5861,8 +5872,8 @@ namespace SickOfIt.Playtest
                 {
                     if (LoadLevel != DefaultLoadLevel)
                     {
-                        // The PlayMode playtest loads scenes itself: the video after the level isn't part of it.
-                        Run.Event("portal", "video 2 not followed (editor scene loader)");
+                        // The PlayMode playtest loads scenes itself: the Shaft / Video2 after the level isn't part of it.
+                        Run.Event("portal", "first-run Shaft plunge not followed (editor scene loader)");
                         portal.Passed.Add("video2");
                     }
                     else
@@ -5874,13 +5885,27 @@ namespace SickOfIt.Playtest
                         if (GameplayWorld.Instance != null && GameplayWorld.Instance.Hud != null && GameplayWorld.Instance.Hud.ResultsOpen)
                             yield return ClickUntil(texts.continueText, () => GameplayWorld.Instance == null || !GameplayWorld.Instance.Hud.ResultsOpen, 20f);
                         if (Run.Done) yield break;
-                        yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null, 30f, "video 2 to start");
+                        // First run skips Video2 and plunges on the Shaft (Video2 stays in Rewatch Stuff).
+                        yield return Run.Until(() => ShaftScreen.Current != null || Object.FindAnyObjectByType<VideoRuntime>() != null || LevelRunning(2),
+                            30f, "the Shaft plunge or Floor 1000 after Level 1");
                         if (Run.Done) yield break;
-                        int video = PlayerPrefs.GetInt("CurrentVideoNumber", 0);
-                        Run.Scene("Video " + video);
-                        PortalCheck("video2", video == 2, $"video {video} started after the portal scene");
-                        // Watch the start of the fall for the recording.
-                        yield return WaitReal(4f);
+                        var shaft = ShaftScreen.Current;
+                        var video = Object.FindAnyObjectByType<VideoRuntime>();
+                        bool firstRunPlunge = shaft != null && shaft.Kind == ShaftScreen.Mode.Plunge;
+                        bool floor1000 = LevelRunning(2);
+                        int videoNum = PlayerPrefs.GetInt("CurrentVideoNumber", 0);
+                        if (firstRunPlunge)
+                            Run.Scene("Shaft plunge (first run, Video2 skipped)");
+                        else if (video != null)
+                            Run.Scene("Video " + videoNum);
+                        else
+                            Run.Scene("Floor 1000");
+                        PortalCheck("video2", firstRunPlunge || floor1000 || videoNum == 2,
+                            firstRunPlunge ? "first-run Shaft plunge after the portal (Video2 unlocked for Rewatch)"
+                            : floor1000 ? "Floor 1000 after Level 1"
+                            : $"video {videoNum} started after the portal scene");
+                        // Watch a beat of the plunge / fall for the recording.
+                        yield return WaitReal(3f);
                         if (Run.Done) yield break;
                     }
                 }

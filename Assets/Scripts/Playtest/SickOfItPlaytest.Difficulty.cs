@@ -17,7 +17,7 @@ namespace SickOfIt.Playtest
     public static partial class SickOfItPlaytest
     {
         /// <summary>
-        /// The difficulty scenario (Docs/Story.md "How sick of it are you?"): New Game asks for Assist, Normal, Hard or Hell Loop with real clicks;
+        /// The difficulty scenario (Docs/Story.md "How sick of it are you?"): New Game starts at Normal; Settings > Pick Your Hell offers Assist, Normal, Hard or Hell Loop;
         /// the settings' Accessibility page toggles are clicked and saved; the bot clears Level 1 on Assist and on Normal (enemy shot speed
         /// measured on each: Assist's are slower), then plays reckless on Hell Loop with every accessibility option on (a hit lands for twice
         /// Normal's damage, shots have a rim and one hot colour, the hitbox dot shows, shake and flash are reduced, aim assist bends a shot onto an enemy).
@@ -40,17 +40,46 @@ namespace SickOfIt.Playtest
                 }
             }
 
-            /// <summary>Clicks New Game, then the named difficulty on the card that opens, until effect() is true.</summary>
+            /// <summary>Opens Settings > Pick Your Hell, picks the named difficulty, closes Settings.</summary>
+            IEnumerator PickDifficultyInSettings(string difficultyName)
+            {
+                var texts = GameDefinition.Instance.menuTheme.texts;
+                yield return ClickUntil(texts.settings, () => FindButton(texts.difficultyTitle) != null || FindButton(texts.accessibility) != null, 15f);
+                if (Run.Done) yield break;
+                yield return ClickUntil(texts.difficultyTitle, () => FindButton(difficultyName) != null, 10f);
+                if (Run.Done) yield break;
+                yield return ClickUntil(difficultyName, () => FindButton(difficultyName) == null, 10f);
+                if (Run.Done) yield break;
+                // Close Settings (Done or Escape).
+                if (FindButton(texts.done) != null)
+                    yield return ClickUntil(texts.done, () => FindButton(texts.done) == null, 10f);
+                else
+                {
+                    yield return Tap(Key.Escape);
+                    yield return WaitReal(0.4f);
+                }
+            }
+
+            /// <summary>Sets the difficulty for the next New Game, then clicks it (New Game no longer opens the card).</summary>
             IEnumerator PickNewGame(string difficultyName, Func<bool> effect)
             {
                 var labels = GameDefinition.Instance.mainMenuConfig.labels;
-                yield return ClickUntil(labels.newGame, () => FindButton(difficultyName) != null || effect(), 30f);
-                if (Run.Done || effect()) yield break;
-                yield return ClickUntil(difficultyName, effect, 30f);
+                DifficultyLevel picked = DifficultyLevel.Normal;
+                foreach (DifficultyLevel level in System.Enum.GetValues(typeof(DifficultyLevel)))
+                {
+                    if (Difficulty.Of(level).name == difficultyName)
+                        picked = level;
+                }
+                FtueProgress.PendingDifficulty = picked;
+                yield return ClickUntil(labels.newGame, effect, 30f);
             }
 
-            /// <summary>Every New Game click in the other scenarios goes through the card as Normal.</summary>
-            IEnumerator ClickNewGame(Func<bool> effect) => PickNewGame(Difficulty.Of(DifficultyLevel.Normal).name, effect);
+            /// <summary>Every New Game click in the other scenarios: straight into play at Normal (no difficulty card).</summary>
+            IEnumerator ClickNewGame(Func<bool> effect)
+            {
+                var labels = GameDefinition.Instance.mainMenuConfig.labels;
+                yield return ClickUntil(labels.newGame, effect, 30f);
+            }
 
             readonly Dictionary<string, float> shotSpeedSum = new Dictionary<string, float>();
             readonly Dictionary<string, int> shotSpeedCount = new Dictionary<string, int>();
@@ -145,16 +174,26 @@ namespace SickOfIt.Playtest
                 var texts = GameDefinition.Instance.menuTheme.texts;
                 var labels = GameDefinition.Instance.mainMenuConfig.labels;
 
-                // 1. The card at New Game offers all four, Back returns to the menu.
+                // 1. New Game goes straight in at Normal (no card). Pick Your Hell lives in Settings.
                 yield return ToMainMenu();
                 if (Run.Done) yield break;
-                yield return ClickUntil(labels.newGame, () => FindButton("Hell Loop") != null, 15f);
+                yield return ClickUntil(labels.newGame, () => LevelRunning(1) || Object.FindAnyObjectByType<VideoRuntime>() != null, 30f);
+                if (Run.Done) yield break;
+                DiffCheck("New Game skips the difficulty card", FindButton("Hell Loop") == null && Difficulty.Current == DifficultyLevel.Normal,
+                    $"Hell Loop button {(FindButton("Hell Loop") != null ? "shown" : "absent")}, Difficulty.Current={Difficulty.Current}");
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                yield return ClickUntil(texts.settings, () => FindButton(texts.difficultyTitle) != null, 15f);
+                if (Run.Done) yield break;
+                yield return ClickUntil(texts.difficultyTitle, () => FindButton("Hell Loop") != null, 10f);
                 if (Run.Done) yield break;
                 foreach (DifficultyLevel level in Enum.GetValues(typeof(DifficultyLevel)))
-                    DiffCheck($"the card offers {Difficulty.Of(level).name}", FindButton(Difficulty.Of(level).name) != null, "a button on the New Game card");
+                    DiffCheck($"Settings offers {Difficulty.Of(level).name}", FindButton(Difficulty.Of(level).name) != null, "a button on Pick Your Hell");
                 yield return ClickUntil(texts.difficultyBack, () => FindButton("Hell Loop") == null, 10f);
                 if (Run.Done) yield break;
-                DiffCheck("Back closes the card without starting", FindButton(labels.newGame) != null && LevelRunning(1) == false, "main menu still up");
+                DiffCheck("Back closes Pick Your Hell", FindButton(texts.difficultyTitle) != null || FindButton(texts.done) != null, "Settings still up");
+                yield return Tap(Key.Escape);
+                yield return WaitReal(0.5f);
 
                 // The numbers behind the cards.
                 var assist = Difficulty.Of(DifficultyLevel.Assist);

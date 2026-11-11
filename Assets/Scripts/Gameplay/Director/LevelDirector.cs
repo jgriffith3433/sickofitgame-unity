@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Gameplay
@@ -94,6 +95,8 @@ namespace SickOfIt.Gameplay
         float levelStart;
         bool completed;
         bool failed;
+        string skipPhase = "";
+        string skipSignal = "";
         readonly List<SequenceRun> sequences = new List<SequenceRun>();
         readonly List<HazardRun> hazards = new List<HazardRun>();
         readonly List<WaveRun> waves = new List<WaveRun>();
@@ -224,6 +227,7 @@ namespace SickOfIt.Gameplay
 
                 AdvanceSequences(now);
                 ApplyPendingPhase(now);
+                PollSkip(now);
                 FireHazards(now);
                 AdvanceWaves(now);
                 ExpireSpawnModifiers(now);
@@ -233,6 +237,54 @@ namespace SickOfIt.Gameplay
             {
                 insideTick = false;
             }
+        }
+
+        /// <summary>Arms allowSkip: a tap or key jumps to phase and/or emits signal.</summary>
+        public void ArmSkip(string phaseName, string signal)
+        {
+            skipPhase = phaseName ?? "";
+            skipSignal = signal ?? "";
+        }
+
+        public void ClearSkip()
+        {
+            skipPhase = "";
+            skipSignal = "";
+        }
+
+        void PollSkip(float now)
+        {
+            if (string.IsNullOrEmpty(skipPhase) && string.IsNullOrEmpty(skipSignal))
+                return;
+            if (!SkipPressed())
+                return;
+            string toPhase = skipPhase;
+            string signal = skipSignal;
+            ClearSkip();
+            sequences.Clear();
+            world.Telemetry.Record("cutscene", "skip", 0, string.IsNullOrEmpty(toPhase) ? signal : toPhase);
+            if (!string.IsNullOrEmpty(signal))
+                world.Emit(signal);
+            if (!string.IsNullOrEmpty(toPhase))
+                GoToPhase(toPhase);
+            ApplyPendingPhase(now);
+        }
+
+        static bool SkipPressed()
+        {
+            // Escape / Enter / a tap or click: not WASD or Space (the bot keeps those pressed through the scene).
+            var kb = Keyboard.current;
+            if (kb != null && (kb.escapeKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame
+                               || kb.numpadEnterKey.wasPressedThisFrame))
+                return true;
+            var pad = Gamepad.current;
+            if (pad != null && pad.startButton.wasPressedThisFrame)
+                return true;
+            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+                return true;
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+                return true;
+            return false;
         }
 
         void CheckObjective(float now)
@@ -549,6 +601,8 @@ namespace SickOfIt.Gameplay
             w.Float(levelStart);
             w.Bool(completed);
             w.Bool(failed);
+            w.String(skipPhase);
+            w.String(skipSignal);
 
             SaveRules(w, globalRules);
             foreach (var p in phases)
@@ -598,6 +652,8 @@ namespace SickOfIt.Gameplay
             levelStart = r.Float();
             completed = r.Bool();
             failed = r.Bool();
+            skipPhase = r.String();
+            skipSignal = r.String();
 
             LoadRules(r, globalRules);
             foreach (var p in phases)

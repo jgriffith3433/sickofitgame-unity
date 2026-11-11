@@ -302,8 +302,8 @@ namespace SickOfIt.Core.Progression
             pendingWardenFloor = 0;
             next = onContinue;
             preview = isPreview;
-            // The first plunge and the first drop (Hell explains Waystones) are watched to the end.
-            Skippable = ShaftProgress.Plunged && !firstDrop;
+            // First plunge is skippable from its first frame (Docs/Story.md "First five minutes"); the first Waystone drop still plays out.
+            Skippable = mode == Mode.Plunge || (ShaftProgress.Plunged && !firstDrop);
             openedAt = Time.unscaledTime;
             menu.Back = null;
             // A scene that replaces the current one (Continue's, or any other) takes the Shaft with it.
@@ -968,12 +968,15 @@ namespace SickOfIt.Core.Progression
 
         IEnumerator PlungeRoutine()
         {
+            // First five minutes: the whole plunge (fall + lines) is at most 8 s, and a tap skips from frame one.
+            const float PlungeBudget = 8f;
+            float started = Time.unscaledTime;
             int bottom = ToFloor;
-            yield return Wait(0.7f);
+            yield return Wait(0.15f);
             Sfx.Play(config.fallSound);
             PlayMusic(config.plungeMusic, "the plunge's riser and slam");
             Report("fall", $"from FLOOR 0 down to FLOOR {Number(bottom)}");
-            float duration = Mathf.Max(0.5f, config.plungeSeconds);
+            float duration = Mathf.Min(Mathf.Max(0.5f, config.plungeSeconds), 2.8f);
             float t = 0f;
             int shown = 0;
             while (t < 1f && !skip)
@@ -1018,7 +1021,7 @@ namespace SickOfIt.Core.Progression
             if (!skip)
             {
                 StartCoroutine(Slam());
-                yield return Wait(0.6f);
+                yield return Wait(0.25f);
             }
 
             if (!preview)
@@ -1029,21 +1032,26 @@ namespace SickOfIt.Core.Progression
 
             if (!skip)
             {
-                // Hell says hello. The hero doesn't.
+                // Hell says hello. The hero doesn't. Cap so the whole plunge stays inside the budget.
+                float left = PlungeBudget - (Time.unscaledTime - started);
                 Sfx.Play(config.welcomeVoice);
                 ShowSubtitle(texts.shaftWelcome);
                 Report("voice", $"announcer: {texts.shaftWelcome} ({config.welcomeVoice}{(Sfx.Has(config.welcomeVoice) ? "" : ", no clip")})");
                 float welcome = Sfx.LengthOf(config.welcomeVoice);
-                yield return Wait((welcome > 0f ? welcome : 3.5f) + 0.25f);
+                float welcomeWait = Mathf.Min((welcome > 0f ? welcome : 2.2f) + 0.15f, Mathf.Max(0.4f, left * 0.6f));
+                yield return Wait(welcomeWait);
             }
             if (!skip)
             {
+                float left = PlungeBudget - (Time.unscaledTime - started);
                 Sfx.Play(config.heroVoice);
                 ShowSubtitle(texts.shaftHero);
                 Report("voice", $"hero: {texts.shaftHero} ({config.heroVoice}{(Sfx.Has(config.heroVoice) ? "" : ", no clip")})");
                 float hero = Sfx.LengthOf(config.heroVoice);
-                yield return Wait((hero > 0f ? hero : 1.4f) + 0.3f);
+                float heroWait = Mathf.Min((hero > 0f ? hero : 1.0f) + 0.15f, Mathf.Max(0.3f, left));
+                yield return Wait(heroWait);
             }
+            Report("plunge", $"done in {Time.unscaledTime - started:0.00}s (skip={skip})");
             Finish();
         }
 

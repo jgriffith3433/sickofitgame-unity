@@ -376,8 +376,8 @@ namespace SickOfIt.Core.Progression
         private void OnNewGameClicked()
         {
             if (isTransitioning) return;
-            // New Game asks how sick of it he is first (Docs/Story.md "How sick of it are you?"); the pick is saved, then the game starts.
-            SettingsPanel.ShowDifficulty(menu, _ => StartNewGame(), null);
+            // First five minutes: straight into play at Normal (Docs/Story.md "First five minutes"). Pick Your Hell lives in Settings.
+            StartNewGame();
         }
 
         private void StartNewGame()
@@ -389,6 +389,7 @@ namespace SickOfIt.Core.Progression
             RunFlow.Abandon();
             RogueliteManager.Instance.ResetAllRogueliteData();
             GameProgressManager.Instance.InitializeNewPlayer();
+            FtueProgress.BeginNewGame();
             PlayerPrefs.SetInt("Level_1_Visited", 1);
             PlayerPrefs.SetInt("ReturnToLevel", 1);
             PlayerPrefs.Save();

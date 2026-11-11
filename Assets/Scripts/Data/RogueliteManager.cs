@@ -557,6 +557,7 @@ namespace SickOfIt.Data
             ShortcutProgress.Reset();
             YoobaProgress.Reset();
             WaystoneProgress.Reset();
+            FtueProgress.Reset();
 
             PlayerPrefs.Save();
             ////Debug.Log("[RogueliteManager] All game and roguelite data reset.");

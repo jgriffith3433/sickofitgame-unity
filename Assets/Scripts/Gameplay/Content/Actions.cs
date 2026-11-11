@@ -205,6 +205,16 @@ namespace SickOfIt.Gameplay.Content
         public override void Run(ActionContext context) { }
     }
 
+    [Serializable, JsonType("allowSkip")]
+    [Doc("While armed, a tap or key (or Escape) ends the current sequences and jumps to 'phase' and/or emits 'signal'. " +
+         "Use it on a lockInput scene so one press skips the rest (Level 1's portal). Cleared on unlockInput or when it fires.")]
+    public sealed class AllowSkipAction : GameAction
+    {
+        [PhaseRef, Doc("Phase to enter when skipped (empty = stay).")] public string phase = "";
+        [Doc("Signal emitted when skipped (empty = none).")] public string signal = "";
+        public override void Run(ActionContext context) => context.Director.ArmSkip(phase, signal);
+    }
+
     [Serializable, JsonType("emit")]
     [Doc("Emits a signal that 'signal' triggers react to (next tick).")]
     public sealed class EmitAction : GameAction
@@ -508,7 +518,11 @@ namespace SickOfIt.Gameplay.Content
     [Serializable, JsonType("unlockInput")]
     public sealed class UnlockInputAction : GameAction
     {
-        public override void Run(ActionContext context) => context.World.SetInputLocked(0f);
+        public override void Run(ActionContext context)
+        {
+            context.Director.ClearSkip();
+            context.World.SetInputLocked(0f);
+        }
     }
 
     // =====================================================================
