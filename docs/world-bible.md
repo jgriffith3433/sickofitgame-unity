@@ -279,6 +279,10 @@ the door sound, the daylight light change, and the hero's walking past as events
 **Voice.** Beats 2 and 6 keep a warm-grey line, but each is paired with an event and a sound first; pending clips in
 `Tools/Audio/pending_clips.json` are made through Hawkes Gen before the beats are called voiced.
 
+**Arrival beats, Floors 1000-997 (2026-11-11).** *Story beats:* arriving on each floor is lived once: the slam on the bank (1000), a ghost flickering past under a rumble (999),
+the baker's cart crashing (998), the imps' snatch and cackle (997), each with a stinger, a shake, the hero's reaction and his one voiced line; no warm-grey captions. *Who lives here:* the pale
+`echoSoul` ghost of an earlier climber; the imps. *What happens:* an event first, voice second, text last (one line); skipped on a retry, never locks input. Playtest `story`.
+
 **The menu and the counter (2026-11-11).** *Who lives here:* the hero idling on the meadow is the first screen; Yooba appears on it only
 as a button, after the first diamonds. *What happens:* each new button is announced by a NEW! burst; Yooba's first visit is a whispered, glowing
 pointer at the one ware the hero can buy. *Landmark:* the glowing card. Details in Docs/Story.md.

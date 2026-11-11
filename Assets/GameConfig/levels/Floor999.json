@@ -678,17 +678,6 @@
                 "style": "Banner",
                 "sound": "vo_floor_999",
                 "color": "#FFD27A"
-              },
-              {
-                "type": "wait",
-                "seconds": 3.4
-              },
-              {
-                "type": "showText",
-                "text": "You said that already.",
-                "duration": 2.6,
-                "style": "Subtitle",
-                "sound": "vo_landing_999"
               }
             ]
           },
@@ -704,18 +693,68 @@
             "facePlayer": false
           },
           {
-            "type": "runSequence",
-            "steps": [
+            "type": "storyBeat",
+            "id": "arrive999",
+            "eventName": "ghostFlicker",
+            "voice": "vo_landing_999",
+            "then": [
               {
-                "type": "wait",
-                "seconds": 6.6
+                "type": "playSound",
+                "sound": "magma_rumble",
+                "volume": 0.8
               },
               {
-                "type": "showText",
-                "text": "One floor up. Hell is counting along.",
-                "duration": 3.6,
-                "style": "Subtitle",
-                "color": "#C9B8A6"
+                "type": "cameraShake",
+                "intensity": 0.2,
+                "duration": 0.9
+              },
+              {
+                "type": "spawn",
+                "entity": "echoSoul",
+                "id": "beat_ghost",
+                "anchor": "Player",
+                "at": [
+                  3.2,
+                  0.3
+                ],
+                "facePlayer": false
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 0.6
+                  },
+                  {
+                    "type": "playPlayerAnimation",
+                    "state": "Curious"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.8
+                  },
+                  {
+                    "type": "playPlayerAnimation",
+                    "state": "Idle"
+                  }
+                ]
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 1.6
+                  },
+                  {
+                    "type": "showText",
+                    "text": "You said that already.",
+                    "duration": 2.6,
+                    "style": "Subtitle",
+                    "sound": "vo_landing_999"
+                  }
+                ]
               }
             ]
           }

@@ -1146,33 +1146,66 @@
                 "style": "Banner",
                 "sound": "vo_f998_title",
                 "color": "#FFD27A"
-              },
-              {
-                "type": "wait",
-                "seconds": 2.8
-              },
-              {
-                "type": "showText",
-                "text": "That was the baker's cart.",
-                "duration": 2.6,
-                "style": "Subtitle",
-                "sound": "vo_spill_cart"
               }
             ]
           },
           {
-            "type": "runSequence",
-            "steps": [
+            "type": "storyBeat",
+            "id": "arrive998",
+            "eventName": "cartCrash",
+            "voice": "vo_spill_cart",
+            "then": [
               {
-                "type": "wait",
-                "seconds": 6.0
+                "type": "playSound",
+                "sound": "impSack_die",
+                "volume": 1.0
               },
               {
-                "type": "showText",
-                "text": "They took the village. Now they take the gun.",
-                "duration": 3.6,
-                "style": "Subtitle",
-                "color": "#C9B8A6"
+                "type": "cameraShake",
+                "intensity": 0.3,
+                "duration": 0.45
+              },
+              {
+                "type": "flash",
+                "color": "#FFB35A44",
+                "duration": 0.15
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 0.5
+                  },
+                  {
+                    "type": "playPlayerAnimation",
+                    "state": "Curious"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.8
+                  },
+                  {
+                    "type": "playPlayerAnimation",
+                    "state": "Idle"
+                  }
+                ]
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 1.4
+                  },
+                  {
+                    "type": "showText",
+                    "text": "That was the baker's cart.",
+                    "duration": 2.6,
+                    "style": "Subtitle",
+                    "sound": "vo_spill_cart"
+                  }
+                ]
               }
             ]
           }

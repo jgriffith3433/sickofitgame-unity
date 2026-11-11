@@ -361,6 +361,9 @@ namespace SickOfIt.Gameplay.Content
             float shown = duration > 0f ? Mathf.Max(duration, SickOfIt.Core.Audio.Sfx.LengthOf(sound) + 0.4f) : 0f;
             context.World.Hud.ShowText(text, style, color, shown > 0f ? context.Now + shown : float.PositiveInfinity);
             SickOfIt.Core.Audio.Sfx.Play(sound);
+            // For the playtest's "text only" count: a caption with a voice (Value 1) or without.
+            if (!string.IsNullOrEmpty(text))
+                context.World.Telemetry.Record("caption", text, string.IsNullOrEmpty(sound) ? 0 : 1, style + "|" + sound);
         }
     }
 
@@ -398,6 +401,35 @@ namespace SickOfIt.Gameplay.Content
                 SickOfIt.Core.Audio.Sfx.Play(def.hintVoice);
             world.Telemetry.Record("hint", def.displayName, 0, text);
         }
+    }
+
+    [Serializable, JsonType("storyBeat")]
+    [Doc("A floor's arrival moment, lived once: runs 'then' (a shake, a stinger, a hero reaction, a voiced line, an event; put waits inside a runSequence) the first " +
+         "time it is reached in a save and does nothing on a retry, a death, a rewind or a new run. Never locks input itself. Remembered in StoryBeats; New Game forgets. " +
+         "Logs a 'storyBeat' telemetry event (subject: id, detail: 'event|voice') the playtest reads. Silent, and not used up, during a scene and while rewinding.")]
+    public sealed class StoryBeatAction : GameAction
+    {
+        [Required, Doc("Unique id of the beat (the floor's).")] public string id = "";
+        [Doc("What happens on screen, for the log (e.g. 'landingSlam').")] public string eventName = "";
+        [SoundRef, Doc("The voiced line (audio.json id) said inside 'then', for the log.")] public string voice = "";
+        [Doc("What the beat does.")] public List<GameAction> then = new List<GameAction>();
+
+        public override void Run(ActionContext context)
+        {
+            var world = context.World;
+            if (!string.IsNullOrEmpty(world.SceneId)
+                || (SickOfIt.Core.GameClock.Instance != null && SickOfIt.Core.GameClock.Instance.IsRewinding))
+                return;
+            if (!SickOfIt.Data.StoryBeats.Add(id))
+            {
+                world.Telemetry.Record("storyBeatSkipped", id, 0, "already lived");
+                return;
+            }
+            world.Telemetry.Record("storyBeat", id, 1, eventName + "|" + voice);
+            world.RunActions(then, context);
+        }
+
+        public override void CollectChildren(List<GameAction> into) => into.AddRange(then);
     }
 
     public enum TextStyle

@@ -1218,6 +1218,9 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(BeatsId, "The opening and the level beats (Docs/Story.md \"Why he is sick of it\"): New Game on a fresh save plays Video1, Escape skips it, " +
                 "Level 1 starts and shows its beat line; Floors 1000-997 are loaded directly (setup shortcut) and each shows its own beat. Every beat is a `beat` event, " +
                 "no two alike; `check` events `beats <beat>`", BeatsSeconds, "menus"));
+            list.Add(new PlaytestScenario(StoryId, "Arrival beats (Docs/Story.md \"Arrival beats\"; play it on device \"phone\", 390x844 touch): Level 1, then Floors 1000-997 loaded directly (setup shortcut, " +
+                "the beats cleared, touch UI on), each played through the move stick. Each floor must show a storyBeat event (a stinger, a shake, a hero reaction), a voiced hero line, a caption of one short line " +
+                "clear of the hero, input locked at most 1.5 s and the hero under the thumb afterwards; Floor 1000 loaded again must not replay its beat. Reports quality.textOnlyBeats. `check`, `beat` events", StorySeconds, "menus"));
             list.Add(new PlaytestScenario("yooba-shop", "Yooba's shop from the Shaft: the Shaft after Video3 (setup shortcut: Yooba's save reset, the marker " +
                 "at Floor 999, his hello skipped), Visit Yooba beside Continue opens his shop over the Shaft with his animated portrait and voiced welcome, " +
                 "slime-made goods; a card clicked with 0 diamonds (can't afford), then with its price (bought: diamonds spent, level saved); Back (goodbye) " +
@@ -1348,6 +1351,8 @@ namespace SickOfIt.Playtest
                 yield return session.Video3Run();
             else if (id == BeatsId)
                 yield return session.BeatsRun();
+            else if (id == StoryId)
+                yield return session.StoryRun();
             else if (id == "waystone")
                 yield return session.WaystoneRun();
             else if (id == "wastes-climb")
