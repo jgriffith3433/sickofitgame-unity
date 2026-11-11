@@ -225,9 +225,10 @@ namespace SickOfIt.Core.Progression
                 var graphics = new GameObject("Graphics");
                 graphics.transform.SetParent(root.transform, false);
                 float scale = player.spriteScale > 0f ? player.spriteScale : 0.25f;
-                graphics.transform.localScale = new Vector3(-scale, scale, scale); // the prefab's: the sheets face the other way
+                graphics.transform.localScale = new Vector3(scale, scale, scale);
                 var renderer = graphics.AddComponent<SpriteRenderer>();
                 renderer.sprite = frames[0];
+                renderer.flipX = true; // the prefab mirrors its Graphics (the sheets face the other way); flipX, not a negative scale
                 SpriteLayers.Apply(renderer, SpriteLayer.Player, SpriteLayers.Character);
                 var standIn = root.AddComponent<MenuHeroStandIn>();
                 standIn.frames = frames;
