@@ -31,6 +31,7 @@ namespace SickOfIt.Playtest
         {
             int firstFiveFailed;
             float firstFivePageOpen;
+            float firstFiveFloor1000Start = 0f;
             float firstFiveMoveAt = -1f, firstFiveHitAt = -1f, firstFiveRewindAt = -1f;
             float firstFiveLockStarted = -1f;
             string firstFiveLockName = "";
@@ -188,22 +189,23 @@ namespace SickOfIt.Playtest
                     ? "no Pick Your Hell before New Game" : "Pick Your Hell already open");
                 Run.Metric("firstFive.choicesBeforePlay", choices);
 
-                yield return ClickUntil(NewGameLabel(labels), () => LevelRunning(1) || Object.FindAnyObjectByType<VideoRuntime>() != null, 30f);
+                yield return ClickUntil(NewGameLabel(labels), () => LevelRunning(2) || Object.FindAnyObjectByType<VideoRuntime>() != null, 30f);
                 if (Run.Done) yield break;
                 FirstFiveCheck("noDifficultyAfterNewGame", FindButton("Hell Loop") == null && Difficulty.Current == DifficultyLevel.Normal,
                     $"Difficulty.Current={Difficulty.Current}");
                 FirstFiveCheck("noUpgradeBeforePlay", Object.FindAnyObjectByType<UpgradeShopManager>() == null,
                     "no upgrade shop before the first dodge");
 
-                yield return ReachLevel(1);
+                yield return ReachLevel(2);
                 if (Run.Done) yield break;
 
+                firstFiveFloor1000Start = FirstFiveAge();
                 GameplayTelemetry.Recorded += FirstFiveTelemetry;
                 float deadline = Time.realtimeSinceStartup + FirstFivePlaySeconds;
                 try
                 {
                     // Level 1 with the bot; during callback taps to skip the portal.
-                    yield return PlayLevel(1, 0f, FirstFiveDuring, 0f, 1f, Mathf.Max(60f, deadline - Time.realtimeSinceStartup), waitOutDeath: true);
+                    yield return PlayLevel(2, 0f, FirstFiveDuring, 0f, 1f, Mathf.Max(60f, deadline - Time.realtimeSinceStartup), waitOutDeath: true);
                     if (Run.Done) yield break;
 
                     // Results → Continue → Shaft plunge (first run skips Video2).
@@ -298,6 +300,8 @@ namespace SickOfIt.Playtest
                     FirstFiveCheck("stretch", stretch <= FirstFiveStretchBudget,
                         $"fight-end to Floor 1000 playable took {stretch:0.00}s (budget {FirstFiveStretchBudget:0}s)");
                 }
+                FirstFiveCheck("firstRewind20s", firstFiveRewindAt >= 0f && firstFiveRewindAt - firstFiveFloor1000Start <= 20f,
+                    firstFiveRewindAt < 0f ? "no rewind seen" : $"first rewind {firstFiveRewindAt - firstFiveFloor1000Start:0.00}s after Floor 1000 began (budget 20s)");
                 FirstFiveCheck("longestLock", firstFiveLongestLock <= FirstFiveLockBudget + 0.15f,
                     $"longest locked stretch \"{firstFiveLongestName}\" was {firstFiveLongestLock:0.00}s (budget {FirstFiveLockBudget:0}s)");
 

@@ -647,7 +647,7 @@
             "name": "THE FIRST SALVO: Hell's welcome, undone with R",
             "when": {
               "type": "after",
-              "seconds": 12.0
+              "seconds": 8.0
             },
             "do": [
               {

@@ -272,8 +272,17 @@ namespace SickOfIt.Core.Progression
         public static NextGoalCard BuildForDeath(MenuCanvas menu, MonoBehaviour owner, int floor, int totalDeaths)
         {
             var goal = NextGoal.Pick(floor);
+            // An empty bar (nothing gathered this attempt) is clutter on the death screen: show the card only with real data in it.
+            if (goal != null && goal.To <= 0)
+                goal = null;
             if (goal == null)
+            {
+                string quiet = DeathReaction.Pick(NextGoal.LastCause, NextGoal.LastBoss, totalDeaths);
+                Debug.Log("[NextGoal] none on the death screen (empty bar hidden)");
+                if (quiet != null && owner != null)
+                    owner.StartCoroutine(DeathReaction.Say(null, quiet, 2.4f));
                 return null;
+            }
             var card = Build(menu, menu.Root, goal,
                 MenuPlacement.At(0.5f, 0.3f, 0f, 0f, 1100f, 170f), MenuPlacement.At(0.5f, 1f, 0f, -1120f, 980f, 170f),
                 MenuPlacement.At(0.5f, 0.6f, 0f, 0f, 1500f, 80f), MenuPlacement.At(0.5f, 1f, 0f, -1300f, 1000f, 100f), 0.6f);

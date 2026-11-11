@@ -43,8 +43,8 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 
 ## First five minutes
 
-A brand-new player who presses **New Game** is dodging within seconds and is never left watching for more than about
-10 s before Floor 1000 (2026-11-11). New Game starts at **Normal** with no Pick Your Hell card (that card lives in
+A brand-new player who presses **New Game** (after one "Tap to play" and nothing else on that card) lands on **Floor 1000** itself (the Meadow stays in Pick a Level); the first staged rewind ("Hold R.") comes 8 s in. Nobody is left watching for more than about
+10 s before it (2026-11-11). New Game starts at **Normal** with no Pick Your Hell card (that card lives in
 Settings). After three deaths inside five real minutes the death screen offers **Try Assist** once. Level 1's portal
 scene stays under 10 s of locked input (That's a hole / Hello? echo / Nope / the grab); a tap or key skips the rest.
 On a first run Video2 (the fire tunnel) is skipped and stays in Rewatch Stuff; the Shaft plunge is at most 8 s and
