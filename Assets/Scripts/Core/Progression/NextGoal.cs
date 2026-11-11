@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SickOfIt.Core;
 using SickOfIt.Core.Audio;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
@@ -31,11 +32,25 @@ namespace SickOfIt.Core.Progression
     /// </summary>
     public static class NextGoal
     {
-        /// <summary>Diamonds held when the level began (set by the HUD), so the bar can show what this attempt added. -1 = unknown.</summary>
-        public static int RunStartPoints = -1;
-        /// <summary>What hit the hero last on a death that stood (an entity id or a hazard name) and the boss he was fighting, set by PlayAnalytics.Died.</summary>
-        public static string LastCause = "";
-        public static string LastBoss = "";
+        /// <summary>Diamonds held when the level began (set by the HUD via <see cref="NextGoalBridge"/>), so the bar can show what this attempt added. -1 = unknown.</summary>
+        public static int RunStartPoints
+        {
+            get => NextGoalBridge.RunStartPoints;
+            set => NextGoalBridge.RunStartPoints = value;
+        }
+
+        /// <summary>What hit the hero last on a death that stood (an entity id or a hazard name) and the boss he was fighting, set by PlayAnalytics via <see cref="NextGoalBridge"/>.</summary>
+        public static string LastCause
+        {
+            get => NextGoalBridge.LastCause;
+            set => NextGoalBridge.LastCause = value;
+        }
+
+        public static string LastBoss
+        {
+            get => NextGoalBridge.LastBoss;
+            set => NextGoalBridge.LastBoss = value;
+        }
 
         public static int DiamondsThisRun()
         {
@@ -268,6 +283,23 @@ namespace SickOfIt.Core.Progression
                 owner.StartCoroutine(DeathReaction.Say(card, line, 2.4f));
             return card;
         }
+
+        /// <summary>
+        /// The results screen's next-goal card (same pick as death). Called from GameplayHud through
+        /// <see cref="NextGoalBridge.BuildResultsCard"/> because Gameplay cannot name this assembly.
+        /// </summary>
+        public static NextGoalCard BuildForResults(MenuCanvas menu, Transform parent, int floor)
+        {
+            var goal = NextGoal.Pick(floor);
+            if (goal == null || menu == null || parent == null)
+                return null;
+            return Build(menu, parent, goal, MenuPlacement.At(0.2f, 0.13f, 0f, 0f, 540f, 140f),
+                MenuPlacement.At(0.5f, 0.268f, 0f, 0f, 900f, 130f), null, null, 1.4f);
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void RegisterResultsCard() =>
+            NextGoalBridge.BuildResultsCard = (menu, parent, floor) => BuildForResults(menu, parent, floor);
 
         void Update()
         {
