@@ -36,6 +36,9 @@ namespace SickOfIt.Core.Progression
         /// <summary>A line is being said right now.</summary>
         public bool Speaking { get; private set; }
 
+        /// <summary>How far the body is lifted now (px): the bob while he speaks, read by the playtest.</summary>
+        public float Lift => body != null ? body.anchoredPosition.y : 0f;
+
         YoobaConfig config;
         readonly Dictionary<string, List<Sprite>> frames = new Dictionary<string, List<Sprite>>();
         readonly Dictionary<string, float> rates = new Dictionary<string, float>();
@@ -239,6 +242,12 @@ namespace SickOfIt.Core.Progression
                 Play("idle");
             float t = Time.unscaledTime - clipStarted;
             IdleBehaviors(out float lift, out float tilt, out float pupilScale, out float pupilShift);
+            if (Speaking)
+            {
+                // A bob while he talks, on top of the clip: a hop per beat and a small sway.
+                lift += Mathf.Abs(Mathf.Sin(Time.unscaledTime * 9f)) * 8f;
+                tilt += Mathf.Sin(Time.unscaledTime * 6f) * 2.5f;
+            }
             body.anchoredPosition = new Vector2(0f, lift);
             body.localRotation = Quaternion.Euler(0f, 0f, tilt);
             if (pupilL != null)
@@ -437,13 +446,31 @@ namespace SickOfIt.Core.Progression
                 candidates = Candidates(moment);
             if (candidates.Count == 0)
                 return null;
-            int key = (int)moment * 1000 + (item != null ? item.GetHashCode() & 0x3ff : 0);
-            shopTurn.TryGetValue(key, out int turn);
-            shopTurn[key] = turn + 1;
-            return candidates[turn % candidates.Count];
+            // Never the same line within RepeatSeconds when the pool allows: the one said longest ago (never = first) wins.
+            float now = Time.realtimeSinceStartup;
+            YoobaLine best = null;
+            float bestAt = float.MaxValue;
+            foreach (var line in candidates)
+            {
+                float at = shopSaidAt.TryGetValue(line.sound, out var t) ? t : float.MinValue;
+                if (at < bestAt)
+                {
+                    bestAt = at;
+                    best = line;
+                }
+            }
+            shopSaidAt[best.sound] = now;
+            ShopRepeatLog?.Invoke(moment, best.sound, bestAt == float.MinValue ? -1f : now - bestAt);
+            return best;
         }
 
-        static readonly Dictionary<int, int> shopTurn = new Dictionary<int, int>();
+        /// <summary>How long a shop line is kept from repeating (about five minutes of play).</summary>
+        public const float RepeatSeconds = 300f;
+
+        /// <summary>Playtest hook: (moment, sound, seconds since it was last said, -1 = never).</summary>
+        public static Action<YoobaMoment, string, float> ShopRepeatLog;
+
+        static readonly Dictionary<string, float> shopSaidAt = new Dictionary<string, float>();
 
         static YoobaLine Choose(List<YoobaLine> candidates)
         {

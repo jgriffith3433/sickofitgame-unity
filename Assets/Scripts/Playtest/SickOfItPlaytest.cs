@@ -1227,6 +1227,9 @@ namespace SickOfIt.Playtest
                 "slime-made goods; a card clicked with 0 diamonds (can't afford), then with its price (bought: diamonds spent, level saved); Back (goodbye) " +
                 "returns to the Shaft and Continue starts Level 3 with the goods applied; the main menu's Visit Yooba shows them still bought; a climb " +
                 "between floors (preview) shows Visit Yooba again. Each beat is a check event", 240, "menus"));
+            list.Add(new PlaytestScenario("yooba-greetings", "Yooba's greetings (acceptance: voiced, no repeats within 5 minutes, the portrait bobs, one-line caption): the Shaft after Video3 (setup shortcut), " +
+                "then ten back-to-back Visit Yooba / Back round trips. Every welcome and goodbye is voiced (a clip), no welcome or goodbye line repeats while another of its pool is unused or inside 300 s, " +
+                "the portrait's lift swings while he speaks and his caption has no line break; `check`, `shop-greeting` events", 360, "menus"));
             list.Add(new PlaytestScenario("waystone", "Waystones and runs: a save where the Landing was cleared (setup shortcut: the Landing's Waystone, " +
                 $"Yooba met, diamonds, one of Yooba's goods bought), then level {WaystoneLevel} (Floor 999) loaded directly and played by the bot, its Grudge " +
                 "picked with 1, the results, the Shaft's climb and Continue to the next stage, where the bot plays to lose (walks into the shots, no " +
@@ -1340,6 +1343,8 @@ namespace SickOfIt.Playtest
                 yield return session.YoobaRun();
             else if (id == "yooba-shop")
                 yield return session.YoobaShopRun();
+            else if (id == "yooba-greetings")
+                yield return session.YoobaGreetingsRun();
             else if (id == NetOutageId)
                 yield return session.NetOutageRun();
             else if (id == IntroSkipId)
@@ -8286,6 +8291,91 @@ namespace SickOfIt.Playtest
                 check("backToShaft", back, back ? $"back on the Shaft at FLOOR {screen.ShownFloor}, Continue up" : "the Shaft didn't come back after the shop");
                 Run.Scene("Shaft (back from Yooba's)");
                 yield return WaitReal(1.2f);
+            }
+
+            /// <summary>Ten shop visits back to back: every greeting and goodbye voiced, none repeated inside the pool's window, the portrait bobbing while he speaks.</summary>
+            public IEnumerator YoobaGreetingsRun()
+            {
+                var definition = GameDefinition.Instance;
+                int video = definition.yooba.helloAfterVideo;
+                var videoConfig = definition.GetVideo(video);
+                int nextLevel = videoConfig != null ? videoConfig.nextLevel : 3;
+                yield return ToMainMenu();
+                if (Run.Done) yield break;
+                Run.Event("shortcut", "reset Yooba's save, marker at Floor 999, load the Shaft through video " + video);
+                YoobaProgress.Reset();
+                ShaftProgress.Floor = 999;
+                ShaftProgress.Plunged = true;
+                RogueliteManager.Instance.SetPoints(0);
+                PlayerPrefs.SetInt("ReturnToLevel", nextLevel);
+                PlayerPrefs.Save();
+                SceneTransitionManager.Instance.LoadVideo(video);
+                yield return Run.Until(() => Object.FindAnyObjectByType<VideoRuntime>() != null && ClockTime > 0.1f, 60f, "the video to start");
+                if (Run.Done) yield break;
+                yield return WaitReal(3f);
+                yield return Tap(Key.Escape);
+                yield return Run.Until(() => ShaftScreen.Current != null, 20f, "the Shaft");
+                if (Run.Done) yield break;
+                var screen = ShaftScreen.Current;
+                yield return WaitReal(4f);
+                if (!screen.Ready)
+                    yield return Tap(Key.Space);
+                yield return Run.Until(() => ShaftScreen.Current != screen || screen.Ready, 60f, "the Shaft's Continue");
+                if (Run.Done) yield break;
+                yield return WaitReal(0.8f);
+
+                var welcomeSeen = new List<string>();
+                var byeSeen = new List<string>();
+                int repeats = 0, unvoiced = 0;
+                float bobMin = float.MaxValue, bobMax = float.MinValue;
+                bool oneLine = true;
+                for (int visit = 1; visit <= 10 && !Run.Done; visit++)
+                {
+                    int at = yoobaLines.Count;
+                    var button = screen.YoobaButton;
+                    yield return ClickButton(button, "Visit Yooba " + visit);
+                    yield return Run.Until(() => UpgradeShopManager.OverShaft != null, 10f, "Yooba's shop");
+                    if (Run.Done) yield break;
+                    var shop = UpgradeShopManager.OverShaft;
+                    float t0 = Time.realtimeSinceStartup;
+                    while (shop != null && shop.Yooba != null && !shop.Yooba.Speaking && Time.realtimeSinceStartup - t0 < 3f)
+                        yield return null;
+                    while (shop != null && shop.Yooba != null && shop.Yooba.Speaking && Time.realtimeSinceStartup - t0 < 25f)
+                    {
+                        bobMin = Mathf.Min(bobMin, shop.Yooba.Lift);
+                        bobMax = Mathf.Max(bobMax, shop.Yooba.Lift);
+                        yield return null;
+                    }
+                    int welcomeEnd = yoobaLines.Count;
+                    for (int i = at; i < welcomeEnd; i++)
+                    {
+                        if (!yoobaLines[i].StartsWith("yooba (ShopWelcome", StringComparison.Ordinal))
+                            continue;
+                        var m = System.Text.RegularExpressions.Regex.Match(yoobaLines[i], @"\((vo_[A-Za-z0-9_]+)(, no clip)?\)\s*$");
+                        string id = m.Success ? m.Groups[1].Value : yoobaLines[i];
+                        if (!m.Success || m.Groups[2].Success) unvoiced++;
+                        if (welcomeSeen.Contains(id)) repeats++;
+                        welcomeSeen.Add(id);
+                        if (yoobaLines[i].Contains("\n")) oneLine = false;
+                        Run.Event("shop-greeting", $"visit {visit}: {id}");
+                    }
+                    int bye0 = yoobaLines.Count;
+                    yield return LeaveYooba(screen, ShopCheck);
+                    for (int i = bye0; i < yoobaLines.Count; i++)
+                        if (yoobaLines[i].StartsWith("yooba (ShopLeave", StringComparison.Ordinal))
+                        {
+                            var m = System.Text.RegularExpressions.Regex.Match(yoobaLines[i], @"\((vo_[A-Za-z0-9_]+)(, no clip)?\)\s*$");
+                            if (!m.Success || m.Groups[2].Success) unvoiced++;
+                            byeSeen.Add(m.Success ? m.Groups[1].Value : yoobaLines[i]);
+                        }
+                }
+                ShopCheck("greetingsVoiced", welcomeSeen.Count >= 10 && unvoiced == 0, $"{welcomeSeen.Count} welcomes, {unvoiced} without a clip");
+                ShopCheck("greetingsNoRepeat", repeats == 0, $"{repeats} repeated welcomes in 10 visits ({string.Join(", ", welcomeSeen)})");
+                ShopCheck("portraitBobs", bobMax - bobMin >= 2f, $"lift ranged {bobMin:0.0}..{bobMax:0.0} while he spoke");
+                ShopCheck("captionOneLine", oneLine, "no line break in his captions");
+                Run.Metric("shop.greetingRepeats", repeats);
+                Run.Progress(1f);
+                End(shopFailed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
             }
 
             /// <summary>
