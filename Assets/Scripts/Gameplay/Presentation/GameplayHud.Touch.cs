@@ -90,7 +90,7 @@ namespace SickOfIt.Gameplay
             var hintRect = MenuGraphics.NewRect("TouchHint", menu.Root);
             hintRect.gameObject.SetActive(false);
             touchHint = MenuGraphics.Text(hintRect, "Text",
-                touchHintPad ? "◄ ► move · JUMP" : "Drag: move · Tap: jump",
+                touchHintPad ? "◄ ► JUMP" : "Tap: jump",
                 theme.chipText, menu.Font, 34f);
             touchHint.raycastTarget = false;
             MenuResponsive.Track(hintRect, MenuPlacement.At(0f, 0f, 460f, 520f, 900f, 60f),
