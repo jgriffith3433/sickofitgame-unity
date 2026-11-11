@@ -900,6 +900,9 @@ namespace SickOfIt.Playtest
                 "fight to its defeat signal, and the hero's voiced weakness hint line; the boss's telegraphs 1+ s after their glow. `boss-fight` events log the timeline, metrics boss.<level>.phases / peakMinions / fightSeconds. ~50 min", BossFightsSeconds, "level"));
             list.Add(new PlaytestScenario(ReadabilityId, "Art direction and bullet readability (Docs/Story.md \"Readability is fairness\"): Level 1 and Floors 1000-997 loaded directly (setup shortcut) and played by the bot through real input for 40 s each. " +
                 "Every hostile shot wears the baseline rims and, measured against the pixels round it in a screen capture, reads at 1.5:1 or better (`bullet` events with the ratio); each level has at least 2 parallax layers (`layers` events). Each beat is a check event", ReadabilitySeconds, "level"));
+            list.Add(new PlaytestScenario(LightingId, "Lighting and post (Docs/lighting.md; Docs/Story.md \"Every floor has its own light\"): Level 1 and Floors 1000-997 loaded directly (setup shortcut) and played through real input with touch UI forced. " +
+                "Each floor shows its own dominant grade colour and bloom, lava/torch lights within 2 units with flicker, a hero rim, and on phone (390x844) the phone tier (half-res bloom, no grain, ≤8 lights) at 30+ fps. " +
+                "Rewind scanlines stay on the frame, off the playfield. `lighting` events and check events lighting <beat>; metrics lighting.levelN.fps / lights", LightingSeconds, "level"));
             list.Add(new PlaytestScenario(AmbienceId, "A Circle's air (Docs/GameplayCookbook.md \"Weather and life\"): each Circle with an ambience (the Ember Wastes, the Cracked Road, the Rune Bridges) gets its first " +
                 "travelling floor loaded directly (setup shortcut) and played by the bot through real input. The parallax layers move at their own factors (every layer's travel measured against the camera's, " +
                 "`parallax` events); each Circle has its own weather (ash, sparks, cinders, runes, grit: kinds and bits drawn) and its own background life (flyers, walkers, a far-off chase: appearances), " +
@@ -1486,6 +1489,8 @@ namespace SickOfIt.Playtest
                 yield return session.DifficultyRun();
             else if (id == ReadabilityId)
                 yield return session.ReadabilityRun();
+            else if (id == LightingId)
+                yield return session.LightingRun();
             else if (id == AmbienceId)
                 yield return session.AmbienceRun();
             else if (id == BossFightsId)

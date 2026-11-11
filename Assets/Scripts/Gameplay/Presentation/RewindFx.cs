@@ -11,7 +11,8 @@ namespace SickOfIt.Gameplay
     /// What rewinding looks and sounds like (Docs/Story.md "Rewind that feels amazing"): while R is held the picture goes
     /// to tape: scrolling scanlines, a cyan/magenta colour split at the edges, a tracking bar sweeping up the screen and
     /// speed streaks trailing off to the side; and a reversed tape whirr loops with its pitch climbing the longer the
-    /// rewind runs, fading out when it ends. All presentation: real time, no simulation state, nothing saved, no
+    /// rewind runs, fading out when it ends. Scanlines and glitch overlays stay on the letterbox / screen frame and off
+    /// the playfield (Docs/lighting.md). All presentation: real time, no simulation state, nothing saved, no
     /// allocation per frame (a fixed set of Images and one AudioSource). Reduced Flash turns off the jitter and halves
     /// the strength.
     /// </summary>
@@ -169,8 +170,10 @@ namespace SickOfIt.Gameplay
             if (shown)
                 Draw(dt);
             else
+            {
                 VisibleLayers = 0;
-            Coverage = shown ? Mathf.Clamp01(intensity * (GameSettings.ReducedFlash ? 0.5f : 1f)) : 0f;
+                Coverage = 0f;
+            }
             Sound(rewinding, dt);
         }
 
@@ -180,40 +183,97 @@ namespace SickOfIt.Gameplay
             float k = intensity * (calm ? 0.5f : 1f);
             float t = Time.unscaledTime;
             float jitter = calm ? 0f : 1f;
+            float h = root.rect.height;
+            float w = root.rect.width;
+            // Playfield in HUD space: the camera's viewport, or a centre band when the screen is already 16:9.
+            // Scanlines / fringes / streaks stay in the frame outside it so the play area stays readable (critic).
+            GetPlayfieldPad(w, h, out float padL, out float padR, out float padB, out float padT);
 
-            // Scanlines, crawling up the screen.
-            var c = scan.color; c.a = 0.2f * k; scan.color = c;
+            // Scanlines only in the letterbox / edge frame (top and bottom strips).
+            float bandH = Mathf.Max(padT, padB, h * 0.08f);
+            var c = scan.color; c.a = 0.22f * k; scan.color = c;
+            scanRect.anchorMin = new Vector2(0f, 0f);
+            scanRect.anchorMax = new Vector2(1f, 1f);
+            scanRect.offsetMin = new Vector2(0f, h - bandH - ScanPeriod * 2f);
+            scanRect.offsetMax = new Vector2(0f, bandH + ScanPeriod * 2f);
+            // Hide the middle of the tiled scan by shrinking it to the top strip only.
+            scanRect.anchorMin = new Vector2(0f, 1f);
+            scanRect.anchorMax = new Vector2(1f, 1f);
+            scanRect.pivot = new Vector2(0.5f, 1f);
+            scanRect.sizeDelta = new Vector2(0f, bandH + ScanPeriod);
             scanRect.anchoredPosition = new Vector2(0f, Mathf.Repeat(t * 40f, ScanPeriod));
 
-            // The colour split, wobbling a little.
+            // Colour split: vignette fringes sit on the outer frame, punched away from the playfield centre.
             float shift = 16f + 8f * Mathf.Sin(t * 9f) * jitter;
-            fringeCyan.color = new Color(0.1f, 0.95f, 1f, 0.5f * k);
-            fringeMagenta.color = new Color(1f, 0.15f, 0.8f, 0.45f * k);
-            fringeCyan.rectTransform.offsetMin = fringeCyan.rectTransform.offsetMax = new Vector2(shift, 0f);
-            fringeMagenta.rectTransform.offsetMin = fringeMagenta.rectTransform.offsetMax = new Vector2(-shift, 0f);
+            fringeCyan.color = new Color(0.1f, 0.95f, 1f, 0.45f * k);
+            fringeMagenta.color = new Color(1f, 0.15f, 0.8f, 0.4f * k);
+            // Keep the vignette, but inset so the hot centre of the playfield is clear.
+            fringeCyan.rectTransform.offsetMin = new Vector2(padL * 0.35f + shift, padB * 0.35f);
+            fringeCyan.rectTransform.offsetMax = new Vector2(-(padR * 0.35f) + shift, -(padT * 0.35f));
+            fringeMagenta.rectTransform.offsetMin = new Vector2(padL * 0.35f - shift, padB * 0.35f);
+            fringeMagenta.rectTransform.offsetMax = new Vector2(-(padR * 0.35f) - shift, -(padT * 0.35f));
+            // Soften the middle by lowering fringe alpha when pads are thin (full-bleed playfield).
+            if (padL + padR + padT + padB < w * 0.05f)
+            {
+                fringeCyan.color = new Color(0.1f, 0.95f, 1f, 0.22f * k);
+                fringeMagenta.color = new Color(1f, 0.15f, 0.8f, 0.2f * k);
+            }
 
-            // The tracking bar rises every 1.4 s.
-            float h = root.rect.height;
+            // Tracking bar rides the top or bottom letterbox, never through the playfield middle.
             float rise = Mathf.Repeat(t / 1.4f, 1f);
-            band.color = new Color(0.7f, 1f, 1f, 0.14f * k);
-            band.rectTransform.anchoredPosition = new Vector2(0f, Mathf.Lerp(-30f, h + 30f, rise));
+            bool topBand = rise > 0.5f;
+            band.color = new Color(0.7f, 1f, 1f, 0.16f * k);
+            var bandRect = band.rectTransform;
+            bandRect.anchorMin = new Vector2(0f, topBand ? 1f : 0f);
+            bandRect.anchorMax = new Vector2(1f, topBand ? 1f : 0f);
+            bandRect.pivot = new Vector2(0.5f, 0.5f);
+            bandRect.sizeDelta = new Vector2(0f, Mathf.Min(46f, bandH));
+            bandRect.anchoredPosition = new Vector2(0f, topBand ? -bandH * rise * 2f : bandH * (1f - rise) * 2f);
 
-            // Speed streaks trail off to the right (things go backward: the world leaves the way it came).
-            float w = root.rect.width;
+            // Speed streaks only along the top and bottom edges (and side letterbox).
             for (int i = 0; i < Streaks; i++)
             {
                 float life = Mathf.Repeat(t * (0.9f + streakSeed[i]) + streakSeed[i] * 9f, 1f);
                 int cycle = Mathf.FloorToInt(t * (0.9f + streakSeed[i]) + streakSeed[i] * 9f);
-                float y = Hash(i * 3.7f + cycle * 1.9f) * h;
+                bool top = (i & 1) == 0;
+                float y = top
+                    ? h - Hash(i * 3.7f + cycle * 1.9f) * bandH
+                    : Hash(i * 3.7f + cycle * 1.9f) * bandH;
                 float len = w * (0.12f + 0.28f * Hash(i + cycle * 5.1f));
                 float x = Mathf.Lerp(-len, w, life);
                 var r = streak[i].rectTransform;
+                r.anchorMin = r.anchorMax = new Vector2(0f, 0f);
+                r.pivot = new Vector2(0f, 0.5f);
                 r.anchoredPosition = new Vector2(x, y);
                 r.sizeDelta = new Vector2(len, 2f + 3f * streakSeed[i]);
                 float fade = Mathf.Sin(life * Mathf.PI);
                 streak[i].color = new Color(0.75f, 1f, 1f, 0.5f * fade * k * (calm ? 0.6f : 1f));
             }
             VisibleLayers = 3 + Streaks;
+            // Coverage is the tinted *frame* share (letterbox / edge), not the playfield centre.
+            float area = Mathf.Max(1f, w * h);
+            float edge = padL * h + padR * h + padT * w + padB * w;
+            Coverage = Mathf.Clamp01(k) * Mathf.Clamp01(Mathf.Max(edge / area, 0.12f));
+        }
+
+        /// <summary>Letterbox / pillarbox padding in HUD pixels; falls back to an 8% frame when the playfield is full-bleed.</summary>
+        static void GetPlayfieldPad(float w, float h, out float padL, out float padR, out float padB, out float padT)
+        {
+            padL = padR = padB = padT = 0f;
+            var cam = Camera.main;
+            Rect view = cam != null ? cam.rect : new Rect(0f, 0f, 1f, 1f);
+            if (cam != null && cam.TryGetComponent(out SickOfIt.Core.Device.AspectRatioController aspect))
+                view = aspect.LastViewport;
+            padL = view.xMin * w;
+            padR = (1f - view.xMax) * w;
+            padB = view.yMin * h;
+            padT = (1f - view.yMax) * h;
+            if (padL + padR + padB + padT < 1f)
+            {
+                // Full-bleed: keep a thin outer frame so glitches never sit on the hero.
+                padL = padR = w * 0.06f;
+                padB = padT = h * 0.08f;
+            }
         }
 
         void Sound(bool rewinding, float dt)
