@@ -16,7 +16,7 @@
       "sequenceLoop": true
     }
   ],
-  "music": "Audio/Music/wastes_loop.ogg",
+  "music": "Audio/Music/road_loop.ogg",
   "musicVolume": 0.0,
   "platforms": [],
   "placedSprites": [],
@@ -242,7 +242,7 @@
           },
           {
             "type": "playMusic",
-            "clip": "Audio/Music/wastes_push.ogg",
+            "clip": "Audio/Music/spire_fiend_theme.ogg",
             "volume": 0.85
           },
           {

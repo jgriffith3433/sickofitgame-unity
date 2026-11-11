@@ -6,7 +6,7 @@
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
   "backgroundLayers": [],
-  "music": "Audio/Music/wastes_loop.ogg",
+  "music": "Audio/Music/road_loop.ogg",
   "musicVolume": 0.85,
   "platforms": [],
   "placedSprites": [],
@@ -329,7 +329,8 @@
                 "type": "showText",
                 "text": "I'm not in a hurry.",
                 "duration": 2.2,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop809_early"
               }
             ]
           }
@@ -354,7 +355,8 @@
                 "type": "showText",
                 "text": "The road goes down. Of course it does.",
                 "duration": 3.0,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop809_dip"
               }
             ]
           }
@@ -392,6 +394,7 @@
                 "text": "Soul: Jump. Then rewind. ...I'll do it for you.",
                 "duration": 4.0,
                 "style": "Subtitle",
+                "sound": "vo_stop809_room",
                 "color": "#B9C4D0"
               }
             ]
@@ -487,6 +490,7 @@
                 "text": "Soul: I've got that one.",
                 "duration": 2.2,
                 "style": "Subtitle",
+                "sound": "vo_stop809_got",
                 "color": "#B9C4D0"
               },
               {
@@ -497,7 +501,8 @@
                 "type": "showText",
                 "text": "It jumps worse than me.",
                 "duration": 2.4,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop809_worse"
               },
               {
                 "type": "spawn",
@@ -555,7 +560,8 @@
                 "text": "THE LOOP ROOM: AGAIN",
                 "duration": 2.4,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop809_clear"
               },
               {
                 "type": "wait",
@@ -587,7 +593,8 @@
                 "text": "FLOOR 809: THE LOOP ROOM",
                 "duration": 2.6,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop809_title"
               }
             ]
           }
