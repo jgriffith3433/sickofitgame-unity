@@ -114,7 +114,7 @@
             {
               "entity": "ledge",
               "at": [
-                -0.5999999999999999,
+                -0.6,
                 1.65
               ],
               "scale": [
@@ -125,7 +125,7 @@
             {
               "entity": "ledge",
               "at": [
-                1.2000000000000002,
+                1.2,
                 1.65
               ],
               "scale": [
@@ -136,7 +136,7 @@
             {
               "entity": "ledge",
               "at": [
-                3.0000000000000004,
+                3.0,
                 1.65
               ],
               "scale": [
@@ -147,7 +147,7 @@
             {
               "entity": "ledge",
               "at": [
-                4.800000000000001,
+                4.8,
                 1.65
               ],
               "scale": [
@@ -203,7 +203,7 @@
             {
               "entity": "campFire",
               "at": [
-                3.5000000000000004,
+                3.5,
                 0.58
               ],
               "id": "campFire"
@@ -319,7 +319,8 @@
                 "type": "showText",
                 "text": "I'm not in a hurry.",
                 "duration": 2.2,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop897_early"
               }
             ]
           }
@@ -360,6 +361,7 @@
                 "text": "Rook: I made a fire! Out of fire. ...It was quicker.",
                 "duration": 4.4,
                 "style": "Subtitle",
+                "sound": "vo_stop897_fire",
                 "color": "#F2A93B"
               },
               {
@@ -371,6 +373,7 @@
                 "text": "Rook: Sit. Or don't. I won't say anything. ...Sit?",
                 "duration": 3.8,
                 "style": "Subtitle",
+                "sound": "vo_stop897_sit",
                 "color": "#F2A93B"
               },
               {
@@ -438,7 +441,8 @@
                 "type": "showText",
                 "text": "Five minutes.",
                 "duration": 2.0,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop897_five"
               },
               {
                 "type": "wait",
@@ -446,9 +450,10 @@
               },
               {
                 "type": "showText",
-                "text": "Rook: Five minutes! I'm winning. ...Winning what?",
+                "text": "Rook: Five minutes! I'm winning. ...Of what, I'll work out later.",
                 "duration": 4.6,
                 "style": "Subtitle",
+                "sound": "vo_stop897_win",
                 "color": "#F2A93B"
               },
               {
@@ -492,7 +497,7 @@
               "type": "playerInZone",
               "center": [
                 9.2,
-                2.8499999999999996
+                2.85
               ],
               "size": [
                 3.0,
@@ -531,7 +536,8 @@
                 "type": "showText",
                 "text": "Can't. Up.",
                 "duration": 1.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop897_cant"
               },
               {
                 "type": "wait",
@@ -542,6 +548,7 @@
                 "text": "Rook: Right. Up. ...I'm right behind you.",
                 "duration": 3.4,
                 "style": "Subtitle",
+                "sound": "vo_stop897_behind",
                 "color": "#F2A93B"
               },
               {
@@ -550,7 +557,7 @@
                 "anchor": "World",
                 "at": [
                   9.6,
-                  2.8499999999999996
+                  2.85
                 ],
                 "facePlayer": false
               },
@@ -560,7 +567,7 @@
                 "anchor": "World",
                 "at": [
                   10.1,
-                  2.8499999999999996
+                  2.85
                 ],
                 "facePlayer": false
               },
@@ -618,7 +625,8 @@
                 "text": "ROOK'S CAMP: LEFT BEHIND",
                 "duration": 2.4,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop897_clear"
               },
               {
                 "type": "wait",
@@ -650,7 +658,8 @@
                 "text": "FLOOR 897: ROOK'S CAMP",
                 "duration": 2.6,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop897_title"
               }
             ]
           }

@@ -114,7 +114,7 @@
             {
               "entity": "ledge",
               "at": [
-                -0.5999999999999999,
+                -0.6,
                 1.65
               ],
               "scale": [
@@ -125,7 +125,7 @@
             {
               "entity": "ledge",
               "at": [
-                1.2000000000000002,
+                1.2,
                 1.65
               ],
               "scale": [
@@ -136,7 +136,7 @@
             {
               "entity": "ledge",
               "at": [
-                3.0000000000000004,
+                3.0,
                 1.65
               ],
               "scale": [
@@ -147,7 +147,7 @@
             {
               "entity": "ledge",
               "at": [
-                4.800000000000001,
+                4.8,
                 1.65
               ],
               "scale": [
@@ -199,7 +199,7 @@
             {
               "entity": "damnedSoul",
               "at": [
-                4.300000000000001,
+                4.3,
                 2.48
               ],
               "id": "soaker0"
@@ -208,14 +208,14 @@
               "entity": "damnedSoul",
               "at": [
                 5.4,
-                2.6799999999999997
+                2.68
               ],
               "id": "soaker1"
             },
             {
               "entity": "damnedSoul",
               "at": [
-                6.6000000000000005,
+                6.6,
                 2.43
               ],
               "id": "soaker2"
@@ -323,7 +323,8 @@
                 "type": "showText",
                 "text": "I'm not in a hurry.",
                 "duration": 2.2,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop957_early"
               }
             ]
           }
@@ -348,7 +349,8 @@
                 "type": "showText",
                 "text": "It's quiet. I don't like it.",
                 "duration": 2.6,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop957_quiet"
               }
             ]
           }
@@ -383,9 +385,10 @@
               },
               {
                 "type": "showText",
-                "text": "Soul: Careful. It's the one thing here that won't burn you.",
+                "text": "Soul: Careful. It's the one thing down here that isn't trying to burn you.",
                 "duration": 4.2,
                 "style": "Subtitle",
+                "sound": "vo_stop957_careful",
                 "color": "#B9C4D0"
               },
               {
@@ -396,7 +399,8 @@
                 "type": "showText",
                 "text": "It's a puddle.",
                 "duration": 2.0,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop957_puddle"
               },
               {
                 "type": "wait",
@@ -404,9 +408,10 @@
               },
               {
                 "type": "showText",
-                "text": "Soul: A spring. ...Nobody told the Overlord.",
+                "text": "Soul: It's a spring. It cooled a century ago. ...Nobody told the Overlord.",
                 "duration": 4.4,
                 "style": "Subtitle",
+                "sound": "vo_stop957_spring",
                 "color": "#B9C4D0"
               },
               {
@@ -441,7 +446,8 @@
                 "type": "showText",
                 "text": "Fine. That helped.",
                 "duration": 2.4,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop957_helped"
               }
             ]
           }
@@ -480,6 +486,7 @@
                 "text": "Soul: Stay as long as you like. Everyone does.",
                 "duration": 3.4,
                 "style": "Subtitle",
+                "sound": "vo_stop957_stay",
                 "color": "#B9C4D0"
               }
             ]
@@ -528,7 +535,8 @@
                 "text": "THE HOT BATH: SOAKED",
                 "duration": 2.4,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop957_clear"
               },
               {
                 "type": "wait",
@@ -560,7 +568,8 @@
                 "text": "FLOOR 957: THE HOT BATH",
                 "duration": 2.6,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop957_title"
               }
             ]
           }

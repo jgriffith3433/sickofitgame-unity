@@ -35,7 +35,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/wastes_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -51,7 +51,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/road_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -66,7 +66,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/spire_fiend_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -81,7 +81,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/road_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -97,7 +97,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/bridges_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -112,7 +112,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/bridge_wraith_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -127,7 +127,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/bridges_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -143,7 +143,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/gloomwood_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -158,7 +158,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/hollow_king_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -173,7 +173,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/gloomwood_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -189,7 +189,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/mire_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -204,7 +204,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/drowned_queen_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -219,7 +219,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/mire_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -235,7 +235,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/caverns_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -250,7 +250,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/mother_maw_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -265,7 +265,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/caverns_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -281,7 +281,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/peaks_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -296,7 +296,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/bell_ringer_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -311,7 +311,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/peaks_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -327,7 +327,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/bastion_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -342,7 +342,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/gatekeeper_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -357,7 +357,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/bastion_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -373,7 +373,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/keep_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -388,7 +388,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/chain_king_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -403,7 +403,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/keep_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -419,7 +419,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/throne_stair_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_loop.ogg",
       "used": "the Circle's floor stages (level `music`)"
     },
@@ -434,7 +434,7 @@
       "seconds": 75,
       "takes": 3,
       "out": "Assets/Audio/Music/overlord_theme.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/magma_king_theme.ogg",
       "used": "the Warden's arena (playMusic when the fight starts)"
     },
@@ -449,7 +449,7 @@
       "seconds": 90,
       "takes": 3,
       "out": "Assets/Audio/Music/throne_stair_layer.ogg",
-      "status": "to-make",
+      "status": "exists",
       "standIn": "Audio/Music/wastes_push.ogg",
       "used": "Circle.intensityMusic (fades in with enemy and bullet count)",
       "note": "Cut to exactly the base loop's length so the two stay in step."
@@ -547,7 +547,7 @@
   ],
   "price": {
     "estimatedWith": "hawkesgen_estimate, 2026-10-25, ace-step median of 40 past jobs",
-    "takes": 102,
+    "takes": 18,
     "gpuSeconds": 1031,
     "modelLoads": 100,
     "wallMinutes": 19,
