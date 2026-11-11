@@ -180,6 +180,8 @@ namespace SickOfIt.Playtest
                 }
                 TouchCheck($"{sizeName}: rewind button is at least 48 px", rewindRect.width >= 48f && rewindRect.height >= 48f,
                     $"{rewindRect.width:0}x{rewindRect.height:0} px");
+                TouchCheck($"{sizeName}: rewind button is thumb-sized (80+ px) and in the lower half, in reach", Mathf.Min(rewindRect.width, rewindRect.height) >= 80f && rewindRect.center.y < Screen.height * 0.5f,
+                    $"{rewindRect.width:0}x{rewindRect.height:0} px at y {rewindRect.center.y:0} of {Screen.height}");
                 Run.Metric($"touch.{sizeName.Replace(' ', '_')}.rewindButtonPx", Mathf.Min(rewindRect.width, rewindRect.height));
                 Run.Metric($"touch.{sizeName.Replace(' ', '_')}.stickPx", ring.width);
 
