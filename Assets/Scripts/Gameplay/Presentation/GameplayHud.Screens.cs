@@ -365,6 +365,9 @@ namespace SickOfIt.Gameplay
         TextMeshProUGUI deathHint;
         PlayerHealth playerHealth;
         bool deathAnnounced;
+        // What the hint shows now (the words and whether the colour is the rewind's), so a frame in the window only writes on a change.
+        string deathHintShown;
+        bool deathHintCanUndo;
 
         void BuildDeathOverlay()
         {
@@ -389,7 +392,29 @@ namespace SickOfIt.Gameplay
             deathBar.Lost = style.healthLost;
             deathBar.Track = style.barTrack;
             deathBar.MaxSegments = 0;
+            deathHint.enableVertexGradient = false;
+            PrewarmDeathOverlay();
             deathRoot.SetActive(false);
+        }
+
+        /// <summary>
+        /// Builds every glyph and mesh the death overlay will need while it is still switched off. The first time it came on (the hit
+        /// that leaves the hero at 0) its 140 pt title and hint had to rasterize their glyphs and build their meshes on that very
+        /// frame, a stall of tens of milliseconds on a phone's CPU, right at the hit-freeze. The words are the same ones the
+        /// overlay shows, so nothing is made at the hit.
+        /// </summary>
+        void PrewarmDeathOverlay()
+        {
+            string[] hints = { Texts.deathRewindTouch, Texts.deathRewind, Texts.deathNoJuice };
+            foreach (var hint in hints)
+            {
+                if (string.IsNullOrEmpty(hint))
+                    continue;
+                MenuGraphics.SetText(deathHint, hint);
+                foreach (var text in deathRoot.GetComponentsInChildren<TMP_Text>(true))
+                    text.ForceMeshUpdate(true, true);
+            }
+            deathHintShown = null;
         }
 
         void UpdateDeath()
@@ -424,9 +449,16 @@ namespace SickOfIt.Gameplay
             }
             var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
             bool canUndo = budget == null || budget.CanRewind;
-            MenuGraphics.SetText(deathHint, canUndo ? (SickOfIt.Core.Device.TouchDevice.IsPrimary ? Texts.deathRewindTouch : Texts.deathRewind) : Texts.deathNoJuice);
-            deathHint.enableVertexGradient = false;
-            deathHint.color = canUndo ? style.rewind : theme.muted;
+            // Written only when it changes: every write rebuilt the hint's mesh and its shadow's (and found the shadow by name,
+            // with a string made) on every frame of the 2.5 s window, which is where a phone's frames went.
+            string hintText = canUndo ? (SickOfIt.Core.Device.TouchDevice.IsPrimary ? Texts.deathRewindTouch : Texts.deathRewind) : Texts.deathNoJuice;
+            if (!string.Equals(hintText, deathHintShown) || canUndo != deathHintCanUndo)
+            {
+                deathHintShown = hintText;
+                deathHintCanUndo = canUndo;
+                MenuGraphics.SetText(deathHint, hintText);
+                deathHint.color = canUndo ? style.rewind : theme.muted;
+            }
             float window = Mathf.Max(0.01f, playerHealth.DeathWindow);
             deathBar.Set(Mathf.RoundToInt(playerHealth.DeathTimeLeft / window * 1000f), 1000);
         }
