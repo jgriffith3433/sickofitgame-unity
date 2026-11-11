@@ -82,8 +82,17 @@ namespace SickOfIt.Core.Device
             clearCamera.depth = cam.depth - 1f;
         }
 
-        /// <summary>Share of the screen height the playfield takes on a portrait phone; the rest is for the thumbs.</summary>
-        public const float PortraitPlayfieldFraction = 0.6f;
+        /// <summary>
+        /// Height of the touch-control strip under the playfield on a portrait phone, in the HUD's layout pixels (the
+        /// 1080-wide portrait space of theme.json: the stick ring tops out near 340, its "drag to move" hint and the
+        /// progress bar's labels near 480). The playfield runs down to the strip's top, so no empty band is left between them.
+        /// </summary>
+        public const float PortraitControlStripLayoutPx = 480f;
+        const float PortraitLayoutWidthPx = 1080f;
+
+        /// <summary>Share of the screen height the control strip takes on a portrait screen of this aspect (width / height).</summary>
+        public static float PortraitControlStripShare(float screenAspect) =>
+            PortraitControlStripLayoutPx * screenAspect / PortraitLayoutWidthPx;
 
         /// <summary>Set after every layout: the share of the screen the playfield covers (tests and the playtest read it).</summary>
         public Rect LastViewport => cam != null ? cam.rect : new Rect(0f, 0f, 1f, 1f);
@@ -217,10 +226,12 @@ namespace SickOfIt.Core.Device
                 if (screenAspect < targetAspect)
                 {
                     // Portrait: the playfield keeps its world width, spans the full screen width and sits at the top
-                    // (below the notch); the lower part of the screen is left to the touch controls.
+                    // (below the notch); only the control strip at the bottom is left to the touch controls, and the
+                    // playfield ends exactly where it starts (no empty band between them).
                     Rect safe = Screen.safeArea;
                     float top = Mathf.Clamp01(safe.yMax / Screen.height);
-                    float height = Mathf.Min(PortraitPlayfieldFraction, top);
+                    float bottom = Mathf.Max(PortraitControlStripShare(screenAspect), Mathf.Clamp01(safe.yMin / Screen.height));
+                    float height = Mathf.Max(0f, top - bottom);
                     // Never shorter than the 16:9 strip it replaces.
                     height = Mathf.Max(height, Mathf.Min(top, screenAspect / targetAspect));
                     cam.rect = new Rect(0f, top - height, 1f, height);

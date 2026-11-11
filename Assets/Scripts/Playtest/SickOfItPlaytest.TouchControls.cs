@@ -166,6 +166,18 @@ namespace SickOfIt.Playtest
                         $"zone {zone}");
 
                 var rewindRect = hud.RewindButtonScreenRect;
+                if (portrait)
+                {
+                    // No dead band: the playfield's bottom edge and the top of the highest control (stick ring or rewind button;
+                    // screen y grows upward) are at most a thumb's breadth apart, and never overlap.
+                    float controlsTop = Mathf.Max(ring.yMax, rewindRect.yMax);
+                    float gapPx = controlsTop - play.yMin;
+                    float gapShare = gapPx / Mathf.Max(1f, Screen.height);
+                    Run.Metric($"touch.{sizeName.Replace(' ', '_')}.playfieldToControlsGapPx", gapPx);
+                    Run.Event("touch", $"{sizeName}: gap between the playfield's bottom ({play.yMin:0} px) and the top of the controls ({controlsTop:0} px): {gapPx:0} px ({gapShare * 100f:0}% of the screen)");
+                    TouchCheck($"{sizeName}: no dead band between the playfield and the controls", gapPx >= -1f && gapShare <= 0.08f,
+                        $"gap {gapPx:0} px = {gapShare * 100f:0}% of {Screen.height} px (playfield {play}, controls top {controlsTop:0})");
+                }
                 TouchCheck($"{sizeName}: rewind button is at least 48 px", rewindRect.width >= 48f && rewindRect.height >= 48f,
                     $"{rewindRect.width:0}x{rewindRect.height:0} px");
                 Run.Metric($"touch.{sizeName.Replace(' ', '_')}.rewindButtonPx", Mathf.Min(rewindRect.width, rewindRect.height));
