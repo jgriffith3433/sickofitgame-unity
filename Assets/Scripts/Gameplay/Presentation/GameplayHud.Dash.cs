@@ -16,6 +16,9 @@ namespace SickOfIt.Gameplay
         RectTransform dashRoot;
         string shownDash = "";
 
+        /// <summary>Clarity: Level 1 and Floor 1000 (level 2) show only hearts and the rewind prompt; the dash and weapon chips arrive from Floor 999 (level 3) on.</summary>
+        internal const int IntroducedAtLevel = 3;
+
         static string DashKeyText => SickOfIt.Core.Device.TouchDevice.IsPrimary ? "Tap: dash" : "Shift: dash";
 
         /// <summary>The dash chip's text (the playtest reads what the player sees).</summary>
@@ -93,7 +96,7 @@ namespace SickOfIt.Gameplay
             if (dashButton == null)
                 return;
             var controller = world.PlayerController;
-            bool show = controller != null && controller.DashUnlocked && !controller.Suspended;
+            bool show = controller != null && controller.DashUnlocked && !controller.Suspended && world.LevelNumber >= IntroducedAtLevel;
             if (dashRoot.gameObject.activeSelf != show)
                 dashRoot.gameObject.SetActive(show);
             if (!show)

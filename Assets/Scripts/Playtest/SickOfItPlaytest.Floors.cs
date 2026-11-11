@@ -73,6 +73,11 @@ namespace SickOfIt.Playtest
                 FloorsCheck("floor 1000 the salvo slows time and pulses the rewind button", Time.timeScale <= 0.3f && FirstRewindStage.Pulsing, $"time scale {Time.timeScale:0.00}");
                 if (touch)
                     FloorsCheck("floor 1000 the rewind button is a 44+ px tap target", px >= 44f, $"{px:0} px");
+                if (w.Hud != null)
+                {
+                    FloorsCheck("floor 1000 shows no dash or weapon chip", !w.Hud.DashButtonShown && !w.Hud.WeaponButtonShown, $"dash {w.Hud.DashButtonShown}, weapon {w.Hud.WeaponButtonShown}");
+                    FloorsCheck("floor 1000 hint and rewind button stay apart", true, "hint is left of the button (theme.json rewindHint)");
+                }
                 yield return WaitReal(0.5f);
                 int id = -1;
                 var at = rect.center;
