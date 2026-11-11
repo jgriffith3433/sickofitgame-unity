@@ -125,10 +125,38 @@ namespace SickOfIt.Core.Addressables
         /// </summary>
         public static void LoadLateInBackground(float delaySeconds)
         {
-            if (!Managed || lateStarted || !Knows(LateCore))
+            if (!Managed || !Knows(LateCore))
                 return;
+            // Every visit to the menu warms the next level again (the first also brings the late core in).
+            if (warming)
+                return;
+            warming = true;
+            warmCancelled = false;
+            WarmDone = false;
+            if (lateStarted)
+            {
+                Runner.Get().StartCoroutine(WarmBehindMenu(delaySeconds));
+                return;
+            }
             lateStarted = true;
             Runner.Get().StartCoroutine(LateInBackground(delaySeconds));
+        }
+
+        static bool warming, warmCancelled;
+
+        /// <summary>The menu is still warming the hero and the next level behind it (the menu's glint shows meanwhile).</summary>
+        public static bool WarmActive => warming;
+
+        /// <summary>
+        /// The player pressed New Game or Continue: the warm-up stops asking for more at low priority; what the level still needs
+        /// loads at full speed under the transition (what the warm-up already fetched is in the cache, never fetched twice).
+        /// </summary>
+        public static void CancelWarm()
+        {
+            if (!warming)
+                return;
+            warmCancelled = true;
+            Application.backgroundLoadingPriority = ThreadPriority.Normal;
         }
 
         /// <summary>
@@ -144,13 +172,48 @@ namespace SickOfIt.Core.Addressables
             yield return new WaitForSecondsRealtime(delaySeconds);
             LateStartedAt = Time.realtimeSinceStartup;
             yield return Acquire(LateCore, new[] { LateCore });
-            // Idle now: fetch what Continue will need (the hero and the level), so tapping it only has to load, not download.
-            string[] next = null;
-            try { if (ContinueLevelProvider != null) next = SickOfIt.Core.Flow.SceneTransitionManager.LevelScopes(ContinueLevelProvider()); }
+            yield return WarmBehindMenu(0f);
+        }
+
+        static IEnumerator WarmBehindMenu(float delaySeconds)
+        {
+            if (delaySeconds > 0f)
+                yield return new WaitForSecondsRealtime(delaySeconds);
+            // Low priority: the menu's input, animation and the ghosts come first.
+            Application.backgroundLoadingPriority = ThreadPriority.Low;
+            try
+            {
+                var routine = WarmNext();
+                while (!warmCancelled && routine.MoveNext())
+                    yield return routine.Current;
+            }
+            finally
+            {
+                Application.backgroundLoadingPriority = ThreadPriority.Normal;
+                warming = false;
+                WarmDone = true;
+            }
+        }
+
+        static IEnumerator WarmNext()
+        {
+            // Idle now: fetch what Continue (and New Game: Level 1) will need, so tapping it only has to load, not download.
+            string[] next = null, download = null;
+            try
+            {
+                if (ContinueLevelProvider != null)
+                {
+                    next = SickOfIt.Core.Flow.SceneTransitionManager.LevelScopes(ContinueLevelProvider());
+                    download = next.Concat(SickOfIt.Core.Flow.SceneTransitionManager.LevelScopes(1)).Distinct().ToArray();
+                }
+            }
             catch (Exception e) { Debug.LogWarning("[GameAssets] warm-up skipped: " + e.Message); }
             if (next == null)
                 yield break;
-            yield return Warm(new[] { Hero }.Concat(next));
+            // Downloads: Continue's level and Level 1 (New Game). Only Continue's is ever held below.
+            yield return Warm(new[] { Hero }.Concat(download));
+            if (warmCancelled)
+                yield break;
             // Downloaded is not loaded: Continue still spent ~11 s decoding and uploading the hero's and Level 1's sheets behind a
             // black bar. Where the browser has the memory (not a phone: iOS kills a page that holds two floors' art) load them too,
             // so Continue finds them in (PrepareThenLoad's "inAlready": no cover, no bar). Left alone if the player already left.
@@ -171,6 +234,8 @@ namespace SickOfIt.Core.Addressables
         /// <summary>Warm-up seconds of the last <see cref="Warm"/> (0 until it ran), for the playtest.</summary>
         public static float WarmSeconds { get; private set; }
         public static bool WarmDone { get; private set; }
+        /// <summary>The last warm-up fetched everything (false if the player pressed Start first), for the playtest.</summary>
+        public static bool WarmProgressDone { get; private set; }
 
         /// <summary>
         /// Downloads the bundles of these scopes into the browser's cache without loading them (each handle released at once, so
@@ -182,13 +247,20 @@ namespace SickOfIt.Core.Addressables
             int count = 0;
             foreach (string address in AddressesOf(wanted))
             {
+                // The player pressed Start: what is left loads at full speed under the transition.
+                if (warmCancelled)
+                    break;
                 var download = AddressablesAPI.DownloadDependenciesAsync(address, false);
                 yield return download;
                 if (download.IsValid())
                     AddressablesAPI.Release(download);
                 count++;
+                // One bundle at a time with a breath between: the menu's taps and animation never wait behind a download.
+                yield return null;
+                yield return null;
             }
             WarmSeconds = Time.realtimeSinceStartup - began;
+            WarmProgressDone = !warmCancelled;
             WarmDone = true;
             Debug.Log($"[GameAssets] warm-up: {count} bundles fetched behind the menu in {WarmSeconds:0.0} s.");
         }

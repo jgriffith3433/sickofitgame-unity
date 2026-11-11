@@ -205,3 +205,18 @@ sheets) downloaded. `PlayerDataSplit.LabelMenuGroup` now labels every entry of `
 only (guids in `Temp/Addressables.menuLabel.txt`, cleared by `End`/`Recover`), and `GameDefinitionBoot.PrefetchCore` downloads
 `soi.core` and `soi.menu` together while GameDefinition loads. The MainMenu scene then finds those bundles cached. Not measured here
 (no Unity/build); the next `phone-load@local:phone` reports `load.menuSeconds`.
+
+## Start to play inside 3 s (the menu's warm-up, the press, the glint)
+
+- **Warm behind the menu, every visit** (`GameAssets.LoadLateInBackground`, `WarmBehindMenu`): once the menu is up the hero's and Continue's/Level 1's bundles are
+  downloaded one at a time at `Application.backgroundLoadingPriority = Low` with two frames between bundles. Phones download only (cache, no heap); desktops also
+  `Acquire` the hero and Continue's level (#297), so the press hands the same handles on. `GameAssets.WarmActive` is true meanwhile.
+- **The press** (`MainMenuManager.TransitionThenExecute`): `GameAssets.CancelWarm()` (back to normal priority), `SceneTransitionManager.PreloadLevel(level)` starts the
+  level's art during the house explosion, which is cut at `ExplodeCapSeconds` (1.4 s) so the level never waits for the whole clip.
+- **Never a bare LOADING bar** (`ScreenTransition`): if assets are still coming in, the cover shows the hero walking along a track (his place is the progress) under
+  "HERE WE GO AGAIN"; no digits, no "LOADING".
+- **No percentage on the menu** (`BundleDownloadUI`): a small breathing ember diamond while the warm-up or a download runs, gone when it is done
+  (`BundleDownloadUI.GlintVisible/GlintShownAt/GlintGoneAt`).
+- **Playtest `phone-load`** step 4d: three New Game presses, each after 5 s on the menu, timed to Level 1 accepting input (`load.pressToPlaySeconds`, median checked
+  <= 3 s), the menu scanned for "%"/LOADING text, the transition checked for the themed words (`check` events `phone-load press to play`, `themed transition`,
+  `menu shows no percentage`). Keep core vs core.late as they are: the warm-up never touches the menu's 20 s budget (it starts after the menu is up).

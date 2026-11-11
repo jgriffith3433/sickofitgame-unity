@@ -306,7 +306,7 @@ namespace SickOfIt.Core.Progression
                     sceneLoadingManager.LoadLevel(level);
                 else
                     SceneTransitionManager.Instance.LoadLevel(level);
-            }));
+            }, level));
         }
 
         /// <summary>A new run from the highest Waystone: the current run's Grudges go; diamonds and Yooba's goods stay.</summary>
@@ -329,7 +329,7 @@ namespace SickOfIt.Core.Progression
                     sceneLoadingManager.LoadLevel(level);
                 else
                     SceneTransitionManager.Instance.LoadLevel(level);
-            }));
+            }, level));
         }
 
         /// <summary>Endless Floor, the Daily Challenge or New Game+: the card first (best, today's table, the cycle), then Play.</summary>
@@ -370,7 +370,7 @@ namespace SickOfIt.Core.Progression
                     sceneLoadingManager.LoadLevel(level);
                 else
                     SceneTransitionManager.Instance.LoadLevel(level);
-            }));
+            }, level));
         }
 
         private void OnNewGameClicked()
@@ -408,16 +408,23 @@ namespace SickOfIt.Core.Progression
                     sceneLoadingManager.LoadLevel(1);
                 else
                     SceneTransitionManager.Instance.LoadLevel(1);
-            }));
+            }, 1));
         }
 
         /// <summary>
         /// Play the house explosion through to the end, then execute the scene load.
         /// </summary>
-        private IEnumerator TransitionThenExecute(Action onComplete)
+        private IEnumerator TransitionThenExecute(Action onComplete, int level = 0)
         {
             if (menu != null)
                 menu.PlayExit(0.35f);
+
+            // The press: the low-priority warm-up stops and the level's art and sound come in at full speed while the house
+            // explodes (the handles are the ones the level loads with, so nothing loads twice).
+            // Press to level is a few seconds, not an explosion plus a load.
+            SickOfIt.Core.Addressables.GameAssets.CancelWarm();
+            if (level > 0 && SceneTransitionManager.Instance != null)
+                SceneTransitionManager.Instance.PreloadLevel(level);
 
             if (explodeRoot != null)
                 explodeRoot.SetActive(true);
@@ -483,6 +490,9 @@ namespace SickOfIt.Core.Progression
             onComplete?.Invoke();
         }
 
+        /// <summary>The most of the house explosion played before the level opens (Start to play inside 3 s: Downwell's drop).</summary>
+        public const float ExplodeCapSeconds = 1.4f;
+
         private IEnumerator WaitForExplodeReady(SpriteFramePlayer player)
         {
             float waited = 0f;
@@ -503,6 +513,8 @@ namespace SickOfIt.Core.Progression
             if (duration <= 0f)
                 duration = 4f;
 
+            // The level is coming in behind it: the blast is cut to its first moments so Start never waits on the whole clip.
+            duration = Mathf.Min(duration, ExplodeCapSeconds);
             float played = 0f;
             while (played < duration + 0.15f)
             {

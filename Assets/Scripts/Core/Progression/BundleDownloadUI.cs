@@ -33,6 +33,8 @@ namespace SickOfIt.Core.Progression
         private void Start()
         {
             manager = BundleDownloadManager.Instance;
+            GlintVisible = false;
+            GlintShownAt = GlintGoneAt = 0f;
 
             if (manager == null)
             {
@@ -85,11 +87,31 @@ namespace SickOfIt.Core.Progression
             }
         }
 
-        private static string CleanStatus(BundleDownloadManager m)
+        // The menu says nothing about loading in numbers: a faint ember glint breathes in the corner while the next level is
+        // fetched behind the menu, and is gone when that is done. (The old "Loading N%" text and bar are never shown.)
+        private Image glint;
+        private float glintAlpha;
+
+        /// <summary>The glint is showing (alpha above a tenth), and when it first showed and went (real seconds since start; 0 = not yet). The playtest reads them.</summary>
+        public static bool GlintVisible { get; private set; }
+        public static float GlintShownAt { get; private set; }
+        public static float GlintGoneAt { get; private set; }
+
+        private void EnsureGlint()
         {
-            if (m.IsFullyCached && !m.IsDownloading)
-                return "";
-            return $"Loading {Mathf.RoundToInt(m.Progress * 100f)}%";
+            if (glint != null || downloadUIRoot == null)
+                return;
+            var go = new GameObject("Glint", typeof(RectTransform));
+            go.transform.SetParent(downloadUIRoot.transform, false);
+            glint = go.AddComponent<Image>();
+            glint.color = new Color(1f, 0.5f, 0.15f, 0f);
+            glint.raycastTarget = false;
+            var r = glint.rectTransform;
+            r.anchorMin = r.anchorMax = new Vector2(0f, 0f);
+            r.pivot = new Vector2(0f, 0f);
+            r.anchoredPosition = Vector2.zero;
+            r.sizeDelta = new Vector2(14f, 14f);
+            r.localRotation = Quaternion.Euler(0f, 0f, 45f); // a diamond: the game's own shape
         }
 
         private void Update()
@@ -102,20 +124,27 @@ namespace SickOfIt.Core.Progression
 
         private void UpdateUI()
         {
-            // Progress bar
-            if (progressBarFill != null)
-                progressBarFill.fillAmount = manager.Progress;
-
-            // Status text
             if (statusText != null)
-                statusText.text = CleanStatus(manager);
+                statusText.gameObject.SetActive(false);
+            if (progressBarFill != null)
+                progressBarFill.gameObject.SetActive(false);
 
-            // Show/hide root
+            bool busy = manager.IsDownloading || SickOfIt.Core.Addressables.GameAssets.WarmActive;
             if (downloadUIRoot != null)
+                downloadUIRoot.SetActive(busy || glintAlpha > 0.01f);
+            EnsureGlint();
+            glintAlpha = Mathf.MoveTowards(glintAlpha, busy ? 1f : 0f, Time.unscaledDeltaTime * 2f);
+            if (glint != null)
             {
-                bool shouldHide = hideWhenFullyCached && manager.IsFullyCached && !manager.IsDownloading;
-                downloadUIRoot.SetActive(!shouldHide);
+                float breathe = 0.55f + 0.45f * Mathf.Sin(Time.unscaledTime * 3f);
+                glint.color = new Color(1f, 0.5f, 0.15f, 0.7f * glintAlpha * breathe);
             }
+            bool visible = glintAlpha > 0.1f;
+            if (visible && !GlintVisible && GlintShownAt <= 0f)
+                GlintShownAt = Time.realtimeSinceStartup;
+            if (!visible && GlintVisible)
+                GlintGoneAt = Time.realtimeSinceStartup;
+            GlintVisible = visible;
         }
 
         private void SetUIVisible(bool visible)
