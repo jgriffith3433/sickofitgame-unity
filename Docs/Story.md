@@ -1642,6 +1642,16 @@ the picks and the trims are recorded in `Tools/Audio/music.json` and made by `To
   crowd of 3 and is fully in at 14; it comes in over 1.5 s and leaves over 4 s so a single volley doesn't flicker it. It is not used under a
   push track or a Warden's theme (they are intense already), and stops for a rewind. The three built Circles (Ember Wastes, Cracked Road, Rune Bridges) each play their own layer; deeper Circles keep the
   Wastes' push track until theirs are wired.
+- **The Meadow's own music** (Level 1): not the old background film's sound but a track of its own: **"A nice day"**, a warm plucked
+  figure over a soft drone in D major (`meadow_calm`, level `music`), which plays while the village goes about its morning. When the sky
+  opens (the rumble, the shake, the neighbours running) the music **turns**: `playMusic` brings in the raid, the Wastes' push track
+  for now (`meadow_raid` is to make: the same tune with double kicks and alarms, `music_manifest.json` `interim`). `meadow_calm` is a synthesised
+  stand-in until Hawkes Gen's take replaces it. The nice day lasts 6 s before the sky opens.
+- **Rewinding bends the music.** A held rewind fades the normal track out and brings in **the same track, slowed like a tape dragged backward and
+  low-passed** (`StageMusic`: pitch 0.85 sliding to 0.6, a 700 Hz low-pass, 0.12 s in, 0.15 s out), started and stopped by the clock's
+  `OnRewindStarted` / `OnRewindStopped` events (telemetry `musicRewind`). The normal track is back the moment the rewind ends.
+- **A Warden's theme starts as his arena locks:** on Floor 901 the Wastes' loop is cut as the throne rises, his one big hit lands and **the theme
+  comes in under the intro** (0.5), rising to full (0.9) when the fight begins.
 - **Stingers.** A short fanfare when a **new weapon** is found for the first time (`sting_weapon`, with the "NEW WEAPON" banner)
   and one per **rank** on the results screen (`sting_rank_s` to `sting_rank_d`, `theme.json` grade `stingSound`): S golden and huge, A
   confident, B tidy, C a lazy shrug, D a sad comedic wah-wah. Stand-ins (the Shaft's climb sting) play until they are made.

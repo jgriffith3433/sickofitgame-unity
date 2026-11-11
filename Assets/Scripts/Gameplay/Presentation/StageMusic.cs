@@ -60,12 +60,111 @@ namespace SickOfIt.Gameplay
         float fadeStart = -1f;
         bool wasRewinding;
 
+        // ─── The rewind variant (Docs/Story.md, "Music") ──────────────
+        // A compressed (streaming) track can't play backward, so RewindableAudioSource fades it out for a rewind. In its place
+        // plays the same track, bent: slowed like a tape being dragged, through a low-pass filter. It comes in on the clock's
+        // OnRewindStarted and goes on OnRewindStopped (events, nothing polled), while the normal track is put back by the
+        // rewindable source in the same frame the rewind ends.
+        const float RewindVariantVolume = 0.7f;
+        const float RewindVariantInSeconds = 0.12f;
+        const float RewindVariantOutSeconds = 0.15f;
+        const float RewindPitchStart = 0.85f;
+        const float RewindPitchEnd = 0.6f;
+        const float RewindPitchSeconds = 3f;
+        const float RewindCutoffHz = 700f;
+        AudioSource rewindSrc;
+        AudioLowPassFilter rewindFilter;
+        float rewindLevel;
+        float rewindTarget;
+        float rewindElapsed;
+        GameClock subscribedClock;
+
+        /// <summary>The bent rewind variant of the music is audible right now (playtest and tests read this).</summary>
+        /// <summary>The normal track is playing and audible (not faded out or paused for a rewind).</summary>
+        public bool NormalTrackAudible => main != null && main.isPlaying && main.volume > 0.02f;
+
+        /// <summary>The clip the normal track is playing now.</summary>
+        public AudioClip NormalTrackClip => main != null ? main.clip : null;
+
+        public bool RewindVariantPlaying => rewindSrc != null && rewindSrc.isPlaying && rewindTarget > 0f;
+
         public void Init(GameplayWorld owner, AudioSource source)
         {
             world = owner;
             main = source;
             levelClip = source.clip;
             levelVolume = volume = Volume.AuthoredOf(source);
+            Subscribe();
+        }
+
+        void Subscribe()
+        {
+            var clock = GameClock.Instance;
+            if (clock == null || clock == subscribedClock)
+                return;
+            subscribedClock = clock;
+            clock.OnRewindStarted += BeginRewindVariant;
+            clock.OnRewindStopped += EndRewindVariant;
+        }
+
+        void OnDestroy()
+        {
+            if (subscribedClock != null)
+            {
+                subscribedClock.OnRewindStarted -= BeginRewindVariant;
+                subscribedClock.OnRewindStopped -= EndRewindVariant;
+            }
+        }
+
+        void BeginRewindVariant()
+        {
+            if (main == null || main.clip == null)
+                return;
+            if (rewindSrc == null)
+            {
+                var go = new GameObject("MusicRewind");
+                go.transform.SetParent(main.transform, false);
+                rewindSrc = go.AddComponent<AudioSource>();
+                rewindSrc.playOnAwake = false;
+                rewindSrc.spatialBlend = 0f;
+                rewindSrc.dopplerLevel = 0f;
+                rewindSrc.loop = true;
+                rewindFilter = go.AddComponent<AudioLowPassFilter>();
+                rewindFilter.cutoffFrequency = RewindCutoffHz;
+                rewindFilter.lowpassResonanceQ = 1.2f;
+            }
+            rewindSrc.clip = main.clip;
+            rewindSrc.pitch = RewindPitchStart;
+            Volume.Set(rewindSrc, 0f);
+            rewindSrc.Play();
+            if (main.clip.length > 0.1f)
+                rewindSrc.time = Mathf.Min(main.time, main.clip.length - 0.05f);
+            rewindElapsed = 0f;
+            rewindLevel = 0f;
+            rewindTarget = 1f;
+            world?.Telemetry?.Record("musicRewind", main.clip.name, 1, "variant on");
+        }
+
+        void EndRewindVariant()
+        {
+            if (rewindSrc == null || rewindTarget <= 0f)
+                return;
+            rewindTarget = 0f;
+            world?.Telemetry?.Record("musicRewind", rewindSrc.clip != null ? rewindSrc.clip.name : "", 0, "variant off");
+        }
+
+        void TickRewindVariant()
+        {
+            if (rewindSrc == null || !rewindSrc.isPlaying)
+                return;
+            float dt = Time.unscaledDeltaTime;
+            rewindElapsed += dt;
+            float speed = dt / (rewindTarget > rewindLevel ? RewindVariantInSeconds : RewindVariantOutSeconds);
+            rewindLevel = Mathf.MoveTowards(rewindLevel, rewindTarget, speed);
+            rewindSrc.pitch = Mathf.Lerp(RewindPitchStart, RewindPitchEnd, Mathf.Clamp01(rewindElapsed / RewindPitchSeconds));
+            Volume.Set(rewindSrc, volume * RewindVariantVolume * rewindLevel);
+            if (rewindTarget <= 0f && rewindLevel <= 0f)
+                rewindSrc.Stop();
         }
 
         /// <summary>The script's playMusic: this track from the top, until another playMusic (or a rewind past this one).</summary>
@@ -123,6 +222,10 @@ namespace SickOfIt.Gameplay
         {
             if (main == null)
                 return;
+            if (subscribedClock == null)
+                Subscribe();
+            // Only moves while the variant is audible (it fades in and out on the clock's events).
+            TickRewindVariant();
             var clock = GameClock.Instance;
             if (clock != null && clock.IsRewinding)
             {
