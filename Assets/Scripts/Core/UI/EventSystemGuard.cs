@@ -37,6 +37,7 @@ namespace SickOfIt.Core.UI
                 Object.DontDestroyOnLoad(go);
                 keeper = go.AddComponent<EventSystem>();
                 go.AddComponent<InputSystemUIInputModule>();
+                go.AddComponent<Watcher>();
             }
 
             foreach (var other in Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -51,6 +52,24 @@ namespace SickOfIt.Core.UI
                 keeper.enabled = true;
             EventSystem.current = keeper;
             return keeper;
+        }
+
+        /// <summary>
+        /// A scene's own EventSystem switches on in its Awake, before <c>sceneLoaded</c> fires, and one made later by a bridge
+        /// or an additive scene never fires it at all: the guard looks again a few times a second, so a second one lives for
+        /// a fraction of a second, never for a whole menu.
+        /// </summary>
+        sealed class Watcher : MonoBehaviour
+        {
+            float next;
+
+            void Update()
+            {
+                if (Time.unscaledTime < next)
+                    return;
+                next = Time.unscaledTime + 0.25f;
+                Ensure();
+            }
         }
     }
 }

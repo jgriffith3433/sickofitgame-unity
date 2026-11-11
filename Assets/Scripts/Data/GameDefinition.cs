@@ -414,7 +414,15 @@ namespace SickOfIt.Data
             Loading = false;
             var waiting = whenReady;
             whenReady = null;
-            waiting?.Invoke();
+            if (waiting == null)
+                return;
+            // One listener that throws (the playtest registering, the remote content fetch) must not stop the others, and above all
+            // must not stop the boot from opening the menu after this call: each runs on its own.
+            foreach (System.Action listener in waiting.GetInvocationList())
+            {
+                try { listener(); }
+                catch (System.Exception e) { Debug.LogException(e); }
+            }
         }
 
         /// <summary>Runs <paramref name="action"/> now if the definition is there, or as soon as the boot has loaded it.</summary>
