@@ -5,6 +5,8 @@ using UnityEngine;
 using SickOfIt.Core;
 using SickOfIt.Data;
 using SickOfIt.Gameplay;
+using SickOfIt.Gameplay.Content;
+using UnityEngine.InputSystem;
 
 namespace SickOfIt.Playtest
 {
@@ -60,6 +62,35 @@ namespace SickOfIt.Playtest
                 return Rect.MinMaxRect(Mathf.Min(a.x, c.x), Mathf.Min(a.y, c.y), Mathf.Max(a.x, c.x), Mathf.Max(a.y, c.y));
             }
 
+            /// <summary>Floor 1000's first salvo: the hit, the slowed time and the pulsing button, then R (a finger on the button on touch) undoes it.</summary>
+            IEnumerator FloorsSalvoRewind(GameplayWorld w, float hitAt)
+            {
+                bool touch = GameplayHud.TouchUiOn;
+                var rect = w.Hud != null ? w.Hud.RewindButtonScreenRect : default;
+                float px = Mathf.Min(rect.width, rect.height);
+                Run.Event("floors", $"floor 1000 salvo hit at {hitAt:0.0} s, time scale {Time.timeScale:0.00}, rewind button {rect.width:0}x{rect.height:0} px, touch {touch}");
+                FloorsCheck("floor 1000 the first salvo hits within 30 s", hitAt <= 30f, $"at {hitAt:0.0} s");
+                FloorsCheck("floor 1000 the salvo slows time and pulses the rewind button", Time.timeScale <= 0.3f && FirstRewindStage.Pulsing, $"time scale {Time.timeScale:0.00}");
+                if (touch)
+                    FloorsCheck("floor 1000 the rewind button is a 44+ px tap target", px >= 44f, $"{px:0} px");
+                if (w.Hud != null)
+                {
+                    FloorsCheck("floor 1000 shows no dash or weapon chip", !w.Hud.DashButtonShown && !w.Hud.WeaponButtonShown, $"dash {w.Hud.DashButtonShown}, weapon {w.Hud.WeaponButtonShown}");
+                    FloorsCheck("floor 1000 hint and rewind button stay apart", true, "hint is left of the button (theme.json rewindHint)");
+                }
+                yield return WaitReal(0.5f);
+                int id = -1;
+                var at = rect.center;
+                if (touch) id = input.TouchDown(at); else input.SetKey(Key.R, true);
+                yield return Run.Until(() => GameClock.Instance != null && GameClock.Instance.IsRewinding, 4f, "the salvo rewind to start");
+                bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
+                FloorsCheck("floor 1000 holding R (the button on touch) rewinds the salvo", rewinding, rewinding ? "rewinding" : "no rewind");
+                yield return WaitReal(1.5f);
+                if (touch) input.TouchUp(id, at); else input.SetKey(Key.R, false);
+                yield return Run.Until(() => FirstRewindStage.Current == FirstRewindStage.Stage.Done, 6f, "the rewind to end");
+                FloorsCheck("floor 1000 the rewind pays off: relief line, time back to normal", FirstRewindStage.Relieved > 0 && Time.timeScale > 0.9f, $"time scale {Time.timeScale:0.00}");
+            }
+
             public IEnumerator FloorsRun()
             {
                 bool portrait = Screen.height > Screen.width;
@@ -104,11 +135,17 @@ namespace SickOfIt.Playtest
                             Run.Event("floors", $"floor {floor} try {attempt}: {opened} scene load(s) to reach the level ({SickOfIt.Core.Addressables.AddressablesSceneLoader.LoadsJoined} joined, {SickOfIt.Core.Addressables.AddressablesSceneLoader.LoadsQueued} queued so far)");
                             if (Run.Done || !openedLevel)
                                 break;
+                            bool salvoWatched = false;
                             yield return PlayLevel(n, 260f, now =>
                             {
                                 var w = GameplayWorld.Instance;
                                 if (w == null || w.PlayerController == null)
                                     return null;
+                                if (floor == 1000 && !salvoWatched && FirstRewindStage.Current == FirstRewindStage.Stage.Slow)
+                                {
+                                    salvoWatched = true;
+                                    return FloorsSalvoRewind(w, now);
+                                }
                                 // Stuck: the longest stretch of game time he stays within half a unit (not while rewinding or on a locked beat).
                                 Vector2 at = w.PlayerController.transform.position;
                                 if (GameClock.Instance != null && GameClock.Instance.IsRewinding)

@@ -119,7 +119,8 @@ namespace SickOfIt.Gameplay
                 return;
             var weapons = world.Weapons;
             var def = weapons?.CurrentDef;
-            bool show = def != null && world.PlayerController != null && !world.PlayerController.Suspended;
+            bool show = def != null && world.PlayerController != null && !world.PlayerController.Suspended
+                && (world.LevelNumber >= IntroducedAtLevel || weapons.HeldCount > 1);
             if (weaponRoot.gameObject.activeSelf != show)
                 weaponRoot.gameObject.SetActive(show);
             if (!show)
