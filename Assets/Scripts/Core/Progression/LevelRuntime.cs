@@ -1095,6 +1095,10 @@ namespace SickOfIt.Core.Progression
 
             float halfHeight = cam.orthographicSize;
             float halfWidth = halfHeight * cam.aspect;
+            // A phone in portrait is zoomed in and follows the hero sideways: the walls belong at the picture's edges,
+            // not at the edges of the slice the camera shows at spawn (those trapped the hero in a strip, bottom-left).
+            if (cam.TryGetComponent(out SickOfIt.Core.Device.AspectRatioController aspect) && aspect.PortraitZoomed)
+                halfWidth = Mathf.Max(halfWidth, aspect.PictureHalfWidth);
             float thickness = config.barrierThickness;
 
             var barrierContainer = new GameObject("Barriers");

@@ -42,7 +42,8 @@ namespace SickOfIt.Data
         /// <summary>Levels (Level 1, Floors 1000 and 999) whose hitbox dot is on by default, until the player picks a side in Settings.</summary>
         public const int HitboxDotDefaultLevels = 3;
         /// <summary>The dot shows on this level: the player's own choice if they made one, else on for the first three floors.</summary>
-        public static bool HitboxDotFor(int levelNumber) => PlayerPrefs.HasKey(Prefix + "HitboxDot") ? HitboxDot : levelNumber <= HitboxDotDefaultLevels;
+        /// <summary>The early-level default is off on touch devices: a ring and dot on the hero read as a target there. An explicit setting wins.</summary>
+        public static bool HitboxDotFor(int levelNumber, bool touchDevice = false) => PlayerPrefs.HasKey(Prefix + "HitboxDot") ? HitboxDot : !touchDevice && levelNumber <= HitboxDotDefaultLevels;
         public static bool HitboxDot { get => Get("HitboxDot", 0f) > 0.5f; set => Set("HitboxDot", value ? 1f : 0f); }
         // On by default: a quiet tick at the edge where something is about to come in (game.json incomingWarnings).
         public static bool IncomingWarnings { get => Get("IncomingWarnings", 1f) > 0.5f; set => Set("IncomingWarnings", value ? 1f : 0f); }
