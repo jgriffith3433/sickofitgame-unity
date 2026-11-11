@@ -125,6 +125,8 @@ aloud. *Reactions:* knows the next floor's gossip; remembers deaths; flags glint
 death, delighted at a boss.
 
 **The Overlord** (`overlord`). Seen only at a distance until Floor 1: eight glimpses on Floors 997-806. Never answers the hero.
+  *Want:* up, out, the surface. *Arc:* ahead of the hero all the way, until Floor 1, where he rewinds too. *Moment that shows it:*
+  the chase below. *Three words:* bored, enormous, stuck. *Voice:* `overlord`; the silhouette itself is silent but for a low rising hum.
 
 **The Climbers.** *Rook* (rival, always second; 996/992/955/899/858/808): shows off, cuts in, leaves a mess. *Wick*
 (Circle X's lamplighter; 999/993/960/902): lights lamps on a loop, helps, repeats himself. *Pointer* (Circle IX's
@@ -190,6 +192,15 @@ Per area: interactions (at least three kinds), events on their own, ambient soun
 - **Interactions:** the same, plus ladders as the road's main climb, bounce shots, chains, risen demons.
 - **On their own:** the road splits in time with the hum; spires grow a notch each floor; wind howls through cracks.
 - **Ambient:** a stone hum; cracks; Pointer's creak when he points. **Changes:** the Great Spire gets taller each floor.
+
+### The chase (the Overlord escaping upward, built Nov 11)
+The Overlord is always one floor ahead, and the hero only ever sees it when time goes backward. **When a rewind starts inside a
+death's undo window** (the hero has died, then holds R or the rewind button), the HUD shows the Overlord's silhouette (horns,
+shoulders, red eyes opening as he turns away) hauling himself up and out of the top of the screen over ~2.4 s, with a low rising
+hum (`overlord_beam_charge`, pitched up). A rewind from no death shows nothing, so seeing him means "I undid a death and he got
+away again". `OverlordEscape` (`Gameplay/Presentation`, made by `GameplayHud.BuildRewind`): presentation only, real time, nothing
+saved. It is the quiet spine of the eight far-ledge glimpses and of the Floor 1 reveal that the loop was his first.
+Playtest `overlord-chase` (run on 390x844 touch: a finger on the rewind button, 44+ px).
 
 ### Death and the Waystone loop
 On death: the hero blinks, the announcer gloats, a quip, and **Again!** at once; the Shaft drops the marker to the last
