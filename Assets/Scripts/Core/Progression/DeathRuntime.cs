@@ -255,7 +255,10 @@ namespace SickOfIt.Core.Progression
             AnalyticsManager.Track("choice", new Dictionary<string, object> { { "kind", "again" }, { "level", levelNumber }, { "deaths", DeathsOnLevel } });
             int next = runEnded ? runStop.NextLevel : levelNumber;
             Debug.Log($"[Death] Again!: level {next} now");
-            SceneTransitionManager.Instance.LoadLevel(next);
+            if (runEnded)
+                SceneTransitionManager.Instance.LoadLevel(next);
+            else
+                SceneTransitionManager.Instance.RetryLevel(next);
         }
 
         /// <summary>"YOU OBVIOUSLY DIED" at the top; the announcer's gloat is heard, not written (the screen was too busy, J 2026-10-26).</summary>
