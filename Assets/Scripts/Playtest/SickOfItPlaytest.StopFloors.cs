@@ -106,6 +106,41 @@ namespace SickOfIt.Playtest
 
             public IEnumerator StopFloorsRun()
             {
+                // Landed clips (c_8cc679606350 / this land): every vo_stop* and sting_* must have a real AudioClip
+                // except the one Gen never made (Tools/Audio/pending_clips.json). Empty clip = placeholder silence.
+                var audio = GameDefinition.Instance != null ? GameDefinition.Instance.audio : null;
+                var pending = new HashSet<string> { "vo_stop959_depot" };
+                int voiced = 0, silent = 0;
+                if (audio?.sounds != null)
+                {
+                    foreach (var sound in audio.sounds)
+                    {
+                        if (sound == null || string.IsNullOrEmpty(sound.id)) continue;
+                        if (!sound.id.StartsWith("vo_stop", System.StringComparison.Ordinal)
+                            && !sound.id.StartsWith("sting_", System.StringComparison.Ordinal))
+                            continue;
+                        if (pending.Contains(sound.id))
+                        {
+                            StopCheck($"pending {sound.id} stays without a clip", sound.clip == null,
+                                sound.clip == null ? "still pending" : "has a clip now — drop it from pending_clips.json");
+                            continue;
+                        }
+                        if (sound.clip == null)
+                        {
+                            silent++;
+                            StopCheck($"clip {sound.id}", false, "no clip (placeholder silence)");
+                        }
+                        else
+                        {
+                            voiced++;
+                            Run.Event("clip", $"{sound.id} ok");
+                        }
+                    }
+                }
+                StopCheck("landed stop-floor voices and stingers have clips", silent == 0 && voiced >= 70,
+                    $"{voiced} with clips, {silent} silent (want 71 minus pending)");
+                Run.Metric("stopFloors.landedClips", voiced);
+
                 GameplayTelemetry.Recorded += StopTelemetry;
                 int cleared = 0;
                 try

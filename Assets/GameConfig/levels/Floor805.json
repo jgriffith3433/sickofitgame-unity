@@ -6,7 +6,7 @@
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
   "backgroundLayers": [],
-  "music": "Audio/Music/wastes_loop.ogg",
+  "music": "Audio/Music/road_loop.ogg",
   "musicVolume": 0.85,
   "platforms": [],
   "placedSprites": [],
@@ -978,7 +978,7 @@
             "steps": [
               {
                 "type": "playMusic",
-                "clip": "Audio/Music/wastes_loop.ogg",
+                "clip": "Audio/Music/road_loop.ogg",
                 "volume": 0.85
               }
             ]
@@ -1877,7 +1877,7 @@
           },
           {
             "type": "playMusic",
-            "clip": "Audio/Music/wastes_loop.ogg",
+            "clip": "Audio/Music/road_loop.ogg",
             "volume": 0.85
           },
           {

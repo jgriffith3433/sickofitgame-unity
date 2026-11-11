@@ -13171,8 +13171,8 @@
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Music/shaft_climb.ogg",
-      "generatedFrom": "",
+      "clip": "Audio/Generated/sting_weapon.mp3",
+      "generatedFrom": "effect|2.5|0.5|False|Short triumphant arcade fanfare for finding a new weapon: a rising three-note distorted guitar riff and a bright FM synth flourish, ending on one big hit. 90s arcade cabinet played through a furnace: distorted electric guitar and an FM synth lead. One-shot music sting, no vocals, no speech, clean ending.",
       "volume": 0.8,
       "pitchVariation": 0,
       "maxVoices": 1,
@@ -13187,8 +13187,8 @@
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Music/shaft_climb.ogg",
-      "generatedFrom": "",
+      "clip": "Audio/Generated/sting_rank_s.mp3",
+      "generatedFrom": "effect|4.0|0.5|False|Huge golden victory fanfare for the top rank: a soaring distorted guitar lead over a choir pad, a big drum fill and a final crash, majestic and over the top. 90s arcade cabinet played through a furnace: distorted electric guitar and an FM synth lead. One-shot music sting, no vocals, no speech, clean ending.",
       "volume": 0.9,
       "pitchVariation": 0,
       "maxVoices": 1,
@@ -13203,8 +13203,8 @@
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Music/shaft_climb.ogg",
-      "generatedFrom": "",
+      "clip": "Audio/Generated/sting_rank_a.mp3",
+      "generatedFrom": "effect|3.0|0.5|False|Confident victory sting for a good rank: a punchy distorted guitar riff resolving to a strong major chord, a short drum fill. 90s arcade cabinet played through a furnace: distorted electric guitar and an FM synth lead. One-shot music sting, no vocals, no speech, clean ending.",
       "volume": 0.8,
       "pitchVariation": 0,
       "maxVoices": 1,
@@ -13219,8 +13219,8 @@
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Music/shaft_climb.ogg",
-      "generatedFrom": "",
+      "clip": "Audio/Generated/sting_rank_b.mp3",
+      "generatedFrom": "effect|2.5|0.5|False|Tidy, pleasant result sting for an average-good rank: a neat little FM synth melody resolving on a clean major chord, modest and short. 90s arcade cabinet played through a furnace: distorted electric guitar and an FM synth lead. One-shot music sting, no vocals, no speech, clean ending.",
       "volume": 0.7,
       "pitchVariation": 0,
       "maxVoices": 1,
@@ -13235,8 +13235,8 @@
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Music/shaft_climb.ogg",
-      "generatedFrom": "",
+      "clip": "Audio/Generated/sting_rank_c.mp3",
+      "generatedFrom": "effect|2.5|0.5|False|Lazy, shrugging result sting for a mediocre rank: a slow, unenthusiastic two-note guitar slide and a half-hearted cymbal tap, a musical shrug. 90s arcade cabinet played through a furnace: distorted electric guitar and an FM synth lead. One-shot music sting, no vocals, no speech, clean ending.",
       "volume": 0.6,
       "pitchVariation": 0,
       "maxVoices": 1,
@@ -13251,8 +13251,8 @@
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Music/shaft_climb.ogg",
-      "generatedFrom": "",
+      "clip": "Audio/Generated/sting_rank_d.mp3",
+      "generatedFrom": "effect|3.0|0.5|False|Sad comedic trombone wah-wah-wah-waaah for a bad rank, descending and deflating, played on a detuned FM synth brass, funny and pathetic. 90s arcade cabinet played through a furnace: distorted electric guitar and an FM synth lead. One-shot music sting, no vocals, no speech, clean ending.",
       "volume": 0.5,
       "pitchVariation": 0,
       "maxVoices": 1,
@@ -15763,11 +15763,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_quiet.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] It's quiet. [beat] I don't like it."
     },
     {
       "id": "vo_stop957_careful",
@@ -15778,11 +15779,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_careful.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[whispering] Careful. [beat] It's the one thing down here that isn't trying to burn you."
     },
     {
       "id": "vo_stop957_puddle",
@@ -15793,11 +15795,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_puddle.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[deadpan] It's a puddle."
     },
     {
       "id": "vo_stop957_spring",
@@ -15808,11 +15811,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_spring.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[whispering] It's a spring. It cooled a century ago. [pause] Nobody told the Overlord."
     },
     {
       "id": "vo_stop957_helped",
@@ -15823,11 +15827,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_helped.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[sighs] Fine. [beat] That helped."
     },
     {
       "id": "vo_stop957_stay",
@@ -15838,11 +15843,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_stay.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[whispering] Stay as long as you like. [beat] Everyone does."
     },
     {
       "id": "vo_stop957_title",
@@ -15853,11 +15859,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_title.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Floor nine fifty-seven! [pause] The Hot Bath!"
     },
     {
       "id": "vo_stop957_clear",
@@ -15868,11 +15875,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_clear.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] The Hot Bath... SOAKED!"
     },
     {
       "id": "vo_stop957_early",
@@ -15883,11 +15891,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop957_early.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm not in a hurry."
     },
     {
       "id": "vo_stop959_third",
@@ -15898,11 +15907,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop959_third.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] Everyone says one."
     },
     {
       "id": "vo_stop959_rook",
@@ -15913,11 +15923,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop959_rook.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[sighs] Rook."
     },
     {
       "id": "vo_stop959_walls",
@@ -15928,11 +15939,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop959_walls.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] Somebody had time."
     },
     {
       "id": "vo_stop959_title",
@@ -15943,11 +15955,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop959_title.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Floor nine fifty-nine! [pause] Hell's Graffiti!"
     },
     {
       "id": "vo_stop959_clear",
@@ -15958,11 +15971,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop959_clear.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Hell's Graffiti... READ!"
     },
     {
       "id": "vo_stop959_early",
@@ -15973,11 +15987,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop959_early.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm not in a hurry."
     },
     {
       "id": "vo_stop897_fire",
@@ -15988,11 +16003,12 @@
       "loop": false,
       "voice": "rook",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_fire.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|tyqG7NyoJ3HhzdkhAsW7|eleven_v3|0.5|1|I made a fire! [beat] Out of fire. [pause] It was quicker."
     },
     {
       "id": "vo_stop897_sit",
@@ -16003,11 +16019,12 @@
       "loop": false,
       "voice": "rook",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_sit.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|tyqG7NyoJ3HhzdkhAsW7|eleven_v3|0.5|1|Sit. Or don't. I won't say anything. [pause] Sit?"
     },
     {
       "id": "vo_stop897_five",
@@ -16018,11 +16035,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_five.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[sighs] Five minutes."
     },
     {
       "id": "vo_stop897_win",
@@ -16033,11 +16051,12 @@
       "loop": false,
       "voice": "rook",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_win.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|tyqG7NyoJ3HhzdkhAsW7|eleven_v3|0.5|1|Five minutes! I'm winning. [pause] Of what, I'll work out later."
     },
     {
       "id": "vo_stop897_cant",
@@ -16048,11 +16067,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_cant.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] Can't. [beat] Up."
     },
     {
       "id": "vo_stop897_behind",
@@ -16063,11 +16083,12 @@
       "loop": false,
       "voice": "rook",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_behind.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|tyqG7NyoJ3HhzdkhAsW7|eleven_v3|0.5|1|Right. Up. [pause] I'm right behind you."
     },
     {
       "id": "vo_stop897_title",
@@ -16078,11 +16099,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_title.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Floor eight ninety-seven! [pause] Rook's Camp!"
     },
     {
       "id": "vo_stop897_clear",
@@ -16093,11 +16115,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_clear.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Rook's Camp... LEFT BEHIND!"
     },
     {
       "id": "vo_stop897_early",
@@ -16108,11 +16131,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop897_early.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm not in a hurry."
     },
     {
       "id": "vo_stop893_down",
@@ -16123,11 +16147,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop893_down.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] An imp. [beat] Down there."
     },
     {
       "id": "vo_stop893_same",
@@ -16138,11 +16163,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop893_same.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[deadpan] Same throw."
     },
     {
       "id": "vo_stop893_miss",
@@ -16153,11 +16179,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop893_miss.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[deadpan] Same miss."
     },
     {
       "id": "vo_stop893_short",
@@ -16168,11 +16195,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop893_short.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[amused, deadpan] Rewound it. [beat] Still short."
     },
     {
       "id": "vo_stop893_feel",
@@ -16183,11 +16211,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop893_feel.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[sighs] I'd feel bad. [beat] Almost."
     },
     {
       "id": "vo_stop893_title",
@@ -16198,11 +16227,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop893_title.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Floor eight ninety-three! [pause] The Stuck Imp!"
     },
     {
       "id": "vo_stop893_clear",
@@ -16213,11 +16243,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop893_clear.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] The Stuck Imp... STILL SHORT!"
     },
     {
       "id": "vo_stop893_early",
@@ -16228,11 +16259,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop893_early.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm not in a hurry."
     },
     {
       "id": "vo_stop952_stone",
@@ -16243,11 +16275,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop952_stone.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] A shrine. [beat] In Hell. [beat] Sure."
     },
     {
       "id": "vo_stop952_kneel",
@@ -16258,11 +16291,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop952_kneel.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[whispering] Kneel. [beat] Resting is free. [pause] Mending costs."
     },
     {
       "id": "vo_stop952_rest",
@@ -16273,11 +16307,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop952_rest.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[sighs] A minute of nothing. [beat] Fine."
     },
     {
       "id": "vo_stop952_whole",
@@ -16288,11 +16323,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop952_whole.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[whispering] All of you. [beat] Back. [pause] Hell keeps the receipt."
     },
     {
       "id": "vo_stop952_new",
@@ -16303,11 +16339,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop952_new.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[deadpan] Good as new. [beat] Worse, but new."
     },
     {
       "id": "vo_stop952_title",
@@ -16318,11 +16355,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop952_title.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Floor nine fifty-two! [pause] The Waystone Shrine!"
     },
     {
       "id": "vo_stop952_clear",
@@ -16333,11 +16371,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop952_clear.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] The Waystone Shrine... KNELT!"
     },
     {
       "id": "vo_stop952_early",
@@ -16348,11 +16387,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop952_early.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm not in a hurry."
     },
     {
       "id": "vo_stop856_big",
@@ -16363,11 +16403,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop856_big.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[low, flat] Big. [beat] Asleep. [beat] Keep it that way."
     },
     {
       "id": "vo_stop856_snore",
@@ -16378,11 +16419,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop856_snore.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[whispering, amused] It snores in time with the lava."
     },
     {
       "id": "vo_stop856_past",
@@ -16393,11 +16435,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop856_past.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[whispering, pleased] Didn't even breathe."
     },
     {
       "id": "vo_stop856_mine",
@@ -16408,11 +16451,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop856_mine.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[sighs] Well. [beat] That one's on me."
     },
     {
       "id": "vo_stop856_title",
@@ -16423,11 +16467,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop856_title.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Floor eight fifty-six! [pause] The Sleeping Demon!"
     },
     {
       "id": "vo_stop856_clear",
@@ -16438,11 +16483,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop856_clear.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] The Sleeping Demon... STILL ASLEEP!"
     },
     {
       "id": "vo_stop856_early",
@@ -16453,11 +16499,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop856_early.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm not in a hurry."
     },
     {
       "id": "vo_stop853_pitch1",
@@ -16468,11 +16515,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_pitch1.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[loudly, sing-song, flat on the repeat] Step right up! [pause, flatter] Step right up!"
     },
     {
       "id": "vo_stop853_pitch2",
@@ -16483,11 +16531,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_pitch2.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[loudly, sing-song, flat on the repeat] Step right up! [pause, flatter] Step right up!"
     },
     {
       "id": "vo_stop853_pitch3",
@@ -16498,11 +16547,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_pitch3.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[loudly, sing-song, flat on the repeat] Step right up! [pause, flatter] Step right up!"
     },
     {
       "id": "vo_stop853_line",
@@ -16513,11 +16563,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_line.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[quietly, surprised] You're not in the line."
     },
     {
       "id": "vo_stop853_leaving",
@@ -16528,11 +16579,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_leaving.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm leaving."
     },
     {
       "id": "vo_stop853_last",
@@ -16543,11 +16595,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_last.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[whispering] That's what the last one said."
     },
     {
       "id": "vo_stop853_fair",
@@ -16558,11 +16611,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_fair.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] A fair. [beat] Down here."
     },
     {
       "id": "vo_stop853_again",
@@ -16573,11 +16627,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_again.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[deadpan] Same as last time. [beat] Exactly."
     },
     {
       "id": "vo_stop853_title",
@@ -16588,11 +16643,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_title.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Floor eight fifty-three! [pause] The Damned Parade!"
     },
     {
       "id": "vo_stop853_clear",
@@ -16603,11 +16659,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_clear.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] The Damned Parade... WATCHED!"
     },
     {
       "id": "vo_stop853_early",
@@ -16618,11 +16675,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop853_early.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm not in a hurry."
     },
     {
       "id": "vo_stop809_dip",
@@ -16633,11 +16691,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop809_dip.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] The road goes down. [beat] Of course it does."
     },
     {
       "id": "vo_stop809_room",
@@ -16648,11 +16707,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop809_room.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[whispering] Jump. [beat] Then rewind. [pause] I'll do it for you."
     },
     {
       "id": "vo_stop809_got",
@@ -16663,11 +16723,12 @@
       "loop": false,
       "voice": "soul",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop809_got.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|ysEGb2K9bN5ooRlOwDTl|eleven_v3|0.5|1|[pleased, whispering] I've got that one."
     },
     {
       "id": "vo_stop809_worse",
@@ -16678,11 +16739,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop809_worse.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[deadpan] It jumps worse than me."
     },
     {
       "id": "vo_stop809_title",
@@ -16693,11 +16755,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop809_title.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] Floor eight oh nine! [pause] The Loop Room!"
     },
     {
       "id": "vo_stop809_clear",
@@ -16708,11 +16771,12 @@
       "loop": false,
       "voice": "announcer",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop809_clear.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|1xynpTfy7I462pPrU2kL|eleven_v3|0.5|1|[shouting] The Loop Room... AGAIN!"
     },
     {
       "id": "vo_stop809_early",
@@ -16723,11 +16787,12 @@
       "loop": false,
       "voice": "player",
       "voiceId": "",
-      "clip": "",
+      "clip": "Audio/Generated/vo_stop809_early.mp3",
       "volume": 1,
       "pitchVariation": 0,
       "maxVoices": 1,
-      "cooldown": 0.5
+      "cooldown": 0.5,
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[flat] I'm not in a hurry."
     },
     {
       "id": "vo_stop959_depot",

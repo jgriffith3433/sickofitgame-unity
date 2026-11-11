@@ -307,7 +307,8 @@
                 "type": "showText",
                 "text": "I'm not in a hurry.",
                 "duration": 2.2,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop952_early"
               }
             ]
           }
@@ -332,7 +333,8 @@
                 "type": "showText",
                 "text": "A shrine. In Hell. Sure.",
                 "duration": 2.6,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop952_stone"
               }
             ]
           }
@@ -370,6 +372,7 @@
                 "text": "Soul: Kneel. Resting is free. ...Mending costs.",
                 "duration": 4.0,
                 "style": "Subtitle",
+                "sound": "vo_stop952_kneel",
                 "color": "#B9C4D0"
               },
               {
@@ -431,7 +434,8 @@
                 "type": "showText",
                 "text": "A minute of nothing. Fine.",
                 "duration": 2.6,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop952_rest"
               }
             ]
           }
@@ -474,6 +478,7 @@
                 "text": "Soul: All of you. Back. ...Hell keeps the receipt.",
                 "duration": 4.0,
                 "style": "Subtitle",
+                "sound": "vo_stop952_whole",
                 "color": "#B9C4D0"
               },
               {
@@ -484,7 +489,8 @@
                 "type": "showText",
                 "text": "Good as new. Worse, but new.",
                 "duration": 2.8,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop952_new"
               }
             ]
           }
@@ -545,7 +551,8 @@
                 "text": "THE WAYSTONE SHRINE: KNELT",
                 "duration": 2.4,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop952_clear"
               },
               {
                 "type": "wait",
@@ -616,7 +623,8 @@
                 "text": "THE WAYSTONE SHRINE: KNELT",
                 "duration": 2.4,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop952_clear"
               },
               {
                 "type": "wait",
@@ -644,7 +652,8 @@
                 "text": "FLOOR 952: THE WAYSTONE SHRINE",
                 "duration": 2.6,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop952_title"
               }
             ]
           }

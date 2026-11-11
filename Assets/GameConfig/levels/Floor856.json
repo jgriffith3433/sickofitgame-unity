@@ -6,7 +6,7 @@
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
   "backgroundLayers": [],
-  "music": "Audio/Music/wastes_loop.ogg",
+  "music": "Audio/Music/road_loop.ogg",
   "musicVolume": 0.85,
   "platforms": [],
   "placedSprites": [],
@@ -345,7 +345,8 @@
                 "type": "showText",
                 "text": "I'm not in a hurry.",
                 "duration": 2.2,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop856_early"
               }
             ]
           }
@@ -370,7 +371,8 @@
                 "type": "showText",
                 "text": "Big. Asleep. Keep it that way.",
                 "duration": 3.0,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop856_big"
               }
             ]
           }
@@ -416,7 +418,8 @@
                 "type": "showText",
                 "text": "It snores in time with the lava.",
                 "duration": 3.2,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop856_snore"
               }
             ]
           }
@@ -538,7 +541,8 @@
                 "type": "showText",
                 "text": "Didn't even breathe.",
                 "duration": 2.4,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop856_past"
               },
               {
                 "type": "spawn",
@@ -602,7 +606,8 @@
                 "type": "showText",
                 "text": "Well. That one's on me.",
                 "duration": 2.6,
-                "style": "Subtitle"
+                "style": "Subtitle",
+                "sound": "vo_stop856_mine"
               }
             ]
           }
@@ -650,7 +655,8 @@
                 "text": "THE SLEEPING DEMON: STILL ASLEEP",
                 "duration": 2.4,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop856_clear"
               },
               {
                 "type": "wait",
@@ -682,7 +688,8 @@
                 "text": "FLOOR 856: THE SLEEPING DEMON",
                 "duration": 2.6,
                 "style": "Banner",
-                "color": "#FFD27A"
+                "color": "#FFD27A",
+                "sound": "vo_stop856_title"
               }
             ]
           }
