@@ -169,23 +169,83 @@ namespace SickOfIt.Core.Addressables
             Debug.Log($"[GameDefinitionBoot] Core/menu prefetch {which} after {prefetchSeconds:0.0}s.");
         }
 
-        // Cosmetic only: nothing else is on screen while the bundles download.
+        Texture2D sky, fill;
+
+        // The game's lava palette (Floor 1000's painted look): ash-black sky going to ember red, lava orange, hot yellow.
+        static readonly Color Ash = new Color(0.05f, 0.02f, 0.02f);
+        static readonly Color Ember = new Color(0.42f, 0.09f, 0.03f);
+        static readonly Color Lava = new Color(1f, 0.45f, 0.1f);
+        static readonly Color Hot = new Color(1f, 0.82f, 0.35f);
+
+        static Texture2D Ramp(Color top, Color bottom)
+        {
+            var t = new Texture2D(1, 64, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            for (int y = 0; y < 64; y++)
+                t.SetPixel(0, y, Color.Lerp(bottom, top, y / 63f));
+            t.Apply();
+            return t;
+        }
+
+        void OnDestroy()
+        {
+            if (sky != null) Destroy(sky);
+            if (fill != null) Destroy(fill);
+        }
+
+        // Cosmetic only: nothing else is on screen while the bundles download. Drawn in the lava art style
+        // (ash sky, lava sea along the bottom, rising embers, a rimmed bar filled with lava), sized for phones too.
         void OnGUI()
         {
-            float w = Screen.width, h = Screen.height;
-            float barW = Mathf.Min(w * 0.6f, 480f), barH = Mathf.Max(6f, h * 0.012f);
+            if (Event.current.type != EventType.Repaint && Event.current.type != EventType.Layout)
+                return;
+            float w = Screen.width, h = Screen.height, t = Time.realtimeSinceStartup;
+            if (sky == null) { sky = Ramp(Ash, Ember); fill = Ramp(Hot, Lava); }
+            GUI.color = Color.white;
+            GUI.DrawTexture(new Rect(0, 0, w, h), sky);
+
+            // The lava sea: a glowing band with a hot surface line that breathes.
+            float seaY = h * 0.78f;
+            GUI.color = new Color(Lava.r, Lava.g, Lava.b, 0.85f);
+            GUI.DrawTexture(new Rect(0, seaY, w, h - seaY), Texture2D.whiteTexture);
+            GUI.color = new Color(Hot.r, Hot.g, Hot.b, 0.7f + 0.3f * Mathf.Sin(t * 2.2f));
+            GUI.DrawTexture(new Rect(0, seaY, w, Mathf.Max(3f, h * 0.006f)), Texture2D.whiteTexture);
+
+            // Embers rising off the lava, positions from the clock only.
+            float u = Mathf.Max(3f, Mathf.Min(w, h) * 0.008f);
+            for (int i = 0; i < 28; i++)
+            {
+                float ph = (t * (0.05f + 0.03f * (i % 5)) + i * 0.137f) % 1f;
+                float x = (Mathf.Sin(i * 12.9898f) * 0.5f + 0.5f) * w + Mathf.Sin(t * 0.9f + i) * u * 3f;
+                float y = Mathf.Lerp(seaY, h * 0.08f, ph);
+                GUI.color = new Color(Hot.r, Lava.g, 0.1f, (1f - ph) * 0.9f);
+                float sz = u * (0.6f + (i % 3) * 0.4f);
+                GUI.DrawTexture(new Rect(x, y, sz, sz), Texture2D.whiteTexture);
+            }
+
+            // The bar: dark basalt frame, ember-red trough, lava fill with a hot top edge.
+            float barW = Mathf.Min(w * 0.7f, 520f), barH = Mathf.Max(16f, h * 0.026f), rim = Mathf.Max(3f, barH * 0.2f);
             var bar = new Rect((w - barW) / 2f, h * 0.6f, barW, barH);
+            GUI.color = Ash;
+            GUI.DrawTexture(new Rect(bar.x - rim, bar.y - rim, bar.width + rim * 2f, bar.height + rim * 2f), Texture2D.whiteTexture);
             GUI.color = new Color(0.25f, 0.06f, 0.03f);
             GUI.DrawTexture(bar, Texture2D.whiteTexture);
-            GUI.color = new Color(1f, 0.45f, 0.1f);
-            GUI.DrawTexture(new Rect(bar.x, bar.y, bar.width * Mathf.Clamp01(progress), bar.height), Texture2D.whiteTexture);
+            float p = Mathf.Clamp01(progress);
+            var filled = new Rect(bar.x, bar.y, bar.width * p, bar.height);
+            GUI.color = new Color(Lava.r, Lava.g, Lava.b, 0.25f + 0.1f * Mathf.Sin(t * 4f));
+            GUI.DrawTexture(new Rect(filled.x - rim, filled.y - rim, filled.width + rim * 2f, filled.height + rim * 2f), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+            GUI.DrawTexture(filled, fill);
+
             if (labelStyle == null)
-                labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
-            labelStyle.fontSize = Mathf.RoundToInt(Mathf.Max(14f, Mathf.Min(w, h) * 0.035f));
+                labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
+            labelStyle.fontSize = Mathf.RoundToInt(Mathf.Max(16f, Mathf.Min(w, h) * 0.04f));
             float lineH = labelStyle.fontSize * 1.6f;
-            // The words above the bar: what is loading and how far it got (the page's own bar covered the download before).
+            var words = new Rect(0f, bar.y - lineH * 1.5f, w, lineH);
+            string text = $"Climbing out of the lava... {Mathf.RoundToInt(p * 100f)}%";
+            GUI.color = Ash;
+            GUI.Label(new Rect(words.x + 2f, words.y + 2f, words.width, words.height), text, labelStyle);
             GUI.color = new Color(1f, 0.82f, 0.6f);
-            GUI.Label(new Rect(0f, bar.y - lineH * 1.4f, w, lineH), $"Climbing out of the lava... {Mathf.RoundToInt(Mathf.Clamp01(progress) * 100f)}%", labelStyle);
+            GUI.Label(words, text, labelStyle);
             if (failure != null)
             {
                 GUI.color = Color.white;
