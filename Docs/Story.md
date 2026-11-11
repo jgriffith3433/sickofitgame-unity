@@ -1629,8 +1629,8 @@ the picks and the trims are recorded in `Tools/Audio/music.json` and made by `To
   heartbeat, the Keep's chains), played silently in step with the loop all the time and **faded in as enemies and hostile shots
   crowd the screen** (`CircleDef.intensityMusic`, `StageMusic`): each live enemy counts 1, each hostile shot 0.35, the layer starts at a
   crowd of 3 and is fully in at 14; it comes in over 1.5 s and leaves over 4 s so a single volley doesn't flicker it. It is not used under a
-  push track or a Warden's theme (they are intense already), and stops for a rewind. Until the layers are made, the Wastes' push track stands in
-  for every Circle's.
+  push track or a Warden's theme (they are intense already), and stops for a rewind. The three built Circles (Ember Wastes, Cracked Road, Rune Bridges) each play their own layer; deeper Circles keep the
+  Wastes' push track until theirs are wired.
 - **Stingers.** A short fanfare when a **new weapon** is found for the first time (`sting_weapon`, with the "NEW WEAPON" banner)
   and one per **rank** on the results screen (`sting_rank_s` to `sting_rank_d`, `theme.json` grade `stingSound`): S golden and huge, A
   confident, B tidy, C a lazy shrug, D a sad comedic wah-wah. Stand-ins (the Shaft's climb sting) play until they are made.

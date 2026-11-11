@@ -348,7 +348,7 @@
   },
   "pushMusic": null,
   "pushMusicVolume": 1.0,
-  "intensityMusic": "Audio/Music/wastes_push.ogg",
+  "intensityMusic": "Audio/Music/road_layer.ogg",
   "intensityMusicVolume": 0.7,
   "intensityEnemyWeight": 1.0,
   "intensityBulletWeight": 0.35,

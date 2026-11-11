@@ -6,7 +6,7 @@
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
   "backgroundLayers": [],
-  "music": "Audio/Music/wastes_loop.ogg",
+  "music": "Audio/Music/bridges_loop.ogg",
   "musicVolume": 0.0,
   "platforms": [],
   "placedSprites": [],
@@ -263,7 +263,7 @@
           },
           {
             "type": "playMusic",
-            "clip": "Audio/Music/wastes_push.ogg",
+            "clip": "Audio/Music/bridge_wraith_theme.ogg",
             "volume": 0.85
           },
           {
