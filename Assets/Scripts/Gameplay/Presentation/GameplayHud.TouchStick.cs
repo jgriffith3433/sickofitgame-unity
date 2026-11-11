@@ -128,7 +128,7 @@ namespace SickOfIt.Gameplay
                 else stickArrowR = arrow;
             }
 
-            stickMoveHintRoot = MakeStickHint("TouchMoveHint", "DRAG TO MOVE · FLICK UP TO JUMP",
+            stickMoveHintRoot = MakeStickHint("TouchMoveHint", "DRAG TO MOVE",
                 MenuPlacement.At(0f, 0f, 270f, 470f, 620f, 56f), MenuPlacement.At(0f, 0f, 300f, 420f, 600f, 56f));
             stickRewindHintRoot = MakeStickHint("TouchRewindHint", "HOLD TO REWIND",
                 MenuPlacement.At(1f, 1f, -400f, -214f, 420f, 56f), MenuPlacement.At(1f, 0f, -330f, 280f, 420f, 56f));
