@@ -70,7 +70,8 @@ namespace SickOfIt.Playtest
                 float px = Mathf.Min(rect.width, rect.height);
                 Run.Event("floors", $"floor 1000 salvo hit at {hitAt:0.0} s, time scale {Time.timeScale:0.00}, rewind button {rect.width:0}x{rect.height:0} px, touch {touch}");
                 FloorsCheck("floor 1000 the first salvo hits within 30 s", hitAt <= 30f, $"at {hitAt:0.0} s");
-                FloorsCheck("floor 1000 the salvo slows time and pulses the rewind button", Time.timeScale <= 0.3f && FirstRewindStage.Pulsing, $"time scale {Time.timeScale:0.00}");
+                // 0.2 is the lesson's slow-motion (readable); the hurt freeze's 0.02 is a near stop, which is what the hold used to fall back to.
+                FloorsCheck("floor 1000 the salvo slows time and pulses the rewind button", Time.timeScale >= 0.1f && Time.timeScale <= 0.3f && FirstRewindStage.Pulsing, $"time scale {Time.timeScale:0.000}, freeze active {SickOfIt.Core.Fx.HitFreeze.Active}");
                 if (touch)
                     FloorsCheck("floor 1000 the rewind button is a 44+ px tap target", px >= 44f, $"{px:0} px");
                 if (w.Hud != null)

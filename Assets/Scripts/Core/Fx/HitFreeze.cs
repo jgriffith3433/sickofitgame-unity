@@ -32,8 +32,19 @@ namespace SickOfIt.Core.Fx
             float now = Time.unscaledTime;
             if (Active)
             {
-                // Already still: a second strong hit lengthens it (up to its own length), never stacks.
-                endsAt = Mathf.Max(endsAt, now + seconds);
+                // Already still: a second strong hit lengthens it (up to its own length), never stacks. A request that
+                // outlasts the running one also sets the scale: the hero's 0.08 s hurt freeze (x0.02) always starts first, and the
+                // Floor 1000 salvo's 600 s slow-motion (x0.2, a lesson he has to watch) was held at x0.02, a near stop, instead.
+                if (now + seconds > endsAt)
+                {
+                    endsAt = now + seconds;
+                    float wanted = baseScale * Mathf.Clamp(scale, 0.001f, 1f);
+                    if (!Mathf.Approximately(wanted, frozenScale) && Mathf.Approximately(Time.timeScale, frozenScale))
+                    {
+                        frozenScale = wanted;
+                        Time.timeScale = wanted;
+                    }
+                }
                 return false;
             }
             if (now < readyAt || Time.timeScale <= 0f)
