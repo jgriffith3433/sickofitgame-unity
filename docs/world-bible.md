@@ -225,7 +225,10 @@ Each beat is lived, not read. Format: **where / when -> what happens (events, so
    only.* First rewind taught by an unlucky hit and the hero's line.
 4. **The portal (Meadow end).** The laser drops (charge, column, burst, ring of burning turf); the hero walks to it
    scripted, leans in, says *"That's a hole."*, shouts *"Hello?"*; the echo returns deeper (`vo_portal_echo`); *"Nope."*;
-   he is yanked in, then Yooba bounces in after him. *Voice* throughout. *Text:* none.
+   he is yanked in, then Yooba bounces in after him. *Voice* throughout. *Text:* none. Built on the beat kit
+   (`docs/beats.md`, Nov 11): letterbox bars, a push-in on the hole, each line a speech bubble over its speaker (the
+   hero, the hole's echo, the Overlord's *"Mm. ... Stay."* from above), 10 s or less, any tap skips to the end state,
+   a second play in a session runs about 60% shorter.
 5. **The plunge (Shaft, first time).** The camera falls past every Circle; each Circle's tone rises; a final slam at
    the Landing. *Voice:* announcer: *"Welcome to the bottom. Nine hundred ninety-nine to go."*; hero: *"...Great."*
 6. **Arrival (Floor 1000, 0:00-0:15).** He drops onto the bank; stones sink under him; lava hisses. The announcer

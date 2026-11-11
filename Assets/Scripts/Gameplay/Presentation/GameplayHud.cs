@@ -133,6 +133,7 @@ namespace SickOfIt.Gameplay
             BuildTouchStick();
             BuildStyle();
             BuildIncoming();
+            BuildBeat();
 
             var place = Landscape.objective;
             objective = menu.AddText(menu.Root, "Objective", "", theme.caption, place.anchor, place.offset,
@@ -758,6 +759,7 @@ namespace SickOfIt.Gameplay
             c.a = left > 0f ? flashColor.a * (left / flashDuration) : 0f;
             flash.color = c;
             UpdateFade();
+            UpdateBeat();
             UpdateHealthAndDiamonds();
             UpdateProgressBar();
             UpdateBossIntro();

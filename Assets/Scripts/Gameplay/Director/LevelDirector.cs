@@ -105,6 +105,9 @@ namespace SickOfIt.Gameplay
         int pendingPhase = -1;
         bool insideTick;
 
+        /// <summary>The beat running now (Docs/beats.md). Presentation-side state, not saved: a beat locks rewind.</summary>
+        public readonly BeatRuntime Beats = new BeatRuntime();
+
         public string PhaseName => phase >= 0 && phase < phases.Length ? phases[phase].Def.name : "";
         public bool Completed => completed;
         public LevelScript Script => script;
@@ -228,6 +231,7 @@ namespace SickOfIt.Gameplay
                 AdvanceSequences(now);
                 ApplyPendingPhase(now);
                 PollSkip(now);
+                PollBeat(now);
                 FireHazards(now);
                 AdvanceWaves(now);
                 ExpireSpawnModifiers(now);
@@ -265,6 +269,72 @@ namespace SickOfIt.Gameplay
             world.Telemetry.Record("cutscene", "skip", 0, string.IsNullOrEmpty(toPhase) ? signal : toPhase);
             if (!string.IsNullOrEmpty(signal))
                 world.Emit(signal);
+            if (!string.IsNullOrEmpty(toPhase))
+                GoToPhase(toPhase);
+            ApplyPendingPhase(now);
+        }
+
+        // ─── Beats (Docs/beats.md) ────────────────────────────────────
+
+        public void BeginBeat(BeatStartAction action, ActionContext context)
+        {
+            if (Beats.Active)
+                EndBeat(false, context.Now);
+            Beats.Active = true;
+            Beats.Id = action.id;
+            Beats.Replay = BeatRuntime.HasSeen(action.id);
+            Beats.StartedAt = context.Now;
+            Beats.MaxSeconds = action.maxSeconds;
+            Beats.UnlockAtEnd = action.unlockAtEnd;
+            Beats.SkipPhase = action.skipPhase ?? "";
+            Beats.OnSkip = action.onSkip;
+            world.SetInputLocked(float.PositiveInfinity);
+            world.SetRewindLocked(true);
+            world.Hud.SetLetterbox(true, BeatLetterbox(Beats.Replay));
+            world.Telemetry.Record("beat", "start", Beats.Replay ? 1 : 0, action.id);
+            world.Emit("beat:" + action.id + ":start");
+        }
+
+        /// <summary>Presses in the first moments of a beat are the fight's last clicks, not a skip.</summary>
+        const float BeatGrace = 0.4f;
+
+        static float BeatLetterbox(bool replay) => GameplayHud.LetterboxSeconds * (replay ? BeatRuntime.ReplayScale : 1f);
+
+        /// <summary>Ends the running beat: bars out, marked seen, input back if it asked for that.</summary>
+        public void EndBeat(bool skipped, float now)
+        {
+            if (!Beats.Active)
+                return;
+            string id = Beats.Id;
+            BeatRuntime.MarkSeen(id);
+            Beats.Active = false;
+            world.Hud.SetLetterbox(false, GameplayHud.LetterboxSeconds);
+            world.Hud.HideBubble();
+            if (Beats.UnlockAtEnd)
+            {
+                world.SetInputLocked(0f);
+                world.SetRewindLocked(false);
+            }
+            world.Telemetry.Record("beat", skipped ? "skipped" : "end", Mathf.RoundToInt((now - Beats.StartedAt) * 100f), id);
+            world.Emit("beat:" + id + ":end");
+        }
+
+        void PollBeat(float now)
+        {
+            if (!Beats.Active)
+                return;
+            bool pressed = world.Hud.TakeBeatPress() && now - Beats.StartedAt > BeatGrace;
+            bool late = Beats.MaxSeconds > 0f && now - Beats.StartedAt >= Beats.MaxSeconds;
+            if (!pressed && !late)
+                return;
+            var onSkip = Beats.OnSkip;
+            string toPhase = Beats.SkipPhase;
+            sequences.Clear();
+            ClearSkip();
+            var context = Context(now, null, 0, null);
+            for (int i = 0; i < onSkip.Count; i++)
+                world.RunAction(onSkip[i], context);
+            EndBeat(true, now);
             if (!string.IsNullOrEmpty(toPhase))
                 GoToPhase(toPhase);
             ApplyPendingPhase(now);
@@ -459,14 +529,17 @@ namespace SickOfIt.Gameplay
                 var step = steps[run.Step++];
                 if (step is WaitAction wait)
                 {
-                    run.WaitUntil = now + Mathf.Max(0f, wait.seconds);
+                    run.WaitUntil = now + Mathf.Max(0f, wait.seconds) * Beats.Scale;
                     continue;
                 }
                 sequences[index] = run;
-                world.RunAction(step, Context(now, self, run.Repeat, run.Scope));
+                var stepContext = Context(now, self, run.Repeat, run.Scope);
+                world.RunAction(step, stepContext);
                 if (index >= sequences.Count)
                     return false;
                 run = sequences[index];
+                if (step is ITimedStep timed)
+                    run.WaitUntil = Mathf.Max(run.WaitUntil, now + timed.Hold(stepContext));
             }
             sequences[index] = run;
             return run.Step >= steps.Count && now >= run.WaitUntil;
