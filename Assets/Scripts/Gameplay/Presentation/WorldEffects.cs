@@ -429,6 +429,8 @@ namespace SickOfIt.Gameplay
         {
             if (cameraTransform != null && cameraMoving)
                 TickCameraMove(now);
+            if (cameraTransform != null && Mode == CameraMode.Static && !cameraMoving)
+                FollowHeroZoomed(dt);
             if (cameraTransform == null || Mode == CameraMode.Static)
                 return;
 
@@ -457,6 +459,19 @@ namespace SickOfIt.Gameplay
                 next = Vector2.Lerp(cameraBase, world.Player.Position, t);
             }
             cameraBase = ClampToBounds(next);
+            movesCamera = true;
+        }
+
+        /// <summary>A Static arena on a zoomed portrait phone: the camera slides sideways after the hero, inside the arena's picture.</summary>
+        void FollowHeroZoomed(float dt)
+        {
+            if (world.Player == null || world.Camera == null || !world.Camera.orthographic
+                || !world.Camera.TryGetComponent(out SickOfIt.Core.Device.AspectRatioController aspect) || !aspect.PortraitZoomed)
+                return;
+            float room = Mathf.Max(0f, aspect.PictureHalfWidth - world.Camera.orthographicSize * world.Camera.aspect);
+            float target = Mathf.Clamp(world.Player.Position.x, homeBase.x - room, homeBase.x + room);
+            float t = 1f - Mathf.Exp(-6f * dt);
+            cameraBase = new Vector2(Mathf.Lerp(cameraBase.x, target, t), cameraBase.y);
             movesCamera = true;
         }
 
