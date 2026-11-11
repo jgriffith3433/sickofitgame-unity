@@ -16,13 +16,14 @@ namespace SickOfIt.Playtest
         public const string BeatsId = "opening-beats";
         const float BeatsSeconds = 300f;
 
+        // Floors 1000-997: the hero's voiced line inside each floor's storyBeat (the warm-grey caption is gone; scenario `story` checks the rest).
         static readonly string[] BeatLines =
         {
             "Then the sky opened.",
-            "The bottom of Hell. He is already sick of it.",
-            "One floor up. Hell is counting along.",
-            "They took the village. Now they take the gun.",
-            "Imps haul his village's diamonds. Same sack, every loop.",
+            "Floor one thousand. Of course it's a thousand.",
+            "You said that already.",
+            "That was the baker's cart.",
+            "Those are ours.",
         };
 
         sealed partial class Session

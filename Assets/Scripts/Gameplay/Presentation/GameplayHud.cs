@@ -684,6 +684,29 @@ namespace SickOfIt.Gameplay
         public float FadeAlpha => FadeAt(world != null ? world.Now : 0f);
 
         /// <summary>The subtitle on screen now ("" when none), for the playtest's checks of scene lines.</summary>
+        /// <summary>The subtitle's drawn text as a screen rect (pixels) and its line count, for the playtest; false when none is up.</summary>
+        public bool TryGetSubtitleScreenRect(out Rect rect, out int lines)
+        {
+            rect = Rect.zero;
+            lines = 0;
+            if (subtitle == null || string.IsNullOrEmpty(SubtitleShown))
+                return false;
+            subtitle.ForceMeshUpdate();
+            lines = subtitle.textInfo.lineCount;
+            var b = subtitle.textBounds;
+            var canvas = subtitle.canvas;
+            var cam = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+            Vector2 P(Vector3 local)
+            {
+                var w = subtitle.transform.TransformPoint(local);
+                return cam != null ? (Vector2)cam.WorldToScreenPoint(w) : (Vector2)w;
+            }
+            var lo = P(b.min);
+            var hi = P(b.max);
+            rect = Rect.MinMaxRect(Mathf.Min(lo.x, hi.x), Mathf.Min(lo.y, hi.y), Mathf.Max(lo.x, hi.x), Mathf.Max(lo.y, hi.y));
+            return true;
+        }
+
         public string SubtitleShown => world != null && world.Now < subtitleUntil ? subtitleText : "";
 
         /// <summary>The boss bar's label while the bar is on screen ("" when it isn't), for the playtest's checks of a boss intro.</summary>

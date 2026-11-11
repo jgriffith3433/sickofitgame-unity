@@ -434,33 +434,62 @@
                 "style": "Banner",
                 "sound": "vo_landing_title",
                 "color": "#FFD27A"
-              },
-              {
-                "type": "wait",
-                "seconds": 2.8
-              },
-              {
-                "type": "showText",
-                "text": "Floor one thousand. Of course it's a thousand.",
-                "duration": 3.0,
-                "style": "Subtitle",
-                "sound": "vo_landing_intro"
               }
             ]
           },
           {
-            "type": "runSequence",
-            "steps": [
+            "type": "storyBeat",
+            "id": "arrive1000",
+            "eventName": "landingSlam",
+            "voice": "vo_landing_intro",
+            "then": [
               {
-                "type": "wait",
-                "seconds": 6.4
+                "type": "playSound",
+                "sound": "shaft_slam",
+                "volume": 1.0
               },
               {
-                "type": "showText",
-                "text": "The bottom of Hell. He is already sick of it.",
-                "duration": 3.6,
-                "style": "Subtitle",
-                "color": "#C9B8A6"
+                "type": "cameraShake",
+                "intensity": 0.35,
+                "duration": 0.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF9A4D55",
+                "duration": 0.2
+              },
+              {
+                "type": "playPlayerAnimation",
+                "state": "Land"
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 0.7
+                  },
+                  {
+                    "type": "playPlayerAnimation",
+                    "state": "Idle"
+                  }
+                ]
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 1.7
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Floor one thousand. Of course it's a thousand.",
+                    "duration": 3.0,
+                    "style": "Subtitle",
+                    "sound": "vo_landing_intro"
+                  }
+                ]
               }
             ]
           }

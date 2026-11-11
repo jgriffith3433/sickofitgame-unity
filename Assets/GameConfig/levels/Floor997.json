@@ -1666,18 +1666,62 @@
             "facePlayer": false
           },
           {
-            "type": "runSequence",
-            "steps": [
+            "type": "storyBeat",
+            "id": "arrive997",
+            "eventName": "snatchCackle",
+            "voice": "vo_imprun_ours",
+            "then": [
               {
-                "type": "wait",
-                "seconds": 3.4
+                "type": "playSound",
+                "sound": "thief_snatch",
+                "volume": 1.0
               },
               {
-                "type": "showText",
-                "text": "Imps haul his village's diamonds. Same sack, every loop.",
-                "duration": 3.6,
-                "style": "Subtitle",
-                "color": "#C9B8A6"
+                "type": "cameraShake",
+                "intensity": 0.25,
+                "duration": 0.4
+              },
+              {
+                "type": "flash",
+                "color": "#FF6A3D44",
+                "duration": 0.15
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 1.0
+                  },
+                  {
+                    "type": "playPlayerAnimation",
+                    "state": "Curious"
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.8
+                  },
+                  {
+                    "type": "playPlayerAnimation",
+                    "state": "Idle"
+                  }
+                ]
+              },
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "wait",
+                    "seconds": 1.8
+                  },
+                  {
+                    "type": "showText",
+                    "text": "Those are ours.",
+                    "duration": 2.4,
+                    "style": "Subtitle",
+                    "sound": "vo_imprun_ours"
+                  }
+                ]
               }
             ]
           }

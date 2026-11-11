@@ -540,6 +540,7 @@ namespace SickOfIt.Data
             WeaponProgress.Reset();
             WeaponUnlocks.Reset();
             EnemyHints.Reset();
+            StoryBeats.Reset();
             CodexProgress.Reset();
             Achievements.Reset();
             StyleRanks.Reset();

@@ -2430,13 +2430,27 @@ idea: *Hell is repetition, and he has had enough of repetition.* (No office or w
 
 | Level | Beat |
 |---|---|
-| 1, The Meadow | Then the sky opened. |
-| Floor 1000 | The bottom of Hell. He is already sick of it. |
-| Floor 999 | One floor up. Hell is counting along. |
-| Floor 998 | They took the village. Now they take the gun. |
-| Floor 997 | Imps haul his village's diamonds. Same sack, every loop. |
+| 1, The Meadow | Then the sky opened. (its own task: k_e34466068097) |
+| Floor 1000 | The bottom of Hell. He is already sick of it. (now an arrival beat, below) |
+| Floor 999 | One floor up. Hell is counting along. (arrival beat) |
+| Floor 998 | They took the village. Now they take the gun. (arrival beat) |
+| Floor 997 | Imps haul his village's diamonds. Same sack, every loop. (arrival beat) |
 
-Playtest `opening-beats` plays them (it is the scenario beta's review runs: Video1 played then skipped, a `beat` event and a `check beats level N` per level, `beats none repeated` last; keep its `BeatLines` in step with this table). Next floors get theirs the same way (an `onEnter` `runSequence` of `wait` + `showText`).
+### Arrival beats (Floors 1000-997)
+
+*Story is played, not read.* The warm-grey captions of Floors 1000-997 are gone: each floor's arrival is a short moment the player lives while still
+moving (Portal's first chamber: the voice and the room do the telling). Each is a `storyBeat` action in phase 0's `onEnter` (`id` `arrive<floor>`), lived **once per save**
+(`Data/StoryBeats`, PlayerPrefs `Story_Beats`, cleared only by New Game): a death, a retry or a new run from the Waystone does not replay it; the banner still shows. It never locks input.
+Every beat = a stinger + a camera shake (and a small flash) + a hero reaction clip (Land, Curious, then back to Idle) + one event + **one** voiced hero caption (the line is its own subtitle, one line, under 60 characters).
+
+| Floor | The moment | Stinger | Hero's line (landed clip) |
+|---|---|---|---|
+| 1000 | He hits the bank: the slam, the screen shudders and flashes ember-orange, he lands. | `shaft_slam` | *"Floor one thousand. Of course it's a thousand."* |
+| 999 | The ground rumbles; a pale ghost of an earlier climber flickers past (`echoSoul`, the Hell-keeps-count of those who came before). He looks. | `magma_rumble` | *"You said that already."* |
+| 998 | The baker's cart wreck crashes into the spill: a thud of sacks, a flash. He looks. | `impSack_die` | *"That was the baker's cart."* |
+| 997 | An imp snatches (the launcher goes; fists come), cackling; he looks at the sack line. | `thief_snatch` | *"Those are ours."* (`vo_imprun_ours`) |
+
+Playtest `story` (`SickOfItPlaytest.Story.cs`, touch, ~5 min) plays them and reports `quality.textOnlyBeats` (a caption with no voice and no beat around it); `opening-beats` still checks that each floor's voiced line shows.
 
 ## Rules for levels
 
