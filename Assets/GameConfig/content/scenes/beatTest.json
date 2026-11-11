@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "seed": 5151,
+  "length": 30,
+  "objective": { "text": "" },
+  "phases": [
+    {
+      "name": "beat",
+      "onEnter": [
+        { "type": "beatStart", "id": "beatTest", "maxSeconds": 8, "unlockAtEnd": true,
+          "onSkip": [ { "type": "setCounter", "name": "beatTestDone", "value": 1 } ] },
+        { "type": "runSequence", "steps": [
+          { "type": "wait", "seconds": 0.4 },
+          { "type": "cameraFocus", "target": "player", "at": [0.0, 0.5], "size": 2.0, "seconds": 0.5 },
+          { "type": "say", "actor": "player", "text": "That's a hole.", "sound": "vo_portal_hole_1" },
+          { "type": "cameraShake", "intensity": 0.1, "duration": 0.3 },
+          { "type": "cameraFocus", "at": [3.0, 0.5], "anchor": "Player", "seconds": 0.5 },
+          { "type": "say", "at": [3.0, 1.2], "anchor": "Player", "text": "Hello?", "sound": "vo_portal_hello_1", "color": "#FF9A5C" },
+          { "type": "cameraReset", "duration": 0.5 },
+          { "type": "wait", "seconds": 0.5 },
+          { "type": "setCounter", "name": "beatTestDone", "value": 1 },
+          { "type": "beatEnd" }
+        ] }
+      ]
+    }
+  ],
+  "counters": [ { "name": "beatTestDone", "value": 0 } ]
+}

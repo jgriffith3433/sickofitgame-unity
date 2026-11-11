@@ -960,6 +960,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(IncomingId, "Incoming warnings (Docs/Story.md \"Incoming warnings\"): Floor 1000 opened directly (a setup shortcut), a known fireball put in from each edge (landscape or portrait, whichever the device is) and watched: its quiet marker must show on the right edge 1+ s before the fireball is in view, stay between 0.25 and 0.7 opacity, and be gone the moment it is. Fireballs that move away or pass beside the view get none; ten along the top are one band, never over the cap of 4; no marker over any HUD button; 400 updates allocate nothing; a pause freezes the marker; a rewind clears them and they come back matching the live fireballs; Settings > Accessibility > Incoming warnings off shows none. Then Floor 998's rain played by the bot: at most 4 markers, one band on the top, no flashing, every drop warned 1+ s ahead. `incoming` events, `check` events incoming <beat>, `incoming.*` metrics", IncomingSeconds, "level"));
             list.Add(new PlaytestScenario(FeelId, "The quick hero (feel): Level 1 loaded directly (setup shortcut), real input, Normal difficulty. Reports the hitbox dot on the hero, input-to-motion in ms (under 100), the time to cross one screen width holding D (2.5-3.2 s), the safe time after a hit (1.0-1.5 s, then he can be hit again), and the dash from the first second: Shift, then a right-half swipe on the virtual touchscreen (the move stick stays idle), each through an ember with no damage. `check` events feel <beat>, feel.* metrics (inputToMotionMs, crossSeconds, invulnerableSeconds)", FeelSeconds, "level"));
             list.Add(new PlaytestScenario(AudioId, "The sound of Level 1 (Docs/SoundAudit.md \"The audio scenario\"): after the page's tap-to-play (the menu must load within 20 s), Level 1 is loaded directly (setup shortcuts: the graze distance widened, a diamond dropped at his feet) and played by the bot for 60 s of game time through real input, with a jump, a dash and a rewind pressed at set moments (on a phone: a tap, a right-half swipe, R held). Every sound that starts is a `sound` event (id, take n/m, pitch, volume, bus), every voice line a `duck` event. Checks: a sound for every shot, hit, kill, graze, pickup, jump, land, dash and rewind; no take twice in a row; effects within 6% of pitch and voices unmoved; at most 4 copies of one effect at once; music at least 6 dB lower during each voice line and back after; Level 1 and then Floor 1000 each log an ambient bed (the Meadow's turns to its burning one); the master limiter is on the page. Run it at 390x844 too. Check events audio <beat>, audio.* metrics", AudioSeconds, "level", "audio"));
+            list.Add(new PlaytestScenario(BeatDirectorId, "The beat director (docs/beats.md): Level 1's portal scene entered at its first phase (setup shortcut) and played four ways. Uncut: letterbox bars in within 0.3 s and inside the safe area, a camera move, speech-bubble captions 16+ px, no scanline overlay, 10 s or less. Played again in the same session: at least 40% shorter. Forgotten and played again, one tap (a virtual finger on a phone, a click on a desktop) 3.5 s in ends it within 0.5 s with the portal up. Then the bench scene beatTest: the bars slide out and input and rewind come back when the beat ends. Run it at 390x844 too. `check` events beat-director <beat>, beat.* metrics", BeatDirectorSeconds, "level"));
             list.Add(new PlaytestScenario(TapJumpId, $"Touch jump on the finger going down: level {TapJumpLevel} loaded directly (setup shortcut), no bot. A virtual touchscreen taps the middle of the screen " +
                 $"{TapJumpTaps} times (30-120 ms down; every tenth tap is down and up inside one frame; every twentieth has the frame stall 150 ms with the finger down): each tap must make exactly one jump. " +
                 "Then a tap while R rewinds must not be latched and must not jump when the rewind ends. Check events, tapJump.* metrics", TapJumpSeconds, "level"));
@@ -1427,6 +1428,8 @@ namespace SickOfIt.Playtest
                 yield return session.FeelRun();
             else if (id == AudioId)
                 yield return session.AudioRun();
+            else if (id == BeatDirectorId)
+                yield return session.BeatDirectorRun();
             else if (id == TapJumpId)
                 yield return session.TapJumpRun();
             else if (id == TouchControlsId)
@@ -5806,7 +5809,9 @@ namespace SickOfIt.Playtest
                     {
                         if (line.signal != signal)
                             continue;
-                        string shown = world.Hud != null ? world.Hud.SubtitleShown : "";
+                        string shown = world.Hud != null ? world.Hud.BubbleShown : "";
+                        if (string.IsNullOrEmpty(shown) && world.Hud != null)
+                            shown = world.Hud.SubtitleShown;
                         bool voiced = Sfx.Has(line.sound);
                         Run.Event("line", $"\"{shown}\" ({line.sound}, {Sfx.LengthOf(line.sound):0.0} s{(voiced ? "" : ", NO CLIP")})");
                         if (shown == line.text && voiced)
@@ -5837,7 +5842,11 @@ namespace SickOfIt.Playtest
                 if (portal.InputTryAt >= 0f && now >= portal.InputTryAt)
                 {
                     portal.InputTryAt = -1f;
-                    return TryLockedInput();
+                    // The beat kit (Docs/beats.md) ends a scene on any press, so pressing keys here would skip it:
+                    // the lock itself is checked at portal:locked, the skip by the beat-director scenario.
+                    Run.Event("input", "portal scene: input stays locked and rewind refused (any press would skip it; scenario beat-director plays that)");
+                    PortalCheck("inputIgnored", world != null && world.RewindLocked && now < world.InputLockedUntil, "input and rewind locked during the beat");
+                    return null;
                 }
                 return null;
             }
