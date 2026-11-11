@@ -69,6 +69,12 @@ namespace SickOfIt.Playtest
                     Run.Event("quip", $"death {i + 1}: \"{quip}\"");
                     DeathRestartCheck($"quip {i + 1}", death != null && !string.IsNullOrWhiteSpace(quip) && fresh,
                         $"\"{quip}\" under \"{(death != null ? death.TitleText : "")}\"{(fresh ? "" : ", the same as the death before")}");
+                    {
+                        var rec = GameObject.Find("BestFloor");
+                        var recText = rec != null ? rec.GetComponentInChildren<TMPro.TextMeshProUGUI>() : null;
+                        DeathRestartCheck($"best floor {i + 1}", recText != null && recText.text.StartsWith("BEST: FLOOR"),
+                            recText != null ? recText.text.Replace('\n', '|') : "no best-floor line on the death screen");
+                    }
                     DeathRestartCheck($"again offered {i + 1}", death != null && death.AgainOffered, "the Again! button is on the death screen");
                     {
                         var goalCard = SickOfIt.Core.Progression.NextGoalCard.Current;
