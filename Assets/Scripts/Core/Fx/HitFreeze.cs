@@ -14,6 +14,7 @@ namespace SickOfIt.Core.Fx
         static float readyAt;
         static float baseScale = 1f;
         static float frozenScale = -1f;
+        static float cooldownSeconds;
 
         /// <summary>Freezes so far this session, and the real seconds of the last one (for the playtest).</summary>
         public static int Count { get; private set; }
@@ -53,7 +54,8 @@ namespace SickOfIt.Core.Fx
             frozenScale = baseScale * Mathf.Clamp(scale, 0.001f, 1f);
             Time.timeScale = frozenScale;
             endsAt = now + seconds;
-            readyAt = now + seconds + Mathf.Max(0f, cooldown);
+            cooldownSeconds = Mathf.Max(0f, cooldown);
+            readyAt = now + seconds + cooldownSeconds;
             Count++;
             LastSeconds = seconds;
             LastReason = reason ?? "";
@@ -71,6 +73,10 @@ namespace SickOfIt.Core.Fx
                 Time.timeScale = baseScale;
             endsAt = -1f;
             frozenScale = -1f;
+            // A freeze cut short (a rewind, a pause, a scene change) hands its cooldown back: 'readyAt' was set for the full
+            // length. The Floor 1000 lesson's 600 s slow-motion otherwise left every later freeze (the hurt hit-stop, the next
+            // try's lesson) refused for ten minutes after its rewind.
+            readyAt = Mathf.Min(readyAt, Time.unscaledTime + cooldownSeconds);
         }
 
         static void Tick()

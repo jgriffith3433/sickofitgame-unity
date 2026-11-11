@@ -37,6 +37,12 @@ namespace SickOfIt.Playtest
                     if (!floorSignals.ContainsKey(e.Subject))
                         floorSignals[e.Subject] = e.Time;
                     Run.Event("floors", $"{e.Subject} at {e.Time:0.00}");
+                    // A metric reaches the runner in the page's live state, an event only in the final report: when the page
+                    // freezes the report is lost, so each cue, finale and payoff is also a metric the moment it happens.
+                    // "floors:1000:finale" -> floors.floor1000.finale (the game second into the try it happened at).
+                    var parts = e.Subject.Split(':');
+                    if (parts.Length >= 3 && (parts[2] == "glow" || parts[2] == "cue" || parts[2] == "finale" || parts[2] == "tint" || parts[2] == "payoff" || parts[2] == "salvo"))
+                        Run.Metric($"floors.floor{parts[1]}.{parts[2]}", Mathf.Max(e.Time, 0.01f));
                 }
                 else if (e.Kind == "music")
                 {
@@ -92,6 +98,30 @@ namespace SickOfIt.Playtest
                 FloorsCheck("floor 1000 the rewind pays off: relief line, time back to normal", FirstRewindStage.Relieved > 0 && Time.timeScale > 0.9f, $"time scale {Time.timeScale:0.00}");
             }
 
+            float floorsWorstFrame, floorsLiveAt;
+            int floorsLiveDeaths = -1;
+
+            /// <summary>
+            /// Live readings for the runner's timeline (the page may freeze and never give its report back): the floor being played, its deaths
+            /// so far, and the worst frame of the last two seconds (a stall shows as a long frame before a freeze, and the scene it was in).
+            /// </summary>
+            void FloorsLive(int floor, int floorDeaths)
+            {
+                floorsWorstFrame = Mathf.Max(floorsWorstFrame, Time.unscaledDeltaTime * 1000f);
+                if (floorDeaths != floorsLiveDeaths)
+                {
+                    floorsLiveDeaths = floorDeaths;
+                    Run.Metric($"floors.floor{floor}.deaths", floorDeaths);
+                }
+                if (Time.realtimeSinceStartup - floorsLiveAt < 2f)
+                    return;
+                floorsLiveAt = Time.realtimeSinceStartup;
+                Run.Metric("floors.current", floor);
+                Run.Metric("floors.worstFrameMs", floorsWorstFrame);
+                Run.Metric("floors.timeScale", Time.timeScale);
+                floorsWorstFrame = 0f;
+            }
+
             public IEnumerator FloorsRun()
             {
                 bool portrait = Screen.height > Screen.width;
@@ -115,6 +145,7 @@ namespace SickOfIt.Playtest
                         }
                         string p = $"floors:{floor}:";
                         int deathsBefore = deaths;
+                        floorsLiveDeaths = -1;
                         int sceneLoads = 0, mostLoadsToOpen = 0;
                         float stillMax = 0f, stillSince = -1f, stillSpot = 0f;
                         Vector2 stillAt = Vector2.zero;
@@ -142,6 +173,7 @@ namespace SickOfIt.Playtest
                                 var w = GameplayWorld.Instance;
                                 if (w == null || w.PlayerController == null)
                                     return null;
+                                FloorsLive(floor, deaths - deathsBefore);
                                 if (floor == 1000 && !salvoWatched && FirstRewindStage.Current == FirstRewindStage.Stage.Slow)
                                 {
                                     salvoWatched = true;
