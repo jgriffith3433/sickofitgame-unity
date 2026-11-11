@@ -1289,18 +1289,33 @@ namespace SickOfIt.Core.Progression
         {
             if (config.nextVideoNumber > 0)
             {
-                var nextVideo = gameDefinition != null ? gameDefinition.GetVideo(config.nextVideoNumber) : null;
-                var frames = nextVideo != null ? nextVideo.spriteFramesData as SpriteFramesData : null;
+                int nextVideo = config.nextVideoNumber;
+                int nextLevel = levelNumber + 1;
+                // First run: skip Video2 (fire tunnel) and plunge straight into Hell; the film stays in Rewatch Stuff
+                // (Docs/Story.md "First five minutes"). CommitCompletion already unlocked the video.
+                var shaft = gameDefinition != null ? gameDefinition.shaft : null;
+                if (!SickOfIt.Data.ShaftProgress.Plunged && shaft != null && shaft.enabled && nextVideo == shaft.plungeAfterVideo)
+                {
+                    PlayerPrefs.SetInt("ReturnToLevel", nextLevel);
+                    PlayerPrefs.Save();
+                    Debug.Log($"[LevelRuntime] First run: skipping video {nextVideo}, Shaft plunge to level {nextLevel}");
+                    ShaftHook.Run(new ShaftStop { Kind = ShaftStopKind.AfterVideo, Video = nextVideo, NextLevel = nextLevel },
+                        () => SceneTransitionManager.Instance.LoadLevel(nextLevel));
+                    return;
+                }
+
+                var video = gameDefinition != null ? gameDefinition.GetVideo(nextVideo) : null;
+                var frames = video != null ? video.spriteFramesData as SpriteFramesData : null;
                 if (frames != null && !frames.HasBuiltFrames)
                 {
-                    Debug.LogWarning($"[LevelRuntime] Video {config.nextVideoNumber} is not built yet. Returning to the main menu.");
+                    Debug.LogWarning($"[LevelRuntime] Video {nextVideo} is not built yet. Returning to the main menu.");
                     SceneTransitionManager.Instance.LoadMainMenu();
                     return;
                 }
 
-                PlayerPrefs.SetInt("ReturnToLevel", levelNumber + 1);
+                PlayerPrefs.SetInt("ReturnToLevel", nextLevel);
                 PlayerPrefs.Save();
-                SceneTransitionManager.Instance.LoadVideo(config.nextVideoNumber);
+                SceneTransitionManager.Instance.LoadVideo(nextVideo);
             }
             else if (NextLevel() > 0)
             {

@@ -83,11 +83,18 @@ namespace SickOfIt.Core.UI.Menus
             }
 
             var done = theme.button.Clone();
-            done.size = new Vector2(340f, 92f);
+            done.size = new Vector2(280f, 92f);
             var access = theme.button.Clone();
-            access.size = new Vector2(440f, 92f);
-            menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(-215f, 84f), texts.accessibility, access, () => ShowAccessibility(menu), panel);
-            menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(260f, 84f), texts.done, done, Close, panel);
+            access.size = new Vector2(360f, 92f);
+            var hell = theme.button.Clone();
+            hell.size = new Vector2(360f, 92f);
+            // Pick Your Hell moved here so New Game drops straight into play (Docs/Story.md "First five minutes").
+            menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(-360f, 84f), texts.difficultyTitle, hell, () =>
+            {
+                ShowDifficulty(menu, _ => { }, null);
+            }, panel);
+            menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(0f, 84f), texts.accessibility, access, () => ShowAccessibility(menu), panel);
+            menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(360f, 84f), texts.done, done, Close, panel);
             menu.Back = Close;
             return overlay.Root;
         }

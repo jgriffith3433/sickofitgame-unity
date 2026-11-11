@@ -205,9 +205,9 @@ Assets/GameConfig/
   a script's `playMusic`; `musicLayer` telemetry). Stingers are audio.json sounds: event `weaponSting` (first find of a weapon) and `stingSound` on each `ui/theme.json`
   grade. `Tools/Audio/music_manifest.json` lists the 34 tracks still to make (stand-ins play meanwhile; `python3 Tools/Audio/music_manifest.py --check --price`): replace
   a stand-in's path with the made file. Playtest `music-layers` (~3 min).
-- **Difficulty and accessibility** (Docs/Story.md "How sick of it are you?"): `Data/Difficulty.cs` (Assist/Normal/Hard/Hell Loop, Normal = all 1): New Game opens `SettingsPanel.ShowDifficulty` first (`MainMenuManager.StartNewGame` runs after the pick, then the house explodes and Level 1 loads: no Video1 before play, so a new player is playing within seconds); the numbers
+- **Difficulty and accessibility** (Docs/Story.md "How sick of it are you?", "First five minutes"): `Data/Difficulty.cs` (Assist/Normal/Hard/Hell Loop, Normal = all 1): New Game starts at Normal with no card (`MainMenuManager.StartNewGame` / `FtueProgress.BeginNewGame`; Pick Your Hell is in Settings); after three deaths inside five real minutes the death screen offers Try Assist once. The numbers
   act in `Spawning.Fire` (enemy shot speed), the `shoot` ability (density), `Entity.Damage` (`Difficulty.ScaleHit`, keyed on the shot's serial, never a random stream) and `GameplayWorld`'s rewind budget setup. Accessibility is `GameSettings` (`BulletOutlines`, `HighContrastBullets`, `ReducedFlash`, `ReducedShake`, `HitboxDot`,
-  `AimAssist`, `TouchButtons`; page `SettingsPanel.ShowAccessibility`; Touch Buttons is the only switch for the ◄ ► JUMP pad, `GameplayHud.Touch.cs`, off by default on phones too: J plays by tap and drag); `BulletReadability`/`HitboxDot` draw, `GameplayWorld.AssistAim` -> `PlayerController.AimAssist` bends shots inside `AimVolley`. Every playtest New Game click goes through `ClickNewGame` (picks Normal). Playtest `difficulty` (~10 min).
+  `AimAssist`, `TouchButtons`; page `SettingsPanel.ShowAccessibility`; Touch Buttons is the only switch for the ◄ ► JUMP pad, `GameplayHud.Touch.cs`, off by default on phones too: J plays by tap and drag); `BulletReadability`/`HitboxDot` draw, `GameplayWorld.AssistAim` -> `PlayerController.AimAssist` bends shots inside `AimVolley`. Every playtest New Game click goes through `ClickNewGame` (straight in at Normal). Playtest `difficulty` (~10 min); FTUE playtest `first-five`.
 - **Style** (Docs/Story.md "Style"): `game.json` `style` (`StyleConfig`) + `Gameplay/Core/StyleSystem.cs`: a hostile shot (an `Enemy` entity with a `projectile` ability) that passes within
   `grazeDistance` of the hero and moves away without hitting is a graze (`Entity.GapTo`), counted in the world counter `grazes`; the meter, streak, tier and the shots watched are saved
   state (rewind takes credit back, `grazeUndone` telemetry), payouts (diamonds, `RewindBudget.Add`) and lines are keyed on the graze count through `TryGrantOnce` so a replay never pays or speaks
@@ -576,6 +576,7 @@ the prologue portal scene's sounds in scene order, every take, then the Meadow's
   pages) and the engine post, linked from the blog and Development; on every page no link or button overlaps another
   or leaves the screen and nothing scrolls sideways (run it on device "phone"); `check` and `site-layout` events;
   `Plugins/WebGL/HawkesSite.jslib`).
+- **First five minutes** (Docs/Story.md "First five minutes"): playtest `first-five` (`SickOfItPlaytest.FirstFive.cs`, ~7 min; run desktop and at 390x844): fresh save, New Game with no difficulty card, play for 5 minutes; metrics `firstFive.menuSeconds` / `firstMoveSeconds` / `firstHitSeconds` / `firstRewindSeconds` / `longestLockSeconds` / `fightToFloor1000Seconds`; one tap skips the portal and the Shaft plunge; Video2 stays unlocked for Rewatch; `check` events `first-five <beat>`.
 - **The opening and the level beats** (Docs/Story.md "Why he is sick of it"): Video1 is the one opening (New Game, skippable with Escape or a tap); each of the first five levels (Level 1, Floors 1000-997) carries one beat in its own JSON: an unvoiced `Subtitle`, colour `#C9B8A6`, 3.6 s, in phase 0's `onEnter` (`wait` + `showText`), never repeated. Playtest `opening-beats` (`SickOfItPlaytest.Beats.cs`, ~5 min): Video1 plays and is skipped, then each level's line is found on screen (`check` events `beats <beat>`, `beat` events); keep `BeatLines` in step with the table when a floor gets a beat.
 - **Video3, Hell's Ad Break** (Docs/LoreVideos.md "Putting a film into the game"): playtest `video3` (`SickOfItPlaytest.Video3.cs`, ~4 min): config (after level 2, next level 3), the film plays with its clock running, Escape skips it into Yooba's hello, the Videos card replays it to its end and back to the main menu. `Tools/Video/prepare_lore_video.py` makes the mp4, mp3 and first frame and sets the config; the sheets are baked by `GenerateProjectWindow.RegenerateClipSheets -clip Video3 -fps 12` (Unity batch).
 - **Daily budgets and the balance report** (`SickOfItPlaytest.Balance.cs`): every `all-levels` run (and its parts, `floors-A-B`, `climb-start`) ends with a
@@ -613,14 +614,15 @@ the prologue portal scene's sounds in scene order, every take, then the Meadow's
   | Scenario | Minutes | | Scenario | Minutes |
   |---|---|---|---|---|
   | `smoke` | 1 | | `start-at` (one floor) | 2-5 |
-  | `level-<n>` (a floor; a floor boss / Warden) | 2-3; 4-6 | | `all-levels-1` ... `-9` (each) | 25-40 |
-  | `climb` / `one-way` | 3 / 2 | | `all-levels` (stops at its 43-min budget) | 43 |
-  | `cutscene`, `video-2`, `video-2-tunnel`, `restart`, `imp-death` | 1-2 | | `climb-start`, `floors-A-B` (each) | 25-35 |
-  | `rewind-perf`, `menus`, `layout`, `portal-audio`, `site` | 2-3 | | `off-path` (budget-capped) | 43 |
-  | `analytics`, `aim-guide`, `magma-king`, `spire-fiend` | 5-7 | | `landing-stretch` / `foreman-stretch` | 15 / 18 |
-  | `yooba`, `yooba-shop`, `waystone`, `shortcut` | 3-6 | | `wastes-climb` (from `at`: ~3 per floor left) | 30 |
-  | `shaft` / `music` | 8 / 15 | | `long-way` | 20 |
-  | `full` | 10 | | `circle-x-route` / `story-path` / `cracked-road-route` | 65 / 70 / 75 |
+  | `first-five` | 7 | | `level-<n>` (a floor; a floor boss / Warden) | 2-3; 4-6 |
+  | `climb` / `one-way` | 3 / 2 | | `all-levels-1` ... `-9` (each) | 25-40 |
+  | `cutscene`, `video-2`, `video-2-tunnel`, `restart`, `imp-death` | 1-2 | | `all-levels` (stops at its 43-min budget) | 43 |
+  | `rewind-perf`, `menus`, `layout`, `portal-audio`, `site` | 2-3 | | `climb-start`, `floors-A-B` (each) | 25-35 |
+  | `analytics`, `aim-guide`, `magma-king`, `spire-fiend` | 5-7 | | `off-path` (budget-capped) | 43 |
+  | `yooba`, `yooba-shop`, `waystone`, `shortcut` | 3-6 | | `landing-stretch` / `foreman-stretch` | 15 / 18 |
+  | `shaft` / `music` | 8 / 15 | | `wastes-climb` (from `at`: ~3 per floor left) | 30 |
+  | `full` | 10 | | `long-way` | 20 |
+  | `circle-x-route` / `story-path` / `cracked-road-route` | 65 / 70 / 75 | | | |
 - **The bot plays through real input.** `PlaytestBot` (Gameplay/Presentation) decides; `PlaytestInput` adds a virtual
   keyboard, gamepad and mouse to the Input System: A/D move, Space jump, gamepad right stick aims and fires, hold R
   rewinds, P pauses, 1 picks an upgrade, Escape skips videos, and menu buttons are clicked with the mouse. Never give

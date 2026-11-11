@@ -901,8 +901,9 @@ give it `floors` and the Shaft follows it.
   the ids in ui/shaft.json (`shaft_fall`, `shaft_slam`, `shaft_tick`, `vo_shaft_welcome`, `vo_shaft_great`).
 - **Placement**: each readout has a landscape and a portrait `MenuPlacement` in ui/shaft.json; the shaft window is a
   panel and Continue a button for the layout audit. `shortcutHints` are floors that get a wall crack or a dotted gap.
-- It is presentation only: `ShaftProgress` (Data) remembers the marker's floor and whether the first plunge was seen
-  (after that a tap or key skips it). New Game resets both.
+- It is presentation only: `ShaftProgress` (Data) remembers the marker's floor and whether the first plunge was seen.
+  The first plunge is skippable from its first frame and at most 8 s (Docs/Story.md "First five minutes"); later Shaft
+  visits stay skippable too. New Game resets both.
 - Playtests: `shaft` (the plunge, The Landing, the climb, each beat a `check`, the paintings too: `plungePaintedBands`,
   `plungeWardenSilhouettes`, `plungeHeroMarker` and the same on the climb), `menus`/`layout` open a preview
   (`ShaftScreen.Preview(from, to)`), and `full`/`story-path` press Continue on it like a player.

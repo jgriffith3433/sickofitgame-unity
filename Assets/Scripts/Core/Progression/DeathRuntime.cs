@@ -181,7 +181,35 @@ namespace SickOfIt.Core.Progression
             againStyle.size = new Vector2(440f, 92f);
             var againPortrait = MenuPlacement.At(0.5f, 1f, 0f, againY, 520f, PortraitButtonHeight);
             againButton = menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(-330f, 96f), again, againStyle, OnAgain, null, againPortrait);
+
+            // First five minutes: three deaths inside five real minutes → offer Assist once (Docs/Story.md).
+            FtueProgress.NoteDeath();
+            if (FtueProgress.ShouldOfferAssist())
+            {
+                float assistY = againY - PortraitButtonStep;
+                string assist = menu.Theme.texts != null && !string.IsNullOrEmpty(menu.Theme.texts.deathTryAssist)
+                    ? menu.Theme.texts.deathTryAssist : "Try Assist";
+                var assistStyle = menu.Theme.button.Clone();
+                assistStyle.size = new Vector2(440f, 92f);
+                var assistPortrait = MenuPlacement.At(0.5f, 1f, 0f, assistY, 520f, PortraitButtonHeight);
+                assistButton = menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(120f, 96f), assist, assistStyle, OnTryAssist, null, assistPortrait);
+            }
             BuildWords(menu);
+        }
+
+        private SickOfIt.Core.UI.Menus.MenuButton assistButton;
+        /// <summary>The Try Assist button is on screen (three deaths in the first five minutes).</summary>
+        public bool AssistOffered => assistButton != null;
+
+        void OnTryAssist()
+        {
+            if (assistButton == null)
+                return;
+            FtueProgress.TakeAssist();
+            if (assistButton != null)
+                assistButton.gameObject.SetActive(false);
+            assistButton = null;
+            Debug.Log("[Death] Try Assist: this run is now Assist");
         }
 
         // Portrait stack (top-anchored canvas units): title -200, quip -335 (ends about -385), buttons from -520 down, 150 tall (about 54 px on a phone).

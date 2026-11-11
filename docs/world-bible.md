@@ -24,8 +24,9 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 - **Mood:** a nice, dull afternoon that is about to end. Warm, bright, then fire.
 - **Look and sound:** green hills, the village's thatch, a single path; Video1's footage as the sky layer. Bed: wind, a far
   rooster, a mill creaking. Then the Overlord's hum, lasers, burning thatch.
-- **Size:** ~2 min (30 s of calm, imp raid, the portal scene).
-- **In/out:** New Game (no Video1) lands here; out through the fire portal into Video2 and the Shaft.
+- **Size:** ~2 min (30 s of calm, imp raid, the portal scene ≤10 s locked, skippable).
+- **In/out:** New Game (no Video1, no difficulty card) lands here; out through the fire portal into the Shaft plunge on a
+  first run (Video2 stays in Rewatch Stuff).
 - **Falls short today:** the first 20 s are mostly the hero and sky; village life (neighbours, a cart, chickens, washing
   line) is thin. Needs the *Meadow's morning* below.
 
@@ -34,8 +35,9 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 - **Look and sound:** a cross-section of ten Circles in their biome colours, Waystones on the wall, cracks that hint
   shortcuts. Bed: a deep wind-in-a-pipe drone, with each Circle's own voice rising as the marker passes it (lava hiss,
   stone hum, wind over bridges...). Yooba's portrait chatters at the side.
-- **Size:** 10-25 s per visit (a plunge ~25 s the first time).
-- **In/out:** after every floor stage and from the menu; out by Continue, Visit Yooba (his shop opens over it) or Back.
+- **Size:** 10-25 s per visit (a first plunge ≤8 s, skippable from frame one).
+- **In/out:** after Level 1 on a first run (plunge), after every floor stage and from the menu; out by Continue, Visit Yooba
+  (his shop opens over it) or Back.
 - **Falls short:** it is a map with a marker. Needs life on the wall (see *What happens*).
 
 ### Yooba's counter (shop, built)

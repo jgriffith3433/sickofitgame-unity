@@ -4,7 +4,7 @@
   "plungeAfterVideo": 2,
   "bottomFloor": 1000,
   "topFloor": 1,
-  "plungeSeconds": 3.4,
+  "plungeSeconds": 2.6,
   "climbSecondsPerFloor": 0.16,
   "climbMaxSeconds": 3,
   "climbDelay": 0.6,

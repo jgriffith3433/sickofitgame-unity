@@ -905,7 +905,12 @@ namespace SickOfIt.Gameplay
 
         public void SetInputLocked(float until)
         {
+            bool WasLocked() => float.IsPositiveInfinity(inputLockedUntil) || inputLockedUntil > Now;
+            bool was = WasLocked();
             inputLockedUntil = until;
+            bool nowLocked = WasLocked();
+            if (was != nowLocked)
+                Telemetry.Record("cutscene", nowLocked ? "lockInput" : "unlockInput", 0);
         }
 
         public void SetRewindLocked(bool locked)

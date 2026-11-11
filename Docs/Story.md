@@ -41,6 +41,15 @@ jokes** (no Mondays, inboxes, meetings, coffee, bosses-as-managers). Dark, but n
 | **The Magma King** | Circle X's Warden: a huge king of slag and obsidian with a lava crown, slouched on a throne of slag at Floor 901. He never gets up, unless you make him: the Wastes come to him. Smug where the Overlord is bored; proud, loves an audience and takes Hell's show seriously (a challenger is the best entertainment the Wastes have had in ages). He hears everything that climbs his stairs and enjoys the wait. Making him stand is what enrages him (see *The Magma King's fight*). | `audio.json` voice `magmaKing`: very deep, thick, gurgling bass; slow, smug, amused, lazy, proud; chuckles (*"Mm-hm-hm."*), never shouts. The one line with weight is when he stands. Heard before he's seen, from ahead on the Heat Stairs. | `art/magmaKing.json`: generated sheets in `Assets/Art/Enemies/MagmaKing/` |
 | **The Spire Fiend** | Circle IX's Warden: a gaunt basalt demon rooted in the heart of the great spire at Floor 801, his lower body a spire instead of legs, rock spires bristling from his head, shoulders and back, thin orange seams glowing all over him. He **grows the spires**: every spire on the Cracked Road is one he pushed up through the road (that is why the road keeps splitting), and the great spire is the one he has grown for ages so that nothing in the Circle stands higher than him. Hell's loop is his too: every night the spire sheds back to the same height, every day he grows it again. He can't bear anything above him, and a hero climbing *up* is the worst thing he can think of. Not a showman like the Magma King: he **listens** (the hum on the Needle Stair is him, listening through the rock), counts steps, and whispers. Making him lose his calm is what enrages him (see *The Spire Fiend's fight*). | `audio.json` voice `spireFiend`: a dry, hollow, rasping whisper with stone grinding under it; slow, patient, cold, precise; hums (*"Hmmmm."*) instead of laughing. The one line he raises is the enrage. Never heard on the route, only his spire's hum. | `art/spireFiend.json`: generated sheets in `Assets/Art/Enemies/SpireFiend/` |
 
+## First five minutes
+
+A brand-new player who presses **New Game** is dodging within seconds and is never left watching for more than about
+10 s before Floor 1000 (2026-11-11). New Game starts at **Normal** with no Pick Your Hell card (that card lives in
+Settings). After three deaths inside five real minutes the death screen offers **Try Assist** once. Level 1's portal
+scene stays under 10 s of locked input (That's a hole / Hello? echo / Nope / the grab); a tap or key skips the rest.
+On a first run Video2 (the fire tunnel) is skipped and stays in Rewatch Stuff; the Shaft plunge is at most 8 s and
+skippable from its first frame. The first Grudge pick is after Floor 1000, not after the Meadow. Playtest `first-five`.
+
 ## Prologue: how the hero gets into Hell
 
 Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
@@ -49,10 +58,9 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
    Game skips it and opens Level 1, whose first seconds tell the same beat in play (the sky opens, the imps drop in);
    Video1 is watchable from Videos.
 2. **Level 1, the Meadow.** The hero clears the imps and the cinders. Diamonds, a first taste of rewind.
-3. **The Grudge pick** (the level's `offerUpgrades`): his first grudge. It happens before the scene, so the scene
-   is never interrupted.
-4. **The portal.** The Overlord's lasers come down one last time, not at the hero (he isn't worth it yet) but at
-   the meadow near him. They burn a glowing hole into the meadow: a portal, lying flat on the ground.
+3. **The portal.** The Overlord's lasers come down one last time, not at the hero (he isn't worth it yet) but at
+   the meadow near him. They burn a glowing hole into the meadow: a portal, lying flat on the ground. The first Grudge
+   pick waits until after Floor 1000 (see *First five minutes*).
    It is always the same spot: where the Overlord's laser hits the meadow in the background footage (Level 1's
    laser clip, a little left of centre on the ground line), and the small fire left burning there in the aftermath
    loop is this portal seen from afar. The game's beam, impact, portal and scorch sit right on top of it, wherever
@@ -62,20 +70,21 @@ Level 1 is the Meadow, and it ends in a scripted scene, not a cut. In order:
    burning turf with fire swirling down inside it: **the same fire portal the hero falls through in Video2**,
    seen side-on from the meadow, so the player recognises it when Video2 starts. It swirls the whole time he
    stands at its edge, and once it has had him (and Yooba) it flares and shrinks to a black scorch mark.
-5. **The walk-over.** The hero walks over to it on his own, curious (scripted: the player's input is off), and
+4. **The walk-over.** The hero walks over to it on his own, curious (scripted: the player's input is off), and
    leans in to peer down at it, head tilted (his `Curious` clip).
-   Hero: *"That's a hole."* Beat. *"So that's where they keep coming from."*
-6. **The echo.** He cups a hand and shouts down *"Hello?"* (`Shout`) Hell answers: *"...hello? ...hello? ...hello?"*, each one
+   Hero: *"That's a hole."*
+5. **The echo.** He cups a hand and shouts down *"Hello?"* (`Shout`) Hell answers: *"...hello? ...hello? ...hello?"*, each one
    deeper than the last. It's the first hint that **Hell is repetition**: even its echo won't stop.
    The echo is his own voice coming back, slower, darker and more broken each time: the loop answering him
    (`vo_portal_echo`).
-7. **"Nope."** He turns to leave. The portal grabs him: yanked off his feet backward, flailing (`Grabbed`), he
-   spins and shrinks into it, and he's gone. He is still tumbling the same way down Video2's fire tunnel.
-8. **Yooba.** A beat later a green village slime bounces past, wobbles at the edge, and is slurped in after him.
+6. **"Nope."** The portal grabs him: yanked off his feet backward, flailing (`Grabbed`), he
+   spins and shrinks into it, and he's gone. A tap or key skips the rest of the scene once the portal is open.
+7. **Yooba.** A beat later a green village slime bounces past, wobbles at the edge, and is slurped in after him.
    Nobody remarks on it. It pays off in Video3, when the same slime turns up at the bottom of Hell, talking.
-9. **Video2.** The burning door; the hero tumbling and spinning down the fire tunnel; the lava river at Floor
-   1,000.
-10. **The Shaft** (below): the camera plunges from the Meadow to the bottom of Hell, and the climb begins.
+8. **Video2** (Rewatch Stuff; skipped on a first run): the burning door; the hero tumbling and spinning down the fire
+   tunnel; the lava river at Floor 1,000.
+9. **The Shaft** (below): the camera plunges from the Meadow to the bottom of Hell (at most 8 s, skippable from the
+   first frame), and the climb begins.
 
 The hero never chose to go. That matters to his voice: he isn't a hero on a quest, he's a man who fell down a
 hole and is now walking home the long way. He wants to stop the Overlord mostly because the Overlord is in the way.
@@ -143,8 +152,9 @@ THE MEADOW again                           Ending
   Floor 960) and Floor 951's when the Chimney is (`Level7`-`Level10`, Floors 950-911, then Floor 910; `Level6`, the old
   Loop over 960-951, is played only from the level select). Their places' names now belong to the floors where those
   ideas are introduced.
-- **The path today** (re-pathed 2026-10-19; New Game goes straight to Level 1 since 2026-11-08, Video1 stays in Videos): New Game → Level 1, the Meadow → Video2 → **Floor 1000, The
-  Landing** → Video3 (Yooba) → **Floors 999-991** → *the Sack Lift* → **Floors 960-951** → *the King's Chimney* →
+- **The path today** (re-pathed 2026-10-19; New Game goes straight to Level 1 since 2026-11-08, Video1 stays in Videos;
+  first run skips Video2 since 2026-11-11, see *First five minutes*): New Game → Level 1, the Meadow → the Shaft plunge →
+  **Floor 1000, The Landing** (first Grudge) → Video3 (Yooba) → **Floors 999-991** → *the Sack Lift* → **Floors 960-951** → *the King's Chimney* →
   **Floors 910-902** → **Floor 901, the Slag Throne** (his Waystone) → the Shaft (Circle IX wakes up) → **Floors
   900-891** → *the Spared Demon* → **Floors 860-851** → *the Hollow Spire* → **Floors 810-802** → the level select,
   until Floor 801 (the Spire Fiend) is built. Inside a Circle the levels run straight on from one to the next (a
@@ -174,8 +184,9 @@ THE MEADOW again                           Ending
 Hell is a hole, so its map is a **vertical shaft**: a tall cross-section with the Meadow (FLOOR 0) at the top,
 the 10 Circles stacked below it, each in its own biome colour, and FLOOR 1,000 at the bottom.
 
-- **First time, after Video2:** the camera plunges from the Meadow down the whole Shaft, past all 10 Circles, to
-  FLOOR 1,000, where the hero's marker lands. Announcer: *"WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO."*
+- **First time** (after Level 1 on a first run, or after Video2 from Rewatch): the camera plunges from the Meadow down
+  the whole Shaft, past all 10 Circles, to FLOOR 1,000, where the hero's marker lands (at most 8 s; a tap skips from
+  the first frame). Announcer: *"WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO."*
   Hero: *"...Great."*
 - **After every level:** the Shaft comes back and the hero's marker climbs to the floor he reached: one floor per
   floor (Floor 1000 done, the marker rises from 1,000 to 999); the old 10-floor stages still climb ten. It is how the player feels the climb: a tiny dot, a very
@@ -2615,14 +2626,16 @@ Port the Dose Of Destruction pipeline (`C:\Projects\doseofdestructionwebsite`, s
 
 ## How sick of it are you? (difficulty and accessibility)
 
-New Game asks first, on a card called *Pick Your Hell*: **Assist**, **Normal**, **Hard**, **Hell Loop** (2026-10-25). It is the hero's mood, not a
-story fork: the same Hell, the same lines. Normal is the bullet hell as designed and changes nothing. The pick scales four things for a whole play
-(`Data/Difficulty.cs`; saved in PlayerPrefs `Difficulty`, changed only by the next New Game): how fast hostile shots fly (x0.8 / 1 / 1.15 / 1.3), how
-often enemies shoot (density x0.75 / 1 / 1.25 / 1.5, on `shoot` abilities), how hard a hit lands on the hero (x0.5 / 1 / 1.5 / 2, a whole number of hearts,
-the fraction paid by a roll that belongs to the shot, so a rewind replays it; pits and lava are not scaled) and rewind juice held and earned
-(x1.5 / 1 / 0.75 / 0.5). Assist also turns Aim Assist on. Settings > Accessibility holds six toggles, each saved at once: bullet outlines, high-contrast
-bullets (one hot colour with an ink rim), reduced flash, reduced shake, a hitbox ring and dot on the hero, aim assist (a shot aimed within 9 degrees of an
-enemy bends most of the way onto it). `BulletReadability`, `HitboxDot` (`Gameplay/Presentation/AccessibilityVisuals.cs`) are presentation only. Playtest `difficulty`.
+New Game starts at **Normal** with no card (2026-11-11; see *First five minutes*). *Pick Your Hell* lives in Settings:
+**Assist**, **Normal**, **Hard**, **Hell Loop**. It is the hero's mood, not a story fork: the same Hell, the same lines. Normal is the bullet hell as
+designed and changes nothing. The pick scales four things for a whole play (`Data/Difficulty.cs`; saved in PlayerPrefs `Difficulty`): how fast hostile
+shots fly (x0.8 / 1 / 1.15 / 1.3), how often enemies shoot (density x0.75 / 1 / 1.25 / 1.5, on `shoot` abilities), how hard a hit lands on the hero
+(x0.5 / 1 / 1.5 / 2, a whole number of hearts, the fraction paid by a roll that belongs to the shot, so a rewind replays it; pits and lava are not
+scaled) and rewind juice held and earned (x1.5 / 1 / 0.75 / 0.5). Assist also turns Aim Assist on. After three deaths inside five real minutes of a New
+Game the death screen offers **Try Assist** once (`FtueProgress`). Settings > Accessibility holds six toggles, each saved at once: bullet outlines,
+high-contrast bullets (one hot colour with an ink rim), reduced flash, reduced shake, a hitbox ring and dot on the hero, aim assist (a shot aimed within
+9 degrees of an enemy bends most of the way onto it). `BulletReadability`, `HitboxDot` (`Gameplay/Presentation/AccessibilityVisuals.cs`) are presentation
+only. Playtest `difficulty`.
 
 ## The hero's own flinch, deaths and victory
 
