@@ -229,7 +229,7 @@ namespace SickOfIt.Gameplay
                     source.pitch = PitchStart;
                     source.Play();
                 }
-                target = 0.55f * GameSettings.SfxVolume;
+                target = 0.55f * GameSettings.SfxVolume * SickOfIt.Core.Audio.AudioBuses.Gain(SickOfIt.Data.Config.Bus.Sfx);
             }
             volume = Mathf.MoveTowards(volume, target, dt * (rewinding ? 6f : 8f));
             if (source.isPlaying)

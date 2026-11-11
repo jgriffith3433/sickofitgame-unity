@@ -8,6 +8,8 @@
   "backgroundLayers": [],
   "music": "Audio/Music/wastes_loop.ogg",
   "musicVolume": 0.85,
+  "ambientSound": "Audio/Generated/Core/ambience_floor1000.ogg",
+  "ambientVolume": 0.8,
   "platforms": [],
   "placedSprites": [],
   "enemies": [],

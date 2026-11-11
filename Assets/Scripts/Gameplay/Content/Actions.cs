@@ -521,6 +521,16 @@ namespace SickOfIt.Gameplay.Content
         public override void Run(ActionContext context) => context.World.Effects.PlayMusic(clip, volume);
     }
 
+    [Serializable, JsonType("setAmbience")]
+    [Doc("Cross-fades the level's ambient bed to this audio.json sound (kind Effect, loop true, bus Ambience): the Meadow's calm bed " +
+         "to its burning one when the sky opens. Presentation only (the Ambience bus, the Effects volume): a rewind past it keeps the new bed.")]
+    public sealed class SetAmbienceAction : GameAction
+    {
+        [SoundRef, Required, Doc("audio.json sound id of the looping bed.")] public string sound = "";
+        [Doc("Seconds of cross-fade.")] public float fadeSeconds = 2f;
+        public override void Run(ActionContext context) => SickOfIt.Core.Audio.AmbienceBed.PlaySound(sound, fadeSeconds);
+    }
+
     [Serializable, JsonType("musicVolume")]
     public sealed class MusicVolumeAction : GameAction
     {

@@ -176,3 +176,67 @@ Not covered: the milestone banner texts (`showText` without a speaker) are silen
 missing), a referenced id audio.json doesn't define, a sound with neither prompt nor clip. `SoundClipTests` (EditMode)
 checks the first two in Unity, the config import warns per sound without a clip, and the `sound-audit` playtest scenario
 reports them (`soundAudit.missing`) and plays one of each kind. A new sound: add its prompt, generate it, run the check.
+
+The same check also fails (2026-11-11): a take file that is missing, a bus audio.json does not know, an Ambience-bus sound that does not
+loop, a voice line with takes or a pitch change, one of the eleven core verbs with fewer than 3 takes (or a pitch variation over 6%, or more
+than 4 copies), a level's `ambientSound` whose file is missing or that no Ambience-bus sound of audio.json describes. `SoundTakesTests`
+(EditMode) runs the take picker, the duck maths and the same JSON rules in Unity.
+
+## Takes, buses and beds (the player goal "every verb has a punchy sound that never grates")
+
+Nov 11, 2026. Reference: Vlambeer's *Nuclear Throne* and Jan Willem Nijman's "The Art of Screenshake": loud, varied, layered sound on every
+verb. What the code does (all presentation, nothing in the simulation, nothing rewound):
+
+- **Takes.** `SoundDef.clip` is the first take and `SoundDef.takes` the others (audio.json `takes`: asset paths). `Sfx.Play` picks one at
+  random per play and never the one it played last for that sound (`Sfx.PickTake`; a take that is not loaded yet is skipped; only effects
+  have takes). Effects get a random pitch of +-`pitchVariation` (0.06 for the core verbs), **voice lines never** (the voice queue plays at
+  pitch 1), and at most `Sfx.MaxCopies` = 4 copies of one effect play at once (`maxVoices` can only lower it).
+- **Core verbs, 3 takes each** (`Tools/Audio/core_sfx.py` is the table, `--check` verifies the JSON): `player_shoot` (rewritten: a punchy
+  bright arcade pop, the old prompt was "barely noticeable"), `hit_pop` (event `enemyHit`, plays on top of an enemy's own hurt sound
+  whenever a shot lands), `kill_pop` (event `killPop`, plays with the enemy's own death sound: the hit and the kill land as layered pops in
+  the same moment), `player_hurt`, `graze_tick`, `pickup_diamond`, `player_jump`, `player_land`, `player_dash`, `rewind_start`,
+  `rewind_stop`. 33 takes.
+- **Mixer groups** (`Core/Audio/AudioBuses.cs`): Music, Voice, SFX, Ambience, each with a trim in dB (`AudioBuses.SetTrimDb`) that
+  `Sfx` (effects, voices), `AmbienceBed` and `MusicVolume` (every music source) multiply in; a sound's `bus` field picks its group (Auto:
+  Voice for spoken lines, SFX for effects). It is software on purpose: Unity's AudioMixer effects (ducking, limiter) are not supported in
+  WebGL, where the game ships, and a software bus is the same on every device and testable.
+- **Duck under voice.** When the voice queue starts a line (`AudioBuses.VoiceStarted`) Music drops **-8 dB** over **0.1 s**; when the
+  line ends (one timer set at that start, `WaitForSecondsRealtime`: no polling anywhere) it comes back over **0.4 s**. The ramp runs only
+  while the duck moves. Back-to-back lines hold the duck.
+- **Master limiter**: the page's, in `Tools/Web/hawkes-sound.js`: every AudioContext Unity makes gets a DynamicsCompressorNode
+  (threshold -6 dB, knee 0, ratio 20, attack 3 ms, release 120 ms) in place of its `destination` (followed by a -3 dB trim that cancels the compressor's automatic make-up gain), so a pile of shots and
+  voices peaks near -3 dBFS. Not yet verified in a WebGL build: whether Unity's "Compressed In Memory" `<audio>` clips (music, the beds) go
+  through the context's destination and so the limiter. `hawkesSound.state()` carries `limiter` (how many) and `hawkesSound.limiter()` the gain reduction. The Editor and a
+  standalone player have none (no WebGL, no problem).
+- **Ambience beds** (`Core/Audio/AmbienceBed.cs`): `LevelConfig.ambientSound` + `ambientVolume` start with the level (`LevelRuntime`) on the
+  Ambience bus, follow the Effects volume, and end with it. The Meadow's is `ambience_meadow_calm` (wind, a far rooster, a mill); the level
+  script's new action `setAmbience` cross-fades to `ambience_meadow_burning` (fire, a village alarm bell) with the raid's music at 5.5 s;
+  Floor 1000's is `ambience_floor1000` (lava rumble, bubbling, stone creaks). A bed is an audio.json Effect with `loop: true`, `bus:
+  Ambience`; its file is mono Vorbis, "Compressed In Memory" (`loadType` 1), and it rides the level's own scope (`level/<name>`), so
+  the menu's boot and late-core downloads do not grow (the extra `takes` of every event sound go to the late core, behind the menu:
+  `PlayerDataManifest.ScopeOf`). The old `meadow_bed` loop (a borrowed `thatch_burst` clip on the `meadowBed` entity) is retired; the entity
+  stays as a marker. Not rewound: a rewind past the swap keeps the burning bed.
+- **Every start is reported** through `Sfx.Played` (id, take n of m, pitch, volume, bus), the audio scenario's log.
+
+### The clips are stand-ins made by a synthesiser
+
+Hawkes Gen's `audio.sfx` was not reachable from the agent that wrote this (its project access was refused for `sickofit`, `shared`,
+`sick-of-it` and `sick-of-it-unity`), so the 33 takes and the 3 loops are **synthesised** by `Tools/Audio/synth_core_sfx.py` (Python
+standard library + ffmpeg's Vorbis, seeded: the same files every run; `Assets/Audio/Generated/Core/*.ogg`, mono, with importer
+`.meta`: effects "Decompress On Load", beds "Compressed In Memory"; 5-13 KB a take, 135-165 KB a loop). They are marked
+`"generatedFrom": "synth|Tools/Audio/synth_core_sfx.py"` and every sound keeps its Hawkes Gen prompt. To replace them:
+`python3 Tools/Audio/core_sfx.py --gen-list` prints the 33 takes (3 per sound, `new_take` for the 2nd and 3rd) and 3 loops, about
+**$0.94** in all (audio.sfx; no GPU); drop the made files over the same names (`<id>_t1..3.ogg`, `<id>.ogg`) and set `generatedFrom` to the
+prompt's key. Nothing else changes.
+
+### The audio scenario
+
+Playtest `audio` (`SickOfItPlaytest.Audio.cs`, ~7 min; run it on a desktop and at 390x844 touch): after the page's tap-to-play it loads
+Level 1 directly and has the bot play 60 s of game time through real input, pressing a jump twice, a dash and a rewind at set moments (on a
+phone a tap, a right-half swipe and R held), with two setup shortcuts (the graze distance widened, a diamond dropped at his feet). Every
+sound that starts is a `sound` event, every voice line a `duck` event; the checks are: a sound for every verb (shot, hit, kill, graze,
+pickup, jump, land, dash, rewind); no take twice in a row; effects within 6% of pitch and voices unmoved; at most 4 copies of one effect
+at once; Music at least 6 dB under each voice line (the duck's own samples and the music source's volume) and back to its prior level after;
+Level 1 logs an ambient bed and the Meadow's turns to its burning one; Floor 1000 logs its own and it is audible; the page's first tap
+started sound and the master limiter is on the page; the main menu loaded within 20 s (WebGL). Metrics `audio.count.<verb>`,
+`audio.voiceLines`, `audio.menuSeconds`.

@@ -95,8 +95,8 @@
   "music": "Audio/Music/meadow_calm.ogg",
   "musicStartTime": 0.0,
   "musicVolume": 1.0,
-  "ambientSound": null,
-  "ambientVolume": 0.5,
+  "ambientSound": "Audio/Generated/Core/ambience_meadow_calm.ogg",
+  "ambientVolume": 0.8,
   "levelCompleteSound": null,
   "platforms": [],
   "placedSprites": [],
@@ -300,6 +300,11 @@
                 "type": "playMusic",
                 "clip": "Audio/Music/meadow_raid.ogg",
                 "volume": 0.85
+              },
+              {
+                "type": "setAmbience",
+                "sound": "ambience_meadow_burning",
+                "fadeSeconds": 2.5
               },
               {
                 "type": "cameraShake",

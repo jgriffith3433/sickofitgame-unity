@@ -11,6 +11,25 @@ namespace SickOfIt.Data.Config
         [Tooltip("A spoken line (ElevenLabs text-to-speech).")] Voice,
     }
 
+    /// <summary>The four mixer groups (Core/Audio/AudioBuses.cs): every sound plays on one.</summary>
+    public enum Bus
+    {
+        Music,
+        Voice,
+        Sfx,
+        Ambience,
+    }
+
+    /// <summary>The mixer group a sound is set to play on (Core/Audio/AudioBuses.cs). Auto = Voice for spoken lines, SFX for effects.</summary>
+    public enum SoundBus
+    {
+        Auto,
+        Sfx,
+        Voice,
+        Ambience,
+        Music,
+    }
+
     /// <summary>
     /// One sound in audio.json. Describe it in 'prompt' and run SickOfIt > Audio > Sound Generator (or the
     /// GenerateSounds batch command): the generator calls ElevenLabs, saves the file under audio.json's outputFolder,
@@ -36,8 +55,12 @@ namespace SickOfIt.Data.Config
         [Tooltip("Voice: a raw ElevenLabs voice id instead of a named voice. Empty = the named voice, else defaultVoiceId.")]
         public string voiceId = "";
 
-        [Tooltip("The audio file. Filled in by the generator.")]
+        [Tooltip("The audio file. Filled in by the generator. With 'takes' it is the first take.")]
         public AudioClip clip;
+        [Tooltip("More takes of the same sound (clip is the first). Each play picks one at random, never the one it played last. Effects only.")]
+        public List<AudioClip> takes = new List<AudioClip>();
+        [Tooltip("Which mixer group it plays on. Auto: Voice for spoken lines, SFX for effects. Beds that loop under a level are Ambience.")]
+        public SoundBus bus = SoundBus.Auto;
         [Tooltip("Written by the generator: the settings 'clip' was made from. If they differ from the current ones, it's out of date.")]
         public string generatedFrom = "";
 
@@ -118,6 +141,8 @@ namespace SickOfIt.Data.Config
         public string uiHover = "ui_hover";
         public string uiClick = "ui_click";
         public string uiBack = "ui_back";
+        [UnityEngine.Tooltip("A hero shot lands on an enemy: a short layered pop on top of the enemy's own hurt sound.")] public string enemyHit = "hit_pop";
+        [UnityEngine.Tooltip("An enemy dies: a layered pop on top of the enemy's own death sound.")] public string killPop = "kill_pop";
     }
 
     /// <summary>All sounds and the ElevenLabs settings used to make them (audio.json).</summary>
@@ -163,6 +188,19 @@ namespace SickOfIt.Data.Config
                 stability = named != null ? named.stability : 0.5f,
                 speed = named != null ? named.speed : 1f,
             };
+        }
+
+        /// <summary>The mixer group of a sound (its own, or by kind).</summary>
+        public static Bus BusOf(SoundDef sound)
+        {
+            switch (sound.bus)
+            {
+                case SoundBus.Sfx: return Bus.Sfx;
+                case SoundBus.Voice: return Bus.Voice;
+                case SoundBus.Ambience: return Bus.Ambience;
+                case SoundBus.Music: return Bus.Music;
+                default: return sound.kind == SoundKind.Voice ? Bus.Voice : Bus.Sfx;
+            }
         }
 
         public SoundDef Find(string id)

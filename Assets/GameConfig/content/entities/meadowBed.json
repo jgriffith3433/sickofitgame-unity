@@ -15,6 +15,5 @@
     "deathPop": false
   },
   "healthBar": { "show": false },
-  "abilities": [ { "type": "lifetime", "seconds": 600 } ],
-  "sounds": { "loopSound": "meadow_bed" }
+  "abilities": [ { "type": "lifetime", "seconds": 600 } ]
 }

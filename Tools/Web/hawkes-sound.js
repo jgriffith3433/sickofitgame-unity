@@ -18,7 +18,13 @@
  *    the browser allows ~75 media players, and a long session of videos and deaths used to run out (see "never run out").
  * 3. Audio resumes when the tab comes back, the page is restored, or iOS reports the context "interrupted"; any
  *    later touch, click or key also resumes it.
- * 4. Not sound, but it needs to run first: the first time the site's service worker takes control of the page, the
+ * 4. The master limiter. A browser is the one place a limiter works for Unity WebGL (the AudioMixer's effects are not
+ *    supported there), so every context Unity makes gets a DynamicsCompressorNode (threshold -6 dB, knee 0, ratio 20,
+ *    attack 3 ms, release 120 ms) that its `destination` is swapped for: everything Unity connects lands on the limiter,
+ *    which feeds a -3 dB trim (the compressor's own make-up gain) and then the real output. Peaks stay near -3 dBFS however many shots and voices pile up. The mixer
+ *    groups (Music, Voice, SFX, Ambience) and the music duck under voice are gains in the game's own code
+ *    (Core/Audio/AudioBuses.cs). window.hawkesSound.limiter() reports it.
+ * 5. Not sound, but it needs to run first: the first time the site's service worker takes control of the page, the
  *    website's own "reload on controllerchange" is stopped, so a first visit isn't reloaded mid-game.
  *
  * window.hawkesSound: tap() presses the prompt (the playtest bot uses it), state() describes it as JSON.
@@ -49,9 +55,34 @@
 
   // ─── AudioContext: track Unity's ───────────────────────────────
 
+  var limiters = [];
+
+  // The master limiter: Unity's `context.destination` becomes a compressor that feeds the real destination.
+  function installLimiter(context) {
+    try {
+      if (!context.createDynamicsCompressor) return;
+      var real = context.destination;
+      var limiter = context.createDynamicsCompressor();
+      limiter.threshold.value = -6;
+      limiter.knee.value = 0;
+      limiter.ratio.value = 20;
+      limiter.attack.value = 0.003;
+      limiter.release.value = 0.12;
+      // The compressor adds automatic make-up gain (about +3 dB for this setting); trim it so quiet sounds keep their level
+      // and the loudest peaks land near -3 dBFS.
+      var trim = context.createGain();
+      trim.gain.value = 0.7;
+      limiter.connect(trim);
+      trim.connect(real);
+      Object.defineProperty(context, 'destination', { configurable: true, get: function () { return limiter; } });
+      limiters.push(limiter);
+    } catch (e) { log('no master limiter: ' + e); }
+  }
+
   function track(context) {
     if (contexts.indexOf(context) >= 0) return context;
     contexts.push(context);
+    installLimiter(context);
     // Unity sets onstatechange itself, so listen instead of assigning.
     if (context.addEventListener) {
       context.addEventListener('statechange', function () {
@@ -306,8 +337,18 @@
         trusted: trusted,
         audio: audioState(),
         pool: pool.length,
-        liveAudio: live.length
+        liveAudio: live.length,
+        limiter: limiters.length
       });
+    },
+    /** The master limiter: how many contexts have one, and its current gain reduction in dB (0 = not limiting). */
+    limiter: function () {
+      var reduction = 0;
+      for (var i = 0; i < limiters.length; i++) {
+        var r = limiters[i].reduction;
+        if (typeof r === 'number') reduction = Math.min(reduction, r);
+      }
+      return JSON.stringify({ contexts: limiters.length, reductionDb: reduction });
     },
   };
 

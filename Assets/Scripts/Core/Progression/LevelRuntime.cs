@@ -251,7 +251,11 @@ namespace SickOfIt.Core.Progression
         private void OnDisable()
         {
             if (Current == this)
+            {
                 Current = null;
+                // The level's ambient bed ends with it (a new level's own start cross-fades if one is already up).
+                SickOfIt.Core.Audio.AmbienceBed.Stop();
+            }
             GameContent.Changed -= OnContentChanged;
             GameplayTelemetry.Recorded -= OnPhaseRecorded;
             if (playerHealth != null)
@@ -490,6 +494,12 @@ namespace SickOfIt.Core.Progression
                 experienceRunner.SetPlaybackHeld(false);
             if (gameplayWorld != null)
                 gameplayWorld.Begin();
+
+            // The place's ambient bed (LevelConfig.ambientSound on the Ambience bus) comes up with the level.
+            if (config != null && config.ambientSound != null)
+                SickOfIt.Core.Audio.AmbienceBed.Play(config.ambientSound, config.ambientVolume);
+            else
+                SickOfIt.Core.Audio.AmbienceBed.Stop(); // a level with no bed of its own must not inherit the last one
 
             if (musicSource == null || musicSource.clip == null)
                 return;

@@ -10,10 +10,38 @@ namespace SickOfIt.Core.Audio
     /// pitch variation, cooldown and voice limit; effects follow the Effects volume setting and spoken lines the
     /// Voices setting. Sounds without a clip yet (not generated) are silent. Purely presentational: nothing here
     /// touches the simulation, so it's safe from anywhere.
+    ///
+    /// A sound with several takes (SoundDef.clip + takes) plays one at random per call, never the take it played last;
+    /// effects get a random pitch of +-SoundDef.pitchVariation (6% in audio.json), voices never; at most
+    /// <see cref="MaxCopies"/> copies of one effect sound at once. Every sound plays on a mixer group (AudioBuses) and
+    /// each start is reported through <see cref="Played"/> (sounds played straight from a clip, such as an enemy's own death clips, bypass the buses) (the audio playtest's log).
     /// </summary>
     public static class Sfx
     {
         const int PoolSize = 24;
+        /// <summary>At most this many copies of one effect sound play at once (audio.json's own maxVoices can only lower it).</summary>
+        public const int MaxCopies = 4;
+
+        /// <summary>What a sound start looked like: the id, which take (of how many), its pitch, volume and mixer group.</summary>
+        public struct PlayedSound
+        {
+            public string id;
+            public int take;
+            public int takes;
+            public float pitch;
+            public float volume;
+            public Bus bus;
+            public float time;
+        }
+
+        /// <summary>Raised for every sound that really starts (effects when they begin, voice lines when the queue says them, the ambience bed).</summary>
+        public static event System.Action<PlayedSound> Played;
+
+        /// <summary>For the other players of sound in this assembly (the ambience bed): report a start the same way.</summary>
+        internal static void Report(PlayedSound sound) => Played?.Invoke(sound);
+
+        static readonly Dictionary<string, AudioClip> lastTake = new Dictionary<string, AudioClip>();
+        static readonly List<AudioClip> candidates = new List<AudioClip>(8);
 
         static AudioConfig config;
         static List<SoundDef> indexedList;
@@ -82,12 +110,14 @@ namespace SickOfIt.Core.Audio
             float now = Time.unscaledTime;
             if (lastPlayed.TryGetValue(id, out float last) && now - last < sound.cooldown)
                 return;
-            if (CountPlaying(id) >= Mathf.Max(1, sound.maxVoices))
+            bool isVoice = sound.kind == SoundKind.Voice;
+            int cap = isVoice ? Mathf.Max(1, sound.maxVoices) : Mathf.Clamp(sound.maxVoices, 1, MaxCopies);
+            if (CountPlaying(id) >= cap)
                 return;
             lastPlayed[id] = now;
 
             // Spoken lines take turns (a banner and its subtitle often appear together).
-            if (sound.kind == SoundKind.Voice)
+            if (isVoice)
             {
                 VoiceQueue.Get().Enqueue(sound, volume);
                 return;
@@ -96,14 +126,55 @@ namespace SickOfIt.Core.Audio
             var source = NextSource();
             if (source == null)
                 return;
-            float setting = sound.kind == SoundKind.Voice ? GameSettings.VoiceVolume : GameSettings.SfxVolume;
-            source.clip = sound.clip;
+            var bus = AudioConfig.BusOf(sound);
+            var clip = PickTake(sound, out int take, out int takeCount);
+            source.clip = clip;
             source.loop = false;
-            source.volume = Mathf.Clamp01(sound.volume * volume * setting);
-            float variation = Mathf.Max(0f, sound.pitchVariation);
+            source.volume = Mathf.Clamp01(sound.volume * volume * GameSettings.SfxVolume * AudioBuses.Gain(bus));
+            float variation = Mathf.Clamp(sound.pitchVariation, 0f, 0.2f);
             source.pitch = Mathf.Clamp(pitch * (1f + Random.Range(-variation, variation)), 0.1f, 3f);
             source.Play();
             poolIds[System.Array.IndexOf(pool, source)] = id;
+            Played?.Invoke(new PlayedSound { id = id, take = take, takes = takeCount, pitch = source.pitch, volume = source.volume, bus = bus, time = now });
+        }
+
+        /// <summary>
+        /// One of a sound's takes (its clip and 'takes' that are loaded), random but never the one picked last time for this sound.
+        /// 'take' is its place in the list (0 = clip), 'count' how many there are.
+        /// </summary>
+        public static AudioClip PickTake(SoundDef sound, out int take, out int count)
+        {
+            candidates.Clear();
+            if (sound.clip != null)
+                candidates.Add(sound.clip);
+            if (sound.takes != null)
+            {
+                for (int i = 0; i < sound.takes.Count; i++)
+                {
+                    if (sound.takes[i] != null)
+                        candidates.Add(sound.takes[i]);
+                }
+            }
+            count = candidates.Count;
+            if (count == 0)
+            {
+                take = -1;
+                return null;
+            }
+            int pick = 0;
+            if (count > 1)
+            {
+                lastTake.TryGetValue(sound.id, out var previous);
+                int previousIndex = previous != null ? candidates.IndexOf(previous) : -1;
+                // Random among the others: a pick of 0..count-2 skips over the previous take's place.
+                pick = Random.Range(0, previousIndex >= 0 ? count - 1 : count);
+                if (previousIndex >= 0 && pick >= previousIndex)
+                    pick++;
+            }
+            var chosen = candidates[pick];
+            lastTake[sound.id] = chosen;
+            take = pick;
+            return chosen;
         }
 
         /// <summary>
@@ -140,8 +211,9 @@ namespace SickOfIt.Core.Audio
             source.clip = sound.clip;
             source.loop = true;
             source.pitch = 1f;
-            source.volume = Mathf.Clamp01(sound.volume * volume * setting);
+            source.volume = Mathf.Clamp01(sound.volume * volume * setting * AudioBuses.Gain(AudioConfig.BusOf(sound)));
             source.Play();
+            Played?.Invoke(new PlayedSound { id = id, take = 0, takes = 1, pitch = 1f, volume = source.volume, bus = AudioConfig.BusOf(sound), time = Time.unscaledTime });
             return true;
         }
 
@@ -279,10 +351,14 @@ namespace SickOfIt.Core.Audio
                     if (now - queuedAt > MaxWait || sound.clip == null)
                         continue;
                     source.clip = sound.clip;
-                    source.volume = Mathf.Clamp01(sound.volume * volume * GameSettings.VoiceVolume);
+                    source.volume = Mathf.Clamp01(sound.volume * volume * GameSettings.VoiceVolume * AudioBuses.Gain(Bus.Voice));
                     source.pitch = 1f;
                     source.Play();
                     freeAt = now + sound.clip.length + Gap;
+                    // Music ducks for as long as the line is spoken: this start is the event that does it (AudioBuses ends it by a timer).
+                    if (GameSettings.SoundOn && GameSettings.VoiceVolume > 0.01f)
+                        AudioBuses.VoiceStarted(sound.clip.length);
+                    Played?.Invoke(new PlayedSound { id = sound.id, take = 0, takes = 1, pitch = 1f, volume = source.volume, bus = Bus.Voice, time = now });
                     break;
                 }
             }
