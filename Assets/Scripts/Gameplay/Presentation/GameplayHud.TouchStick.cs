@@ -88,7 +88,7 @@ namespace SickOfIt.Gameplay
             stickRewoundBefore = PlayerPrefs.GetInt(StickRewoundKey, 0) > 0;
             stickVisualAlpha = IdleOutlineAlpha;
 
-            // Landscape: bottom-left float zone over the playfield. Portrait: lower strip below the 60% playfield.
+            // Landscape: bottom-left float zone over the playfield. Portrait: lower strip below the playfield (the playfield ends where the strip starts: AspectRatioController.PortraitControlStripLayoutPx).
             stickZoneRect = MenuGraphics.NewRect("TouchStickZone", menu.Root);
             stickZoneRect.gameObject.SetActive(false);
             MenuResponsive.Track(stickZoneRect,
