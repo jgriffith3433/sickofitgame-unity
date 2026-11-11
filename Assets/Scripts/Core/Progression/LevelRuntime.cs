@@ -38,6 +38,8 @@ namespace SickOfIt.Core.Progression
 
         [Header("Projectile Pools (wired by generator)")]
         private const int PlayerShotPoolSize = 160;
+        /// <summary>Share of the landscape picture's width a portrait phone still shows on a one-screen or following arena (travel and scroll floors keep all of it).</summary>
+        private const float PortraitZoomShare = 0.6f;
         [SerializeField] private ObjectPool playerProjectilePool;
         [SerializeField] private ObjectPool enemyProjectilePool;
         [SerializeField] private ObjectPool laserPool;
