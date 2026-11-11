@@ -24,6 +24,7 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 - **Mood:** a nice, dull afternoon that is about to end. Warm, bright, then fire.
 - **Look and sound:** green hills, the village's thatch, a single path; Video1's footage as the sky layer. Bed: wind, a far
   rooster, a mill creaking. Then the Overlord's hum, lasers, burning thatch.
+- **Music (Nov 11):** its own track, not the film's audio: "A nice day", a plucked D-major figure over a soft drone (`meadow_calm`, interim stand-in until Gen's take), which turns to the raid's track the moment the sky opens (`playMusic`, 6 s in). Rewinding bends whatever is playing (slowed, low-passed) and it snaps back on release.
 - **Size:** ~2 min (30 s of calm, imp raid, the portal scene ≤10 s locked, skippable).
 - **In/out:** New Game (no Video1, no difficulty card) lands here; out through the fire portal into the Shaft plunge on a
   first run (Video2 stays in Rewatch Stuff).

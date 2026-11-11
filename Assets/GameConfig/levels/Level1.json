@@ -92,7 +92,7 @@
     }
   ],
   "ambientColor": "#FFFFFF",
-  "music": "Videos/Level1_Background1_Audio.mp3",
+  "music": "Audio/Music/meadow_calm.ogg",
   "musicStartTime": 0.0,
   "musicVolume": 1.0,
   "ambientSound": null,
@@ -290,11 +290,16 @@
             "steps": [
               {
                 "type": "wait",
-                "seconds": 3.5
+                "seconds": 5.5
               },
               {
                 "type": "playSound",
                 "sound": "magma_rumble"
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.85
               },
               {
                 "type": "cameraShake",
@@ -328,7 +333,7 @@
             "name": "sky opens",
             "when": {
               "type": "after",
-              "seconds": 4.0
+              "seconds": 6.0
             },
             "do": [
               {

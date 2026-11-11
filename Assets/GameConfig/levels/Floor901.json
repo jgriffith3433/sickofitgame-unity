@@ -147,6 +147,11 @@
                     "sound": "mk_theme_intro"
                   },
                   {
+                    "type": "playMusic",
+                    "clip": "Audio/Music/magma_king_theme.ogg",
+                    "volume": 0.5
+                  },
+                  {
                     "type": "wait",
                     "seconds": 2.4
                   },
@@ -244,6 +249,10 @@
           {
             "type": "playMusic",
             "clip": "Audio/Music/magma_king_theme.ogg",
+            "volume": 0.9
+          },
+          {
+            "type": "musicVolume",
             "volume": 0.9
           },
           {
