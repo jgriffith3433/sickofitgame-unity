@@ -70,6 +70,16 @@ namespace SickOfIt.Playtest
                     DeathRestartCheck($"quip {i + 1}", death != null && !string.IsNullOrWhiteSpace(quip) && fresh,
                         $"\"{quip}\" under \"{(death != null ? death.TitleText : "")}\"{(fresh ? "" : ", the same as the death before")}");
                     DeathRestartCheck($"again offered {i + 1}", death != null && death.AgainOffered, "the Again! button is on the death screen");
+                    {
+                        var goalCard = SickOfIt.Core.Progression.NextGoalCard.Current;
+                        yield return WaitReal(2.2f);
+                        DeathRestartCheck($"next goal {i + 1}", goalCard != null && goalCard.Goal != null && goalCard.Label != null && goalCard.Label.text.Length > 0,
+                            goalCard != null ? $"{goalCard.Goal.Kind}: {goalCard.Label.text} (bar {goalCard.FillFraction:0.00}, ticks {goalCard.Ticks})" : "no card");
+                        var rect = goalCard != null ? goalCard.Panel : null;
+                        bool sane = rect != null && rect.rect.width > 0f && rect.rect.height > 0f;
+                        DeathRestartCheck($"next goal fits {i + 1}", sane, rect != null ? $"card {rect.rect.width:0}x{rect.rect.height:0}, Again! offered" : "no card");
+                        DeathRestartCheck($"reaction {i + 1}", true, $"cause \"{SickOfIt.Core.Progression.NextGoal.LastCause}\" -> {(SickOfIt.Core.Progression.DeathReaction.LastSaid == "" ? "no clip made yet (pending_clips.json)" : SickOfIt.Core.Progression.DeathReaction.LastSaid)}");
+                    }
                     if (death == null || !death.AgainOffered) { End(PlaytestOutcome.Lost); yield break; }
 
                     int next = death.RunEnded ? death.RunStop.NextLevel : level;
