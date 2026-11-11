@@ -134,6 +134,12 @@ namespace SickOfIt.Tools.Editor
             }
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
+            // The main menu's own hero (the MainMenu scene's copy is taken out for the player build, PlayerDataSplit.StripMenuHero):
+            // the same prefab entry again, in a scope of its own, so the menu loads his bundles without the hero's whole scope.
+            int heroPrefab = entries.FindIndex(e => e.kind == AssetManifestEntry.Prefab && e.path == "player.playerPrefab");
+            if (heroPrefab >= 0)
+                Scope(SickOfIt.Core.Addressables.GameAssets.MenuHero).entries.Add(heroPrefab);
+
             AddClosures(definition, eventSounds, id => Scope(id).include);
 
             // The menu's own art and sound: a few shared bundles instead of one request each (142 bundles before the menu).

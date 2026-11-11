@@ -116,6 +116,32 @@ namespace SickOfIt.Playtest
 
             static string Megabytes(double bytes) => (bytes / 1000000.0).ToString("0.0") + " MB";
 
+            /// <summary>
+            /// Why the main menu's hero is not on screen (null = he is): the deploy takes the scene's copy out of the player build
+            /// (PlayerDataSplit.StripMenuHero: it was 22.8 MB of SickOfIt.data) and MainMenuManager.SpawnMenuHero puts one back at runtime,
+            /// so a sprite drawn inside the camera's view is the proof nothing removed him for good.
+            /// </summary>
+            static string MenuHeroProblem()
+            {
+                var menu = Object.FindAnyObjectByType<MainMenuManager>();
+                if (menu == null)
+                    return "no main menu";
+                var sr = menu.MenuHeroRenderer();
+                if (sr == null)
+                    return "no hero object on the menu";
+                if (!sr.enabled || !sr.gameObject.activeInHierarchy)
+                    return "his renderer is switched off";
+                if (sr.sprite == null)
+                    return "his renderer draws no sprite";
+                var camera = Camera.main;
+                if (camera == null)
+                    return "no camera";
+                var view = camera.WorldToViewportPoint(sr.bounds.center);
+                if (view.z <= 0f || view.x < 0f || view.x > 1f || view.y < 0f || view.y > 1f)
+                    return $"he is off screen (viewport {view.x:0.00}, {view.y:0.00})";
+                return null;
+            }
+
             /// <summary>Frames per second over 'seconds' of real time while 'during' runs: (average, worst one-second window).</summary>
             IEnumerator SampleFps(float seconds, IEnumerator during, System.Action<float, float> result)
             {
@@ -334,7 +360,7 @@ namespace SickOfIt.Playtest
                 {
                     Run.Metric("load.menuBundlesHeld", GameAssets.LoadedCount);
                     LoadCheck("hero art waits for a level", !GameAssets.Holds(GameAssets.Hero),
-                        $"the hero's sheets and the legacy enemy art are not held at the menu ({GameAssets.Describe()})");
+                        $"the hero's whole scope (every state's sheets) and the legacy enemy art are not held at the menu, only the menu hero's own prefab ({GameAssets.Describe()})");
                 }
                 Run.Progress(0.3f);
 
@@ -344,6 +370,19 @@ namespace SickOfIt.Playtest
                 Run.Metric("load.menuFps", menuFps);
                 LoadCheck("menu fps", menuFps >= PhoneLoadMinFps, $"{menuFps:0} fps on the main menu (worst second {menuWorst:0})");
                 if (Run.Done) yield break;
+
+                // 4a. The hero is on the menu: drawn at once from the core Idle sheet, then the real, playable one once his bundles are in.
+                float heroAsked = Time.realtimeSinceStartup;
+                string heroProblem = MenuHeroProblem();
+                while (heroProblem != null && !Run.Done && Time.realtimeSinceStartup - heroAsked < 20f)
+                {
+                    yield return null;
+                    heroProblem = MenuHeroProblem();
+                }
+                if (Run.Done) yield break;
+                Run.Metric("load.menuHeroSeconds", Time.realtimeSinceStartup - heroAsked);
+                LoadCheck("hero on the menu", heroProblem == null,
+                    heroProblem == null ? $"his sprite is drawn on the menu {Time.realtimeSinceStartup - heroAsked:0.0} s after the buttons" : heroProblem);
 
                 // 4b. The art for the screens after the menu (select cards, Shaft, Yooba, shop) arrives behind it, not before it.
                 if (GameAssets.Managed && GameAssets.Knows(GameAssets.LateCore))
@@ -372,6 +411,13 @@ namespace SickOfIt.Playtest
                     Run.Metric("load.warmSeconds", GameAssets.WarmSeconds);
                     LoadCheck("level bundles warmed behind the menu", GameAssets.WarmDone, $"the hero and Level 1 bundles were fetched in {GameAssets.WarmSeconds:0.0} s while the menu idled");
                 }
+
+                // 4c2. By now his bundles have been fetched behind the menu: the stand-in has given way to the playable hero.
+                yield return Run.Until(() => Object.FindAnyObjectByType<SickOfIt.Core.Input.PlayerController>() != null, 60f, "the menu's playable hero");
+                if (Run.Done) yield break;
+                LoadCheck("playable hero on the menu", MenuHeroProblem() == null && Object.FindAnyObjectByType<SickOfIt.Core.Input.PlayerController>() != null,
+                    $"the real hero took his place {Time.realtimeSinceStartup - menuReal:0.0} s after the menu came up ({MenuHeroProblem() ?? "on screen"})");
+                Run.Metric("load.menuHeroPlayableSeconds", Time.realtimeSinceStartup - menuReal);
 
                 // 4d. A player's Start: after 5 s on the menu, New Game to Level 1 accepting input, three times (median), with the
                 // menu's indicator gone and a themed transition (never a bare LOADING bar).
