@@ -229,7 +229,7 @@
         "name": "cleared",
         "atLeast": 1
       },
-      "text": "Defend the meadow"
+      "text": "Defend!"
     },
     "phases": [
       {
@@ -237,7 +237,7 @@
         "onEnter": [
           {
             "type": "objectiveText",
-            "text": "PROLOGUE: THE MEADOW"
+            "text": "THE MEADOW"
           },
           {
             "type": "spawn",
