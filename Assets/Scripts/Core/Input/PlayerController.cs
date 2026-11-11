@@ -24,6 +24,9 @@ namespace SickOfIt.Core.Input
         
         [Header("Movement Settings")]
         [SerializeField] private float moveSpeed = 2f;
+        private float accelSeconds, stopSeconds, jumpCutFactor = 1f;
+        private float runVx;            // his own run speed, eased toward the stick (carrier, wind and swing ride on top)
+        private bool jumpTracking, jumpCutPending;
         
         [Header("Jump Settings")]
         [SerializeField] private float jumpForce = 9f;
@@ -456,6 +459,9 @@ namespace SickOfIt.Core.Input
 
             var cfg = gd.player;
             moveSpeed = cfg.moveSpeed;
+            accelSeconds = cfg.accelSeconds;
+            stopSeconds = cfg.stopSeconds;
+            jumpCutFactor = cfg.jumpCutFactor;
             jumpForce = cfg.jumpForce;
             gravityScale = cfg.gravityScale;
             groundCheckDistance = cfg.groundCheckDistance;
@@ -499,7 +505,7 @@ namespace SickOfIt.Core.Input
 
             // Moves (dash, wall-jump)
             moves = cfg.moves ?? new HeroMovesConfig();
-            airDashesLeft = Mathf.Max(0, moves.dash.airDashes);
+            airDashesLeft = MaxAirDashes;
             ResolveDashKeys();
             ResolveGrappleKeys();
         }
@@ -630,6 +636,8 @@ namespace SickOfIt.Core.Input
             if (GameClock.Instance != null && GameClock.Instance.IsRewinding)
             {
                 jumpLatch.Clear();
+                runVx = 0f;
+                jumpCutPending = false;
                 return;
             }
 
@@ -640,6 +648,22 @@ namespace SickOfIt.Core.Input
             else
                 HandleJump();
             HandleMovement();
+            ApplyJumpCut();
+        }
+
+        // Variable jump height: Jump let go while still rising cuts the climb short (a tap is a hop). Only sources that report a
+        // release (keyboard, gamepad) cut; a touch tap or the HUD button always gives the full jump.
+        private void ApplyJumpCut()
+        {
+            if (!jumpCutPending || rb == null)
+                return;
+            jumpCutPending = false;
+            var v = rb.linearVelocity;
+            if (v.y * gravitySign > 0f && jumpCutFactor < 1f)
+            {
+                v.y *= jumpCutFactor;
+                rb.linearVelocity = v;
+            }
         }
         
         private void LateUpdate()
@@ -688,7 +712,7 @@ namespace SickOfIt.Core.Input
             {
                 landPoseUntil = Time.time + LandPoseSeconds;
                 airJumpsRemaining = maxAirJumps;
-                airDashesLeft = Mathf.Max(0, moves.dash.airDashes);
+                airDashesLeft = MaxAirDashes;
                 if (Cue(landSound, SickOfIt.Core.Audio.Sfx.Events.playerLand))
                     SickOfIt.Core.Fx.Fx.Dust(Feet, 1f);
             }
@@ -784,8 +808,19 @@ namespace SickOfIt.Core.Input
         
         private void ReadJumpInput()
         {
-            if (jumpAction?.action != null && jumpAction.action.WasPressedThisFrame())
+            if (jumpAction?.action == null)
+                return;
+            if (jumpAction.action.WasPressedThisFrame())
+            {
                 LatchJump();
+                jumpTracking = true;
+                jumpCutPending = false;
+            }
+            if (jumpTracking && !jumpAction.action.IsPressed())
+            {
+                jumpTracking = false;
+                jumpCutPending = true;
+            }
         }
         
         private void ApplyInputOverrides()
@@ -1102,6 +1137,7 @@ namespace SickOfIt.Core.Input
             {
                 // The holder sets his position each tick; keep moving with it in between.
                 rb.linearVelocity = heldVelocity;
+                runVx = 0f;
                 return;
             }
 
@@ -1118,9 +1154,15 @@ namespace SickOfIt.Core.Input
                 velocity.x = dashDir * moves.dash.distance / Mathf.Max(0.02f, moves.dash.duration) + CarrierVelocity.x;
                 velocity.y = 0f;
                 rb.linearVelocity = velocity;
+                runVx = 0f;
                 return;
             }
-            velocity.x = horizontalInput * moveSpeed * MoveSpeedMultiplier + CarrierVelocity.x + swingMomentum + WindVelocity.x;
+            float runTarget = horizontalInput * moveSpeed * MoveSpeedMultiplier;
+            float fullSpeed = Mathf.Max(0.01f, moveSpeed * MoveSpeedMultiplier);
+            bool speedingUp = Mathf.Abs(runTarget) > Mathf.Abs(runVx) && (runTarget * runVx >= 0f);
+            float rampSeconds = speedingUp ? accelSeconds : stopSeconds;
+            runVx = rampSeconds <= 0f ? runTarget : Mathf.MoveTowards(runVx, runTarget, fullSpeed / rampSeconds * Time.fixedDeltaTime);
+            velocity.x = runVx + CarrierVelocity.x + swingMomentum + WindVelocity.x;
             if (now < kickUntil)
                 velocity.x = kickDir * moves.wallJump.kickSpeed;
             if (wallSide != 0)
@@ -1458,6 +1500,19 @@ namespace SickOfIt.Core.Input
         }
 
         /// <summary>The world unlocks the moves (story flags and Yooba's goods) when a floor starts.</summary>
+        /// <summary>Yooba's dash upgrade is bought: one more dash in the air and a shorter cooldown.</summary>
+        public bool DashUpgraded
+        {
+            get => dashUpgraded;
+            set { dashUpgraded = value; airDashesLeft = MaxAirDashes; }
+        }
+        private bool dashUpgraded;
+        private int MaxAirDashes => Mathf.Max(0, moves.dash.airDashes) + (dashUpgraded ? Mathf.Max(0, moves.dash.upgradeAirDashes) : 0);
+        private float DashCooldown => dashUpgraded ? Mathf.Min(moves.dash.cooldown, moves.dash.upgradeCooldown) : moves.dash.cooldown;
+        /// <summary>A swipe asks for a dash the way it points (-1 or 1); 0 = the way he faces.</summary>
+        public void RequestDash(float direction) { dashRequested = true; dashRequestDir = direction; }
+        private float dashRequestDir;
+
         public void SetMovesUnlocked(bool dash, bool wallJump)
         {
             dashUnlocked = dash;
@@ -1546,6 +1601,7 @@ namespace SickOfIt.Core.Input
             }
             bool want = dashRequested;
             dashRequested = false;
+            if (!want) dashRequestDir = 0f;
             if (!want || !DashUnlocked || held || Suspended || InputLocked || ScriptedMove.HasValue || rb == null)
                 return;
             var dash = moves.dash;
@@ -1554,7 +1610,9 @@ namespace SickOfIt.Core.Input
                 return;
             if (!isGrounded && airDashesLeft <= 0)
                 return;
-            float dir = Mathf.Abs(moveInput.x) > inputDeadzone ? Mathf.Sign(moveInput.x) : (FacingRight ? 1f : -1f);
+            float dir = dashRequestDir != 0f ? Mathf.Sign(dashRequestDir)
+                : Mathf.Abs(moveInput.x) > inputDeadzone ? Mathf.Sign(moveInput.x) : (FacingRight ? 1f : -1f);
+            dashRequestDir = 0f;
             // Never into the wall he hangs on: away from it.
             if (wallSide != 0 && dir == wallSide)
                 dir = -wallSide;
@@ -1563,7 +1621,7 @@ namespace SickOfIt.Core.Input
             dashDir = dir;
             dashEnd = now + dash.duration;
             dashInvulnUntil = now + Mathf.Max(dash.duration, dash.invulnerableSeconds);
-            dashReadyAt = now + Mathf.Max(dash.cooldown, dash.duration);
+            dashReadyAt = now + Mathf.Max(DashCooldown, dash.duration);
             wallSide = 0;
             dashReadyPending = true;
             Face(dir);
@@ -1653,7 +1711,7 @@ namespace SickOfIt.Core.Input
             wallCoyoteUntil = -100f;
             wallSide = 0;
             swingMomentum = 0f;
-            airDashesLeft = Mathf.Max(0, moves.dash.airDashes);
+            airDashesLeft = MaxAirDashes;
             rb.linearVelocity = new Vector2(kickDir * kick.kickSpeed, kick.kickUp * gravitySign);
             Face(kickDir);
             if (Cue(null, SickOfIt.Core.Audio.Sfx.Events.playerWallJump))

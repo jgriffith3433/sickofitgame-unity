@@ -57,7 +57,10 @@ namespace SickOfIt.Gameplay
             var moves = GameDefinition.Instance != null && GameDefinition.Instance.player != null ? GameDefinition.Instance.player.moves : null;
             if (moves == null)
                 return;
-            bool dash = Unlock(DashFlag, moves.dash.unlockFlag, moves.dash.unlockWhen, roguelite != null && roguelite.GetShopTotal(ShopEffect.Dash) > 0f, null);
+            // The dash is his from the first second; Yooba's Slimed Lining only upgrades it (a second air dash, a shorter cooldown).
+            bool upgraded = roguelite != null && roguelite.GetShopTotal(ShopEffect.Dash) > 0f;
+            bool dash = Unlock(DashFlag, moves.dash.unlockFlag, moves.dash.unlockWhen, upgraded || moves.dash.startUnlocked, null);
+            controller.DashUpgraded = upgraded;
             bool wall = Unlock(WallJumpFlag, moves.wallJump.unlockFlag, moves.wallJump.unlockWhen, false, moves.wallJump.unlockLine);
             controller.SetMovesUnlocked(dash, wall);
         }

@@ -32,6 +32,12 @@ namespace SickOfIt.Data.Config
 
         [Header("Movement")]
         public float moveSpeed = 2f;
+        [Tooltip("Seconds from standing to full run speed (0 = instant).")]
+        public float accelSeconds = 0.06f;
+        [Tooltip("Seconds from full run speed to standing when the stick lets go (0 = instant).")]
+        public float stopSeconds = 0.04f;
+        [Tooltip("Share of the rising speed kept when Jump is let go early (variable jump height; 1 = no cut).")]
+        public float jumpCutFactor = 0.5f;
         public float jumpForce = 9f;
         public float gravityScale = 1.8f;
         public float groundCheckDistance = 0.2f;
@@ -216,6 +222,18 @@ namespace SickOfIt.Data.Config
         public float cooldown = 0.9f;
         [Tooltip("Dashes in the air before he lands (the ground refills it).")]
         public int airDashes = 1;
+        [Tooltip("True: the dash is his from the first second of Level 1 (Yooba's Slimed Lining is then an upgrade, see upgradeAirDashes / upgradeCooldown).")]
+        public bool startUnlocked = true;
+        [Tooltip("Extra dashes in the air once Yooba's dash upgrade is bought.")]
+        public int upgradeAirDashes = 1;
+        [Tooltip("Cooldown in seconds once Yooba's dash upgrade is bought.")]
+        public float upgradeCooldown = 0.6f;
+        [Tooltip("On touch, a swipe that starts on the right half of the screen dashes the way it points (the stick is untouched).")]
+        public bool touchSwipe = true;
+        [Tooltip("Swipe length that counts as a dash, as a fraction of the screen's short side.")]
+        public float swipeFraction = 0.08f;
+        [Tooltip("Seconds a swipe has to reach that length.")]
+        public float swipeSeconds = 0.3f;
         [Tooltip("Keyboard keys that dash (Input System key names).")]
         public string[] keys = { "LeftShift", "RightShift" };
         [Tooltip("Hero line (audio.json voice id) the first time he dashes in a save.")]

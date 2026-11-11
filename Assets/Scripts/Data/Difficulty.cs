@@ -17,20 +17,20 @@ namespace SickOfIt.Data
         public readonly struct Modifiers
         {
             public readonly string name, blurb;
-            public readonly float bulletSpeed, density, damageTaken, juice;
-            public Modifiers(string name, string blurb, float bulletSpeed, float density, float damageTaken, float juice)
+            public readonly float bulletSpeed, density, damageTaken, juice, grace;
+            public Modifiers(string name, string blurb, float bulletSpeed, float density, float damageTaken, float juice, float grace = 1f)
             {
                 this.name = name; this.blurb = blurb; this.bulletSpeed = bulletSpeed; this.density = density;
-                this.damageTaken = damageTaken; this.juice = juice;
+                this.damageTaken = damageTaken; this.juice = juice; this.grace = grace;
             }
         }
 
         static readonly Modifiers[] Table =
         {
-            new Modifiers("Assist", "Slower, sparser shots. Hits barely count. Lots of rewind. Aim assist on.", 0.8f, 0.75f, 0.5f, 1.5f),
+            new Modifiers("Assist", "Slower, sparser shots. Hits barely count. Lots of rewind. Aim assist on.", 0.8f, 0.75f, 0.5f, 1.5f, 2f / 1.2f),
             new Modifiers("Normal", "Hell as designed.", 1f, 1f, 1f, 1f),
-            new Modifiers("Hard", "Faster, thicker shots. Hits bite. Less rewind.", 1.15f, 1.25f, 1.5f, 0.75f),
-            new Modifiers("Hell Loop", "Everything Hell has, again and again. Rewind is a rumor.", 1.3f, 1.5f, 2f, 0.5f),
+            new Modifiers("Hard", "Faster, thicker shots. Hits bite. Less rewind.", 1.15f, 1.25f, 1.5f, 0.75f, 0.9f / 1.2f),
+            new Modifiers("Hell Loop", "Everything Hell has, again and again. Rewind is a rumor.", 1.3f, 1.5f, 2f, 0.5f, 0.7f / 1.2f),
         };
 
         public static event System.Action Changed;
@@ -60,6 +60,8 @@ namespace SickOfIt.Data
         public static float Density => Now.density;
         public static float DamageTaken => Now.damageTaken;
         public static float Juice => Now.juice;
+        /// <summary>Scale on the post-hit safe time (player.json invincibilityDuration is Normal's 1.2 s): Assist 2.0 s, Hard 0.9 s, Hell Loop 0.7 s.</summary>
+        public static float Grace => Now.grace;
 
         /// <summary>
         /// A hit on the hero scaled by the difficulty: a whole number of hearts, the fraction paid by a roll that belongs to the shot

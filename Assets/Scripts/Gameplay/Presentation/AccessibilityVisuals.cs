@@ -143,7 +143,7 @@ namespace SickOfIt.Gameplay
 
         void LateUpdate()
         {
-            bool want = GameSettings.HitboxDot && controller != null && controller.BodyCollider != null && controller.BodyCollider.enabled;
+            bool want = GameSettings.HitboxDotFor(SickOfIt.Core.Progression.LevelRuntime.Current != null ? SickOfIt.Core.Progression.LevelRuntime.Current.LevelNumber : 99) && controller != null && controller.BodyCollider != null && controller.BodyCollider.enabled;
             if (renderer2d.enabled != want)
                 renderer2d.enabled = want;
             if (!want)
