@@ -299,3 +299,7 @@ the baker's cart crashing (998), the imps' snatch and cackle (997), each with a 
 as a button, after the first diamonds. *What happens:* each new button is announced by a NEW! burst; Yooba's first visit is a whispered, glowing
 pointer at the one ware the hero can buy. *Landmark:* the glowing card. Details in Docs/Story.md.
 
+
+### Floor 999 dressing and the death screen's record (Nov 11)
+- **Floor 999 (Only 999 To Go)** now reads differently from 1000's bare bank: a red glow from the climbing sea, tally marks scratched on the rock (the counted wall, for the soul that counts the same stone), rising ash. Props in `levels/Floor999.json` `world.props`.
+- **Death screen:** always shows `BEST: FLOOR n` (kept for good, `BestFloorRecord`, "(NEW!)" on a new best) over the next unlock (cheapest good, next Waystone or the top).
