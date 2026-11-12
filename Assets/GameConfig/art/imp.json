@@ -5,7 +5,9 @@
   "description": "a small wiry hell imp, one of the Overlord's raiders: crimson leathery skin, short curled horns, leathery bat wings, a long whip tail with a spade tip, yellow eyes and a toothy grin, a little sack of stolen glittering diamonds slung over its shoulder, a glowing orange ember cupped in one clawed hand",
   "height": 0.75,
   "poses": {
-    "stand": "hovering in mid-air on spread bat wings, legs dangling, the ember held up in one hand",
+    "stand": "hovering in mid-air on spread bat wings, legs dangling, the ember held up in one hand, bored",
+    "windup": "hovering, body coiled back, the ember-hand hauled way back over its shoulder, ember flaring bright cyan-white with a thick glow, wings flared for a Cuphead-style held wind-up beat",
+    "throw": "arm snapped forward, the ember leaving its claw toward the right, body stretched into the throw",
     "struck": "just hit and caught mid-shriek: eyes bulging wide, mouth stretched open, horns and wings snapped straight up, tail whipped stiff, the ember flying out of its open hand and the diamond sack slipping off its shoulder, body tilted back with small cracks of orange light glowing through its crimson skin",
     "dead": "bursting apart in a small round pop of black soot and bright orange embers, only its two curled horns and the empty sack tumbling out of the puff"
   },
@@ -15,10 +17,19 @@
       "action": "hovers in place, flapping its bat wings steadily, tail swishing, tossing the ember from hand to hand",
       "seconds": 2
     },
-    "attack": {
+    "windup": {
       "from": "stand",
-      "action": "winds its arm back and hurls the glowing ember forward to the right, then hovers again",
-      "seconds": 1.5
+      "to": "windup",
+      "action": "pulls the glowing ember-hand back over its shoulder and HOLDS the exaggerated wind-up pose, ember flaring brighter, wings flared; a clear Cuphead telegraph beat with no throw yet",
+      "seconds": 0.8,
+      "loop": true,
+      "state": "Windup"
+    },
+    "attack": {
+      "from": "windup",
+      "to": "stand",
+      "action": "hurls the glowing ember forward to the right in one snappy throw, then settles back to a hover",
+      "seconds": 0.7
     },
     "hurt": {
       "from": "stand",
@@ -33,7 +44,87 @@
     }
   },
   "takes": {
-    "pose": 3,
-    "clip": 3
-  }
+    "pose": 2,
+    "clip": 1
+  },
+  "style": "Hand-inked 2D arcade character like Hollow Knight and Cuphead: heavy warm near-black outline (#140B0D), flat two-tone cel colour (base + one shadow), one thin rim of hellfire light, a readable silhouette at 48 px, no soft airbrush, no gradients beyond two tones, no pure black #000000, side view facing right",
+  "background": "Plain flat pure green background (#00ff00), no floor, no shadow, no scenery, even studio lighting.",
+  "negative": "photorealistic, 3d render, soft airbrush, gradient shading, watercolor wash, pure black outline, text, watermark, busy background, extra limbs, blurry, low contrast silhouette, camera movement, zoom, pan",
+  "animator": {
+    "parameters": [
+      {
+        "name": "IsAttacking",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      },
+      {
+        "name": "IsWinding",
+        "type": "Bool"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Attack",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Windup",
+        "when": [
+          "IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Idle",
+        "when": [
+          "!IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      }
+    ],
+    "attackBool": "IsWinding",
+    "default": "Idle"
+  },
+  "reference": "Art/EnemyInk/imp_concept.png"
 }

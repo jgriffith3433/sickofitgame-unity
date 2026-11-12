@@ -154,8 +154,10 @@ fingerpost; 900/895/860/810): points the wrong way kindly. Each branches on the 
 line, a queue that never moves. *Reactions:* flinch from shots that pass, hide at the boss's roar, wave at the hero if
 he is unhurt (witness triggers, Story.md *Bystanders*).
 
-**Imps and cinders** (Circle X). *Routine:* carry sacks, patrol ledges, sit on chains, argue over stolen goods. *Reaction:*
-turn and hurl embers when the hero is near; flee when a boss is dying.
+**Imps and cinders** (Circle X). *Routine:* carry sacks, patrol ledges, sit on chains, argue over stolen goods. *Look:*
+hand-inked like the hero (docs/art-bible.md): heavy `#140B0D` outline, two-tone cel, a Cuphead wind-up held 0.3+ s with a
+glow on the ember hand or the cinder's core before any shot or lunge. *Reaction:* turn and hurl embers when the hero is
+near; flee when a boss is dying.
 
 **Brimstone demons and the road's bestiary** (Circle IX). *Routine:* push a spire up through the road, then pace it. *Reaction:*
 split rock to cut his way.

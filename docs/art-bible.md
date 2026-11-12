@@ -112,7 +112,28 @@ Hand-inked UI widgets for the in-level HUD (`HudInkAtlas`, `GameplayHud.Ink`), H
 
 Outline `#140B0D`, ember `#FF5B3A`/`#FF8A1F`, brass `#C89A3A`, rewind teal `#4CE0D2`. Flat cel, no soft airbrush. Packed into one atlas at `Assets/Resources/UI/HudInkAtlas.png` (Gen `image.generate` + `image.transform` trim/pot). Grouped top-left (vessels + reel) and top-right (gem + dial); phone rewind button ≥72 px bottom-right.
 
-## 9. The hero redraw (in progress)
+## 9. Enemy redraw (Meadow and Floors 1000-997)
+
+Every hostile type on the Meadow and Floors 1000-997 (imp, cinder, thatch cinder, cinder brute, cinder spark, sack
+imp; the launcher thief shares the same ink rules) ships the same five clips as the hero's combat set, plus a held
+**wind-up**:
+
+| Clip | Rule |
+|---|---|
+| Idle | loop; signature silhouette at rest |
+| Windup | held 0.3–0.5 s, glow on the part that will fire or lunge (Cuphead telegraph) |
+| Attack | the throw / lunge / pop; fires on an animation event after the wind-up |
+| Hurt | flash; never brighter than the hit flash |
+| Die | pairs with the death burst; ends on a still last frame |
+
+Outline `#140B0D`, two-tone cel, one rim, green `#00ff00` key, 12 fps. Specs: `Assets/GameConfig/art/<id>.json` with
+`_defaults.json`. Wind-up is wired in gameplay: `ShootAbility.windupBool` (imp) and `ContactDamageAbility.windup`
+(cinders / sack imp). Playtest `enemy-ink` (arena `content/scenes/enemyInk.json`).
+
+**Status:** specs and wind-up wiring landed; Gen concepts/poses/clips queued within the task GPU budget (imp + cinder
+first). Remaining roster priced in `.hawkes/pending-gpu.txt`.
+
+## 10. The hero redraw (in progress)
 
 - Design is fixed: armoured knight, battered dark bronze plate, brass trim, closed helm with two glowing orange eye slits, tattered maroon cloth, heavy gauntlets and greaves, broad and tired. Launcher from the start. Never a man in a jacket.
 - Order: concepts (3) from the current Idle sheet -> pick -> key poses (`image.edit` each) -> clips (`video.i2v`, still camera, 00ff00) -> bake -> hand-pick frames -> wire into `player.json` replacing the old sheets (same state names, same cell, same pivot) -> match walk fps to `moveSpeed`.

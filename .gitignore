@@ -106,3 +106,6 @@ InitTestScene*.unity*
 /Assets/Resources/TextureVariantShared.txt.meta
 
 videos/*/out/
+
+# Local Gen art work (clips); sheets land in Assets/Art/Enemies
+.art-work/

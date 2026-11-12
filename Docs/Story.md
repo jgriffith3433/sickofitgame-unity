@@ -1979,6 +1979,10 @@ without a Circle like the Meadow, the script's own `ambience`. Palette rule: bac
 are the only hot orange/yellow on screen. Playtest `readability` (levels 1-5). Still to do: per-bullet-family silhouettes (a ring, a
 shard, a spiral) and a second pass on the Cracked Road and Rune Bridges once their art is regenerated (GPU).
 
+**Enemy wind-up (Meadow and Floors 1000-997).** Every hostile that attacks on those floors holds a Cuphead-style wind-up of at
+least 0.3 s before the shot or lunge: the imp coils its ember-hand back with a glow, cinders (and thatch / brute / spark) swell
+and flare, sack imps glow before a bump. Specs and the art bible (`docs/art-bible.md` §9); playtest `enemy-ink`.
+
 ## Hell's air (weather and the life far away)
 
 Hell is repetition, so even its air repeats: every Circle has its own weather and its own things going about their business a long way off, and

@@ -7,7 +7,8 @@
   "poses": {
     "stand": "hovering low on straining bat wings, bent under the huge diamond sack held on its back with both claws",
     "struck": "just hit: the sack tearing open, a diamond spilling out, the imp squawking with eyes bulging",
-    "dead": "bursting into a puff of black soot and embers, the torn empty sack dropping with a few diamonds"
+    "dead": "bursting into a puff of black soot and embers, the torn empty sack dropping with a few diamonds",
+    "windup": "coiled into an exaggerated Cuphead wind-up, the part that will hurt flaring with a bright glow, held still a beat"
   },
   "clips": {
     "idle": {
@@ -30,11 +31,103 @@
       "to": "dead",
       "action": "flares bright and breaks apart into soot, ash and embers",
       "seconds": 1.25
+    },
+    "windup": {
+      "from": "stand",
+      "to": "windup",
+      "action": "pulls into a held glowing wind-up pose for a clear telegraph beat, no strike yet",
+      "seconds": 0.7,
+      "loop": true,
+      "state": "Windup"
+    },
+    "attack": {
+      "from": "windup",
+      "to": "stand",
+      "action": "snaps forward into its strike, then recovers",
+      "seconds": 0.7
     }
   },
   "takes": {
-    "stand": 3,
     "pose": 2,
     "clip": 1
-  }
+  },
+  "style": "Hand-inked 2D arcade character like Hollow Knight and Cuphead: heavy warm near-black outline (#140B0D), flat two-tone cel colour (base + one shadow), one thin rim of hellfire light, a readable silhouette at 48 px, no soft airbrush, no gradients beyond two tones, no pure black #000000, side view facing right",
+  "background": "Plain flat pure green background (#00ff00), no floor, no shadow, no scenery, even studio lighting.",
+  "negative": "photorealistic, 3d render, soft airbrush, gradient shading, watercolor wash, pure black outline, text, watermark, busy background, extra limbs, blurry, low contrast silhouette, camera movement, zoom, pan",
+  "animator": {
+    "parameters": [
+      {
+        "name": "IsAttacking",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      },
+      {
+        "name": "IsWinding",
+        "type": "Bool"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Attack",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Windup",
+        "when": [
+          "IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Idle",
+        "when": [
+          "!IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      }
+    ],
+    "attackBool": "IsWinding"
+  },
+  "reference": "Art/EnemyInk/impSack_concept.png"
 }

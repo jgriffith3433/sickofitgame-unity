@@ -2,10 +2,12 @@
   "schemaVersion": 1,
   "entity": "cinderThatch",
   "name": "Thatch cinder",
-  "description": "a floating round ball of tangled golden straw thatch on fire, flames licking off its top, with a mischievous face (two beady black eyes and a grin) glowing in the middle of the burning straw, smoke and sparks drifting off it",
+  "description": "a floating round ball of tangled golden straw thatch on fire, flames licking off its top, mischievous face (two beady black eyes and a grin) glowing in the middle of the burning straw, smoke and sparks drifting off it, heavy ink outline",
   "height": 0.5,
   "poses": {
     "stand": "floating in the air, burning, the straw crackling with flames",
+    "windup": "puffed wider, straw flaring bright with a thick orange glow, eyes huge, held for a Cuphead wind-up before it lunges",
+    "lunge": "stretched forward to the right mid-lunge, straw streaming back",
     "struck": "just hit and recoiling, eyes wide, mouth open, body jolted back, sparks and chips flying off it",
     "dead": "bursting apart into a scatter of burning straw and sparks"
   },
@@ -20,6 +22,20 @@
       "action": "drifts forward to the right, flames streaming back, staying in the same spot in the frame",
       "seconds": 1.25
     },
+    "windup": {
+      "from": "stand",
+      "to": "windup",
+      "action": "swells and HOLDS a glowing wind-up pose, straw blazing brighter, no lunge yet",
+      "seconds": 0.7,
+      "loop": true,
+      "state": "Windup"
+    },
+    "attack": {
+      "from": "windup",
+      "to": "lunge",
+      "action": "lunges forward to the right, then settles",
+      "seconds": 0.6
+    },
     "hurt": {
       "from": "stand",
       "action": "is struck, jerks backward with a pained grimace, then recovers",
@@ -33,7 +49,6 @@
     }
   },
   "takes": {
-    "stand": 3,
     "pose": 2,
     "clip": 1
   },
@@ -41,5 +56,83 @@
     "standFromText": "Paint {description}. Seen from the side, small and centered in the frame with lots of empty space around it. It is a ball of fire that floats in the air by itself. {style} {background}",
     "pose": "Image 1 is {description}. Show this exact same object, the same design, {action}. Keep its shape, colors, size and position in the frame and the painterly art style of image 1. {background}"
   },
-  "style": "Painterly digital painting in the style of dark fantasy video game art: soft visible brush strokes, rich shading, gritty and detailed, warm hellfire rim light, high resolution and smooth (not pixel art, not a cartoon)."
+  "style": "Hand-inked 2D arcade character like Hollow Knight and Cuphead: heavy warm near-black outline (#140B0D), flat two-tone cel colour (base + one shadow), one thin rim of hellfire light, a readable silhouette at 48 px, no soft airbrush, no gradients beyond two tones, no pure black #000000, side view facing right",
+  "background": "Plain flat pure green background (#00ff00), no floor, no shadow, no scenery, even studio lighting.",
+  "negative": "photorealistic, 3d render, soft airbrush, gradient shading, watercolor wash, pure black outline, text, watermark, busy background, extra limbs, blurry, low contrast silhouette, camera movement, zoom, pan",
+  "animator": {
+    "parameters": [
+      {
+        "name": "IsAttacking",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      },
+      {
+        "name": "IsWinding",
+        "type": "Bool"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Attack",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Windup",
+        "when": [
+          "IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Idle",
+        "when": [
+          "!IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      }
+    ],
+    "attackBool": "IsWinding"
+  },
+  "reference": "Art/EnemyInk/cinderThatch_concept.png"
 }

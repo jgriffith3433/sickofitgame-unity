@@ -6,7 +6,10 @@
   "hintVoice": "vo_hero_hint_impSack",
   "extends": "imp",
   "health": 4,
-  "tags": ["imp", "impSack"],
+  "tags": [
+    "imp",
+    "impSack"
+  ],
   "body": {
     "radius": 1,
     "solid": false
@@ -22,6 +25,16 @@
         },
         {
           "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsWinding",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsAttacking",
           "type": "Trigger",
           "defaultValue": 0
         }
@@ -54,6 +67,25 @@
           "fps": 12,
           "loop": false,
           "events": []
+        },
+        {
+          "stateName": "Windup",
+          "spriteSheet": "Art/Enemies/ImpSack/ImpSack_windup.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/ImpSack/ImpSack_attack.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 2,
+              "functionName": "FireProjectile"
+            }
+          ]
         }
       ],
       "transitions": [
@@ -115,6 +147,104 @@
           "hasExitTime": true,
           "exitTime": 1,
           "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Windup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Windup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
         }
       ],
       "defaultStateName": "Idle"
@@ -130,7 +260,10 @@
   "abilities": [
     {
       "type": "contactDamage",
-      "damage": 1
+      "damage": 1,
+      "windup": 0.35,
+      "windupRange": 1.6,
+      "windupBool": "IsWinding"
     },
     {
       "type": "patrol",
@@ -151,7 +284,10 @@
           "type": "spawn",
           "entity": "diamond",
           "anchor": "Self",
-          "at": [-0.25, 0.1],
+          "at": [
+            -0.25,
+            0.1
+          ],
           "facePlayer": false
         },
         {
@@ -172,7 +308,10 @@
           "type": "spawn",
           "entity": "diamond",
           "anchor": "Self",
-          "at": [0.25, 0.1],
+          "at": [
+            0.25,
+            0.1
+          ],
           "facePlayer": false
         },
         {
@@ -193,7 +332,10 @@
           "type": "spawn",
           "entity": "diamond",
           "anchor": "Self",
-          "at": [0, 0.25],
+          "at": [
+            0,
+            0.25
+          ],
           "facePlayer": false
         },
         {

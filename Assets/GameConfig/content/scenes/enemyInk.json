@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "seed": 9971,
+  "length": 420,
+  "objective": {
+    "text": "Meadow and early-floor enemies, inked and winding up"
+  },
+  "phases": [
+    {
+      "name": "imp",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        { "type": "showText", "text": "THE IMP. WATCH THE EMBER HAND.", "duration": 2.5, "color": "#FFD27A" },
+        {
+          "type": "spawn",
+          "entity": "imp",
+          "anchor": "Camera",
+          "at": [3.8, 0.4],
+          "tags": ["station"],
+          "facePlayer": true
+        },
+        { "type": "emit", "signal": "ink:imp" }
+      ],
+      "rules": [
+        {
+          "name": "imp done",
+          "when": { "type": "allDead", "target": { "tag": "station" } },
+          "do": [{ "type": "goToPhase", "phase": "cinder" }]
+        },
+        {
+          "name": "imp timeout",
+          "when": { "type": "after", "seconds": 45 },
+          "do": [
+            { "type": "despawn", "target": { "tag": "station" } },
+            { "type": "goToPhase", "phase": "cinder" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "cinder",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        { "type": "showText", "text": "A CINDER. IT SWELLS BEFORE IT POPS.", "duration": 2.5, "color": "#FFD27A" },
+        {
+          "type": "spawn",
+          "entity": "cinder",
+          "anchor": "Camera",
+          "at": [3.5, 0.2],
+          "tags": ["station"],
+          "facePlayer": true
+        },
+        { "type": "emit", "signal": "ink:cinder" }
+      ],
+      "rules": [
+        {
+          "name": "cinder done",
+          "when": { "type": "allDead", "target": { "tag": "station" } },
+          "do": [{ "type": "goToPhase", "phase": "thatch" }]
+        },
+        {
+          "name": "cinder timeout",
+          "when": { "type": "after", "seconds": 40 },
+          "do": [
+            { "type": "despawn", "target": { "tag": "station" } },
+            { "type": "goToPhase", "phase": "thatch" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "thatch",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        { "type": "showText", "text": "THATCH ON FIRE. SAME SWELL.", "duration": 2.5, "color": "#FFD27A" },
+        {
+          "type": "spawn",
+          "entity": "cinderThatch",
+          "anchor": "Camera",
+          "at": [3.5, 0.2],
+          "tags": ["station"],
+          "facePlayer": true
+        },
+        { "type": "emit", "signal": "ink:cinderThatch" }
+      ],
+      "rules": [
+        {
+          "name": "thatch done",
+          "when": { "type": "allDead", "target": { "tag": "station" } },
+          "do": [{ "type": "goToPhase", "phase": "brute" }]
+        },
+        {
+          "name": "thatch timeout",
+          "when": { "type": "after", "seconds": 40 },
+          "do": [
+            { "type": "despawn", "target": { "tag": "station" } },
+            { "type": "goToPhase", "phase": "brute" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "brute",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        { "type": "showText", "text": "A FATTER CINDER. STILL WINDS UP.", "duration": 2.5, "color": "#FFD27A" },
+        {
+          "type": "spawn",
+          "entity": "cinderBrute",
+          "anchor": "Camera",
+          "at": [3.6, 0.3],
+          "tags": ["station"],
+          "facePlayer": true
+        },
+        { "type": "emit", "signal": "ink:cinderBrute" }
+      ],
+      "rules": [
+        {
+          "name": "brute done",
+          "when": { "type": "allDead", "target": { "tag": "station" } },
+          "do": [{ "type": "goToPhase", "phase": "spark" }]
+        },
+        {
+          "name": "brute timeout",
+          "when": { "type": "after", "seconds": 40 },
+          "do": [
+            { "type": "despawn", "target": { "tag": "station" } },
+            { "type": "goToPhase", "phase": "spark" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "spark",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        { "type": "showText", "text": "SPARKS. TINY, STILL A TELL.", "duration": 2.5, "color": "#FFD27A" },
+        {
+          "type": "spawn",
+          "entity": "cinderSpark",
+          "anchor": "Camera",
+          "at": [3.2, 0.5],
+          "tags": ["station"],
+          "facePlayer": true
+        },
+        { "type": "emit", "signal": "ink:cinderSpark" }
+      ],
+      "rules": [
+        {
+          "name": "spark done",
+          "when": { "type": "allDead", "target": { "tag": "station" } },
+          "do": [{ "type": "goToPhase", "phase": "sack" }]
+        },
+        {
+          "name": "spark timeout",
+          "when": { "type": "after", "seconds": 35 },
+          "do": [
+            { "type": "despawn", "target": { "tag": "station" } },
+            { "type": "goToPhase", "phase": "sack" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sack",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        { "type": "showText", "text": "SACK IMP. GLOWS BEFORE IT BUMPS.", "duration": 2.5, "color": "#FFD27A" },
+        {
+          "type": "spawn",
+          "entity": "impSack",
+          "anchor": "Camera",
+          "at": [3.4, 0.2],
+          "tags": ["station"],
+          "facePlayer": true
+        },
+        { "type": "emit", "signal": "ink:impSack" }
+      ],
+      "rules": [
+        {
+          "name": "sack done",
+          "when": { "type": "allDead", "target": { "tag": "station" } },
+          "do": [{ "type": "goToPhase", "phase": "lineup" }]
+        },
+        {
+          "name": "sack timeout",
+          "when": { "type": "after", "seconds": 45 },
+          "do": [
+            { "type": "despawn", "target": { "tag": "station" } },
+            { "type": "goToPhase", "phase": "lineup" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lineup",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        { "type": "showText", "text": "SIDE BY SIDE WITH THE HERO.", "duration": 2.5, "color": "#FFD27A" },
+        {
+          "type": "spawn",
+          "entity": "imp",
+          "anchor": "Camera",
+          "at": [2.2, 0.3],
+          "tags": ["lineup", "station"],
+          "facePlayer": true
+        },
+        {
+          "type": "spawn",
+          "entity": "cinder",
+          "anchor": "Camera",
+          "at": [3.4, 0.5],
+          "tags": ["lineup", "station"],
+          "facePlayer": true
+        },
+        {
+          "type": "spawn",
+          "entity": "cinderThatch",
+          "anchor": "Camera",
+          "at": [4.4, 0.4],
+          "tags": ["lineup", "station"],
+          "facePlayer": true
+        },
+        { "type": "emit", "signal": "ink:lineup" }
+      ],
+      "rules": [
+        {
+          "name": "lineup done",
+          "when": { "type": "after", "seconds": 8 },
+          "do": [
+            { "type": "despawn", "target": { "tag": "station" } },
+            { "type": "emit", "signal": "ink:done" },
+            { "type": "completeLevel" }
+          ]
+        }
+      ]
+    }
+  ]
+}
