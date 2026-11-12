@@ -129,7 +129,7 @@ namespace SickOfIt.Playtest
                     yield return Run.Until(() => adaptiveMusic.Count > 0, 5f, "the level's music to start");
                     int start = adaptiveMusic.Count > 0 ? 0 : -1;
                     string first = start >= 0 ? adaptiveMusic[0].clip : "(none)";
-                    AdaptiveCheck("Level 1 plays the Meadow track", first == "meadow_calm", $"the level's first music is \"{first}\" (not Level1_Background1_Audio)");
+                    AdaptiveCheck("Level 1 plays the Meadow track", first == "meadow_calm" || first == "score_meadow_explore", $"the level's first music is \"{first}\" (the score's explore loop, or the old Meadow track as fallback; not Level1_Background1_Audio)");
                     AdaptiveCheck("Level 1's background video audio is not the music", first != "Level1_Background1_Audio", $"music \"{first}\"");
                     if (start >= 0)
                     {
@@ -140,8 +140,9 @@ namespace SickOfIt.Playtest
                         AdaptiveCheck("floor music starts within 1 s of the level opening", afterPlay <= 1f, $"{afterPlay:0.00} s after the level began ({afterTap:0.0} s after the New Game tap, loading included)");
                     }
                     // Calm first, then the raid: the sky opens and the music turns.
-                    yield return Run.Until(() => AdaptiveFirst(0, "meadow_raid", "script") >= 0, 30f, "the music to turn to the raid");
+                    yield return Run.Until(() => AdaptiveFirst(0, "meadow_raid", "script") >= 0 || AdaptiveFirst(0, "score_meadow_fight", null) >= 0, 30f, "the music to turn to the raid");
                     int raid = AdaptiveFirst(0, "meadow_raid", "script");
+                    if (raid < 0) raid = AdaptiveFirst(0, "score_meadow_fight", null);
                     if (raid >= 0 && start >= 0)
                     {
                         float calm = adaptiveMusic[raid].game - adaptiveMusic[0].game;
@@ -166,7 +167,7 @@ namespace SickOfIt.Playtest
                     yield return PlayLevel(AdaptiveMusicFloorLevel, 0f, until: () => GameClock.Instance != null && GameClock.Instance.Time >= 25f);
                     if (Run.Done) yield break;
                     string loop = adaptiveMusic.Count > 0 ? adaptiveMusic[0].clip : "(none)";
-                    AdaptiveCheck("the Circle's loop plays on the floor", loop == "wastes_loop", $"first music \"{loop}\"");
+                    AdaptiveCheck("the Circle's loop plays on the floor", loop == "wastes_loop" || loop.StartsWith("score_f"), $"first music \"{loop}\"");
 
                     var stage = Object.FindAnyObjectByType<StageMusic>();
                     AdaptiveCheck("the stage music exists", stage != null, stage != null ? "StageMusic found" : "no StageMusic");
