@@ -1,5 +1,5 @@
-- lesson: Thatch windup pose a_f5d9ad823922f967 has bird legs — treat as FAIL; build held wind-up from limbless idle/lunge frames, not that pose or framed a_773bbd2466a05ef6.
-- lesson: Never `git checkout` enemy PNG folders to restore metas — it replaces baked sheets with LFS pointers; extract only `*.meta` via `git show HEAD:path > path`.
-- convention: Bake without DoD — Pillow+numpy venv + stub `_build_anims.py`/`cutout.py` under `DOD_ROOT`, then `SOI_ART_WORK=… SOI_ART_PYTHON=… node Tools/Art/art.mjs <id> --build --no-unity`.
-- lesson: This batch spent ~$0.55 of $0.86; launcherThief (~$0.50) still needs a later budget.
-- canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles share the hero’s hand-inked look and a Cuphead wind-up of at least 0.3 s (`docs/art-bible.md` §9).
+- lesson: pending-gpu other-task — never list `menu_theme` (k_aea2f5751795) in this item's pending-gpu; Studio re-queues the living-menu task forever. Delete pending-gpu when this task's own Gen art is done.
+- convention: Main menu clicks — EventSystemGuard disables StandaloneInputModule, aggressive Ensure 2 s after scene load; MainMenuManager.EnsureClicksReady after BuildMenu.
+- lesson: sparse + Audio/Generated — do not `sparse-checkout add Assets/Audio/Generated/`; LFS smudge dirties hundreds of mp3s and leftover commits can ship them.
+- canon: Main menu ledge — damned soul looks up on Overlord pass; Overlord sheds one ember that lands; occasional lava bursts near the hero.
+- lesson: soul facing — mirror-symmetric quads don't show a flip; keep an asymmetric horn/shoulder so localScale.x reads as a turn.

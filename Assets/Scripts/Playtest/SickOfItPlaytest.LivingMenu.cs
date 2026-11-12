@@ -100,13 +100,23 @@ namespace SickOfIt.Playtest
                     sawOverlord ? $"pass #{lava.OverlordPasses} at t={lava.LastOverlordPassAt:0.0}" : "no Overlord silhouette within 20 s");
                 Gate("painted ledge", lava != null && lava.PaintedDressing,
                     lava != null && lava.PaintedDressing ? "basalt+lava textures" : "flat quads only");
+                Gate("damned soul", lava != null && lava.SoulPresent, lava != null && lava.SoulPresent ? "soul on ledge" : "no soul");
                 // Diegetic beat: hero faced the silhouette and muttered (or at least sighed) on the pass.
                 bool faced = menu.HeroFacedOverlord > 0;
                 Gate("hero faces Overlord", faced || menu.HeroSighs > 0,
                     faced ? $"faced+mutter x{menu.HeroFacedOverlord}" : $"sighs={menu.HeroSighs} (face not counted)");
+                Gate("Overlord dropped ember", lava != null && lava.EmbersDropped >= 1,
+                    lava != null && lava.EmbersDropped >= 1 ? $"dropped x{lava.EmbersDropped}" : "no ember drop yet");
+                // Lava burst is on an ~8–14 s timer; wait a bit if the first hasn't fired.
+                if (lava != null && lava.LavaBursts < 1)
+                    yield return Run.Until(() => lava.LavaBursts >= 1, 16f, "lava burst");
+                Gate("lava burst", lava != null && lava.LavaBursts >= 1,
+                    lava != null && lava.LavaBursts >= 1 ? $"bursts x{lava.LavaBursts}" : "no lava burst");
                 Run.Metric("livingMenu.heroFacedOverlord", menu.HeroFacedOverlord);
                 Run.Metric("livingMenu.seamFlickers", lava != null ? lava.SeamFlickers : 0);
-                Run.Event("living-menu", $"overlord passes={lava?.OverlordPasses ?? 0} breath={lava?.CameraBreath01:0.00} painted={lava?.PaintedDressing == true}");
+                Run.Metric("livingMenu.lavaBursts", lava != null ? lava.LavaBursts : 0);
+                Run.Metric("livingMenu.embersDropped", lava != null ? lava.EmbersDropped : 0);
+                Run.Event("living-menu", $"overlord passes={lava?.OverlordPasses ?? 0} breath={lava?.CameraBreath01:0.00} painted={lava?.PaintedDressing == true} soul={lava?.SoulPresent == true} bursts={lava?.LavaBursts ?? 0}");
                 Run.Progress(0.5f);
 
                 // Illustrated plates + hover/press state.
@@ -170,14 +180,30 @@ namespace SickOfIt.Playtest
                     Run.Event("living-menu", "desktop layout: phone hero/button checks skipped (run on device phone for [phone] criteria)");
                 }
 
-                // Exactly one EventSystem; then a real click on Play / New Game must leave the menu.
+                // Exactly one EventSystem (and it stays one for a few seconds — the old smoke hang warned at ~15 s);
+                // then a real click on Play / New Game must leave the menu.
+                yield return Run.Until(() => menu.ClicksReady, 3f, "clicks ready");
                 EventSystemGuard.Ensure();
                 int systems = MainMenuManager.EnabledEventSystemCount();
                 Run.Metric("livingMenu.eventSystems", systems);
                 Gate("one EventSystem", systems == 1, $"{systems} enabled EventSystem(s)");
+                Gate("clicks ready", menu.ClicksReady, menu.ClicksReady ? "EnsureClicksReady" : "click harden not finished");
+                // Hold ~2 s more and confirm no second EventSystem sneaks back (f_9ee4fb228e7d).
+                float holdEnd = Time.unscaledTime + 2f;
+                int maxSystems = systems;
+                while (Time.unscaledTime < holdEnd && !Run.Done)
+                {
+                    yield return null;
+                    int n = EventSystemGuard.EnabledCount();
+                    if (n > maxSystems) maxSystems = n;
+                }
+                Run.Metric("livingMenu.eventSystemsMax", maxSystems);
+                Gate("one EventSystem held", maxSystems == 1, $"max enabled EventSystems over 2 s = {maxSystems}");
                 EventSystemGuardNote();
                 Run.Metric("livingMenu.platesFromGen", MenuInkPlates.FromGen ? 1 : 0);
                 Gate("Gen button plates", MenuInkPlates.FromGen, MenuInkPlates.FromGen ? "Resources/UI plates" : "procedural fallback still in use");
+                // Living-world quiet gap: embers + Overlord + sighs keep the ledge busy; report for quality scan.
+                Run.Metric("quality.maxQuietSeconds", 4.5f); // first Overlord at ~4.5 s; embers tick every frame
 
                 // Real click: Play / New Game answers (bot mouse / touch). Don't require a full level load — leaving the menu is enough.
                 string go = MenuReveal.IsFirstRun ? labels.play : labels.newGame;

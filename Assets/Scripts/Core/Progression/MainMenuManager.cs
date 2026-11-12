@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using SickOfIt.Core.Audio;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.UI;
@@ -101,6 +100,7 @@ namespace SickOfIt.Core.Progression
             MenuLavaBackdrop.OverlordAppeared += OnOverlordAppeared;
             StartCoroutine(HeroSighLoop());
             StartCoroutine(StartMenuBedAfterButtons());
+            StartCoroutine(EnsureClicksReady());
             SetupBundleDownloadManager();
             // The ghost lobby (Docs/Story.md "Other climbers"): the menu's hero is a ghost on everyone else's menu.
             GhostLobby.MenuOpen = true;
@@ -166,13 +166,40 @@ namespace SickOfIt.Core.Progression
         /// <summary>
         /// How many EventSystems are enabled right now (playtest: must be 1 while the menu is up).
         /// </summary>
-        public static int EnabledEventSystemCount()
+        public static int EnabledEventSystemCount() => EventSystemGuard.EnabledCount();
+
+        /// <summary>
+        /// True once the post-build click harden has run (one EventSystem, buttons interactable). Playtest reads it.
+        /// </summary>
+        public bool ClicksReady { get; private set; }
+
+        /// <summary>
+        /// Scene Awakes can re-enable a second EventSystem a frame after BuildMenu; re-Ensure and force every menu
+        /// button interactable so Play / Continue answer (f_9ee4fb228e7d).
+        /// </summary>
+        IEnumerator EnsureClicksReady()
         {
-            int n = 0;
-            foreach (var es in Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                if (es != null && es.enabled && es.gameObject.activeInHierarchy)
-                    n++;
-            return n;
+            ClicksReady = false;
+            // Two frames: one for scene Awakes, one for any MenuMotionDriver entrance CanvasGroup.
+            yield return null;
+            yield return null;
+            EventSystemGuard.Ensure();
+            if (menu != null)
+            {
+                foreach (var button in menu.GetComponentsInChildren<MenuButton>(true))
+                {
+                    if (button == null) continue;
+                    button.interactable = true;
+                    if (!button.gameObject.activeSelf)
+                        continue;
+                    // Hit area must catch the pointer even during a short entrance fade.
+                    var fills = button.GetComponentsInChildren<UnityEngine.UI.Image>(true);
+                    for (int i = 0; i < fills.Length; i++)
+                        if (fills[i] != null && fills[i].raycastTarget == false && fills[i].name == "HitArea")
+                            fills[i].raycastTarget = true;
+                }
+            }
+            ClicksReady = EventSystemGuard.EnabledCount() == 1;
         }
 
         IEnumerator HeroSighLoop()

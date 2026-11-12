@@ -34,6 +34,10 @@ namespace SickOfIt.Core.Progression
         SpriteRenderer seam, surface, glow, seamSpark;
         Transform overlordRoot;
         SpriteRenderer[] overlordParts;
+        Transform soulRoot;
+        SpriteRenderer[] soulParts;
+        SpriteRenderer lavaBurst;
+        SpriteRenderer droppedEmber;
         Camera cam;
         float baseOrtho = 3.6f;
         float nextOverlordAt;
@@ -42,6 +46,12 @@ namespace SickOfIt.Core.Progression
         float openedAt;
         float seamFlickerUntil = -1f;
         float lastSeamFlickerAt = -99f;
+        float nextLavaBurstAt;
+        float lavaBurstStartedAt = -1f;
+        float droppedEmberStartedAt = -1f;
+        bool droppedEmberLanded;
+        float soulFaceUntil = -1f;
+        float soulLookUpUntil = -1f;
         /// <summary>Raised (presentation) when the Overlord silhouette starts a climb past; MainMenuManager sighs the hero.</summary>
         public static System.Action OverlordAppeared;
 
@@ -68,6 +78,15 @@ namespace SickOfIt.Core.Progression
 
         /// <summary>How many times the cyan seam sparked under the hero (playtest).</summary>
         public int SeamFlickers { get; private set; }
+
+        /// <summary>How many lava bursts have fired (playtest / fun-reviewer life).</summary>
+        public int LavaBursts { get; private set; }
+
+        /// <summary>How many times the Overlord dropped an ember mid-climb (playtest).</summary>
+        public int EmbersDropped { get; private set; }
+
+        /// <summary>True once the damned soul sit-in was built on the ledge.</summary>
+        public bool SoulPresent => soulRoot != null;
 
         /// <summary>World X the Overlord is climbing toward (&gt;0 right); used so the hero faces him.</summary>
         public float OverlordFaceDir => overlordGoingRight ? 1f : -1f;
@@ -141,9 +160,36 @@ namespace SickOfIt.Core.Progression
             }
 
             BuildOverlordSilhouette();
+            BuildDamnedSoul();
+            lavaBurst = Quad("LavaBurst", whiteSprite, new Color(Hot.r, Hot.g, Hot.b, 0f),
+                new Vector2(0f, LedgeTop - 0.2f), new Vector2(0.55f, 0.9f), -18, false);
+            droppedEmber = Quad("DroppedEmber", whiteSprite, new Color(Hot.r, Hot.g, Hot.b, 0f),
+                new Vector2(0f, LedgeTop + 5f), new Vector2(0.18f, 0.18f), -5, false);
             // First glimpse soon enough that a 25 s sit always sees one, then every 15–20 s.
             nextOverlordAt = openedAt + 4.5f;
+            nextLavaBurstAt = openedAt + 7f;
             Tick(0f);
+        }
+
+        /// <summary>
+        /// A pale damned soul sits at the far end of the ledge (fun-reviewer: life that reacts). Looks up when the
+        /// Overlord hums; turns toward the hero when he walks near. Presentation quads only — no climb-sheet load.
+        /// </summary>
+        void BuildDamnedSoul()
+        {
+            soulRoot = new GameObject("DamnedSoul").transform;
+            soulRoot.SetParent(transform, false);
+            soulRoot.localPosition = new Vector3(4.2f, LedgeTop + 0.55f, 0f);
+            // Asymmetric on purpose: a flip of localScale.x must read as a turn (fun-reviewer).
+            soulParts = new[]
+            {
+                QuadOn(soulRoot, "Body", whiteSprite, new Color(0.55f, 0.62f, 0.7f, 0.55f), new Vector2(0f, 0.15f), new Vector2(0.55f, 0.85f), -4),
+                QuadOn(soulRoot, "Shoulder", whiteSprite, new Color(0.45f, 0.52f, 0.6f, 0.5f), new Vector2(0.22f, 0.35f), new Vector2(0.28f, 0.2f), -4),
+                QuadOn(soulRoot, "Head", whiteSprite, new Color(0.7f, 0.78f, 0.85f, 0.65f), new Vector2(0.04f, 0.7f), new Vector2(0.32f, 0.32f), -3),
+                QuadOn(soulRoot, "Horn", whiteSprite, new Color(0.35f, 0.4f, 0.48f, 0.7f), new Vector2(0.18f, 0.95f), new Vector2(0.08f, 0.28f), -3),
+                QuadOn(soulRoot, "EyeL", whiteSprite, new Color(0.15f, 0.2f, 0.25f, 0.7f), new Vector2(-0.02f, 0.72f), new Vector2(0.05f, 0.05f), -2),
+                QuadOn(soulRoot, "EyeR", whiteSprite, new Color(0.15f, 0.2f, 0.25f, 0.7f), new Vector2(0.12f, 0.72f), new Vector2(0.05f, 0.05f), -2),
+            };
         }
 
         Sprite PaintBasalt()
@@ -303,6 +349,147 @@ namespace SickOfIt.Core.Progression
             BreathCamera(t);
             TickOverlord(t);
             TickSeamWithHero(t);
+            TickSoul(t);
+            TickLavaBurst(t);
+            TickDroppedEmber(t);
+        }
+
+        void TickSoul(float t)
+        {
+            if (soulRoot == null) return;
+            // Idle bob + a readable turn (asymmetric horn/shoulder) and a head tip when looking up.
+            float bob = Mathf.Sin(t * 1.7f) * 0.04f;
+            float face = 1f;
+            bool lookUp = t < soulLookUpUntil;
+            if (MainMenuManager.ActiveHeroX(out float heroX))
+            {
+                float dx = heroX - soulRoot.localPosition.x;
+                if (Mathf.Abs(dx) < 2.4f)
+                    soulFaceUntil = t + 1.2f;
+                if (t < soulFaceUntil)
+                    face = dx >= 0f ? 1f : -1f;
+            }
+            if (lookUp)
+                face = OverlordFaceDir; // turn toward the climb
+            soulRoot.localScale = new Vector3(face * 1f, 1f, 1f);
+            soulRoot.localPosition = new Vector3(soulRoot.localPosition.x, LedgeTop + 0.55f + bob + (lookUp ? 0.12f : 0f), 0f);
+            soulRoot.localRotation = Quaternion.Euler(0f, 0f, lookUp ? -12f * face : 0f);
+            // Eyes flare briefly when looking up at the Overlord.
+            if (soulParts != null)
+            {
+                for (int i = 0; i < soulParts.Length; i++)
+                {
+                    if (soulParts[i] == null || !soulParts[i].name.StartsWith("Eye")) continue;
+                    var c = soulParts[i].color;
+                    c.a = lookUp ? 0.95f : 0.7f;
+                    if (lookUp)
+                        c = Color.Lerp(c, new Color(0.85f, 0.15f, 0.12f, c.a), 0.45f);
+                    else
+                        c = new Color(0.15f, 0.2f, 0.25f, c.a);
+                    soulParts[i].color = c;
+                }
+            }
+        }
+
+        void TickLavaBurst(float t)
+        {
+            if (lavaBurst == null) return;
+            if (lavaBurstStartedAt < 0f)
+            {
+                if (t < nextLavaBurstAt) return;
+                lavaBurstStartedAt = t;
+                LavaBursts++;
+                // Prefer near the hero so the burst feels aimed at the ledge he stands on.
+                float x = Mathf.Sin(t * 0.91f) * 7f;
+                if (MainMenuManager.ActiveHeroX(out float heroX))
+                    x = Mathf.Lerp(x, heroX + Mathf.Sin(t * 2.1f) * 1.2f, 0.65f);
+                lavaBurst.transform.localPosition = new Vector3(x, LedgeTop - 0.15f, 0f);
+                if (SickOfIt.Core.Audio.Sfx.ClipOf("lava_burst") != null)
+                    SickOfIt.Core.Audio.Sfx.Play("lava_burst");
+                else if (SickOfIt.Core.Audio.Sfx.ClipOf("lava_bubble") != null)
+                    SickOfIt.Core.Audio.Sfx.Play("lava_bubble");
+            }
+            float u = (t - lavaBurstStartedAt) / 0.9f;
+            if (u >= 1f)
+            {
+                lavaBurstStartedAt = -1f;
+                nextLavaBurstAt = t + 8f + 6f * Mathf.Abs(Mathf.Sin(t * 0.23f));
+                var clear = lavaBurst.color; clear.a = 0f; lavaBurst.color = clear;
+                return;
+            }
+            float rise = Mathf.Sin(Mathf.Clamp01(u) * Mathf.PI);
+            lavaBurst.transform.localPosition = new Vector3(
+                lavaBurst.transform.localPosition.x,
+                LedgeTop - 0.15f + rise * 1.6f,
+                0f);
+            lavaBurst.transform.localScale = new Vector3(0.4f + rise * 0.5f, 0.6f + rise * 1.1f, 1f);
+            var c = Hot;
+            c.a = rise * 0.85f;
+            lavaBurst.color = c;
+        }
+
+        void TickDroppedEmber(float t)
+        {
+            if (droppedEmber == null || droppedEmberStartedAt < 0f) return;
+            const float fallDur = 1.35f;
+            const float splashDur = 0.55f;
+            float elapsed = t - droppedEmberStartedAt;
+            float u = elapsed / fallDur;
+            if (u < 1f)
+            {
+                // Fall from the Overlord's path toward the ledge, with a slight arc.
+                float y0 = LedgeTop + 7.2f;
+                float y1 = LedgeTop + 0.15f;
+                float y = Mathf.Lerp(y0, y1, u * u) + Mathf.Sin(u * Mathf.PI) * 0.3f;
+                float x = droppedEmber.transform.localPosition.x + (overlordGoingRight ? 0.012f : -0.012f);
+                droppedEmber.transform.localPosition = new Vector3(x, y, 0f);
+                var c = Hot;
+                c.a = 0.95f;
+                droppedEmber.color = c;
+                float s = 0.18f * (1f - 0.25f * u);
+                droppedEmber.transform.localScale = new Vector3(s, s, 1f);
+                return;
+            }
+            // Land: a short splash + hiss, and the cyan seam brightens under the impact.
+            float splashU = (elapsed - fallDur) / splashDur;
+            if (splashU >= 1f)
+            {
+                droppedEmberStartedAt = -1f;
+                var clear = droppedEmber.color; clear.a = 0f; droppedEmber.color = clear;
+                return;
+            }
+            if (!droppedEmberLanded)
+            {
+                droppedEmberLanded = true;
+                if (SickOfIt.Core.Audio.Sfx.ClipOf("lava_bubble") != null)
+                    SickOfIt.Core.Audio.Sfx.Play("lava_bubble");
+            }
+            float landX = droppedEmber.transform.localPosition.x;
+            droppedEmber.transform.localPosition = new Vector3(landX, LedgeTop + 0.12f + splashU * 0.35f, 0f);
+            float splash = Mathf.Sin(splashU * Mathf.PI);
+            droppedEmber.transform.localScale = new Vector3(0.35f + splash * 0.55f, 0.12f + splash * 0.25f, 1f);
+            var sc = Color.Lerp(Hot, Cyan, splashU * 0.4f);
+            sc.a = (1f - splashU) * 0.9f;
+            droppedEmber.color = sc;
+            // Seam brightens under the landing for a beat.
+            if (seam != null && splashU < 0.6f)
+            {
+                seamFlickerUntil = Mathf.Max(seamFlickerUntil, t + 0.35f);
+                if (seamSpark != null)
+                    seamSpark.transform.localPosition = new Vector3(landX, LedgeTop + 0.12f, 0f);
+            }
+        }
+
+        /// <summary>Called from TickOverlord mid-climb: the silhouette sheds one ember toward the ledge.</summary>
+        void DropEmberFromOverlord(float t)
+        {
+            if (droppedEmber == null || overlordRoot == null) return;
+            if (droppedEmberStartedAt >= 0f) return;
+            droppedEmberStartedAt = t;
+            droppedEmberLanded = false;
+            EmbersDropped++;
+            droppedEmber.transform.localPosition = overlordRoot.localPosition + new Vector3(0f, -0.4f, 0f);
+            var c = Hot; c.a = 0.95f; droppedEmber.color = c;
         }
 
         /// <summary>Diegetic ledge verb: stand on the cyan rewind seam and it brightens + sparks a whisper-flicker.</summary>
@@ -374,10 +561,14 @@ namespace SickOfIt.Core.Progression
                     SickOfIt.Core.Audio.Sfx.Play("menu_overlord_hum");
                 else
                     SickOfIt.Core.Audio.Sfx.Play("magma_rumble");
+                soulLookUpUntil = t + 2.8f; // damned soul looks up for the pass
                 OverlordAppeared?.Invoke();
             }
 
             float u = Mathf.Clamp01((t - overlordStartedAt) / OverlordCrossSeconds);
+            // Mid-climb: shed one ember toward the ledge (fun-reviewer: Overlord does something).
+            if (u > 0.45f && u < 0.55f && droppedEmberStartedAt < 0f)
+                DropEmberFromOverlord(t);
             // Ease in/out so he doesn't pop; climbs slightly upward as he crosses.
             float eased = u * u * (3f - 2f * u);
             float x0 = overlordGoingRight ? -11f : 11f;
