@@ -1,4 +1,5 @@
-1. Open beta, tap once for sound, then Pick a Level → Level 1 (Meadow): wind / rooster / mill under the music within a second; occasional mill creaks and rooster crows from left or right.
-2. Quit to the Shaft: rushing wind and distant chains under the map.
-3. Play Floors 1000 → 997: lava + ticket bell → furnace + hammer → drips + bone chimes → organ drone; short prop one-shots keep coming, louder when you stand near them.
-4. On a phone (390×844), after the first tap, fps should stay at 30+.
+1. Open beta, tap once to unlock audio, then run playtest `floor-ambience` (or New Game → Shaft preview, then Floors 1000–997).
+2. Eyes closed: Meadow (wind/rooster/mill), Shaft (wind/chains), 1000 (lava/ticket bell), 999 (furnace/hammer), 998 (drips/bone chimes), 997 (organ/Overlord laugh).
+3. On each floor, listen for prop one-shots every few seconds, louder toward that side of the screen.
+4. On a phone (390x844): same after the first touch; fps should stay around 30+.
+5. Until Gen credits refill, beds still sound like the synth stand-ins from #398 — not the final Gen takes.

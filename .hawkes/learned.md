@@ -1,5 +1,5 @@
-- lesson: Gen wall still up — audio.sfx needs 8 org credits with 1 left; hawkesgen_fleet reports AWS keys missing; do not requeue (m_f60905657340), keep pending-gpu.
-- lesson: ElevenLabs audio.sfx is $0 GPU (~$0.14 for 7 beds + 12 oneshots) and fits the $0.28 budget once credits exist; open variants batch estimates ~$0.19 GPU.
-- convention: Gen project id — always `org_eb0d5c82e8da8c2d.sickofit` for hawkesgen_*.
+- lesson: Gen org credits vs GPU budget — a $0.28 GPU brief still fails when org credits are 1; `audio.sfx` / `audio.sfx-open` need ≥8 per job; do not invent waiting-job ids (m_f60905657340).
+- convention: Gen project id — always `org_eb0d5c82e8da8c2d.sickofit` for hawkesgen_* (plain `sickofit` is No access).
 - convention: floor ambience — tables in `Tools/Audio/floor_ambience.py`; runtime `AmbienceBed` + `AmbientEmitters`; playtest `floor-ambience`.
-- canon: Place beds — Meadow calm/burning, Shaft wind+chains, Floor 1000 lava+screams+ticket bell, 999 furnace+hammer, 998 drips+bone chimes+choir, 997 organ+Overlord laugh; positional prop one-shots on the Ambience bus.
+- canon: Place beds — Meadow calm/burning, Shaft wind+chains, Floor 1000 lava+screams+ticket bell, 999 furnace+hammer, 998 drips+bone chimes+choir, 997 organ+Overlord laugh; each has positional prop one-shots on the Ambience bus.
+- lesson: sparse Audio/ — this worktree omits `Assets/Audio/Generated/Core` LFS oggs; `floor_ambience.py --check` reports missing clips even when beta has them; judge wiring from JSON.
