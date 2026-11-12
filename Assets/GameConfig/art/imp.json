@@ -54,5 +54,6 @@
     "parameters": [],
     "transitions": [],
     "attackBool": "IsWinding"
-  }
+  },
+  "reference": "Art/EnemyInk/imp_concept.png"
 }

@@ -62,5 +62,6 @@
     "parameters": [],
     "transitions": [],
     "attackBool": "IsWinding"
-  }
+  },
+  "reference": "Art/EnemyInk/cinderSpark_concept.png"
 }

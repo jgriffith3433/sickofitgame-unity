@@ -63,5 +63,6 @@
     "parameters": [],
     "transitions": [],
     "attackBool": "IsWinding"
-  }
+  },
+  "reference": "Art/EnemyInk/cinderThatch_concept.png"
 }

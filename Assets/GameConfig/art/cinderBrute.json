@@ -58,5 +58,6 @@
     "parameters": [],
     "transitions": [],
     "attackBool": "IsWinding"
-  }
+  },
+  "reference": "Art/EnemyInk/cinderBrute_concept.png"
 }
