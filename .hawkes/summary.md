@@ -1,27 +1,30 @@
-# Merge origin/beta into Rook/Wick climber-locals
+# Rook / Wick real art — blocked on Gen org credits
 
-## Conflict
-- **File:** `docs/world-bible.md` (only conflict; everything else auto-merged).
-- **Cause:** beta’s living-floors change (#404) and this branch both edited The Shaft under *What happens*.
-- **Resolution:** kept **both** intents in that section:
-  - *Ours:* Rook scratches chalk when the rewind count rises; ambient chalk scratch; wall fills with fives.
-  - *Beta:* living air (wind streaks, debris every 10–15 s, chain silhouettes).
-  - Merged lines include Rook’s tally behaviour **and** the living-air sentence; ambient and Changes list both Rook’s chalk and beta’s prior bullets.
-- No binary / Unity YAML conflicts. Did not abort.
+## What was wrong
+c_8d29cd9df354 merged gameplay (Rook Shaft tally, Wick Floor 999 lamp walk, playtest `climber-locals`) with stand-in portrait blobs and placeholder lamp props. This pass was to replace them with Gen art within $0.88 GPU.
 
-## Auto-merge (no conflict markers)
-Beta’s ShaftAmbience attach in `ShaftScreen.cs` sits beside our Rook wiring; Floor 999 keeps Wick’s three-lamp walk and gains beta’s furnace ambience pack; `SickOfItPlaytest.cs` registers both `climber-locals` and `living-air`.
+## What blocked Gen
+- `image.generate` refused: **org credits need 5, 1 left** (same wall as the prior pass). GPU budget ($0.88) and fleet are separate; estimate for the full batch is **~$0.38 GPU / ~13 min**.
+- Fleet status also reports AWS keys missing in hawkesgen/.env; brief said Studio boots a server — jobs still cannot start without org credits.
+- No Rook/Wick concept assets in the Gen library to reuse.
+
+## What changed (prep only)
+- `Assets/GameConfig/art/rook.json` — poses/clips/animator for **scratch** and **talk** (Shaft portrait loops).
+- `Assets/GameConfig/art/wick.json` — poses/clips/animator for **lightLamp** and **talk**.
+- `.hawkes/pending-gpu.txt` — remaining Gen pieces + estimate.
+- `.hawkes/scenario.txt` — `climber-locals` on phone.
+
+## Conflicts
+None (no merge this pass). Did not touch the other agent's rewind files.
 
 ## Checks
-- No `<<<<<<<` / `=======` / `>>>>>>>` left in `docs/world-bible.md`
-- World bible still has Areas / Landmarks / Who lives here / Characters / What happens / Story beats; Rook + Wick character blocks intact
-- `python3 Tools/Levels/companions.py --check` → would change: nothing
-- Unity compile not run here (no editor in this worktree)
+- Art specs JSON valid.
+- Did not run Unity compile (no editor here).
+- Did not start a browser / playtest (Studio owns that).
+- Fun-reviewer (self-pass): **thin** — gameplay locals already on beta; without sheets/voices the Shaft Rook is still an amber blob and lamps are tinted placeholders. Gaps: Gen sheets, land pending voice clips, phone ≥64 px on real art.
 
-## Fun-reviewer (post-merge pass)
-Verdict: **thin**. Shaft is fuller (Rook tally + living air), Floor 999 has Wick’s lamp walk + furnace air; still missing Gen voice/SFX clips and GPU character sheets (`pending-gpu.txt` / prior credits wall). Biggest gaps: land clips so lines are heard; ScratchMark / LightLamp art; phone ≥64 px check on real sheets.
-
-## What’s left (unchanged by merge)
-1. Gen credits → make Rook/Wick clips → clear pending
-2. GPU art in `pending-gpu.txt` within $0.88 once free
-3. Beta playtest `climber-locals` (phone 390x844 for size/captions)
+## What's left
+1. Top up Gen org credits (≥5, ideally ≥40 for 4× generate + edits + i2v).
+2. Resume: queue concepts → poses → frame → i2v → sprite.sheet; `studio_gen_import` into `Assets/Art/Enemies/Rook|Wick` and `Assets/Art/Props/WickLamp/`; wire `ui/rook.json` sheets + entity animators; then `companions.py` LightLamp play.
+3. Delete `.hawkes/pending-gpu.txt` when nothing remains.
+4. Beta playtest `climber-locals` (phone 390x844).

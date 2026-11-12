@@ -1,5 +1,5 @@
-- canon: Shaft Rook — On every Shaft stop Rook stands by a chalk tally of Achievements.rewinds (bundles of five); one line per visit by band 0/1-5/6-20/20+; voice id stays tyqG7NyoJ3HhzdkhAsW7 (bright, boastful).
-- canon: Wick Floor 999 lamp walk — Wick walks ahead lighting ≥3 lamps that stay lit; BeatDirector say keeps input live; voice id nXyPsMINc4YNXaqnmYmR.
-- convention: world-bible Shaft merge — when living air and Rook tally both edit The Shaft *What happens*, keep Rook scratch + chalk ambient/changes *and* beta’s Living air sentence; don’t drop either.
-- lesson: Gen audio.voice ElevenLabs — org credits wall (needs 8, had 1); stop after one test; put ids in pending_clips.json until clips land.
-- convention: companions Floor 999 — build_wick999 in Tools/Levels/companions.py (edit table/helpers, run the script; never hand-edit the wick lamp sequence alone).
+- lesson: Gen org credits ≠ GPU budget — `$0.88` approved and `hawkesgen_estimate` ~`$0.38`, but `image.generate` still refuses at 1 org credit (needs 5); keep pending-gpu, do not requeue until credits clear.
+- convention: Rook/Wick clip specs — add Scratch/Talk and LightLamp/Talk in `art/rook.json` / `art/wick.json` before Gen; Shaft portrait sheets are separate 4×2 atlases wired in `ui/rook.json`, not the long enemy strips.
+- lesson: sparse + LFS — `git sparse-checkout add` on Yooba/Rook art can replace full committed PNGs with 132-byte pointers in the worktree; never stage those; restore with `git cat-file -p HEAD:path > path` if needed.
+- canon: Shaft Rook — tally = Achievements.rewinds; voice id `tyqG7NyoJ3HhzdkhAsW7` (do not redesign).
+- canon: Wick Floor 999 — ≥3 lamps stay lit; BeatDirector `say`; voice id `nXyPsMINc4YNXaqnmYmR`.

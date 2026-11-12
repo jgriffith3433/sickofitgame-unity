@@ -7,20 +7,22 @@
   "pixels": 300,
   "keepTint": false,
   "poses": {
-    "stand": "standing in profile facing right, relaxed, weight on one leg",
-    "walk": "mid-stride walking to the right"
+    "stand": "standing in profile facing right, candle-head flame steady pale green, holding a long wooden lighting pole",
+    "walk": "mid-stride walking to the right, lighting pole planted with each step, candle flame steady",
+    "light": "standing in profile facing right, reaching the tip of his lighting pole up to a lamp, pale green flame flaring at the tip",
+    "talk": "standing in profile facing right, candle-head flame bobbing as he speaks softly, pole resting, kind posture"
   },
   "clips": {
     "idle": {
       "from": "stand",
-      "action": "stands, breathes slowly, shifts weight and looks around",
+      "action": "stands, candle flame flickers gently, shifts weight, pole tip dips slightly",
       "seconds": 2
     },
     "walk": {
       "from": "walk",
       "state": "Walk",
       "loop": true,
-      "action": "walks forward unhurried, staying in the same spot in the frame",
+      "action": "walks forward unhurried in place, feet plant cleanly with no slide, pole swings lightly, candle flame steady",
       "seconds": 1.25
     },
     "hiccup": {
@@ -28,6 +30,20 @@
       "state": "Hiccup",
       "loop": false,
       "action": "flinches back, startled, then settles and nods",
+      "seconds": 1.5
+    },
+    "lightLamp": {
+      "from": "light",
+      "state": "LightLamp",
+      "loop": false,
+      "action": "reaches the pole tip up to light a lamp, pale green flare at the tip, then lowers the pole",
+      "seconds": 1.4
+    },
+    "talk": {
+      "from": "talk",
+      "state": "Talk",
+      "loop": true,
+      "action": "speaks softly, candle flame bobbing with each word, feet planted, kind and patient",
       "seconds": 1.5
     }
   },
@@ -39,6 +55,14 @@
       },
       {
         "name": "Walking",
+        "type": "Bool"
+      },
+      {
+        "name": "LightLamp",
+        "type": "Trigger"
+      },
+      {
+        "name": "Talking",
         "type": "Bool"
       }
     ],
@@ -67,6 +91,32 @@
         "to": "Idle",
         "when": [
           "!Walking"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "LightLamp",
+        "when": [
+          "LightLamp"
+        ]
+      },
+      {
+        "from": "LightLamp",
+        "to": "Idle",
+        "exit": true
+      },
+      {
+        "from": "Idle",
+        "to": "Talk",
+        "when": [
+          "Talking"
+        ]
+      },
+      {
+        "from": "Talk",
+        "to": "Idle",
+        "when": [
+          "!Talking"
         ]
       }
     ]
