@@ -131,6 +131,8 @@
   "script": {
     "shotRim": "#2A0A18E6",
     "ambience": {
+      "liveWeather": true,
+      "heatShimmer": 0,
       "depth": [
         {
           "name": "far hills",
@@ -173,42 +175,145 @@
           "chance": 0.6,
           "baseY": -2.5,
           "sortingOrder": -55
+        },
+        {
+          "name": "grass and fence posts",
+          "shape": "Spire",
+          "color": "#0E1A1288",
+          "size": [
+            0.35,
+            1.1
+          ],
+          "sizeVariation": 0.35,
+          "parallax": [
+            -0.35,
+            -0.2
+          ],
+          "spacing": [
+            3.2,
+            0.0
+          ],
+          "chance": 0.55,
+          "baseY": -2.9,
+          "layer": "Foreground1",
+          "sortingOrder": 40
         }
       ],
       "weather": [
         {
-          "name": "meadow motes",
-          "kind": "Ash",
-          "count": 24,
+          "name": "meadow pollen",
+          "kind": "Pollen",
+          "count": 22,
           "color": "#E8E0B07A",
           "size": [
             0.04,
-            0.09
+            0.1
           ],
           "speed": [
-            0.15,
-            0.4
+            0.12,
+            0.35
           ],
-          "wind": -0.2,
-          "sway": 0.4,
-          "parallax": 0.6
+          "wind": -0.15,
+          "sway": 0.55,
+          "parallax": 0.55
         },
         {
-          "name": "embers from the opened sky",
+          "name": "soft motes",
+          "kind": "Ash",
+          "count": 14,
+          "color": "#D8D0A06A",
+          "size": [
+            0.03,
+            0.07
+          ],
+          "speed": [
+            0.1,
+            0.3
+          ],
+          "wind": -0.1,
+          "sway": 0.4,
+          "parallax": 0.7
+        },
+        {
+          "name": "raid embers",
           "kind": "Sparks",
-          "count": 18,
-          "color": "#FFB347E6",
+          "count": 16,
+          "color": "#FFB347CC",
           "size": [
             0.05,
             0.1
           ],
           "speed": [
-            0.8,
-            1.6
+            0.7,
+            1.5
           ],
           "wind": -0.1,
           "sway": 0.25,
-          "parallax": 0.35
+          "parallax": 0.4
+        }
+      ],
+      "life": [
+        {
+          "name": "meadow birds",
+          "behavior": "Flyer",
+          "shape": "Wing",
+          "color": "#2A3A2888",
+          "size": 0.45,
+          "speed": 2.2,
+          "height": [
+            0.6,
+            0.9
+          ],
+          "interval": [
+            7.0,
+            12.0
+          ],
+          "parallax": 0.9
+        }
+      ],
+      "events": [
+        {
+          "name": "birds scatter",
+          "kind": "BirdsScatter",
+          "color": "#2A3A28AA",
+          "size": 0.7,
+          "duration": 1.6,
+          "parallax": 0.85,
+          "onSignal": "meadow:raid",
+          "sound": "amb_rooster_crow",
+          "signalOnly": true,
+          "interval": [
+            12.0,
+            16.0
+          ]
+        },
+        {
+          "name": "smoke from burning houses",
+          "kind": "SmokePlume",
+          "color": "#3A2A2299",
+          "size": 1.8,
+          "duration": 2.2,
+          "parallax": 0.9,
+          "onSignal": "meadow:raid",
+          "sound": "amb_torch_crackle",
+          "signalOnly": true,
+          "interval": [
+            12.0,
+            16.0
+          ]
+        },
+        {
+          "name": "far chimney puff",
+          "kind": "SteamVent",
+          "interval": [
+            12.0,
+            16.0
+          ],
+          "color": "#C8C0B066",
+          "size": 1.0,
+          "duration": 1.4,
+          "parallax": 0.92,
+          "sound": "amb_steam_hiss"
         }
       ]
     },
@@ -305,6 +410,10 @@
                 "type": "setAmbience",
                 "sound": "ambience_meadow_burning",
                 "fadeSeconds": 2.5
+              },
+              {
+                "type": "emit",
+                "signal": "meadow:raid"
               },
               {
                 "type": "cameraShake",

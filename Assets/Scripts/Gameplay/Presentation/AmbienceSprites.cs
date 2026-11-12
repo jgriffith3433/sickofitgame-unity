@@ -21,9 +21,17 @@ namespace SickOfIt.Gameplay
                 case WeatherKind.Cinders: return Make("cinder", 24, (x, y) => Soft(Mathf.Abs(x) * 1.1f + Mathf.Abs(y) * 1.35f, 0.95f, 0.2f));
                 case WeatherKind.Runes: return Make("rune", 32, Rune);
                 case WeatherKind.Grit: return Make("grit", 16, (x, y) => Soft(Mathf.Max(Mathf.Abs(x), Mathf.Abs(y * 1.2f)), 0.8f, 0.2f));
+                case WeatherKind.Pollen: return Make("pollen", 20, (x, y) => Soft(Mathf.Sqrt(x * x + y * y * 1.4f), 0.85f, 0.7f));
+                case WeatherKind.Debris: return Make("debris", 28, (x, y) => Soft(Mathf.Abs(x) * 0.4f + Mathf.Abs(y), 0.95f, 0.35f));
+                case WeatherKind.Steam: return Make("steam", 32, (x, y) => Soft(Mathf.Sqrt(x * x * 0.7f + y * y), 1f, 0.85f));
+                case WeatherKind.Dust: return Make("dust", 18, (x, y) => Soft(Mathf.Sqrt(x * x + y * y), 0.7f, 0.55f));
+                case WeatherKind.Soul: return Make("soul", 28, (x, y) => Soft(Mathf.Sqrt(x * x * 0.6f + (y - 0.15f) * (y - 0.15f)), 0.55f, 0.5f));
                 default: return Make("flake", 24, (x, y) => Soft(Mathf.Sqrt(x * x + y * y), 1f, 0.6f));
             }
         }
+
+        /// <summary>Optional Gen-painted bit: when a sprite is wired on the weather def it wins over the built-in shape.</summary>
+        public static Sprite BitOr(WeatherKind kind, Sprite painted) => painted != null ? painted : Bit(kind);
 
         public static Sprite Life(LifeShape shape)
         {

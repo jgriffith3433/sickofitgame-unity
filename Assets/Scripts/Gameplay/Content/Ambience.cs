@@ -15,6 +15,23 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Heavier glowing cinders falling and turning, brightening and dimming.")] Cinders,
         [Doc("Glyphs from the walls floating up, pulsing. The Rune Bridges' air.")] Runes,
         [Doc("Grit and pebbles shaken loose, blown sideways while they fall. The Cracked Road's dust.")] Grit,
+        [Doc("Soft meadow pollen drifting and swaying.")] Pollen,
+        [Doc("Wind streaks or thin debris rushing past (negative parallax reads close).")] Debris,
+        [Doc("Soft steam or smoke puffs rising and thinning.")] Steam,
+        [Doc("Fine dark dust (obsidian, furnace grit) drifting sideways.")] Dust,
+        [Doc("Pale soul wisps drifting and pulsing.")] Soul,
+    }
+
+    /// <summary>A timed background beat that fires on its own (geyser, steam vent, birds scattering).</summary>
+    [Doc("What a timed ambient event does on screen.")]
+    public enum AmbientEventKind
+    {
+        [Doc("A background lava geyser: a rising column, a glow, optional sound.")] Geyser,
+        [Doc("A steam vent puff that blooms and fades.")] SteamVent,
+        [Doc("Chunks of debris falling through the view.")] DebrisFall,
+        [Doc("A flock of birds scattering off screen.")] BirdsScatter,
+        [Doc("A smoke plume rising (Meadow raid, burning houses).")] SmokePlume,
+        [Doc("A soft glow pulse on the far ground (heat flash).")] GlowPulse,
     }
 
     [Doc("How a bit of background life moves.")]
@@ -40,12 +57,39 @@ namespace SickOfIt.Gameplay.Content
          "touches the simulation and needs no rewind. Keep it cheap: weather bits are capped (see Docs/GameplayCookbook.md, \"Weather and life\").")]
     public class AmbienceDef
     {
-        [Doc("Silhouettes in rows at their own depth; each row repeats around the camera so it covers the screen however far the stage goes.")]
+        [Doc("Silhouettes in rows at their own depth; each row repeats around the camera so it covers the screen however far the stage goes. " +
+             "Put a foreground silhouette row on Foreground1 at alpha ≤ 0.6 so chains/grass pass in front without hiding bullets.")]
         public List<DepthLayerDef> depth = new List<DepthLayerDef>();
         [Doc("Bits in the air.")] public List<WeatherDef> weather = new List<WeatherDef>();
         [Doc("Things far away: flyers, walkers, chases.")] public List<AmbientLifeDef> life = new List<AmbientLifeDef>();
+        [Doc("Timed background beats (geyser, steam vent, birds scattering) that fire every interval seconds so the screen breathes on its own.")]
+        public List<AmbientEventDef> events = new List<AmbientEventDef>();
+        [Doc("True = draw weather bits for players on this pack (the Meadow and Floors 1000-997 living air). Circle defaults stay false so older floors keep the quiet air J asked for.")]
+        public bool liveWeather;
+        [Doc("Heat shimmer strength over lava (0 = off). Soft distortion bars; always off on the phone tier.")]
+        public float heatShimmer;
 
-        public bool IsEmpty => (depth == null || depth.Count == 0) && (weather == null || weather.Count == 0) && (life == null || life.Count == 0);
+        public bool IsEmpty => (depth == null || depth.Count == 0) && (weather == null || weather.Count == 0)
+            && (life == null || life.Count == 0) && (events == null || events.Count == 0);
+    }
+
+    [Serializable]
+    [Doc("A timed ambient event: a geyser, steam vent, falling debris, birds scattering or a smoke plume. Fires every 'interval' seconds " +
+         "(and optionally when 'onSignal' is emitted). Presentation only; never hurts the hero. Keep one every ~10-15 s so each screen breathes.")]
+    public class AmbientEventDef
+    {
+        [Doc("For reports and playtest events.")] public string name = "";
+        public AmbientEventKind kind = AmbientEventKind.Geyser;
+        [Doc("Seconds between firings: [min, max].")] public Vector2 interval = new Vector2(10f, 15f);
+        [Doc("Optional audio.json sound id played when it fires.")] public string sound = "";
+        public Color color = new Color(1f, 0.45f, 0.15f, 0.7f);
+        [Doc("World size of the effect.")] public float size = 1.6f;
+        [Doc("How long the visual lasts.")] public float duration = 1.4f;
+        [Doc("How much it follows the camera (far = near 1).")] public float parallax = 0.88f;
+        [Doc("Also fire when this signal is emitted (e.g. meadow:raid for birds scattering). Empty = timer only.")]
+        public string onSignal = "";
+        [Doc("True = never fire on the timer; only on onSignal (Meadow raid smoke/birds).")] public bool signalOnly;
+        [Doc("Skip this event on the phone tier (heat flashes and heavy debris).")] public bool phoneOff;
     }
 
     [Serializable]
@@ -79,12 +123,13 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Bits alive at once.")] public int count = 30;
         public Color color = new Color(0.7f, 0.65f, 0.6f, 0.6f);
         [Doc("Bit size: [min, max] world units.")] public Vector2 size = new Vector2(0.04f, 0.09f);
-        [Doc("Speed along its kind's way (down for ash, cinders, grit; up for sparks, runes): [min, max] units per second.")] public Vector2 speed = new Vector2(0.3f, 0.7f);
+        [Doc("Speed along its kind's way (down for ash, cinders, grit, pollen, dust, debris, soul; up for sparks, runes, steam): [min, max] units per second.")] public Vector2 speed = new Vector2(0.3f, 0.7f);
         [Doc("Steady sideways wind, units per second (negative = left).")] public float wind;
         [Doc("How far it sways side to side (units).")] public float sway = 0.3f;
         [Doc("How much it follows the camera (1 = stuck to the screen, 0 = fixed in the world, negative = close and rushing past).")] public float parallax = 0.6f;
         [Doc("Only at or above this floor (counting down: 990 means from floor 990 up). 0 = always.")] public int fromFloor;
-        [Doc("Draw in front of the player instead of behind (a few big close bits).")] public bool inFront;
+        [Doc("Draw in front of the player instead of behind (a few big close bits). Keep alpha low so bullets stay readable.")] public bool inFront;
+        [Doc("Optional painted particle sprite (Hawkes Gen). Empty = the built-in shape for 'kind'.")] public Sprite sprite;
     }
 
     [Serializable]

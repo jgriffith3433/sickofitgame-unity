@@ -1985,7 +1985,170 @@
           }
         ]
       }
-    ]
+    ],
+    "ambience": {
+      "liveWeather": true,
+      "heatShimmer": 0,
+      "depth": [
+        {
+          "name": "bone ridges",
+          "shape": "Rock",
+          "color": "#1A152099",
+          "size": [
+            5.5,
+            2.0
+          ],
+          "sizeVariation": 0.35,
+          "parallax": [
+            0.88,
+            0.88
+          ],
+          "spacing": [
+            4.8,
+            0.0
+          ],
+          "chance": 0.7,
+          "baseY": -2.35,
+          "sortingOrder": -60
+        },
+        {
+          "name": "hanging cages",
+          "shape": "Spire",
+          "color": "#120E1888",
+          "size": [
+            0.4,
+            1.8
+          ],
+          "sizeVariation": 0.35,
+          "parallax": [
+            -0.4,
+            -0.15
+          ],
+          "spacing": [
+            4.8,
+            0.0
+          ],
+          "chance": 0.55,
+          "baseY": 2.6,
+          "layer": "Foreground1",
+          "sortingOrder": 40,
+          "hanging": true
+        }
+      ],
+      "weather": [
+        {
+          "name": "ash snow",
+          "kind": "Ash",
+          "count": 24,
+          "color": "#C8C0D07A",
+          "size": [
+            0.05,
+            0.12
+          ],
+          "speed": [
+            0.2,
+            0.55
+          ],
+          "wind": -0.15,
+          "sway": 0.4,
+          "parallax": 0.55
+        },
+        {
+          "name": "soul wisps",
+          "kind": "Soul",
+          "count": 14,
+          "color": "#A8B0E0AA",
+          "size": [
+            0.06,
+            0.14
+          ],
+          "speed": [
+            0.15,
+            0.4
+          ],
+          "wind": 0.05,
+          "sway": 0.5,
+          "parallax": 0.65
+        },
+        {
+          "name": "bone dust",
+          "kind": "Dust",
+          "count": 12,
+          "color": "#90889099",
+          "size": [
+            0.03,
+            0.07
+          ],
+          "speed": [
+            0.2,
+            0.5
+          ],
+          "wind": -0.25,
+          "sway": 0.3,
+          "parallax": 0.5
+        }
+      ],
+      "life": [
+        {
+          "name": "far souls",
+          "behavior": "Flyer",
+          "shape": "Wisp",
+          "color": "#A0A8D0AA",
+          "size": 0.55,
+          "speed": 1.5,
+          "height": [
+            0.5,
+            0.85
+          ],
+          "interval": [
+            8.0,
+            14.0
+          ],
+          "parallax": 0.9
+        }
+      ],
+      "events": [
+        {
+          "name": "soul drift",
+          "kind": "SmokePlume",
+          "interval": [
+            10.0,
+            14.0
+          ],
+          "color": "#8890C088",
+          "size": 1.4,
+          "duration": 2.0,
+          "parallax": 0.9,
+          "sound": "amb_bone_chime"
+        },
+        {
+          "name": "ash cascade",
+          "kind": "DebrisFall",
+          "interval": [
+            11.0,
+            15.0
+          ],
+          "color": "#B0A8B0AA",
+          "size": 1.0,
+          "duration": 1.5,
+          "parallax": 0.7,
+          "sound": "amb_bone_clatter"
+        },
+        {
+          "name": "choir glow",
+          "kind": "GlowPulse",
+          "interval": [
+            12.0,
+            16.0
+          ],
+          "color": "#8870C066",
+          "size": 2.0,
+          "duration": 1.3,
+          "parallax": 0.95,
+          "sound": "amb_drip"
+        }
+      ]
+    }
   },
   "score": {
     "explore": "Audio/Music/score_f998_explore.ogg",

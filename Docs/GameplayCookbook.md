@@ -649,12 +649,17 @@ A Circle's air is `ambience` in `content/circles/<id>.json`; it is drawn on ever
 - `depth`: rows of silhouettes (`shape` or `sprite`, `color`, `size`, `spacing`, `baseY`) at their own `parallax` [x, y]. 1 = stuck to the
   screen, 0 = fixed in the world, 0.9 = far away, drifting by slowly. The row repeats around the camera, so it covers any distance
   (a `spacing` y above 0 repeats it upward too, for Up-travel stages). `hanging` for stalactites.
-- `weather`: bits in the air. `kind` is `Ash` (sinking flakes), `Sparks` (flickering, rising), `Cinders` (heavy, glowing, falling, turning),
-  `Runes` (glyphs floating up and pulsing) or `Grit` (pebbles blown sideways). `count` alive at once, `speed`, `wind`, `sway`, `parallax`
-  (negative = close and rushing past), `fromFloor` (counting down, 990 = from floor 990 up), `inFront` (draw over the hero).
+- `weather`: bits in the air. `kind` is `Ash`, `Sparks`, `Cinders`, `Runes`, `Grit`, plus living-air kinds `Pollen`, `Debris`,
+  `Steam`, `Dust`, `Soul`. `count` alive at once, `speed`, `wind`, `sway`, `parallax` (negative = close and rushing past),
+  `fromFloor` (counting down, 990 = from floor 990 up), `inFront` (draw over the hero), optional `sprite` (Gen particle).
 - `life`: `behavior` `Flyer` (crosses at a height, flapping), `Walker` (along a far ledge) or `Chase` (a small figure and a bigger one after
   it); `shape` `Wing`, `Figure`, `Horned` or `Wisp` (built-in silhouettes, or `sprite`), `size`, `speed`, `height` (fractions of the view),
   `interval` (seconds between appearances), `parallax`. The first one shows within a few seconds of arriving.
+- `events`: timed background beats (`Geyser`, `SteamVent`, `DebrisFall`, `BirdsScatter`, `SmokePlume`, `GlowPulse`) every
+  `interval` seconds; optional `onSignal` (e.g. `meadow:raid`) and `sound`. `liveWeather: true` draws weather for players
+  (Circle defaults stay quiet). `heatShimmer` is soft lava distortion, off on phone. A level's `script.ambience` overrides
+  the Circle when non-empty (Meadow + Floors 1000-997). Foreground silhouettes: a `depth` row with `layer: Foreground1`
+  and alpha ≤ 0.6. Playtest `living-air`.
 
 The budget: **at most 150 weather bits** over a Circle (`CircleAmbience.MaxBits`, half on phones) and **8 actors**; everything is pooled when the stage
 loads and moved in one LateUpdate (no allocation). Keep a Circle to two or three kinds of weather. Each Circle has its own set (a test fails when two

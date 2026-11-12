@@ -89,7 +89,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
             sb.AppendLine("## Circle");
             sb.AppendLine();
             foreach (var t in new[] { typeof(CircleDef), typeof(TrackDef), typeof(PropDef), typeof(CircleEnemyDef), typeof(CircleHazardDef),
-                         typeof(DifficultyDef), typeof(MilestoneDef), typeof(AmbienceDef), typeof(DepthLayerDef), typeof(WeatherDef), typeof(AmbientLifeDef),
+                         typeof(DifficultyDef), typeof(MilestoneDef), typeof(AmbienceDef), typeof(DepthLayerDef), typeof(WeatherDef), typeof(AmbientLifeDef), typeof(AmbientEventDef),
                          typeof(SickOfIt.Data.Config.BackgroundLayerConfig) })
                 Class(sb, t, enums, helpers, 3);
 

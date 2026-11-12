@@ -228,9 +228,11 @@ namespace SickOfIt.Gameplay
                 Effects.BuildTrack(setup.Script, Stage.Circle);
             if (setup.Script != null && string.IsNullOrEmpty(SceneId))
             {
-                Ambience = CircleAmbience.Create(this, Stage.Circle);
-                if (Ambience == null && setup.Script.ambience != null && !setup.Script.ambience.IsEmpty)
+                // A level's own air wins (Meadow, Floors 1000-997 living packs); else the Circle's shared air.
+                if (setup.Script.ambience != null && !setup.Script.ambience.IsEmpty)
                     Ambience = CircleAmbience.Create(this, new CircleDef { ambience = setup.Script.ambience });
+                if (Ambience == null)
+                    Ambience = CircleAmbience.Create(this, Stage.Circle);
             }
             ShotRim = setup.Script != null && setup.Script.shotRim.a > 0.01f ? setup.Script.shotRim
                 : Stage.Circle != null && Stage.Circle.shotRim.a > 0.01f ? Stage.Circle.shotRim : new Color(1f, 0.93f, 0.7f, 0.9f);
