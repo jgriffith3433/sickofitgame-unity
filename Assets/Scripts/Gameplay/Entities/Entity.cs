@@ -309,6 +309,7 @@ namespace SickOfIt.Gameplay
                 EnterState(InitialState());
 
             BulletReadability.Attach(this);
+            HazardWarnFx.Attach(this);
             ApplyLook();
             world.Register(this);
 

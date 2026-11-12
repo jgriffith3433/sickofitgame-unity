@@ -578,7 +578,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_meadow_explore.ogg",
       "standIn": "Audio/Music/meadow_calm.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Level1 `score.explore`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -594,7 +594,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_meadow_fight.ogg",
       "standIn": "Audio/Music/meadow_calm.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Level1 `score.fight`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -610,7 +610,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_meadow_finale.ogg",
       "standIn": "Audio/Music/meadow_calm.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Level1 `score.finale`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -626,7 +626,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f1000_explore.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor1000 `score.explore`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -642,7 +642,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f1000_fight.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor1000 `score.fight`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -658,7 +658,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f1000_finale.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor1000 `score.finale`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -674,7 +674,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f999_explore.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor999 `score.explore`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -690,7 +690,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f999_fight.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor999 `score.fight`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -706,7 +706,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f999_finale.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor999 `score.finale`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -722,7 +722,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f998_explore.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor998 `score.explore`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -738,7 +738,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f998_fight.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor998 `score.fight`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -754,7 +754,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f998_finale.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor998 `score.finale`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -770,7 +770,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f997_explore.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor997 `score.explore`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -786,7 +786,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f997_fight.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor997 `score.fight`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     },
@@ -802,7 +802,7 @@
       "takes": 1,
       "out": "Assets/Audio/Music/score_f997_finale.ogg",
       "standIn": "Audio/Music/wastes_loop.ogg",
-      "status": "to-make",
+      "status": "exists",
       "used": "StageMusic score (Floor997 `score.finale`)",
       "note": "audio.music then audio.music-loop, audio.analyze loop:true; whole bars (32 s = 14-15 bars), same length for the floor's three loops; Vorbis, streamed (loadType 1)."
     }

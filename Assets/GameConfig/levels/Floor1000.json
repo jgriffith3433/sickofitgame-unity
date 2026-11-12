@@ -680,5 +680,14 @@
         ]
       }
     ]
+  },
+  "score": {
+    "explore": "Audio/Music/score_f1000_explore.ogg",
+    "fight": "Audio/Music/score_f1000_fight.ogg",
+    "finale": "Audio/Music/score_f1000_finale.ogg",
+    "bpm": 120,
+    "volume": 0.9,
+    "finaleSignal": "floors:1000:finale",
+    "fightHoldSeconds": 1.0
   }
 }

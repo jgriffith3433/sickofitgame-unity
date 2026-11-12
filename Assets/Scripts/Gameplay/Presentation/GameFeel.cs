@@ -294,8 +294,13 @@ namespace SickOfIt.Gameplay
                 {
                     var shot = shots[i];
                     if (shot != null && glowingShots.Add(shot))
-                        Glow.Follow(shot.transform, "heroShot", Vector2.zero, Vector2.one * g.heroShotSize, g.heroShotColor, g.heroShotAlpha, 0.15f, 14f,
+                    {
+                        // Warm amber glow + a dark rim so the hero's rockets never read as enemy orbs.
+                        var warm = g.heroShotColor.a > 0.01f ? g.heroShotColor : new Color(1f, 0.72f, 0.28f, 1f);
+                        Glow.Follow(shot.transform, "heroShot", Vector2.zero, Vector2.one * g.heroShotSize, warm, g.heroShotAlpha, 0.15f, 14f,
                             GlowShape.Round, SpriteLayer.Player, SpriteLayers.Projectile - 1);
+                        HeroShotLook.Attach(shot);
+                    }
                 }
             }
         }
