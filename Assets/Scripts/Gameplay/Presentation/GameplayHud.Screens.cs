@@ -367,6 +367,10 @@ namespace SickOfIt.Gameplay
                 Sfx.Play(Sfx.Events.levelClearVoice);
             resultsNewBestPending = newBest;
 
+            tallyTickers.Clear();
+            tallyTickTimes.Clear();
+            resultsOpenedAt = Time.unscaledTime;
+            stampFired = false;
             var overlay = Overlay.Create(menu, "Results", 0.78f);
             resultsRoot = overlay.Root;
             var inner = overlay.Inner;
@@ -422,8 +426,11 @@ namespace SickOfIt.Gameplay
                 // The numbers count up one row after another once the screen is in.
                 var ticker = NumberTicker.On(value, stats[i].format);
                 ticker.Snap(0);
-                ticker.CountTo(stats[i].amount, 0.7f, 0.55f + i * 0.14f);
+                ticker.CountTo(stats[i].amount, 0.3f, 0.3f + i * 0.3f);
+                tallyTickers.Add((ticker, stats[i].amount));
+                tallyTickTimes.Add(Time.unscaledTime + 0.3f + i * 0.3f);
             }
+            tallyEndAt = Time.unscaledTime + 0.3f + stats.Count * 0.3f + 0.1f;
 
             // The grade (or Chapter One's "I" stamp): a stamped starburst that slams in after the stats.
             var stamp = MenuGraphics.NewRect("Grade", inner);
@@ -444,8 +451,10 @@ namespace SickOfIt.Gameplay
             var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
                 new MenuEntrance { type = MenuEntranceType.Pop, duration = 0.45f, delay = 0f }, 12f);
             MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
-            stampMotion.EntranceDelay = 0.9f;
-            gradeSoundAt = Time.unscaledTime + 0.95f;
+            stampMotion.EntranceDelay = tallyEndAt - Time.unscaledTime;
+            resultsStamp = stampMotion;
+            stampLetter = chapterOne ? "" : grade.grade;
+            gradeSoundAt = tallyEndAt;
             gradeSting = chapterOne ? "" : grade.stingSound;
             string quipText = chapterOne
                 ? (string.IsNullOrEmpty(Texts.chapterOneHook) ? "Daylight's still up there. Somewhere." : Texts.chapterOneHook)
@@ -485,11 +494,13 @@ namespace SickOfIt.Gameplay
             var go = theme.button.Clone();
             // Phone acceptance: Continue at least 48 px tall (100 design units keeps it well above on 390x844).
             go.size = new Vector2(420f, Mathf.Max(100f, go.size.y));
-            menu.AddButtonAt(new Vector2(0.5f, 0.1f), Vector2.zero, Texts.continueText, go, () =>
+            continueButton = menu.AddButtonAt(new Vector2(0.5f, 0.1f), Vector2.zero, Texts.continueText, go, () =>
             {
                 if (!continuing)
                     StartCoroutine(ContinueThroughCover(onContinue));
             }, inner, screens.resultsContinue);
+            // Continue shows after 2 s, or at once on a tap (which also skips the tally to its end).
+            continueButton.gameObject.SetActive(false);
             if (chapterOne)
                 world.Telemetry?.Record("signal", "chapter1:continueReady", Mathf.RoundToInt(go.size.y), "continueH");
         }
@@ -509,6 +520,61 @@ namespace SickOfIt.Gameplay
             Time.timeScale = 1f;
             GameClock.Instance?.Resume();
             onContinue?.Invoke();
+        }
+
+        readonly List<(NumberTicker ticker, int amount)> tallyTickers = new List<(NumberTicker, int)>();
+        readonly List<float> tallyTickTimes = new List<float>();
+        float tallyEndAt, resultsOpenedAt;
+        bool stampFired;
+        string stampLetter = "";
+        MenuMotionDriver resultsStamp;
+        MenuButton continueButton;
+        static int lastVerdict = -1;
+
+        // Slam: shake, ember burst, stamp sound, then Yooba's voiced verdict for the rank.
+        void FireStamp()
+        {
+            if (stampFired)
+                return;
+            stampFired = true;
+            world.Effects.Shake(0.5f, 0.2f);
+            var at = world.Player != null ? (Vector2)world.Player.transform.position : Vector2.zero;
+            SickOfIt.Core.Fx.Fx.Burst(at, new Color(1f, 0.55f, 0.15f), 40, 6f, 0.14f, 0.7f);
+            if (stampLetter.Length > 0)
+            {
+                string key = stampLetter == "S" || stampLetter == "A" || stampLetter == "B" ? stampLetter.ToLowerInvariant() : "c";
+                lastVerdict = lastVerdict == 1 ? 2 : lastVerdict == 2 ? 1 : UnityEngine.Random.Range(1, 3);
+                Sfx.Play("vo_yooba_rank_" + key + "_" + lastVerdict);
+            }
+        }
+
+        void UpdateResultsTally()
+        {
+            if (resultsRoot == null || continueButton == null)
+                return;
+            float now = Time.unscaledTime;
+            for (int i = 0; i < tallyTickTimes.Count; i++)
+                if (tallyTickTimes[i] > 0f && now >= tallyTickTimes[i])
+                {
+                    tallyTickTimes[i] = -1f;
+                    Sfx.Play("ui_click", 0.7f, 1f + i * 0.06f);
+                }
+            var pointer = UnityEngine.InputSystem.Pointer.current;
+            var keys = UnityEngine.InputSystem.Keyboard.current;
+            bool tapped = pointer != null && pointer.press.wasPressedThisFrame
+                || keys != null && keys.anyKey.wasPressedThisFrame;
+            if (tapped && now < tallyEndAt)
+            {
+                foreach (var t in tallyTickers)
+                    t.ticker.Snap(t.amount);
+                for (int i = 0; i < tallyTickTimes.Count; i++)
+                    tallyTickTimes[i] = -1f;
+                resultsStamp?.Restart(0f);
+                tallyEndAt = now;
+                gradeSoundAt = now;
+            }
+            if (!continueButton.gameObject.activeSelf && (now - resultsOpenedAt >= 2f || tapped))
+                continueButton.gameObject.SetActive(true);
         }
 
         float gradeSoundAt = -1f;
@@ -685,9 +751,11 @@ namespace SickOfIt.Gameplay
             UpdateHurtFeedback();
             UpdateDeath();
             UpdatePauseKeys();
+            UpdateResultsTally();
             if (gradeSoundAt > 0f && Time.unscaledTime >= gradeSoundAt)
             {
                 gradeSoundAt = -1f;
+                FireStamp();
                 UiSounds.RankStamp();
                 Sfx.Play(Sfx.Events.gradeReveal);
                 Sfx.Play(gradeSting);
