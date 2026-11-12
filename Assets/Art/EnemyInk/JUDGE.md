@@ -102,3 +102,30 @@ Thatch / brute / sack got Idle/Move/Windup/Attack from framed stands + wind-up p
 ### Queued `video.i2v` (wait_for_server; estimate **$0.70** of $0.86)
 16 clips: thatch×5, brute×5, sack×5, spark windup cyan redo×1. Ids in `.hawkes/waiting-jobs.txt` / `framed/manifest.json`.
 **Left for next budget:** `launcherThief` full ink (~$0.50). Fleet had no AWS keys when queued; Studio resumes when jobs finish.
+
+## Resume 2026-11-12d (bake i2v batch — c_01cbd869e007)
+
+Spent **~$0.55** of $0.86 on the 16 clips (Wan). Judged mid frames vs art bible + silhouette.
+
+### cinderThatch
+| Clip | Asset | Verdict | Notes |
+|---|---|---|---|
+| idle | `a_5d9e1efd5747b4d9` | PASS | Limbless straw ball |
+| windup | `a_0785c49a5e2b2fb7` | FAIL | Grew bird legs; prior “PASS” pose `a_f5d9ad823922f967` also has legs. Held sheet remade from limbless idle frame (puffed + glow) |
+| attack | `a_ee20ba9c5256acd6` | FAIL | Bird legs — held from framed limbless lunge `a_268b14b1ea7b805e` |
+| hurt | `a_d5ecb74fc3451ff6` | PASS | Limbless |
+| die | `a_6d8832dec05e0856` | PASS | Limbless burst |
+
+### cinderBrute
+All five PASS (hulking fireball + stubby fists): idle `a_6481258e34123a32`, windup `a_282a4df1fe22cbee`, attack `a_1f7728db2c5b4f41`, hurt `a_b13b269a7c3c4b06`, die `a_99cd3be4df736462`.
+
+### impSack
+All five PASS (oversized diamond sack): idle `a_111bc53f7c8af4ac`, windup `a_c95b48f2365249cd`, attack `a_c335a5b82ff86273`, hurt `a_2461b2943edd6eb9`, die `a_a175ddfbe3ecee67`.
+
+### cinderSpark windup redo
+| Clip | Asset | Verdict | Notes |
+|---|---|---|---|
+| windup | `a_4c5fed0fbca0470d` | PASS | Mid frames show cyan core glow (~1% cyanish pixels); replaced held sheet |
+
+Baked with stub DoD + `SOI_ART_WORK` → `Assets/Art/Enemies/{CinderThatch,CinderBrute,ImpSack,CinderSpark}` + animator apply. Previews under `EnemyInk/previews/`.
+**Still pending:** `launcherThief` (~$0.50); optional thatch windup/attack motion redo.

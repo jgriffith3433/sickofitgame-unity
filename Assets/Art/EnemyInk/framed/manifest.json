@@ -50,5 +50,38 @@
       {"id": "j_bc927d9292ba", "entity": "cinderSpark", "clip": "windup", "note": "cyan redo; reuse=false"}
     ]
   },
-  "resume": "2026-11-12c: framed thatch/brute/sack struck+dead+lunge; queued 16 i2v (~$0.70). On resume: judge clips, bake sheets with art.mjs --build --no-unity, wire animator, delete pending lines that land."
+  "i2vJudged": {
+    "spentUsd": 0.55,
+    "pass": {
+      "cinderThatch": ["idle", "hurt", "die"],
+      "cinderBrute": ["idle", "windup", "attack", "hurt", "die"],
+      "impSack": ["idle", "windup", "attack", "hurt", "die"],
+      "cinderSpark": ["windup"]
+    },
+    "failHeld": {
+      "cinderThatch": {
+        "windup": "a_0785c49a5e2b2fb7 bird legs — held a_773bbd2466a05ef6",
+        "attack": "a_ee20ba9c5256acd6 bird legs — held a_268b14b1ea7b805e"
+      }
+    },
+    "assets": {
+      "cinderThatch_idle": "a_5d9e1efd5747b4d9",
+      "cinderThatch_windup": "a_0785c49a5e2b2fb7",
+      "cinderThatch_attack": "a_ee20ba9c5256acd6",
+      "cinderThatch_hurt": "a_d5ecb74fc3451ff6",
+      "cinderThatch_die": "a_6d8832dec05e0856",
+      "cinderBrute_idle": "a_6481258e34123a32",
+      "cinderBrute_windup": "a_282a4df1fe22cbee",
+      "cinderBrute_attack": "a_1f7728db2c5b4f41",
+      "cinderBrute_hurt": "a_b13b269a7c3c4b06",
+      "cinderBrute_die": "a_99cd3be4df736462",
+      "impSack_idle": "a_111bc53f7c8af4ac",
+      "impSack_windup": "a_c95b48f2365249cd",
+      "impSack_attack": "a_c335a5b82ff86273",
+      "impSack_hurt": "a_2461b2943edd6eb9",
+      "impSack_die": "a_a175ddfbe3ecee67",
+      "cinderSpark_windup": "a_4c5fed0fbca0470d"
+    }
+  },
+  "resume": "2026-11-12d: judged 16 i2v; baked thatch (held windup/attack)/brute/sack/spark sheets; launcherThief still pending."
 }

@@ -1,5 +1,2 @@
-launcherThief full ink (concepts optional — share imp silhouette; image.edit windup/attack/hurt/die poses from Imp stand + 5 video.i2v) — not started; estimate ~$0.50; Windup/Attack still point at Move sheet
-cinderThatch Idle/Windup/Attack/Hurt/Die i2v sheets — queued j_e9a86239e2e9 j_23300285c0aa j_7875f2aeefe1 j_e7a52dd0b25f j_683a6bbbaa2e (~$0.16 of batch)
-cinderBrute Idle/Windup/Attack/Hurt/Die i2v sheets — queued j_9502d714e3f6 j_cb826e300940 j_94969b4f2cfa j_e0ba821a0623 j_6d4ab37bb540
-impSack Idle/Windup/Attack/Hurt/Die i2v sheets — queued j_5f2d1d2c9b19 j_507e89df5dfe j_f388a77093dd j_251e838f8595 j_60b2c0035a1d
-cinderSpark windup cyan i2v redo — queued j_bc927d9292ba (held pose sheet already ships)
+launcherThief full ink (shares imp silhouette; concepts optional + image.edit windup/attack/hurt/die + 5 video.i2v) — not started; estimate ~$0.50; Windup/Attack still point at Move sheet; Floors 998/994
+cinderThatch Windup/Attack motion i2v — FAIL bird legs (windup a_0785c49a5e2b2fb7, attack a_ee20ba9c5256acd6); held limbless sheets ship; optional redo ~$0.04–0.08 with “NO LEGS floating ball only” (do not use a_f5d9ad823922f967 — it has legs)

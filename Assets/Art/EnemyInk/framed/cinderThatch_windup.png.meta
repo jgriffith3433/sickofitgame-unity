@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b57f3f67c35b4d79a1d08b0c8c94c087
+guid: 9b8313c794d646c8af759bfa3f8b37c3
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -21,7 +21,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -64,7 +64,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
-  swizzle: 1048416465
+  swizzle: 50462976
   cookieLightType: 0
   platformSettings: []
   spriteSheet:
@@ -73,7 +73,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5962eba4ecba443a9c2f7ae84a245d48
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 

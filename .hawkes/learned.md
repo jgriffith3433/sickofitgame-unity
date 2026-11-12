@@ -1,4 +1,5 @@
-- convention: EnemyInk framed poses — keep PASS Gen poses in `Assets/Art/EnemyInk/framed/` via free `image.frame` (640 / 00ff00 / fill 0.78); feed those `asset:` ids straight into `video.i2v` without local SOI_ART_WORK when the Windows enemy root is missing.
-- lesson: Thatch windup Gen frame can grow legs — always re-frame from the judged PASS pose (`a_f5d9ad823922f967`), never reuse a FAIL framed asset.
-- lesson: GPU batch sizing — thatch+brute+sack×5 + spark windup ≈ $0.70 on one Wan load; launcherThief (~$0.50) must wait for a later budget.
+- lesson: Thatch windup pose a_f5d9ad823922f967 has bird legs — treat as FAIL; build held wind-up from limbless idle/lunge frames, not that pose or framed a_773bbd2466a05ef6.
+- lesson: Never `git checkout` enemy PNG folders to restore metas — it replaces baked sheets with LFS pointers; extract only `*.meta` via `git show HEAD:path > path`.
+- convention: Bake without DoD — Pillow+numpy venv + stub `_build_anims.py`/`cutout.py` under `DOD_ROOT`, then `SOI_ART_WORK=… SOI_ART_PYTHON=… node Tools/Art/art.mjs <id> --build --no-unity`.
+- lesson: This batch spent ~$0.55 of $0.86; launcherThief (~$0.50) still needs a later budget.
 - canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles share the hero’s hand-inked look and a Cuphead wind-up of at least 0.3 s (`docs/art-bible.md` §9).

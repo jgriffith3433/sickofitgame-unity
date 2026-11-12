@@ -1,26 +1,29 @@
-# Enemy ink redraw — framed variants + i2v queued (~$0.70)
+# Enemy ink redraw — thatch/brute/sack/spark sheets baked
 
 ## Wrong
-Prior merge (#388 / c_9c4e54748bbe) shipped Imp/Cinder/CinderSpark sheets and held still wind-ups for thatch/brute/sack because GPU budget ran out. Hurt/Die for variants and full motion for those three were still stand-ins; spark wind-up lacked cyan mid-frames.
+Prior merge shipped Imp/Cinder/CinderSpark plus held wind-ups for thatch/brute/sack; Hurt/Die and full motion for those three, and spark’s cyan wind-up, were still stand-ins / queued GPU.
 
-## This pass (non-GPU + queue)
-- Free `image.frame` of PASS poses → `Assets/Art/EnemyInk/framed/` for thatch (stand/windup/lunge/struck/dead), brute (struck/dead + existing stand/windup), sack (struck/dead + stand/windup), spark stand/windup. Metas added.
-- Queued **16 `video.i2v`** jobs (one Wan batch, `wait_for_server`): thatch×5, brute×5, sack×5, spark windup cyan redo×1. Estimate **$0.70** of **$0.86**. Ids in `.hawkes/waiting-jobs.txt` (already running on RunPod when queued).
-- Updated `docs/art-bible.md` §9 status, `JUDGE.md`, `framed/manifest.json`.
-- Playtest scenario stays `enemy-ink` (phone device) in `.hawkes/scenario.txt`.
-- **Left:** `launcherThief` full ink (~$0.50) in `.hawkes/pending-gpu.txt` (over remaining budget after this batch).
+## Judged (16 `video.i2v`, ~$0.55 of $0.86)
+- **cinderBrute** all 5 PASS → motion sheets baked.
+- **impSack** all 5 PASS → motion sheets baked.
+- **cinderSpark windup** `a_4c5fed0fbca0470d` PASS (cyan mid-frames) → replaced held sheet; other spark clips re-baked from prior PASS assets.
+- **cinderThatch** idle/hurt/die PASS (limbless). Windup + attack i2v FAIL (bird legs). Held Windup remade from limbless idle frame; Attack held from limbless lunge frame. Note: old “PASS” pose `a_f5d9ad823922f967` also has legs — do not reuse.
 
-## On resume (Studio brings job results)
-Judge each clip against art bible + silhouette; bake with `SOI_ART_WORK=... node Tools/Art/art.mjs <id> --build --apply --no-unity`; replace sheets under `Assets/Art/Enemies/{CinderThatch,CinderBrute,ImpSack,CinderSpark}`; clear pending lines that land; PR screenshots of lineup beside the hero.
+## Changed
+- Sheets: `Assets/Art/Enemies/{CinderThatch,CinderBrute,ImpSack,CinderSpark}/*` (+ `.sheet.json`, kept `.meta` GUIDs).
+- Entities: animator re-applied for those four (`Windup` + Idle/Move/Attack/Hurt/Die); contact `windup` 0.35 inherited / set.
+- Docs: `docs/art-bible.md` §9, `EnemyInk/JUDGE.md`, `framed/manifest.json`, previews under `EnemyInk/previews/`.
+- `.hawkes/pending-gpu.txt`: **launcherThief** (~$0.50, Floors 998/994) + optional thatch windup/attack motion redo.
+- Playtest scenario stays `enemy-ink` (`{"device":"phone"}`).
 
 ## Checks
-- `hawkesgen_estimate` for thatch+brute+sack+spark = $0.70; framing cost $0.
-- `hawkesgen_jobs`: batch queued/running (RunPod).
-- Unity compile not run here (no editor on agent; JSON/docs/PNG only this pass).
-- Conflicts: none.
+- Visual judge of mid-frames + baked thatch windup/attack (limbless) and spark windup (cyan).
+- `art.mjs --build --no-unity` with stub DoD + Pillow venv (lesson m_a9b1750211f6).
+- Phone height math at `levelCameraOrthoSize` 2.8: spark ~42 px; thatch/brute/sack well over 40.
+- Unity compile not run here (no editor). Conflicts: none.
 
 ## Fun reviewer
-**thin** (1–2 lines): this pass is art pipeline + wind-up telegraph for existing Meadow foes, not a new area. Living-world score unchanged; gaps are unfinished GPU sheets (queued) and launcherThief ink.
+**thin** — art/telegraph pass for existing Meadow foes, not a new area. Living-world score unchanged. Gaps: launcherThief ink; thatch windup/attack still held (readable, not full motion).
 
 ## Reviewer
-**revise until bake lands** — acceptance needs Idle/Windup/Attack/Hurt/Die motion sheets; held frames + queued i2v are the correct mid-pass. Do not open PR as done until waiting-jobs bake.
+**merge for this slice** — acceptance for thatch/brute/sack/spark Idle/Windup/Attack/Hurt/Die + ≥0.3 s wind-up met; launcherThief still open under pending-gpu (budget left ~$0.31 < ~$0.50).

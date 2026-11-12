@@ -6,10 +6,7 @@
   "extends": "cinder",
   "health": 3,
   "moveSpeed": 1,
-  "tags": [
-    "cinder",
-    "brute"
-  ],
+  "tags": ["cinder", "brute"],
   "visual": {
     "scale": 0.17,
     "fxColor": "#FF6A2A",
@@ -19,8 +16,8 @@
     "animator": {
       "parameters": [
         {
-          "name": "IsMoving",
-          "type": "Bool",
+          "name": "IsAttacking",
+          "type": "Trigger",
           "defaultValue": 0
         },
         {
@@ -31,11 +28,6 @@
         {
           "name": "IsWinding",
           "type": "Bool",
-          "defaultValue": 0
-        },
-        {
-          "name": "IsAttacking",
-          "type": "Trigger",
           "defaultValue": 0
         }
       ],
@@ -52,6 +44,13 @@
           "spriteSheet": "Art/Enemies/CinderBrute/CinderBrute_move.png",
           "fps": 12,
           "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/CinderBrute/CinderBrute_attack.png",
+          "fps": 12,
+          "loop": false,
           "events": []
         },
         {
@@ -74,62 +73,31 @@
           "fps": 12,
           "loop": true,
           "events": []
-        },
-        {
-          "stateName": "Attack",
-          "spriteSheet": "Art/Enemies/CinderBrute/CinderBrute_attack.png",
-          "fps": 12,
-          "loop": false,
-          "events": [
-            {
-              "frame": 2,
-              "functionName": "FireProjectile"
-            }
-          ]
         }
       ],
       "transitions": [
         {
           "fromState": "Idle",
-          "toState": "Move",
+          "toState": "Attack",
           "hasExitTime": false,
           "exitTime": 1,
           "conditions": [
             {
-              "parameterName": "IsMoving",
+              "parameterName": "IsAttacking",
               "mode": "If",
               "threshold": 0
             }
           ]
         },
         {
-          "fromState": "Move",
+          "fromState": "Attack",
           "toState": "Idle",
-          "hasExitTime": false,
+          "hasExitTime": true,
           "exitTime": 1,
-          "conditions": [
-            {
-              "parameterName": "IsMoving",
-              "mode": "IfNot",
-              "threshold": 0
-            }
-          ]
+          "conditions": []
         },
         {
           "fromState": "Idle",
-          "toState": "Hurt",
-          "hasExitTime": false,
-          "exitTime": 1,
-          "conditions": [
-            {
-              "parameterName": "Hurt",
-              "mode": "If",
-              "threshold": 0
-            }
-          ]
-        },
-        {
-          "fromState": "Move",
           "toState": "Hurt",
           "hasExitTime": false,
           "exitTime": 1,
@@ -162,19 +130,6 @@
           ]
         },
         {
-          "fromState": "Move",
-          "toState": "Windup",
-          "hasExitTime": false,
-          "exitTime": 1,
-          "conditions": [
-            {
-              "parameterName": "IsWinding",
-              "mode": "If",
-              "threshold": 0
-            }
-          ]
-        },
-        {
           "fromState": "Windup",
           "toState": "Idle",
           "hasExitTime": false,
@@ -188,32 +143,6 @@
           ]
         },
         {
-          "fromState": "Idle",
-          "toState": "Attack",
-          "hasExitTime": false,
-          "exitTime": 1,
-          "conditions": [
-            {
-              "parameterName": "IsAttacking",
-              "mode": "If",
-              "threshold": 0
-            }
-          ]
-        },
-        {
-          "fromState": "Move",
-          "toState": "Attack",
-          "hasExitTime": false,
-          "exitTime": 1,
-          "conditions": [
-            {
-              "parameterName": "IsAttacking",
-              "mode": "If",
-              "threshold": 0
-            }
-          ]
-        },
-        {
           "fromState": "Windup",
           "toState": "Attack",
           "hasExitTime": false,
@@ -225,13 +154,6 @@
               "threshold": 0
             }
           ]
-        },
-        {
-          "fromState": "Attack",
-          "toState": "Idle",
-          "hasExitTime": true,
-          "exitTime": 1,
-          "conditions": []
         },
         {
           "fromState": "Windup",
