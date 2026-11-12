@@ -7,88 +7,41 @@
   "backgrounds": [],
   "backgroundLayers": [
     {
-      "name": "Level1_Background1",
-      "spriteFramesData": "Videos/Level1_Background1.asset",
-      "staticSprite": null,
-      "solidColor": "#00000000",
-      "offset": [
-        0.0,
-        0.0
-      ],
-      "scale": [
-        1.0,
-        1.0
-      ],
+      "name": "Meadow_1_sky",
+      "staticSprite": "Art/Backdrops/Meadow_1_sky.png",
       "layer": "Background1",
       "sortingOrder": 0,
-      "parallaxFactor": 0.0,
-      "tileHorizontally": false,
-      "sequenceStart": 0.0,
-      "sequenceDuration": 2.833333,
-      "sequenceLoop": false
+      "parallaxFactor": 0.1,
+      "tileHorizontally": true,
+      "driftSpeed": 0.04,
+      "raidSprite": "Art/Backdrops/Meadow_1_sky_raid.png"
     },
     {
-      "name": "Level1_Background2",
-      "spriteFramesData": "Videos/Level1_Background2.asset",
-      "staticSprite": null,
-      "solidColor": "#00000000",
-      "offset": [
-        0.0,
-        0.0
-      ],
-      "scale": [
-        1.0,
-        1.0
-      ],
+      "name": "Meadow_2_far",
+      "staticSprite": "Art/Backdrops/Meadow_2_far.png",
       "layer": "Background1",
-      "sortingOrder": 0,
-      "parallaxFactor": 0.0,
-      "tileHorizontally": false,
-      "sequenceStart": 2.833333,
-      "sequenceDuration": 23.0,
-      "sequenceLoop": true
+      "sortingOrder": 1,
+      "parallaxFactor": 0.25,
+      "tileHorizontally": true,
+      "driftSpeed": 0.1
     },
     {
-      "name": "Level1_Background3",
-      "spriteFramesData": "Videos/Level1_Background3.asset",
-      "staticSprite": null,
-      "solidColor": "#00000000",
-      "offset": [
-        0.0,
-        0.0
-      ],
-      "scale": [
-        1.0,
-        1.0
-      ],
+      "name": "Meadow_3_mid",
+      "staticSprite": "Art/Backdrops/Meadow_3_mid.png",
       "layer": "Background1",
-      "sortingOrder": 0,
-      "parallaxFactor": 0.0,
-      "tileHorizontally": false,
-      "sequenceStart": 25.833332,
-      "sequenceDuration": 13.933333,
-      "sequenceLoop": false
+      "sortingOrder": 2,
+      "parallaxFactor": 0.5,
+      "tileHorizontally": true,
+      "driftSpeed": 0.2
     },
     {
-      "name": "Level1_Background4",
-      "spriteFramesData": "Videos/Level1_Background4.asset",
-      "staticSprite": null,
-      "solidColor": "#00000000",
-      "offset": [
-        0.0,
-        0.0
-      ],
-      "scale": [
-        1.0,
-        1.0
-      ],
+      "name": "Meadow_4_near",
+      "staticSprite": "Art/Backdrops/Meadow_4_near.png",
       "layer": "Background1",
-      "sortingOrder": 0,
-      "parallaxFactor": 0.0,
-      "tileHorizontally": false,
-      "sequenceStart": 39.766666,
-      "sequenceDuration": 0.0,
-      "sequenceLoop": true
+      "sortingOrder": 3,
+      "parallaxFactor": 0.8,
+      "tileHorizontally": true,
+      "driftSpeed": 0.35
     }
   ],
   "ambientColor": "#FFFFFF",

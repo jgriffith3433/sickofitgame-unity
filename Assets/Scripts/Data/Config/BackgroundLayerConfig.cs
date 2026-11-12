@@ -61,6 +61,14 @@ namespace SickOfIt.Data.Config
         [Tooltip("If true, tile this layer vertically too (Up-travel stages)")]
         public bool tileVertically = false;
 
+        [Header("Painted backdrop motion")]
+        [Tooltip("A tiled static layer drifts sideways at this many world units a second (game clock, so a rewind plays it back). 0 = still.")]
+        public float driftSpeed = 0f;
+        [Tooltip("The level's raid (its second phase) swaps this static layer's sprite for this one. Null = no swap.")]
+        public Sprite raidSprite;
+        [Tooltip("The raid also multiplies this layer by this colour (alpha 0 = no tint).")]
+        public Color raidTint = new Color(0f, 0f, 0f, 0f);
+
         [Header("Sequence")]
         [Tooltip("When this layer appears, in seconds on the game clock (the same clock as the music). Negative means it plays from the start, stacked with the other layers.")]
         public float sequenceStart = -1f;

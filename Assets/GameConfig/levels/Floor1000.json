@@ -5,7 +5,44 @@
   "levelNumber": 2,
   "thumbnail": "Videos/Video2_FirstFrame.png",
   "backgrounds": [],
-  "backgroundLayers": [],
+  "backgroundLayers": [
+    {
+      "name": "Floor1000_1_sky",
+      "staticSprite": "Art/Backdrops/Floor1000_1_sky.png",
+      "layer": "Background1",
+      "sortingOrder": 0,
+      "parallaxFactor": 0.1,
+      "tileHorizontally": true,
+      "driftSpeed": 0.05
+    },
+    {
+      "name": "Floor1000_2_far",
+      "staticSprite": "Art/Backdrops/Floor1000_2_far.png",
+      "layer": "Background1",
+      "sortingOrder": 1,
+      "parallaxFactor": 0.25,
+      "tileHorizontally": true,
+      "driftSpeed": 0.1
+    },
+    {
+      "name": "Floor1000_3_mid",
+      "staticSprite": "Art/Backdrops/Floor1000_3_mid.png",
+      "layer": "Background1",
+      "sortingOrder": 2,
+      "parallaxFactor": 0.5,
+      "tileHorizontally": true,
+      "driftSpeed": 0.15
+    },
+    {
+      "name": "Floor1000_4_near",
+      "staticSprite": "Art/Backdrops/Floor1000_4_near.png",
+      "layer": "Background1",
+      "sortingOrder": 3,
+      "parallaxFactor": 0.8,
+      "tileHorizontally": true,
+      "driftSpeed": 0.2
+    }
+  ],
   "music": "Audio/Music/wastes_loop.ogg",
   "musicVolume": 0.85,
   "ambientSound": "Audio/Generated/Core/ambience_floor1000.ogg",
