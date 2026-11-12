@@ -443,3 +443,11 @@ Pending art: per-level tilesets (top edges, undersides, corners, 3+ variants eac
 ### Floor arrival cards and the ember iris (Nov 12)
 - Every screen change closes and opens as an **ember iris** (`ScreenTransition`: the picture shrinks to a ring of burning edge in 0.35 s, opens from it in 0.55 s; a pulse of ember light sits in the middle while a load holds it shut, so it is never plain black).
 - Arriving on Floors 1000-997 slams a **stamped card** ("FLOOR 1000" over "THE LANDING", tilted, dark plate, ember rim) with the stamp thump and one announcer quip (`vo_card_1000` "Welcome to the bottom!", `vo_card_999` "Only nine ninety-nine to go!", `vo_card_998` "Mind the spill!", `vo_card_997` "Imp run!"); gone by 1.5 s while play is live. `Gameplay/Presentation/FloorCard.cs`; playtest `floor-card`.
+
+## Speaker portraits (plan)
+
+Five speakers get a painted portrait: the hero, the Overlord, Yooba, Rook and Wick. Each has four expressions
+(neutral, smug/angry, laughing, shocked) and an open-mouth frame for each, 8 cut-outs per character. Each line carries a
+`mood` field that picks the expression. The portrait slides in over 0.15 s in a bottom corner away from the hero and the
+touch stick. The mouth flaps with the voice clip's amplitude and closes within 0.2 s of the line ending.
+Portraits load in the core-late scope. Shown in the BeatDirector `say` bubble, Yooba's shop and the death screen.
