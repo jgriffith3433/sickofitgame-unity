@@ -20,7 +20,7 @@ namespace SickOfIt.Playtest
         /// The difficulty scenario (Docs/Story.md "How sick of it are you?"): New Game starts at Normal; Settings > Pick Your Hell offers Assist, Normal, Hard or Hell Loop;
         /// the settings' Accessibility page toggles are clicked and saved; the bot clears Level 1 on Assist and on Normal (enemy shot speed
         /// measured on each: Assist's are slower), then plays reckless on Hell Loop with every accessibility option on (a hit lands for twice
-        /// Normal's damage, shots have a rim and one hot colour, the hitbox dot shows, shake and flash are reduced, aim assist bends a shot onto an enemy).
+        /// Normal's damage, shots have a rim and one hot colour, no marker on the hero, shake and flash are reduced, aim assist bends a shot onto an enemy).
         /// </summary>
         public const string DifficultyId = "difficulty";
         const float DifficultySeconds = 900f;
@@ -216,7 +216,6 @@ namespace SickOfIt.Playtest
                     (texts.highContrastBullets, () => GameSettings.HighContrastBullets, "Settings_HighContrast"),
                     (texts.reducedFlash, () => GameSettings.ReducedFlash, "Settings_ReducedFlash"),
                     (texts.reducedShake, () => GameSettings.ReducedShake, "Settings_ReducedShake"),
-                    (texts.hitboxDot, () => GameSettings.HitboxDot, "Settings_HitboxDot"),
                     (texts.aimAssist, () => GameSettings.AimAssist, "Settings_AimAssist"),
                 };
                 foreach (var r in rows)
@@ -241,7 +240,7 @@ namespace SickOfIt.Playtest
                 // 3. Assist, then Normal: the bot clears Level 1 on both. Accessibility on Assist: aim assist comes on with the pick.
                 GameSettings.AimAssist = false;
                 GameSettings.BulletOutlines = false; GameSettings.HighContrastBullets = false; GameSettings.ReducedFlash = false;
-                GameSettings.ReducedShake = false; GameSettings.HitboxDot = false;
+                GameSettings.ReducedShake = false;
                 yield return PlayOnDifficulty(DifficultyLevel.Assist);
                 if (Run.Done) yield break;
                 DiffCheck("Assist turns aim assist on", GameSettings.AimAssist, $"AimAssist {GameSettings.AimAssist}");
@@ -268,7 +267,7 @@ namespace SickOfIt.Playtest
 
                 // 4. Hell Loop with every accessibility option on, reckless until the first hit.
                 GameSettings.BulletOutlines = true; GameSettings.HighContrastBullets = true; GameSettings.ReducedFlash = true;
-                GameSettings.ReducedShake = true; GameSettings.HitboxDot = true; GameSettings.AimAssist = true; GameSettings.ScreenShake = true;
+                GameSettings.ReducedShake = true; GameSettings.AimAssist = true; GameSettings.ScreenShake = true;
                 reckless = true;
                 bool checkedVisuals = false;
                 int hellHits = 0;
@@ -290,7 +289,7 @@ namespace SickOfIt.Playtest
 
                 // Put the player's settings back.
                 GameSettings.BulletOutlines = false; GameSettings.HighContrastBullets = false; GameSettings.ReducedFlash = false;
-                GameSettings.ReducedShake = false; GameSettings.HitboxDot = false; GameSettings.AimAssist = false;
+                GameSettings.ReducedShake = false; GameSettings.AimAssist = false;
                 Difficulty.Current = DifficultyLevel.Normal;
                 input.ReleaseAll();
                 Run.Metric("difficulty.passed", diffPassed);
@@ -327,8 +326,7 @@ namespace SickOfIt.Playtest
                     return false;
                 DiffCheck("bullets have a rim", shot.RimShown, "enemy shot's Rim renderer on");
                 DiffCheck("bullets are one high-contrast colour", shot.HighContrast, "BulletReadability.HighContrast");
-                var dot = w.Player.GetComponentInChildren<HitboxDot>();
-                DiffCheck("the hitbox dot shows", dot != null && dot.Shown, dot != null ? "dot on" : "no HitboxDot on the hero");
+                DiffCheck("no ring or dot is drawn on the hero", !HeroHasMarker(w.Player), "no HitboxDot/Reticle/Crosshair child on the hero");
                 w.Effects.Shake(1f, 0.05f);
                 DiffCheck("reduced shake softens a shake", w.Effects.LastShakeIntensity < 0.5f, $"asked 1.0, got {w.Effects.LastShakeIntensity:0.00}");
                 w.Hud.Flash(Color.white, 0.05f);

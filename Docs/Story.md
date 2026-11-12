@@ -2207,8 +2207,7 @@ slightly better at leaving.
 at 3.8 units a second (a screen in about 2.7 s), eases into a run and out of it in a blink, and a short tap on Jump is a hop. The coat
 already slides on Level 1 (the dash is his from the start; "Oh. It slides. Nobody said it slides." is the first time), and a hit stings
 rather than excuses him: 1.2 s of grace on Normal (Assist 2.0, Hard 0.9, Hell Loop 0.7), not 5. Yooba's Slimed Lining is now the upgrade: a
-second dash in the air and a coat that dries in 0.6 s. The hitbox dot shows on Level 1 and Floors 1000-999 until the player picks a side
-in Settings. On a touch screen a swipe on the right half dashes; on Android a phone buzzes a hair for a hit, a graze or a kill.
+second dash in the air and a coat that dries in 0.6 s. Nothing is drawn on him, no ring and no dot (J took the hitbox dot out, 2026-11-12). On a touch screen a swipe on the right half dashes; on Android a phone buzzes a hair for a hit, a graze or a kill.
 
 **The dash (Yooba's Slimed Lining).** The slime does the work. Once the hero has lost the launcher on Floor 998 and has nothing left to
 hide behind, Yooba puts a slick of himself in the inside of the coat: shove off the floor and the coat carries him a few steps (2.6 units, a
@@ -2791,10 +2790,10 @@ designed and changes nothing. The pick scales four things for a whole play (`Dat
 shots fly (x0.8 / 1 / 1.15 / 1.3), how often enemies shoot (density x0.75 / 1 / 1.25 / 1.5, on `shoot` abilities), how hard a hit lands on the hero
 (x0.5 / 1 / 1.5 / 2, a whole number of hearts, the fraction paid by a roll that belongs to the shot, so a rewind replays it; pits and lava are not
 scaled) and rewind juice held and earned (x1.5 / 1 / 0.75 / 0.5). Assist also turns Aim Assist on. After three deaths inside five real minutes of a New
-Game the death screen offers **Try Assist** once (`FtueProgress`). Settings > Accessibility holds six toggles, each saved at once: bullet outlines,
-high-contrast bullets (one hot colour with an ink rim), reduced flash, reduced shake, a hitbox ring and dot on the hero, aim assist (a shot aimed within
-9 degrees of an enemy bends most of the way onto it). `BulletReadability`, `HitboxDot` (`Gameplay/Presentation/AccessibilityVisuals.cs`) are presentation
-only. Playtest `difficulty`.
+Game the death screen offers **Try Assist** once (`FtueProgress`). Settings > Accessibility holds five toggles (plus incoming warnings and touch buttons), each saved at once: bullet outlines,
+high-contrast bullets (one hot colour with an ink rim), reduced flash, reduced shake, aim assist (a shot aimed within
+9 degrees of an enemy bends most of the way onto it). `BulletReadability` (`Gameplay/Presentation/AccessibilityVisuals.cs`) is presentation
+only. Nothing is drawn on the hero (the hitbox ring and dot were removed 2026-11-12). Playtest `difficulty`.
 
 ## The hero's own flinch, deaths and victory
 

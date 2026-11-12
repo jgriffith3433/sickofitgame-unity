@@ -488,7 +488,6 @@ namespace SickOfIt.Data.Config
         public string highContrastBullets = "High-Contrast Bullets";
         public string reducedFlash = "Reduced Flash";
         public string reducedShake = "Reduced Shake";
-        public string hitboxDot = "Hitbox Dot";
         public string aimAssist = "Aim Assist";
         public string incomingWarnings = "Incoming warnings";
         public string touchButtons = "Touch Buttons";
