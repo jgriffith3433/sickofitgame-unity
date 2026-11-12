@@ -169,7 +169,7 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Moment: A graze streak: he flinches, mutters a one-liner, and the HUD vessels crack or glow with what happens.
 - Personality: tired, dry, stubborn
 - Voice: `player` (lines `vo_hero_*`)
-- Animations: Idle, Walk, Jump, Fall, Fire, Dash, Hurt, Victory (art/hero.json)
+- Animations: Idle, Walk, Talk (Idle held while a voiced `vo_hero_*` line and its subtitle play), Jump, Fall, Fire, Dash, Hurt, Victory (art/hero.json)
 
 ### Yooba
 - Want: To keep the climber alive and sell him goods, and to find his Lost Things.
