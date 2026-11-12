@@ -8,6 +8,13 @@
   ],
   "abilities": [
     {
+      "type": "contactDamage",
+      "damage": 0,
+      "windup": 0.4,
+      "windupRange": 3.2,
+      "windupBool": "IsWinding"
+    },
+    {
       "type": "move",
       "speed": 3.4,
       "direction": [

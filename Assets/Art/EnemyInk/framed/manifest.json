@@ -83,5 +83,19 @@
       "cinderSpark_windup": "a_4c5fed0fbca0470d"
     }
   },
-  "resume": "2026-11-12d: judged 16 i2v; baked thatch (held windup/attack)/brute/sack/spark sheets; launcherThief still pending."
+  "resume": "2026-11-12d: judged 16 i2v; baked thatch (held windup/attack)/brute/sack/spark sheets; launcherThief still pending.",
+  "queued_c_666db16040a6": {
+    "estimateUsd": 0.44,
+    "budgetUsd": 0.86,
+    "batch": [
+      {"id": "j_643207ac4b56", "entity": "launcherThief", "pose": "stand"},
+      {"id": "j_049536d717ee", "entity": "launcherThief", "pose": "windup"},
+      {"id": "j_765c66f24b31", "entity": "launcherThief", "pose": "attack"},
+      {"id": "j_e9990336a907", "entity": "launcherThief", "pose": "struck"},
+      {"id": "j_8bc7677f243c", "entity": "launcherThief", "pose": "dead"},
+      {"id": "j_439924f978a2", "entity": "cinderThatch", "pose": "windup", "note": "limbless redo; never a_f5d9ad823922f967"},
+      {"id": "j_08a2bfaa8127", "entity": "cinderThatch", "clip": "attack", "note": "NO LEGS i2v from limbless framed stand→lunge"}
+    ],
+    "next": "judge poses → image.frame → launcherThief 5× i2v + thatch windup i2v → bake; wire Windup/Attack off Move"
+  }
 }
