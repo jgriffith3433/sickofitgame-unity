@@ -1,5 +1,5 @@
-- convention: Menu plates — clone `menuTheme.button` before `MenuInkPlates.ApplyTo`; never mutate the shared theme or Export rewrites theme.json as Sprite/null.
-- convention: Main menu clicks — backdrop CanvasGroup.blocksRaycasts=false and EventSystemGuard adopts an existing InputSystemUIInputModule after BuildMenu.
-- lesson: sparse + Gen plates — Resources/UI PNGs are outside the default sparse cone (LFS pointers only); `git sparse-checkout add Assets/Resources/UI/` then `studio_gen_import` writes real bytes.
-- lesson: Gen fleet this pass — hawkesgen_fleet returned no servers and AWS keys missing; reuse library assets, do not queue GPU generate.
-- canon: Main menu ledge — Hell's basalt ledge over lava; Overlord silhouette every 15–20 s; title slam 0.5 s then Pulse; Gen plates in Resources/UI/MenuButtonPlate*.png.
+- convention: Menu plates — clone `menuTheme.button` before `MenuInkPlates.ApplyTo`; never mutate the shared theme.
+- lesson: sparse + Gen plates — `git sparse-checkout add Assets/Resources/UI/` then `studio_gen_import` (LFS pointers alone leave FromGen false).
+- lesson: fun-reviewer thin on living menu — fix with painted runtime textures + diegetic face/mutter/seam spark; `menu_theme` stays other-task.
+- canon: Main menu ledge — painted basalt/lava; Overlord every 15–20 s with `menu_overlord_hum`; hero faces and says `vo_hero_menu_mutter`.
+- lesson: audio.json append — surgical insert before final `]`; full `json.dumps` escapes unicode em-dashes and noisily rewrites the file.

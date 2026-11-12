@@ -1,4 +1,4 @@
-1. Open the beta game and wait for the main menu (lava ledge, not the meadow).
-2. Watch ~20 s: the hero idles on the ledge, embers drift, the title slams then pulses, and the Overlord's silhouette climbs past above.
-3. Hover and press Play / Settings — each button sits on a basalt-ember plate that brightens on hover and darkens on press.
-4. On a phone (or 390×844), confirm the hero sits above the button stack and buttons are thumb-sized; Play starts a New Game.
+1. Open the beta game and wait for the main menu (painted basalt ledge over lava, not the meadow).
+2. Watch ~20 s: embers drift, title slams, Overlord climbs with a low hum; the hero faces him and mutters "Still climbing. Of course."
+3. Walk onto the cyan seam — it brightens and sparks; hover a plated button for the hover/press art.
+4. On a phone (390×844), hero above the buttons, thumb-sized plates; Play starts a New Game.

@@ -27,11 +27,11 @@ namespace SickOfIt.Core.Progression
         static readonly Color Hot = new Color(1f, 0.72f, 0.25f);
         static readonly Color Cyan = new Color(0.30f, 0.88f, 0.82f); // theme hud.rewind #4CE0D2
 
-        Texture2D ramp, white;
-        Sprite rampSprite, whiteSprite;
+        Texture2D ramp, white, basaltTex, lavaTex;
+        Sprite rampSprite, whiteSprite, basaltSprite, lavaSprite;
         Transform[] embers;
         SpriteRenderer[] emberRenderers;
-        SpriteRenderer seam, surface, glow;
+        SpriteRenderer seam, surface, glow, seamSpark;
         Transform overlordRoot;
         SpriteRenderer[] overlordParts;
         Camera cam;
@@ -40,6 +40,8 @@ namespace SickOfIt.Core.Progression
         float overlordStartedAt = -1f;
         bool overlordGoingRight = true;
         float openedAt;
+        float seamFlickerUntil = -1f;
+        float lastSeamFlickerAt = -99f;
         /// <summary>Raised (presentation) when the Overlord silhouette starts a climb past; MainMenuManager sighs the hero.</summary>
         public static System.Action OverlordAppeared;
 
@@ -60,6 +62,15 @@ namespace SickOfIt.Core.Progression
 
         /// <summary>True while the silhouette is on screen climbing.</summary>
         public bool OverlordVisible => overlordStartedAt >= 0f;
+
+        /// <summary>True once the basalt ledge + lava strip textures were painted (playtest / fun-reviewer).</summary>
+        public bool PaintedDressing { get; private set; }
+
+        /// <summary>How many times the cyan seam sparked under the hero (playtest).</summary>
+        public int SeamFlickers { get; private set; }
+
+        /// <summary>World X the Overlord is climbing toward (&gt;0 right); used so the hero faces him.</summary>
+        public float OverlordFaceDir => overlordGoingRight ? 1f : -1f;
 
         /// <summary>Builds the backdrop under <paramref name="parent"/> (the scene's content root) and hides the meadow's objects.</summary>
         public static MenuLavaBackdrop Build(Transform parent)
@@ -101,14 +112,22 @@ namespace SickOfIt.Core.Progression
             white = Texture2D.whiteTexture;
             rampSprite = Sprite.Create(ramp, new Rect(0, 0, 1, 64), new Vector2(0.5f, 0.5f), 1f);
             whiteSprite = Sprite.Create(white, new Rect(0, 0, white.width, white.height), new Vector2(0.5f, 0.5f), white.width);
+            basaltSprite = PaintBasalt();
+            lavaSprite = PaintLava();
+            PaintedDressing = basaltSprite != null && lavaSprite != null;
 
             const float W = 60f; // wide enough for any aspect the portrait cover can ask for
             Quad("Sky", rampSprite, Color.white, new Vector2(0f, 2f), new Vector2(W, 40f), -30, true);
+            // Far cliff teeth so the ledge reads as a place, not a flat band (fun-reviewer: painted dressing).
+            BuildFarCliffs(W);
             glow = Quad("Glow", whiteSprite, new Color(Lava.r, Lava.g, Lava.b, 0.18f), new Vector2(0f, LedgeTop + 1.2f), new Vector2(W * 0.55f, 6f), -25, false);
-            Quad("FarSea", whiteSprite, new Color(Lava.r, Lava.g, Lava.b, 0.35f), new Vector2(0f, LedgeTop - 0.1f), new Vector2(W, 2.6f), -20, false);
-            surface = Quad("SeaLine", whiteSprite, Hot, new Vector2(0f, LedgeTop + 0.04f), new Vector2(W, 0.05f), -19, false);
-            Quad("Ledge", whiteSprite, Ash, new Vector2(0f, LedgeTop - 1.4f), new Vector2(W, 2.8f), -10, false);
-            seam = Quad("RewindSeam", whiteSprite, Cyan, new Vector2(0f, LedgeTop - 0.02f), new Vector2(W, 0.035f), -9, false);
+            Quad("FarSea", lavaSprite != null ? lavaSprite : whiteSprite, Color.white, new Vector2(0f, LedgeTop - 0.15f), new Vector2(W, 2.8f), -20, false);
+            surface = Quad("SeaLine", whiteSprite, Hot, new Vector2(0f, LedgeTop + 0.04f), new Vector2(W, 0.06f), -19, false);
+            Quad("Ledge", basaltSprite != null ? basaltSprite : whiteSprite, Color.white, new Vector2(0f, LedgeTop - 1.4f), new Vector2(W, 2.8f), -10, false);
+            // Darker basalt lip under the walkable top so feet read against rock, not lava.
+            Quad("LedgeLip", whiteSprite, new Color(0.06f, 0.03f, 0.05f, 1f), new Vector2(0f, LedgeTop - 0.18f), new Vector2(W, 0.22f), -9, false);
+            seam = Quad("RewindSeam", whiteSprite, Cyan, new Vector2(0f, LedgeTop - 0.02f), new Vector2(W, 0.035f), -8, false);
+            seamSpark = Quad("SeamSpark", whiteSprite, new Color(Cyan.r, Cyan.g, Cyan.b, 0f), new Vector2(0f, LedgeTop + 0.12f), new Vector2(0.35f, 0.35f), -7, false);
 
             embers = new Transform[EmberCount];
             emberRenderers = new SpriteRenderer[EmberCount];
@@ -116,7 +135,7 @@ namespace SickOfIt.Core.Progression
             {
                 bool cyan = i % 9 == 0;
                 float sz = 0.05f + 0.03f * (i % 3);
-                var r = Quad("Ember" + i, whiteSprite, cyan ? Cyan : Lava, Vector2.zero, new Vector2(sz, sz), -8, false);
+                var r = Quad("Ember" + i, whiteSprite, cyan ? Cyan : Lava, Vector2.zero, new Vector2(sz, sz), -6, false);
                 embers[i] = r.transform;
                 emberRenderers[i] = r;
             }
@@ -125,6 +144,80 @@ namespace SickOfIt.Core.Progression
             // First glimpse soon enough that a 25 s sit always sees one, then every 15–20 s.
             nextOverlordAt = openedAt + 4.5f;
             Tick(0f);
+        }
+
+        Sprite PaintBasalt()
+        {
+            const int W = 128, H = 48;
+            basaltTex = new Texture2D(W, H, TextureFormat.RGBA32, false)
+            {
+                wrapMode = TextureWrapMode.Repeat,
+                filterMode = FilterMode.Bilinear,
+                name = "MenuBasalt",
+            };
+            var ink = new Color(0.05f, 0.02f, 0.04f, 1f);
+            var mid = new Color(0.12f, 0.06f, 0.08f, 1f);
+            var rim = new Color(0.22f, 0.1f, 0.09f, 1f);
+            for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+            {
+                float ny = y / (float)(H - 1);
+                float grain = Mathf.PerlinNoise(x * 0.11f, y * 0.17f);
+                float crack = Mathf.PerlinNoise(x * 0.35f + 9f, y * 0.08f);
+                var c = Color.Lerp(ink, mid, 0.35f + 0.5f * grain);
+                if (ny > 0.82f)
+                    c = Color.Lerp(c, rim, (ny - 0.82f) / 0.18f * 0.7f);
+                if (crack > 0.72f)
+                    c = Color.Lerp(c, ink, 0.55f);
+                // Ember wash near the lava edge (bottom of the strip).
+                if (ny < 0.18f)
+                    c = Color.Lerp(c, Ember, 0.25f * (1f - ny / 0.18f));
+                basaltTex.SetPixel(x, y, c);
+            }
+            basaltTex.Apply(false, true);
+            return Sprite.Create(basaltTex, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), H);
+        }
+
+        Sprite PaintLava()
+        {
+            const int W = 128, H = 32;
+            lavaTex = new Texture2D(W, H, TextureFormat.RGBA32, false)
+            {
+                wrapMode = TextureWrapMode.Repeat,
+                filterMode = FilterMode.Bilinear,
+                name = "MenuLava",
+            };
+            for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+            {
+                float ny = y / (float)(H - 1);
+                float swirl = Mathf.PerlinNoise(x * 0.07f, y * 0.14f + 3f);
+                var c = Color.Lerp(Ember, Lava, 0.35f + 0.55f * swirl);
+                if (ny > 0.7f)
+                    c = Color.Lerp(c, Hot, (ny - 0.7f) / 0.3f * 0.65f);
+                if (ny < 0.2f)
+                    c = Color.Lerp(c, Ash, 0.35f * (1f - ny / 0.2f));
+                c.a = 0.92f;
+                lavaTex.SetPixel(x, y, c);
+            }
+            lavaTex.Apply(false, true);
+            return Sprite.Create(lavaTex, new Rect(0, 0, W, H), new Vector2(0.5f, 0.5f), H);
+        }
+
+        void BuildFarCliffs(float _)
+        {
+            // Jagged dark silhouettes above the far lava — landmark depth without loading climb sheets.
+            float[] xs = { -18f, -11f, -4f, 5f, 12f, 19f };
+            float[] hs = { 3.2f, 4.1f, 2.6f, 3.8f, 2.9f, 3.5f };
+            for (int i = 0; i < xs.Length; i++)
+            {
+                float h = hs[i];
+                Quad("Cliff" + i, whiteSprite, new Color(0.02f, 0.01f, 0.02f, 0.85f),
+                    new Vector2(xs[i], LedgeTop + 1.1f + h * 0.5f), new Vector2(2.2f + (i % 3) * 0.4f, h), -28, false);
+                // Horn tip
+                Quad("CliffTip" + i, whiteSprite, new Color(0.015f, 0.008f, 0.02f, 0.9f),
+                    new Vector2(xs[i] + 0.3f, LedgeTop + 1.1f + h + 0.35f), new Vector2(0.45f, 0.7f), -27, false);
+            }
         }
 
         void BuildOverlordSilhouette()
@@ -212,28 +305,45 @@ namespace SickOfIt.Core.Progression
             TickSeamWithHero(t);
         }
 
-        /// <summary>Second ledge verb: stand on the cyan rewind seam and it brightens (fun-reviewer: more than click + walk).</summary>
+        /// <summary>Diegetic ledge verb: stand on the cyan rewind seam and it brightens + sparks a whisper-flicker.</summary>
         void TickSeamWithHero(float t)
         {
             if (seam == null) return;
             float heroX = 0f;
             bool near = false;
-            var menu = MainMenuManager.ActiveHeroX(out heroX);
-            if (menu)
-            {
-                // Ledge top is under his feet; horizontal near the camera centre / hero.
+            if (MainMenuManager.ActiveHeroX(out heroX))
                 near = Mathf.Abs(heroX) < 6f;
-            }
             var c = Cyan;
             float pulse = 0.55f + 0.25f * Mathf.Sin(t * 2.4f);
-            c.a = near ? Mathf.Lerp(0.85f, 1f, pulse) : 0.55f + 0.2f * Mathf.Sin(t * 1.1f);
+            bool flickering = t < seamFlickerUntil;
+            if (near && !flickering && t - lastSeamFlickerAt > 4f)
+            {
+                // Stand near the seam: a tiny cyan rewind whisper (diegetic verb beyond walk/click).
+                lastSeamFlickerAt = t;
+                seamFlickerUntil = t + 0.45f;
+                SeamFlickers++;
+                if (seamSpark != null)
+                    seamSpark.transform.localPosition = new Vector3(heroX, LedgeTop + 0.12f, 0f);
+            }
+            c.a = flickering ? 1f : (near ? Mathf.Lerp(0.85f, 1f, pulse) : 0.55f + 0.2f * Mathf.Sin(t * 1.1f));
             seam.color = c;
-            // Slightly taller when stood on.
             if (seam.transform != null)
             {
-                float h = near ? 0.055f : 0.035f;
+                float h = flickering ? 0.08f : (near ? 0.055f : 0.035f);
                 var s = seam.transform.localScale;
                 seam.transform.localScale = new Vector3(s.x, h, s.z);
+            }
+            if (seamSpark != null)
+            {
+                float u = flickering ? 1f - (seamFlickerUntil - t) / 0.45f : 1f;
+                var sc = Cyan;
+                sc.a = flickering ? Mathf.Sin(u * Mathf.PI) * 0.95f : 0f;
+                seamSpark.color = sc;
+                if (flickering)
+                {
+                    float s = 0.25f + 0.35f * Mathf.Sin(u * Mathf.PI);
+                    seamSpark.transform.localScale = new Vector3(s, s, 1f);
+                }
             }
         }
 
@@ -259,8 +369,11 @@ namespace SickOfIt.Core.Progression
                 overlordGoingRight = !overlordGoingRight;
                 overlordStartedAt = t;
                 SetOverlordVisible(true);
-                // Low rising hum as he crosses (bible: silhouette silent but for a hum).
-                SickOfIt.Core.Audio.Sfx.Play("magma_rumble");
+                // Dedicated low hum for the silhouette (fun-reviewer: not a reused magma rumble).
+                if (SickOfIt.Core.Audio.Sfx.ClipOf("menu_overlord_hum") != null)
+                    SickOfIt.Core.Audio.Sfx.Play("menu_overlord_hum");
+                else
+                    SickOfIt.Core.Audio.Sfx.Play("magma_rumble");
                 OverlordAppeared?.Invoke();
             }
 
@@ -305,7 +418,11 @@ namespace SickOfIt.Core.Progression
                 cam.orthographicSize = baseOrtho;
             if (rampSprite != null) Destroy(rampSprite);
             if (whiteSprite != null) Destroy(whiteSprite);
+            if (basaltSprite != null) Destroy(basaltSprite);
+            if (lavaSprite != null) Destroy(lavaSprite);
             if (ramp != null) Destroy(ramp);
+            if (basaltTex != null) Destroy(basaltTex);
+            if (lavaTex != null) Destroy(lavaTex);
         }
     }
 }

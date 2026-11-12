@@ -98,7 +98,15 @@ namespace SickOfIt.Playtest
                 Run.Metric("livingMenu.overlordWaitSeconds", Time.unscaledTime - started);
                 Gate("overlord every 20 s", sawOverlord && lava != null && lava.OverlordPasses >= 1,
                     sawOverlord ? $"pass #{lava.OverlordPasses} at t={lava.LastOverlordPassAt:0.0}" : "no Overlord silhouette within 20 s");
-                Run.Event("living-menu", $"overlord passes={lava?.OverlordPasses ?? 0} breath={lava?.CameraBreath01:0.00}");
+                Gate("painted ledge", lava != null && lava.PaintedDressing,
+                    lava != null && lava.PaintedDressing ? "basalt+lava textures" : "flat quads only");
+                // Diegetic beat: hero faced the silhouette and muttered (or at least sighed) on the pass.
+                bool faced = menu.HeroFacedOverlord > 0;
+                Gate("hero faces Overlord", faced || menu.HeroSighs > 0,
+                    faced ? $"faced+mutter x{menu.HeroFacedOverlord}" : $"sighs={menu.HeroSighs} (face not counted)");
+                Run.Metric("livingMenu.heroFacedOverlord", menu.HeroFacedOverlord);
+                Run.Metric("livingMenu.seamFlickers", lava != null ? lava.SeamFlickers : 0);
+                Run.Event("living-menu", $"overlord passes={lava?.OverlordPasses ?? 0} breath={lava?.CameraBreath01:0.00} painted={lava?.PaintedDressing == true}");
                 Run.Progress(0.5f);
 
                 // Illustrated plates + hover/press state.

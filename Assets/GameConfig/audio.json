@@ -19541,6 +19541,57 @@
       "cooldown": 0.5,
       "prompt": "[bored, velvety] Mm. [long pause] Let me help.",
       "generatedFrom": "voice|A5KBJzxznyU8QeeRqyiY|eleven_v3|0.5|0.85|[bored, velvety] Mm. [long pause] Let me help."
+    },
+    {
+      "id": "vo_hero_menu_mutter",
+      "kind": "Voice",
+      "prompt": "[sighs] Still climbing. [beat] Of course.",
+      "durationSeconds": 0,
+      "promptInfluence": 0.3,
+      "loop": false,
+      "voice": "player",
+      "voiceId": "",
+      "clip": "Audio/Generated/vo_hero_menu_mutter.mp3",
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[sighs] Still climbing. [beat] Of course.",
+      "volume": 1,
+      "pitchVariation": 0,
+      "maxVoices": 1,
+      "cooldown": 0.5,
+      "bus": "Voice"
+    },
+    {
+      "id": "vo_hero_menu_sigh",
+      "kind": "Voice",
+      "prompt": "[sighs] Still here.",
+      "durationSeconds": 0,
+      "promptInfluence": 0.3,
+      "loop": false,
+      "voice": "player",
+      "voiceId": "",
+      "clip": "Audio/Generated/vo_hero_menu_sigh.mp3",
+      "generatedFrom": "voice|DzkD7I4tf5i3KSaB4cz5|eleven_v3|0.5|1|[sighs] Still here.",
+      "volume": 1,
+      "pitchVariation": 0,
+      "maxVoices": 1,
+      "cooldown": 0.5,
+      "bus": "Voice"
+    },
+    {
+      "id": "menu_overlord_hum",
+      "kind": "Effect",
+      "prompt": "Very low distant bass hum rising slowly, deep subterranean drone, soft and ominous, no melody",
+      "durationSeconds": 2.5,
+      "promptInfluence": 0.3,
+      "loop": false,
+      "voice": "",
+      "voiceId": "",
+      "clip": "Audio/Generated/menu_overlord_hum.mp3",
+      "generatedFrom": "sfx|menu_overlord_hum",
+      "volume": 0.7,
+      "pitchVariation": 0.02,
+      "maxVoices": 1,
+      "cooldown": 1.0,
+      "bus": "Ambience"
     }
   ]
 }
