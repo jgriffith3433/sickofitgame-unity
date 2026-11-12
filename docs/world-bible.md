@@ -267,6 +267,13 @@ rewind juice (spins while held, drains as juice spends), a **gem** that pulses w
 that ticks the floor down. Two corners only (health+reel top-left, gem+dial top-right); on a phone the rewind button is the
 big bottom-right reel (≥72 px). Same game state as before; art from `HudInkAtlas` (Gen sheet under Resources/UI). Playtest `hud-ink`.
 
+### The Overlord's taunts (Floors 1000-997, built Nov 12)
+He is on screen on every one of the first four floors, small and far on the upper edge, and answers what the hero just did: the floor entered, a death
+(imp, shot, hazard, fall), a rewind, a rewind that undoes a death, 30 s untouched, the finale. 30 lines (voice `overlord`: *bored, velvety, enormous*),
+one every 20 s at most, none twice in a session; an undone death is answered at once and his silhouette climbs out of the top (the chase, below).
+Want: to be done with Hell and take the surface; arc: his lines are about the loop, and the hero's rewinds remind him of his own. Idle, laugh, point and flee
+clips (`art/overlordTaunt.json`, sheets in `Assets/Art/Enemies/OverlordTaunt/`: he faces the camera, about 1.8 units tall; only Flee shows his back). `OverlordTaunts`, playtest `overlord-taunts` (run on 390x844 touch).
+
 ### The chase (the Overlord escaping upward, built Nov 11)
 The Overlord is always one floor ahead, and the hero only ever sees it when time goes backward. **When a rewind starts inside a
 death's undo window** (the hero has died, then holds R or the rewind button), the HUD shows the Overlord's silhouette (horns,
@@ -322,16 +329,6 @@ Each beat is lived, not read. Format: **where / when -> what happens (events, so
     gameplay, then the knock from underground.
 
 Every beat above is an event first. A beat that is only a `showText` is a defect.
-
----
-
-## Bullets and hazard tells (Meadow + Floors 1000-997, Nov 12)
-
-Hostile shots read like Returnal orbs: white-hot core, dark ink outline, cyan/magenta halo (never the sulphur/furnace
-orange of the Wastes; Floor 997 prefers magenta), short fading trail. The hero's rockets stay warm amber and elongated.
-Aimed shots flash the muzzle and draw a thin aim line ~0.4 s before firing; spreads flash the emitter; lava / geyser /
-surge / sink tells glow a warning colour ≥ 0.5 s before they hurt. Playtests: `readability`, `bullet-look`. Hitboxes
-unchanged; phone draws bullets at least 8 px across.
 
 ---
 

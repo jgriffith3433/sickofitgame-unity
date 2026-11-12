@@ -279,6 +279,8 @@ namespace SickOfIt.Gameplay
             RewindFx.Create(transform, style.rewind, rewindTint.transform.GetSiblingIndex() + 1);
             // The Overlord's silhouette climbing out of the top when a rewind undoes a death (the chase, seen in play).
             OverlordEscape.Create(transform, rewindTint.transform.GetSiblingIndex() + 1);
+            // His taunts on Floors 1000-997 (animated, voiced; Docs/Story.md "The Overlord watches the climb").
+            OverlordTaunts.Create(transform, world);
             var place = Landscape.rewinding;
             rewindingText = menu.AddText(menu.Root, "Rewinding", "\u25C4\u25C4  Rewinding", theme.title, place.anchor,
                 place.offset, place.size, out _, Mathf.Min(theme.title.fontSize, 84f), menu.TitleFont, null,
