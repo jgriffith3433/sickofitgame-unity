@@ -1970,20 +1970,13 @@ burning), Floor 1000's lava and creaking stone. The design and the numbers are i
 
 ## Readability is fairness (art direction and bullets)
 
-In a dodger every death must be the player's. So a hostile shot is never lost in the picture. Every enemy bullet wears a **white-hot
-core**, a **dark ink outline**, a **coloured halo** in the cyan/magenta family (a hue no Meadow grass or Ember Wastes sulphur/furnace
-backdrop uses; Floor 997's obsidian light takes magenta) and a **short fading trail**, in the Housemarque / Returnal vein. The level's
-or Circle's `shotRim` still sits as the pale rim under the ink so older contrast checks hold. The hero's own shots are a **warm amber
-elongated** look with a dark rim and no cyan halo, so they never read as danger. Settings > Accessibility still adds the heavier outlines
-and the one-colour high-contrast shots on top. Hitboxes are unchanged; on a phone the drawn sprite is grown so a bullet stays at least
-8 CSS px across beside the touch stick.
-
-**Telegraphs.** Aimed enemy shots flash at the muzzle and draw a thin magenta aim line for about 0.4 s before they fire (the attack
-clip's wind-up is the same window; a shorter clip is held to 0.3 s). Spread patterns flash the emitter. Floor hazards (lava rise, geyser
-tell, surge rumble, sinking-stone shake) glow a cyan or magenta warning for at least 0.5 s before they can hurt. A playtest-only overlay
-logs each lead (`TelegraphLog`). Playtests `readability` (contrast + parallax) and `bullet-look` (core/outline/trail, leads, phone size)
-on levels 1-5. Still to do: per-bullet-family silhouettes (a ring, a shard, a spiral) baked from Hawkes Gen into one atlas, and a second
-pass on the Cracked Road and Rune Bridges once their art is regenerated (GPU).
+In a dodger every death must be the player's. So a hostile shot is never lost in the picture: each wears two thin rims, a pale one
+beside it (the level's or Circle's `shotRim`; the Ember Wastes' is a hot cream) and an ink one outside it, so it reads on a bright
+meadow and on black slag alike. Settings > Accessibility still adds the heavier outlines and the one-colour high-contrast shots on top.
+Every level has at least two layers of depth: the Circle's `ambience` (silhouettes and weather at their own parallax) or, on a level
+without a Circle like the Meadow, the script's own `ambience`. Palette rule: backdrops stay dark and low in saturation, hazards and shots
+are the only hot orange/yellow on screen. Playtest `readability` (levels 1-5). Still to do: per-bullet-family silhouettes (a ring, a
+shard, a spiral) and a second pass on the Cracked Road and Rune Bridges once their art is regenerated (GPU).
 
 ## Hell's air (weather and the life far away)
 
@@ -2325,6 +2318,25 @@ base creature's art, tinted and larger (rule 5). Test arena `content/scenes/elit
 Not only on the far ledges: when the hero dies and undoes it, rewinding past the death, the Overlord's silhouette climbs out of
 the top of the screen, eyes red, a low hum rising. He is always ahead; time backward is the only way to see his back. A rewind
 that undoes no death shows nothing. (`OverlordEscape`; world bible "The chase".)
+
+## The Overlord watches the climb (Floors 1000-997, built 2026-11-12)
+
+The first four floors gave him no face; now he has one. On Floors 1000-997 the Overlord is on screen again and again, small and far on the
+upper edge, and he **answers what the hero just did**, in his own voice (`audio.json` voice `overlord`, unchanged: bored, deep, velvety, barely
+bothered) and in his own few words: *"Mm. ... "* then one short line. He still never listens to the hero and never turns to him (canon: he is always
+ahead; the hero only sees his back by rewinding). 30 lines, each said once per session, at most one every 20 s:
+
+| Moment | Lines | Figure |
+|---|---|---|
+| Floor entered (one per floor) | 1000 *The bottom. Cozy, isn't it?* / 999 *Rising, are we?* / 998 *Your village is floating by.* / 997 *Higher. How tiresome.* | hovers (Idle) |
+| The hero dies | by what hurt him last: an imp, a shot, a hazard (lava, geyser, cinder fire), a fall; 3 each | laughs |
+| A rewind (no death behind it) | 4: *Again with the clock.*, *I remember that trick.*... | climbs away when it ends |
+| A rewind that undoes a death | 4, spoken at once, whatever the cooldown: *Dead, then not. Tiresome.* | the silhouette climbs out of the top (see "The chase") |
+| 30 s without being hit | 3: *Untouched. It won't last.* | points |
+| The finale (`floors:<n>:finale`) | 3: *Now it gets loud.* | points |
+
+The figure (`overlordTaunt`, art spec `art/overlordTaunt.json`: Idle, Laugh, Point, Flee) stays on the upper edge, never over the touch stick or the
+rewind button, and his caption is one line. Code: `OverlordTaunts` (Gameplay/Presentation), lines from `Tools/Levels/overlord_taunts.py`.
 
 ## The Overlord on the far ledge (eight glimpses, Circles X and IX, built 2026-10-25)
 

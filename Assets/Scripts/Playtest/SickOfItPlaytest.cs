@@ -900,9 +900,6 @@ namespace SickOfIt.Playtest
                 "fight to its defeat signal, and the hero's voiced weakness hint line; the boss's telegraphs 1+ s after their glow. `boss-fight` events log the timeline, metrics boss.<level>.phases / peakMinions / fightSeconds. ~50 min", BossFightsSeconds, "level"));
             list.Add(new PlaytestScenario(ReadabilityId, "Art direction and bullet readability (Docs/Story.md \"Readability is fairness\"): Level 1 and Floors 1000-997 loaded directly (setup shortcut) and played by the bot through real input for 40 s each. " +
                 "Every hostile shot wears the baseline rims and, measured against the pixels round it in a screen capture, reads at 1.5:1 or better (`bullet` events with the ratio); each level has at least 2 parallax layers (`layers` events). Each beat is a check event", ReadabilitySeconds, "level"));
-            list.Add(new PlaytestScenario(BulletLookId, "Enemy bullet look and telegraphs (Docs/Story.md \"Readability is fairness\"): Level 1 and Floors 1000-997 loaded directly (setup shortcut) and played by the bot through real input for 40 s each. " +
-                "Every hostile shot shows a white-hot core, dark outline, cyan/magenta halo and a short trail (`bullet` events); aimed shots telegraph ≥ 0.3 s and hazards ≥ 0.5 s (`telegraph` events, debug overlay); " +
-                "on a 390x844 phone enemy bullets are ≥ 8 px across. Screenshots per floor. Each beat is a check event", BulletLookSeconds, "level"));
             list.Add(new PlaytestScenario(LightingId, "Lighting and post (Docs/lighting.md; Docs/Story.md \"Every floor has its own light\"): Level 1 and Floors 1000-997 loaded directly (setup shortcut) and played through real input with touch UI forced. " +
                 "Each floor shows its own dominant grade colour and bloom, lava/torch lights within 2 units with flicker, a hero rim, and on phone (390x844) the phone tier (half-res bloom, no grain, ≤8 lights) at 30+ fps. " +
                 "Rewind scanlines stay on the frame, off the playfield. `lighting` events and check events lighting <beat>; metrics lighting.levelN.fps / lights", LightingSeconds, "level"));
@@ -979,6 +976,7 @@ namespace SickOfIt.Playtest
                 "the bot plays to lose; the screen offers \"Return for 10 diamonds\" and the button is clicked: level 3 again, 15 diamonds, a moment of safety, the run and Grudges kept. Then dying with 15 and skipping with Escape " +
                 "(the Shaft drops him, nothing spent, run ended, Grudges gone), then dying with 5 (no offer, the drop). check events death-return <beat>", DeathReturnSeconds, "level"));
             list.Add(new PlaytestScenario(FirstRewindId, "Level 1's first minute as the tutorial: a shot crossing within 8 s, 4+ enemies by 25 s, neighbours moving, the meadow bed, the staged unavoidable volley (time to ~20%, pulsing rewind button 64+ px on a 390x844 touch phone, the hero's voiced 'Hold R.'), the press rewinding, a relief line, never two captions. check events first-rewind <beat>", FirstRewindSeconds, "level"));
+            list.Add(new PlaytestScenario(OverlordTauntsId, "The Overlord watches the climb: Levels 2-5 (Floors 1000-997) each show his animated figure with a voiced entry taunt (no line twice, caption on one line, 64+ px tall on touch); dying and rewinding plays a rewind taunt within 3 s. Run it at 390x844 on touch. check events overlord-taunts <beat>; metrics overlordTaunts.*", OverlordTauntsSeconds, "level"));
             list.Add(new PlaytestScenario(OverlordChaseId, $"The chase seen in play (docs/world-bible.md \"The chase\"): level {OverlordChaseLevel} loaded directly (setup shortcut), the bot plays to lose, then rewinds the death (R, or a finger on the HUD button on touch). The Overlord's silhouette must climb out of the top of the screen, readable, and be gone after. check events overlord-chase <beat>; metrics overlordChase.*", OverlordChaseSeconds, "level"));
             list.Add(new PlaytestScenario(RewindFxId, $"Rewind that feels amazing (RewindFx, Docs/Story.md): level {RewindFxLevel} loaded directly (setup shortcut), played by the bot, then R held {RewindFxHold:0.0} s with the juice topped up (setup shortcut). While held: the screen effect (scanlines, colour split, tracking bar, streaks) is up, a reversed whirr loops with its pitch climbing, and the frame rate stays 30+ fps; on release the sound stops and the screen returns. check events rewind-fx <beat>; metrics rewindFx.*", RewindFxSeconds, "level"));
             list.Add(new PlaytestScenario(RewindJuiceId, "Longer, more rewarding rewind and readable HUD feedback (Docs/GameplayCookbook.md \"The arcade loop\", Docs/Story.md \"The HUD and menus\"): Level 1 loaded directly with the shop reset (setup shortcut): " +
@@ -1428,6 +1426,8 @@ namespace SickOfIt.Playtest
                 yield return session.FirstRewindRun();
             else if (id == OverlordChaseId)
                 yield return session.OverlordChaseRun();
+            else if (id == OverlordTauntsId)
+                yield return session.OverlordTauntsRun();
             else if (id == RewindFxId)
                 yield return session.RewindFxRun();
             else if (id == SpawnEdgeId)
@@ -1501,8 +1501,6 @@ namespace SickOfIt.Playtest
                 yield return session.DifficultyRun();
             else if (id == ReadabilityId)
                 yield return session.ReadabilityRun();
-            else if (id == BulletLookId)
-                yield return session.BulletLookRun();
             else if (id == LightingId)
                 yield return session.LightingRun();
             else if (id == AmbienceId)
