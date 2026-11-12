@@ -618,7 +618,9 @@ function animatorFor(spec, built, w) {
     states.push({ stateName: stateOf(spec, name), spriteSheet: sheet(name), fps: m.fps, loop: m.loop, events });
   }
   const graph = spec.animator?.transitions;
-  if (graph) {
+  // Empty transitions: [] is truthy — treat it as "use the built-in graph" so a stub
+  // animator block with attackBool alone does not wipe IsWinding / Windup wiring.
+  if (graph && graph.length) {
     // The spec draws the graph itself: { from, to, when: [bool or trigger names, "!Name" = not], exit: true }.
     // Transitions to or from a state without a sheet yet are left out until it is made.
     const made = new Set(states.map((s) => s.stateName));
@@ -641,8 +643,18 @@ function animatorFor(spec, built, w) {
   }
   if (has('attack') && w.attackBool) {
     params.push({ name: w.attackBool, type: 'Bool', defaultValue: 0 });
-    for (const s of calm) t(s, 'Attack', { conditions: [cond(w.attackBool, 'If')] });
-    t('Attack', 'Idle', { conditions: [cond(w.attackBool, 'IfNot')] });
+    if (has('windup')) {
+      // Cuphead hold: Idle/Move -> Windup while winding, then Attack pulses off Windup.
+      for (const s of calm) t(s, 'Windup', { conditions: [cond(w.attackBool, 'If')] });
+      t('Windup', 'Idle', { conditions: [cond(w.attackBool, 'IfNot')] });
+      params.push({ name: w.attackParam, type: 'Trigger', defaultValue: 0 });
+      t('Windup', 'Attack', { conditions: [cond(w.attackParam, 'If')] });
+      for (const s of calm) t(s, 'Attack', { conditions: [cond(w.attackParam, 'If')] });
+      t('Attack', 'Idle', { hasExitTime: true, exitTime: 1 });
+    } else {
+      for (const s of calm) t(s, 'Attack', { conditions: [cond(w.attackBool, 'If')] });
+      t('Attack', 'Idle', { conditions: [cond(w.attackBool, 'IfNot')] });
+    }
   } else if (has('attack')) {
     params.push({ name: w.attackParam, type: 'Trigger', defaultValue: 0 });
     for (const s of calm) t(s, 'Attack', { conditions: [cond(w.attackParam, 'If')] });
@@ -652,6 +664,7 @@ function animatorFor(spec, built, w) {
     // The engine pulses "Hurt" on every hit that doesn't kill. Not from Attack: that would drop its fire event.
     params.push({ name: 'Hurt', type: 'Trigger', defaultValue: 0 });
     for (const s of calm) t(s, 'Hurt', { conditions: [cond('Hurt', 'If')] });
+    if (has('windup') && w.attackBool) t('Windup', 'Hurt', { conditions: [cond('Hurt', 'If')] });
     t('Hurt', 'Idle', { hasExitTime: true, exitTime: 1 });
   }
   // "Die" has no transitions: the engine plays it as the death effect.

@@ -60,9 +60,119 @@
     "clip": 1
   },
   "animator": {
-    "parameters": [],
-    "transitions": [],
-    "attackBool": "IsWinding"
+    "parameters": [
+      {
+        "name": "IsMoving",
+        "type": "Bool"
+      },
+      {
+        "name": "IsWinding",
+        "type": "Bool"
+      },
+      {
+        "name": "IsAttacking",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Move",
+        "when": [
+          "IsMoving"
+        ]
+      },
+      {
+        "from": "Move",
+        "to": "Idle",
+        "when": [
+          "!IsMoving"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Windup",
+        "when": [
+          "IsWinding"
+        ]
+      },
+      {
+        "from": "Move",
+        "to": "Windup",
+        "when": [
+          "IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Idle",
+        "when": [
+          "!IsWinding"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Move",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Attack",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Move",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      }
+    ],
+    "attackBool": "IsWinding",
+    "default": "Idle"
   },
   "reference": "Art/EnemyInk/cinder_concept.png"
 }

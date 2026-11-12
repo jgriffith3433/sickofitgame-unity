@@ -38,3 +38,20 @@ Judged against `docs/art-bible.md` (ink outline, two-tone cel, readable silhouet
 
 Spark poses (windup / struck / dead) queued from cleaned concept after this commit.
 Clips (`video.i2v`) for imp + cinder queued after `image.frame` (640 green) of their key poses.
+
+## Resume 2026-11-12 (clips baked)
+
+### Spark poses
+| File | Asset | Verdict | Notes |
+|---|---|---|---|
+| `poses/cinderSpark_windup.png` | `a_40b1de0982220f96` | PASS | Tiny flame coil + cyan core glow |
+| `poses/cinderSpark_struck.png` | `a_c9a8d0dba6e9283e` | PASS | Shock face + sparks |
+| `poses/cinderSpark_dead.png` | `a_55e9993a64a5f4e4` | PASS | Fizzle + smoke |
+
+### Thatch lunge redo
+| File | Asset | Verdict | Notes |
+|---|---|---|---|
+| `poses/_rejected/cinderThatch_lunge_redo.png` | `a_2e65f902b4b0b18d` | FAIL | Still grew arms/legs; concept is limbless straw ball. Another redo queued `j_47f98911631c`. |
+
+### Imp + cinder i2v → sheets
+All 10 clips PASS (usable; wind-up glow present on mid frames). Baked with `art.mjs --build --no-unity` into `Assets/Art/Enemies/Imp|Cinder` including new `*_windup.png`. Animator graphs restored with `IsWinding` → Windup. Previews: `preview_imp.png`, `preview_cinder.png`.

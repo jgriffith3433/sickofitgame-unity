@@ -53,7 +53,7 @@
           "loop": false,
           "events": [
             {
-              "frame": 5,
+              "frame": 4,
               "functionName": "FireProjectile"
             }
           ]
@@ -74,8 +74,8 @@
         },
         {
           "stateName": "Windup",
-          "spriteSheet": "Art/Enemies/Imp/Imp_attack.png",
-          "fps": 8,
+          "spriteSheet": "Art/Enemies/Imp/Imp_windup.png",
+          "fps": 12,
           "loop": true,
           "events": []
         }

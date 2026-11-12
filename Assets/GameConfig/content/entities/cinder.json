@@ -67,26 +67,26 @@
         },
         {
           "stateName": "Windup",
-          "spriteSheet": "Art/Enemies/Cinder/Cinder_move.png",
-          "fps": 8,
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_windup.png",
+          "fps": 12,
           "loop": true,
           "events": []
         },
         {
           "stateName": "Attack",
-          "spriteSheet": "Art/Enemies/Cinder/Cinder_move.png",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_attack.png",
           "fps": 12,
           "loop": false,
           "events": [
             {
-              "frame": 2,
+              "frame": 8,
               "functionName": "FireProjectile"
             }
           ]
         },
         {
           "stateName": "Hurt",
-          "spriteSheet": "Art/Enemies/Cinder/Cinder_idle.png",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_hurt.png",
           "fps": 12,
           "loop": false,
           "events": []
