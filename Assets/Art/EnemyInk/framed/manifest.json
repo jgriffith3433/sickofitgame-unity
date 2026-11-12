@@ -15,208 +15,73 @@
     "cinderSpark_struck": "a_057f154e9fc89a1d",
     "cinderSpark_dead": "a_ab05b318b47b801e",
     "cinderThatch_stand": "a_bb81b3c6ba63b46a",
-    "cinderThatch_windup": "local-reframe",
-    "cinderThatch_lunge": "a_e2c151d1172b7b08",
+    "cinderThatch_windup": "a_773bbd2466a05ef6",
+    "cinderThatch_lunge": "a_268b14b1ea7b805e",
+    "cinderThatch_struck": "a_354cacd856ccb667",
+    "cinderThatch_dead": "a_9eb8506fb086b8e8",
     "cinderBrute_stand": "a_855a05ac0a0ee4aa",
-    "cinderBrute_windup": "local-reframe",
+    "cinderBrute_windup": "a_b86713581476a1f5",
+    "cinderBrute_struck": "a_39c306ccbccc621a",
+    "cinderBrute_dead": "a_2bc7550a97314f63",
     "impSack_stand": "a_d2e670aed500ea5b",
-    "impSack_windup": "a_ebc9aafc0e014f98"
+    "impSack_windup": "a_ebc9aafc0e014f98",
+    "impSack_struck": "a_c18649d1e0207897",
+    "impSack_dead": "a_55a250844c98b1df"
   },
-  "jobs": [
-    {
-      "id": "j_6b03ead7fee6",
-      "tool": "image.edit",
-      "labels": {
-        "entity": "cinderSpark",
-        "pose": "windup",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 5
-      },
-      "status": "queued",
-      "detail": "queued"
+  "i2vQueued": {
+    "estimateUsd": 0.7,
+    "budgetUsd": 0.86,
+    "batch": [
+      {"id": "j_e9a86239e2e9", "entity": "cinderThatch", "clip": "idle"},
+      {"id": "j_23300285c0aa", "entity": "cinderThatch", "clip": "windup"},
+      {"id": "j_7875f2aeefe1", "entity": "cinderThatch", "clip": "attack"},
+      {"id": "j_e7a52dd0b25f", "entity": "cinderThatch", "clip": "hurt"},
+      {"id": "j_683a6bbbaa2e", "entity": "cinderThatch", "clip": "die"},
+      {"id": "j_9502d714e3f6", "entity": "cinderBrute", "clip": "idle"},
+      {"id": "j_cb826e300940", "entity": "cinderBrute", "clip": "windup"},
+      {"id": "j_94969b4f2cfa", "entity": "cinderBrute", "clip": "attack"},
+      {"id": "j_e0ba821a0623", "entity": "cinderBrute", "clip": "hurt"},
+      {"id": "j_6d4ab37bb540", "entity": "cinderBrute", "clip": "die"},
+      {"id": "j_5f2d1d2c9b19", "entity": "impSack", "clip": "idle"},
+      {"id": "j_507e89df5dfe", "entity": "impSack", "clip": "windup"},
+      {"id": "j_f388a77093dd", "entity": "impSack", "clip": "attack"},
+      {"id": "j_251e838f8595", "entity": "impSack", "clip": "hurt"},
+      {"id": "j_60b2c0035a1d", "entity": "impSack", "clip": "die"},
+      {"id": "j_bc927d9292ba", "entity": "cinderSpark", "clip": "windup", "note": "cyan redo; reuse=false"}
+    ]
+  },
+  "i2vJudged": {
+    "spentUsd": 0.55,
+    "pass": {
+      "cinderThatch": ["idle", "hurt", "die"],
+      "cinderBrute": ["idle", "windup", "attack", "hurt", "die"],
+      "impSack": ["idle", "windup", "attack", "hurt", "die"],
+      "cinderSpark": ["windup"]
     },
-    {
-      "id": "j_5238917fca8c",
-      "tool": "image.edit",
-      "labels": {
-        "entity": "cinderSpark",
-        "pose": "struck",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 5
-      },
-      "status": "queued",
-      "detail": "queued"
+    "failHeld": {
+      "cinderThatch": {
+        "windup": "a_0785c49a5e2b2fb7 bird legs — held a_773bbd2466a05ef6",
+        "attack": "a_ee20ba9c5256acd6 bird legs — held a_268b14b1ea7b805e"
+      }
     },
-    {
-      "id": "j_68c5198e9fd2",
-      "tool": "image.edit",
-      "labels": {
-        "entity": "cinderSpark",
-        "pose": "dead",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 5
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_d24bbc02a1ae",
-      "tool": "image.edit",
-      "labels": {
-        "entity": "cinderThatch",
-        "pose": "lunge",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 5
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_7165d8026f18",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "imp",
-        "clip": "idle",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_cd0419b2e613",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "imp",
-        "clip": "windup",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_c1364bd157df",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "imp",
-        "clip": "attack",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_ead0628d6346",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "imp",
-        "clip": "hurt",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_ac3cf8f3cf18",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "imp",
-        "clip": "die",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_ebe44a2076b9",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "cinder",
-        "clip": "idle",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_45c86457f611",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "cinder",
-        "clip": "windup",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_ea1d1fe70779",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "cinder",
-        "clip": "attack",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_76dfa01cc893",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "cinder",
-        "clip": "hurt",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
-    },
-    {
-      "id": "j_33b95c67f54e",
-      "tool": "video.i2v",
-      "labels": {
-        "entity": "cinder",
-        "clip": "die",
-        "studioChange": "c_9c4e54748bbe",
-        "orgCredits": 40
-      },
-      "status": "queued",
-      "detail": "queued"
+    "assets": {
+      "cinderThatch_idle": "a_5d9e1efd5747b4d9",
+      "cinderThatch_windup": "a_0785c49a5e2b2fb7",
+      "cinderThatch_attack": "a_ee20ba9c5256acd6",
+      "cinderThatch_hurt": "a_d5ecb74fc3451ff6",
+      "cinderThatch_die": "a_6d8832dec05e0856",
+      "cinderBrute_idle": "a_6481258e34123a32",
+      "cinderBrute_windup": "a_282a4df1fe22cbee",
+      "cinderBrute_attack": "a_1f7728db2c5b4f41",
+      "cinderBrute_hurt": "a_b13b269a7c3c4b06",
+      "cinderBrute_die": "a_99cd3be4df736462",
+      "impSack_idle": "a_111bc53f7c8af4ac",
+      "impSack_windup": "a_c95b48f2365249cd",
+      "impSack_attack": "a_c335a5b82ff86273",
+      "impSack_hurt": "a_2461b2943edd6eb9",
+      "impSack_die": "a_a175ddfbe3ecee67",
+      "cinderSpark_windup": "a_4c5fed0fbca0470d"
     }
-  ],
-  "queuedNext": [
-    {
-      "id": "j_47f98911631c",
-      "note": "thatch lunge no-limbs redo"
-    },
-    {
-      "id": "j_00e364df10f3",
-      "note": "spark idle i2v"
-    },
-    {
-      "id": "j_3425e2e0fb73",
-      "note": "spark windup i2v"
-    },
-    {
-      "id": "j_17758e97a5c0",
-      "note": "spark attack i2v"
-    },
-    {
-      "id": "j_8e8b4bdfdc77",
-      "note": "spark hurt i2v"
-    },
-    {
-      "id": "j_8659abf48f75",
-      "note": "spark die i2v"
-    }
-  ],
-  "resume": "2026-11-12 spark baked; variant held windups from framed poses"
+  },
+  "resume": "2026-11-12d: judged 16 i2v; baked thatch (held windup/attack)/brute/sack/spark sheets; launcherThief still pending."
 }

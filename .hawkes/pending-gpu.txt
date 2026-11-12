@@ -1,1 +1,2 @@
-dedicated main theme (k_aea2f5751795) — audio.music → audio.json id menu_theme; menu beds with ambience_floor1000 until that lands. Estimate ~$0.18 GPU (+ idle tail if a server stays up). Not made here: fleet has no GPU (AWS keys missing) and theme is owned by that task.
+launcherThief full ink (shares imp silhouette; concepts optional + image.edit windup/attack/hurt/die + 5 video.i2v) — not started; estimate ~$0.50; Windup/Attack still point at Move sheet; Floors 998/994
+cinderThatch Windup/Attack motion i2v — FAIL bird legs (windup a_0785c49a5e2b2fb7, attack a_ee20ba9c5256acd6); held limbless sheets ship; optional redo ~$0.04–0.08 with “NO LEGS floating ball only” (do not use a_f5d9ad823922f967 — it has legs)

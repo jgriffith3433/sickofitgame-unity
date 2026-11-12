@@ -130,8 +130,9 @@ Outline `#140B0D`, two-tone cel, one rim, green `#00ff00` key, 12 fps. Specs: `A
 `_defaults.json`. Wind-up is wired in gameplay: `ShootAbility.windupBool` (imp) and `ContactDamageAbility.windup`
 (cinders / sack imp). Playtest `enemy-ink` (arena `content/scenes/enemyInk.json`).
 
-**Status:** specs and wind-up wiring landed; Gen concepts/poses/clips queued within the task GPU budget (imp + cinder
-first). Remaining roster priced in `.hawkes/pending-gpu.txt`.
+**Status:** Imp + Cinder + CinderSpark + Thatch + Brute + Sack ship Idle/Windup/Attack/Hurt/Die sheets (spark wind-up
+cyan redo baked; thatch Windup/Attack stay held framed poses after i2v grew bird legs; brute/sack full motion).
+Launcher thief still pending (~$0.50; Floors 998/994). Playtest `enemy-ink`.
 
 ## 10. The hero redraw (done)
 

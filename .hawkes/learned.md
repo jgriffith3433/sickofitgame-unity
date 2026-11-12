@@ -1,5 +1,5 @@
-- convention: Menu plates — clone `menuTheme.button` before `MenuInkPlates.ApplyTo`; never mutate the shared theme.
-- lesson: sparse + Gen plates — `git sparse-checkout add Assets/Resources/UI/` then `studio_gen_import` (LFS pointers alone leave FromGen false).
-- lesson: fun-reviewer thin on living menu — fix with painted runtime textures + diegetic face/mutter/seam spark; `menu_theme` stays other-task.
-- canon: Main menu ledge — painted basalt/lava; Overlord every 15–20 s with `menu_overlord_hum`; hero faces and says `vo_hero_menu_mutter`.
-- lesson: audio.json append — surgical insert before final `]`; full `json.dumps` escapes unicode em-dashes and noisily rewrites the file.
+- lesson: Thatch windup pose a_f5d9ad823922f967 has bird legs — treat as FAIL; build held wind-up from limbless idle/lunge frames, not that pose or framed a_773bbd2466a05ef6.
+- lesson: Never `git checkout` enemy PNG folders to restore metas — it replaces baked sheets with LFS pointers; extract only `*.meta` via `git show HEAD:path > path`.
+- convention: Bake without DoD — Pillow+numpy venv + stub `_build_anims.py`/`cutout.py` under `DOD_ROOT`, then `SOI_ART_WORK=… SOI_ART_PYTHON=… node Tools/Art/art.mjs <id> --build --no-unity`.
+- lesson: This batch spent ~$0.55 of $0.86; launcherThief (~$0.50) still needs a later budget.
+- canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles share the hero’s hand-inked look and a Cuphead wind-up of at least 0.3 s (`docs/art-bible.md` §9).

@@ -1,27 +1,29 @@
-# Living main-menu diorama — Gen plates + fun-reviewer gaps
+# Enemy ink redraw — thatch/brute/sack/spark sheets baked
 
-## What was wrong
-Studio re-queued after #386/#387: sparse trees only had LFS pointers for menu plates. [Fun reviewer](c5b9f0b2-0a69-429b-9667-29645ff03a17) then scored the ledge **thin** (Full 3 / Interactions 2): flat quads, borrowed audio, walk/click only.
+## Wrong
+Prior merge shipped Imp/Cinder/CinderSpark plus held wind-ups for thatch/brute/sack; Hurt/Die and full motion for those three, and spark’s cyan wind-up, were still stand-ins / queued GPU.
 
-## What changed
-- **Gen plates:** re-imported trimmed library plates into `Assets/Resources/UI/MenuButtonPlate{,Hover,Pressed}.png` ($0 GPU).
-- **Painted ledge (gap 2):** `MenuLavaBackdrop` paints basalt + lava textures at runtime, adds far cliff teeth and a ledge lip (no climb-sheet load / phone budget).
-- **Diegetic verbs (gap 3):** cyan seam sparks under the hero; on each Overlord pass he **faces** the silhouette and mutters `vo_hero_menu_mutter`.
-- **Menu sound identity (gap 1, partial):** voiced idle `vo_hero_menu_sigh`, Overlord `menu_overlord_hum` (new SFX); bed still `ambience_floor1000` until `menu_theme` (k_aea2f5751795).
-- **Playtest `living-menu`:** gates painted ledge + hero faces Overlord; metrics `heroFacedOverlord`, `seamFlickers`.
-- Story + world-bible ledge updated.
+## Judged (16 `video.i2v`, ~$0.55 of $0.86)
+- **cinderBrute** all 5 PASS → motion sheets baked.
+- **impSack** all 5 PASS → motion sheets baked.
+- **cinderSpark windup** `a_4c5fed0fbca0470d` PASS (cyan mid-frames) → replaced held sheet; other spark clips re-baked from prior PASS assets.
+- **cinderThatch** idle/hurt/die PASS (limbless). Windup + attack i2v FAIL (bird legs). Held Windup remade from limbless idle frame; Attack held from limbless lunge frame. Note: old “PASS” pose `a_f5d9ad823922f967` also has legs — do not reuse.
 
-## Fun-reviewer
-Initial: **thin**. After fixes: self-pass **living** — Full↑ (painted rock/lava/cliffs), Interactions↑ (face+mutter, seam spark), Story↑ (voiced mutter + hum). Remaining: dedicated `menu_theme` (owned elsewhere).
-
-## Reviewer
-**Merge** once beta `living-menu` (phone) runs. Theme music still pending-gpu.
+## Changed
+- Sheets: `Assets/Art/Enemies/{CinderThatch,CinderBrute,ImpSack,CinderSpark}/*` (+ `.sheet.json`, kept `.meta` GUIDs).
+- Entities: animator re-applied for those four (`Windup` + Idle/Move/Attack/Hurt/Die); contact `windup` 0.35 inherited / set.
+- Docs: `docs/art-bible.md` §9, `EnemyInk/JUDGE.md`, `framed/manifest.json`, previews under `EnemyInk/previews/`.
+- `.hawkes/pending-gpu.txt`: **launcherThief** (~$0.50, Floors 998/994) + optional thatch windup/attack motion redo.
+- Playtest scenario stays `enemy-ink` (`{"device":"phone"}`).
 
 ## Checks
-- Voice/SFX: $0.048 API (no GPU). Fleet still no AWS keys.
-- Plate PNGs + three new Audio/Generated clips on disk.
-- C# read for duplicate members — clean. **Unity compile not run here.**
-- Conflicts: none. Stayed out of enemy-roster c_9c4e54748bbe.
+- Visual judge of mid-frames + baked thatch windup/attack (limbless) and spark windup (cyan).
+- `art.mjs --build --no-unity` with stub DoD + Pillow venv (lesson m_a9b1750211f6).
+- Phone height math at `levelCameraOrthoSize` 2.8: spark ~42 px; thatch/brute/sack well over 40.
+- Unity compile not run here (no editor). Conflicts: none.
 
-## Acceptance map
-1–4 unchanged from living-menu gates; phone criteria in scenario.
+## Fun reviewer
+**thin** — art/telegraph pass for existing Meadow foes, not a new area. Living-world score unchanged. Gaps: launcherThief ink; thatch windup/attack still held (readable, not full motion).
+
+## Reviewer
+**merge for this slice** — acceptance for thatch/brute/sack/spark Idle/Windup/Attack/Hurt/Die + ≥0.3 s wind-up met; launcherThief still open under pending-gpu (budget left ~$0.31 < ~$0.50).
