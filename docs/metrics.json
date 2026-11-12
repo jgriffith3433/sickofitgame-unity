@@ -1,0 +1,17 @@
+{
+  "jumpHeight": 2.4,
+  "jumpDistance": 3.2,
+  "runSpeed": 3.8,
+  "corridorWidths": {
+    "narrow": 2.0,
+    "standard": 4.0,
+    "wide": 6.0
+  },
+  "feel": {
+    "coyoteMs": 100,
+    "jumpBufferMs": 120,
+    "hitStopMs": 60,
+    "screenShakeMs": 100,
+    "diamondFlyMs": 600
+  }
+}

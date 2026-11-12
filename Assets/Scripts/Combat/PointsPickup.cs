@@ -155,7 +155,9 @@ namespace SickOfIt.Combat
                 return;
 
             // Award points
+            Vector2 at = transform.position;
             RogueliteManager.Instance.AddPoints(pointsValue);
+            SickOfIt.Gameplay.FeelVfx.DiamondPickup(at);
 
             // Play collect SFX (PlayOneShot so it finishes even after return to pool)
             if (collectSound != null && audioSource != null)

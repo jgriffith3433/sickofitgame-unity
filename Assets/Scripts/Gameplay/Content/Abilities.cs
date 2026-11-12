@@ -1015,6 +1015,10 @@ namespace SickOfIt.Gameplay.Content
                 other.ApplyStatus(effect, Owner);
             if (hitSound != null)
                 AudioSource.PlayClipAtPoint(hitSound, Owner.Position);
+            // Hero shot landing: impact spark at the contact (enemy hit flash is separate).
+            if (Owner.Team == Team.Player)
+                SickOfIt.Gameplay.FeelVfx.Play(SickOfIt.Gameplay.FeelVfx.Kind.Impact, other.Position, size: 0.5f,
+                    tint: new Color(1f, 0.8f, 0.35f, 1f));
             hits++;
             if (hits > pierce)
                 Owner.Die(DeathCause.Self);
@@ -1029,6 +1033,8 @@ namespace SickOfIt.Gameplay.Content
             if (dieOnSolid)
             {
                 SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.bulletImpact);
+                SickOfIt.Gameplay.FeelVfx.Play(SickOfIt.Gameplay.FeelVfx.Kind.Impact, Owner.Position, size: 0.55f,
+                    tint: Owner.FxColor.a > 0.01f ? Owner.FxColor : new Color(1f, 0.85f, 0.4f, 1f));
                 Owner.Die(DeathCause.Self);
             }
         }

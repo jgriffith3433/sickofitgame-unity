@@ -1925,7 +1925,7 @@ shake, no words: the hero is sick of it, not blind to it (2026-10-27; playtest `
 
 Hell is an arcade cabinet, and a cabinet sells every blow: the world stops for a beat when something lands hard, monsters
 flinch, the hero's gun kicks, and Hell's fire actually shines. This is feel, not story: no new words or sounds, none of it
-touches the simulation or the rewind, and all of it is tuned in `game.json` `feel` (2026-10-25; playtest `game-feel`).
+touches the simulation or the rewind, and all of it is tuned in `game.json` `feel` (2026-10-25; playtest `game-feel` / `vfx-kit`).
 
 - **The hit-freeze**: a strong blow (2+ damage: the fists' hook, the whip's last lash, a crit), a kill, an explosion or the hero
   getting hurt stops the world for 45-80 ms; a Warden's killing blow holds it for about a fifth of a second. It is Unity's clock
@@ -1939,6 +1939,11 @@ touches the simulation or the rewind, and all of it is tuned in `game.json` `fee
   sea lights the bottom of the screen, the Magma King smoulders, and explosions and death pops flare. Soft additive sprites
   (`Glow`), not 2D lights: the game runs the built-in renderer, and on WebGL a few dozen batched quads cost far less than a lighting
   pass. At most 48 on screen at once.
+- **Hand-made flipbook bursts** (2026-11-12, Dead Cells-style): every shot, impact, enemy hit, family death (imp soot, cinder ash,
+  sack/Floor 997 threats), diamond pickup, hero hurt, hero death, dash smear, graze streak and rewind-start ripple plays a short
+  inked flipbook from one atlas (`FeelVfx` / `Resources/Effects/FeelVfxAtlas`, pooled — never Instantiate in play). Diamonds arc to
+  the HUD gem within 0.6 s. Phones draw the same sheets smaller and cap the pool lower so 390x844 holds 30+ fps. Gen sheets replace
+  the procedural stand-ins; playtest `vfx-kit`.
 
 ## Every floor has its own light (built 2026-11-11)
 

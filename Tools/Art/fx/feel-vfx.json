@@ -1,0 +1,75 @@
+{
+  "about": "Combat feel flipbooks (Docs/Story.md \"The feel of a hit\", Dead Cells-style). Twelve one-shot bursts packed into Resources/Effects/FeelVfxAtlas. Gen: image.generate keyframe on #00ff00 → video.i2v → sprite.sheet (key 00ff00, 10 frames, 256 px cells); pack rows top-to-bottom in Kind enum order at 128 px.",
+  "out": "Assets/Resources/Effects",
+  "name": "FeelVfxAtlas",
+  "key": "00ff00",
+  "size": [512, 512],
+  "pivot": [256, 256],
+  "worldWidth": 1.0,
+  "widthPixels": 128,
+  "scale": 1.0,
+  "clips": {
+    "muzzle": { "image": "muzzle.png", "make": "burst", "frames": 10 },
+    "impact": { "image": "impact.png", "make": "burst", "frames": 10 },
+    "hit": { "image": "hit.png", "make": "burst", "frames": 10 },
+    "deathImp": { "image": "deathImp.png", "make": "burst", "frames": 10 },
+    "deathCinder": { "image": "deathCinder.png", "make": "burst", "frames": 10 },
+    "deathSack": { "image": "deathSack.png", "make": "burst", "frames": 10 },
+    "diamond": { "image": "diamond.png", "make": "burst", "frames": 10 },
+    "heroHurt": { "image": "heroHurt.png", "make": "burst", "frames": 10 },
+    "heroDeath": { "image": "heroDeath.png", "make": "burst", "frames": 10 },
+    "dash": { "image": "dash.png", "make": "burst", "frames": 10 },
+    "graze": { "image": "graze.png", "make": "burst", "frames": 10 },
+    "rewindRipple": { "image": "rewindRipple.png", "make": "burst", "frames": 10 }
+  },
+  "gen": {
+    "muzzle.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: bright warm amber muzzle flash burst, heavy #140B0D outline, flat cel. Plain flat pure green (#00ff00)."
+    },
+    "impact.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: gold white star bullet impact spark, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "hit.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: white-hot enemy hit flash ring with orange rim, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "deathImp.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: black soot puff death burst with orange embers, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "deathCinder.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: grey ash shatter with yellow sparks, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "deathSack.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: soot puff with gold diamond flecks and embers, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "diamond.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: cyan diamond gem sparkle with white glints, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "heroHurt.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: red hero-hurt flash ring, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "heroDeath.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: large red-orange hero death explosion, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "dash.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: cyan horizontal dash afterimage streak, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "graze.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: warm gold graze spark streak, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    },
+    "rewindRipple.png": {
+      "canvas": "00ff00",
+      "prompt": "Hand-inked 2D arcade VFX: teal rewind time ripple rings, heavy #140B0D outline. Plain flat pure green (#00ff00)."
+    }
+  }
+}
