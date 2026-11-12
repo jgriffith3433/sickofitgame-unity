@@ -2,4 +2,3 @@
 2. Watch the lineup: imp, cinder, thatch, brute, spark, sack, launcher thief — each should wind up ≥0.3 s before the hit.
 3. Thief and thatch: silhouette readable, Windup glow visible (held sheets until Gen motion lands after the fleet pause).
 4. On Floor 998 in a normal climb, the thief should glow before the snatch.
-5. (Also on beta from the merged adaptive-score change) New Game Meadow: explore→fight→finale layers; hold R for tape-stop; Floors 1000-997 via `score-floors` when checking score cues.
