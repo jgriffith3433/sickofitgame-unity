@@ -1,29 +1,28 @@
-# Enemy ink redraw — thatch/brute/sack/spark sheets baked
+# Living main-menu diorama — clicks + ledge life
 
-## Wrong
-Prior merge shipped Imp/Cinder/CinderSpark plus held wind-ups for thatch/brute/sack; Hurt/Die and full motion for those three, and spark’s cyan wind-up, were still stand-ins / queued GPU.
+## What was wrong
+Studio re-queued after #389 because `.hawkes/pending-gpu.txt` listed `menu_theme` (owned by **k_aea2f5751795**, not this task). Gen button plates, painted ledge, Overlord pass, hero mutter/sigh and `living-menu` already landed on beta. PM also linked **f_9ee4fb228e7d** (smoke stuck on Play/Continue; duplicate EventSystem warning). Fun-reviewer still scored the ledge **thin**.
 
-## Judged (16 `video.i2v`, ~$0.55 of $0.86)
-- **cinderBrute** all 5 PASS → motion sheets baked.
-- **impSack** all 5 PASS → motion sheets baked.
-- **cinderSpark windup** `a_4c5fed0fbca0470d` PASS (cyan mid-frames) → replaced held sheet; other spark clips re-baked from prior PASS assets.
-- **cinderThatch** idle/hurt/die PASS (limbless). Windup + attack i2v FAIL (bird legs). Held Windup remade from limbless idle frame; Attack held from limbless lunge frame. Note: old “PASS” pose `a_f5d9ad823922f967` also has legs — do not reuse.
+## What changed
+- **No pending-gpu** for `menu_theme` (other task). Bed stays `ambience_floor1000` until that lands. Plates already Gen on beta (`MenuInkPlates.FromGen`).
+- **Clicks / EventSystem (f_9ee4fb228e7d):** `EventSystemGuard` disables `StandaloneInputModule`, watches aggressively for 2 s after every scene load, exposes `EnabledCount`. `MainMenuManager.EnsureClicksReady` re-Ensures after two frames and forces menu buttons interactable. `living-menu` gates clicks-ready + one EventSystem held 2 s, then a real Play click.
+- **Ledge life (fun-reviewer gaps):** damned soul sit-in (asymmetric, looks up / faces hero), occasional lava bursts aimed near the hero, Overlord sheds an ember mid-climb that lands with a splash + seam flash.
+- Story + `docs/world-bible.md` ledge updated. Scenario: `living-menu`.
 
-## Changed
-- Sheets: `Assets/Art/Enemies/{CinderThatch,CinderBrute,ImpSack,CinderSpark}/*` (+ `.sheet.json`, kept `.meta` GUIDs).
-- Entities: animator re-applied for those four (`Windup` + Idle/Move/Attack/Hurt/Die); contact `windup` 0.35 inherited / set.
-- Docs: `docs/art-bible.md` §9, `EnemyInk/JUDGE.md`, `framed/manifest.json`, previews under `EnemyInk/previews/`.
-- `.hawkes/pending-gpu.txt`: **launcherThief** (~$0.50, Floors 998/994) + optional thatch windup/attack motion redo.
-- Playtest scenario stays `enemy-ink` (`{"device":"phone"}`).
-
-## Checks
-- Visual judge of mid-frames + baked thatch windup/attack (limbless) and spark windup (cyan).
-- `art.mjs --build --no-unity` with stub DoD + Pillow venv (lesson m_a9b1750211f6).
-- Phone height math at `levelCameraOrthoSize` 2.8: spark ~42 px; thatch/brute/sack well over 40.
-- Unity compile not run here (no editor). Conflicts: none.
-
-## Fun reviewer
-**thin** — art/telegraph pass for existing Meadow foes, not a new area. Living-world score unchanged. Gaps: launcherThief ink; thatch windup/attack still held (readable, not full motion).
+## Fun-reviewer
+After life pass: still **thin** on painted Overlord / `menu_theme` / rewind-on-menu toy (out of this task / owned elsewhere). Full↑ Breathing↑ Interactions↑ vs prior; remaining gaps called out in try/learned for later polish.
 
 ## Reviewer
-**merge for this slice** — acceptance for thatch/brute/sack/spark Idle/Windup/Attack/Hurt/Die + ≥0.3 s wind-up met; launcherThief still open under pending-gpu (budget left ~$0.31 < ~$0.50).
+**Merge** on criteria 1–4 + click harden; do not block on `menu_theme`.
+
+## Checks
+- C# read for duplicate members / missing usings on changed files — clean.
+- **Unity compile not run here** (no editor).
+- Conflicts: none. Stayed out of enemy-roster redraw (c_01cbd869e007 / k_f8a8bfcb37fe).
+- GPU spend: $0 (reuse library plates + procedural life).
+
+## Acceptance map
+1. Hero + Overlord ≤20 s — existing + ember drop / soul look-up
+2. Embers + logo slam ≤0.5 s — existing; lava bursts add life
+3. Illustrated plates hover/press — Gen plates already on beta
+4. [phone] hero above buttons, ≥48 px, ≤20 s — existing `living-menu` gates

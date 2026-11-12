@@ -15,6 +15,7 @@ namespace SickOfIt.Core.UI
     public static class EventSystemGuard
     {
         static EventSystem keeper;
+        static float aggressiveUntil;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Install()
@@ -24,15 +25,31 @@ namespace SickOfIt.Core.UI
             Ensure();
         }
 
-        static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Ensure();
+        static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            // After a load, scene Awakes may re-enable a second EventSystem for a few frames: watch tightly for 2 s.
+            aggressiveUntil = Time.unscaledTime + 2f;
+            Ensure();
+        }
+
+        /// <summary>How many EventSystems are enabled and active in the hierarchy right now.</summary>
+        public static int EnabledCount()
+        {
+            int n = 0;
+            foreach (var es in Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (es != null && es.enabled && es.gameObject.activeInHierarchy)
+                    n++;
+            return n;
+        }
 
         /// <summary>Makes sure the one EventSystem exists and is the only enabled one; returns it.</summary>
         public static EventSystem Ensure()
         {
             if (!Application.isPlaying)
                 return EventSystem.current;
-            if (keeper == null)
+            if (keeper == null || keeper.Equals(null))
             {
+                keeper = null;
                 // Prefer a scene / Camera-prefab EventSystem that already has an Input System UI module: its actions
                 // stay wired. A brand-new empty module can miss pointer/touch events and leave Play / Continue dead
                 // (backlog f_9ee4fb228e7d: smoke sits on the menu forever).
@@ -58,6 +75,12 @@ namespace SickOfIt.Core.UI
 
             foreach (var other in Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
+                if (other == null)
+                    continue;
+                // Legacy StandaloneInputModule fights the Input System module and can swallow clicks on WebGL.
+                foreach (var legacy in other.GetComponents<StandaloneInputModule>())
+                    if (legacy != null)
+                        legacy.enabled = false;
                 if (other == keeper)
                     continue;
                 // Switch off even if already disabled so a late Awake that re-enables it loses its modules first.
@@ -67,8 +90,16 @@ namespace SickOfIt.Core.UI
             }
             if (!keeper.enabled)
                 keeper.enabled = true;
+            if (!keeper.gameObject.activeSelf)
+                keeper.gameObject.SetActive(true);
+            foreach (var legacy in keeper.GetComponents<StandaloneInputModule>())
+                if (legacy != null)
+                    legacy.enabled = false;
+            var ui = keeper.GetComponent<InputSystemUIInputModule>();
+            if (ui != null && !ui.enabled)
+                ui.enabled = true;
             foreach (var module in keeper.GetComponents<BaseInputModule>())
-                if (module != null && !module.enabled)
+                if (module != null && !(module is StandaloneInputModule) && !module.enabled)
                     module.enabled = true;
             EventSystem.current = keeper;
             return keeper;
@@ -77,7 +108,7 @@ namespace SickOfIt.Core.UI
         /// <summary>
         /// A scene's own EventSystem switches on in its Awake, before <c>sceneLoaded</c> fires, and one made later by a bridge
         /// or an additive scene never fires it at all: the guard looks again a few times a second, so a second one lives for
-        /// a fraction of a second, never for a whole menu.
+        /// a fraction of a second, never for a whole menu. Right after a load it checks every frame for 2 s.
         /// </summary>
         sealed class Watcher : MonoBehaviour
         {
@@ -85,9 +116,11 @@ namespace SickOfIt.Core.UI
 
             void Update()
             {
-                if (Time.unscaledTime < next)
+                float now = Time.unscaledTime;
+                float gap = now < aggressiveUntil ? 0f : 0.25f;
+                if (now < next)
                     return;
-                next = Time.unscaledTime + 0.25f;
+                next = now + gap;
                 Ensure();
             }
         }

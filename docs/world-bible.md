@@ -92,14 +92,15 @@ palace, daylight leaking in). Shared rule: each Circle opens with a *vista* beat
 ### The main menu ledge (living diorama, built)
 - **Mood:** bored pause before the climb; Hell's glow, not the meadow's daylight.
 - **Look and sound:** ash-to-ember sky, painted basalt ledge + lava strip (runtime grain, far cliff teeth), cyan rewind seam,
-  drifting orange/cyan embers; the hero idles bored with a voiced sigh (`vo_hero_menu_sigh`); the Overlord's silhouette climbs
-  the far cliff every 15–20 s with a low hum (`menu_overlord_hum`) and the hero faces him and mutters (`vo_hero_menu_mutter`);
-  camera breathes ±3% over 20 s; title slams in 0.5 s then pulses. Bed: `menu_theme` when landed, else `ambience_floor1000`.
-  Buttons on illustrated basalt-ember plates (hover/press).
+  drifting orange/cyan embers, occasional lava burst (`lava_burst`); the hero idles bored with a voiced sigh (`vo_hero_menu_sigh`);
+  a pale damned soul sits further along the ledge; the Overlord's silhouette climbs the far cliff every 15–20 s with a low hum
+  (`menu_overlord_hum`), sheds one ember mid-pass, and the hero faces him and mutters (`vo_hero_menu_mutter`); camera breathes
+  ±3% over 20 s; title slams in 0.5 s then pulses. Bed: `menu_theme` when landed, else `ambience_floor1000`. Buttons on
+  illustrated basalt-ember plates (hover/press).
 - **Size:** as long as the player stays. **In/out:** boot / quit-to-menu; out by Play / Continue / New Run / the staged buttons.
 - **Landmark:** the Overlord climbing past above the ledge.
-- **Life:** embers, lava shimmer, Overlord pass + hum, hero sigh/mutter, seam spark under his feet, other climbers as pale ghosts (`climbingNow` chip).
-- **Interactions:** press a plated button, walk the hero on the ledge, stand on the cyan seam (it sparks), watch the Overlord (he faces and mutters), open Settings / shop / Codex when earned.
+- **Life:** embers, lava shimmer + bursts, damned soul (looks up / faces hero), Overlord pass + hum + dropped ember, hero sigh/mutter, seam spark under his feet, other climbers as pale ghosts (`climbingNow` chip).
+- **Interactions:** press a plated button, walk the hero on the ledge (soul turns), stand on the cyan seam (it sparks), watch the Overlord (hero mutters; soul looks up; an ember falls), open Settings / shop / Codex when earned.
 
 ### Menus and the climb's ghosts
 The main menu ledge (above) hosts the hero and **other climbers as pale ghosts** around him (Hawkes Net; `climbingNow` chip).
