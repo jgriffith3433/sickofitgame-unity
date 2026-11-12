@@ -1,5 +1,4 @@
-- convention: Menu plates — clone `menuTheme.button` before `MenuInkPlates.ApplyTo`; never mutate the shared theme.
-- lesson: sparse + Gen plates — `git sparse-checkout add Assets/Resources/UI/` then `studio_gen_import` (LFS pointers alone leave FromGen false).
-- lesson: fun-reviewer thin on living menu — fix with painted runtime textures + diegetic face/mutter/seam spark; `menu_theme` stays other-task.
-- canon: Main menu ledge — painted basalt/lava; Overlord every 15–20 s with `menu_overlord_hum`; hero faces and says `vo_hero_menu_mutter`.
-- lesson: audio.json append — surgical insert before final `]`; full `json.dumps` escapes unicode em-dashes and noisily rewrites the file.
+- convention: EnemyInk framed poses — keep PASS Gen poses in `Assets/Art/EnemyInk/framed/` via free `image.frame` (640 / 00ff00 / fill 0.78); feed those `asset:` ids straight into `video.i2v` without local SOI_ART_WORK when the Windows enemy root is missing.
+- lesson: Thatch windup Gen frame can grow legs — always re-frame from the judged PASS pose (`a_f5d9ad823922f967`), never reuse a FAIL framed asset.
+- lesson: GPU batch sizing — thatch+brute+sack×5 + spark windup ≈ $0.70 on one Wan load; launcherThief (~$0.50) must wait for a later budget.
+- canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles share the hero’s hand-inked look and a Cuphead wind-up of at least 0.3 s (`docs/art-bible.md` §9).

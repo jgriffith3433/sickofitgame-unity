@@ -1,27 +1,26 @@
-# Living main-menu diorama — Gen plates + fun-reviewer gaps
+# Enemy ink redraw — framed variants + i2v queued (~$0.70)
 
-## What was wrong
-Studio re-queued after #386/#387: sparse trees only had LFS pointers for menu plates. [Fun reviewer](c5b9f0b2-0a69-429b-9667-29645ff03a17) then scored the ledge **thin** (Full 3 / Interactions 2): flat quads, borrowed audio, walk/click only.
+## Wrong
+Prior merge (#388 / c_9c4e54748bbe) shipped Imp/Cinder/CinderSpark sheets and held still wind-ups for thatch/brute/sack because GPU budget ran out. Hurt/Die for variants and full motion for those three were still stand-ins; spark wind-up lacked cyan mid-frames.
 
-## What changed
-- **Gen plates:** re-imported trimmed library plates into `Assets/Resources/UI/MenuButtonPlate{,Hover,Pressed}.png` ($0 GPU).
-- **Painted ledge (gap 2):** `MenuLavaBackdrop` paints basalt + lava textures at runtime, adds far cliff teeth and a ledge lip (no climb-sheet load / phone budget).
-- **Diegetic verbs (gap 3):** cyan seam sparks under the hero; on each Overlord pass he **faces** the silhouette and mutters `vo_hero_menu_mutter`.
-- **Menu sound identity (gap 1, partial):** voiced idle `vo_hero_menu_sigh`, Overlord `menu_overlord_hum` (new SFX); bed still `ambience_floor1000` until `menu_theme` (k_aea2f5751795).
-- **Playtest `living-menu`:** gates painted ledge + hero faces Overlord; metrics `heroFacedOverlord`, `seamFlickers`.
-- Story + world-bible ledge updated.
+## This pass (non-GPU + queue)
+- Free `image.frame` of PASS poses → `Assets/Art/EnemyInk/framed/` for thatch (stand/windup/lunge/struck/dead), brute (struck/dead + existing stand/windup), sack (struck/dead + stand/windup), spark stand/windup. Metas added.
+- Queued **16 `video.i2v`** jobs (one Wan batch, `wait_for_server`): thatch×5, brute×5, sack×5, spark windup cyan redo×1. Estimate **$0.70** of **$0.86**. Ids in `.hawkes/waiting-jobs.txt` (already running on RunPod when queued).
+- Updated `docs/art-bible.md` §9 status, `JUDGE.md`, `framed/manifest.json`.
+- Playtest scenario stays `enemy-ink` (phone device) in `.hawkes/scenario.txt`.
+- **Left:** `launcherThief` full ink (~$0.50) in `.hawkes/pending-gpu.txt` (over remaining budget after this batch).
 
-## Fun-reviewer
-Initial: **thin**. After fixes: self-pass **living** — Full↑ (painted rock/lava/cliffs), Interactions↑ (face+mutter, seam spark), Story↑ (voiced mutter + hum). Remaining: dedicated `menu_theme` (owned elsewhere).
-
-## Reviewer
-**Merge** once beta `living-menu` (phone) runs. Theme music still pending-gpu.
+## On resume (Studio brings job results)
+Judge each clip against art bible + silhouette; bake with `SOI_ART_WORK=... node Tools/Art/art.mjs <id> --build --apply --no-unity`; replace sheets under `Assets/Art/Enemies/{CinderThatch,CinderBrute,ImpSack,CinderSpark}`; clear pending lines that land; PR screenshots of lineup beside the hero.
 
 ## Checks
-- Voice/SFX: $0.048 API (no GPU). Fleet still no AWS keys.
-- Plate PNGs + three new Audio/Generated clips on disk.
-- C# read for duplicate members — clean. **Unity compile not run here.**
-- Conflicts: none. Stayed out of enemy-roster c_9c4e54748bbe.
+- `hawkesgen_estimate` for thatch+brute+sack+spark = $0.70; framing cost $0.
+- `hawkesgen_jobs`: batch queued/running (RunPod).
+- Unity compile not run here (no editor on agent; JSON/docs/PNG only this pass).
+- Conflicts: none.
 
-## Acceptance map
-1–4 unchanged from living-menu gates; phone criteria in scenario.
+## Fun reviewer
+**thin** (1–2 lines): this pass is art pipeline + wind-up telegraph for existing Meadow foes, not a new area. Living-world score unchanged; gaps are unfinished GPU sheets (queued) and launcherThief ink.
+
+## Reviewer
+**revise until bake lands** — acceptance needs Idle/Windup/Attack/Hurt/Die motion sheets; held frames + queued i2v are the correct mid-pass. Do not open PR as done until waiting-jobs bake.
