@@ -16,7 +16,7 @@ namespace SickOfIt.Gameplay
     /// shots crowd the world and out as it empties, and stays out under a push track or a Warden's theme.
     /// Presentation only: it reads the simulation and never changes it.
     /// </summary>
-    public sealed class StageMusic : MonoBehaviour
+    public sealed partial class StageMusic : MonoBehaviour
     {
         const float FadeSeconds = 0.8f;
         // The push track stays this long after a push ends, so a short breather doesn't flip the music back and forth.
@@ -95,6 +95,7 @@ namespace SickOfIt.Gameplay
             levelClip = source.clip;
             levelVolume = volume = Volume.AuthoredOf(source);
             Subscribe();
+            InitScore(source);
         }
 
         void Subscribe()
@@ -109,6 +110,7 @@ namespace SickOfIt.Gameplay
 
         void OnDestroy()
         {
+            ReleaseScore();
             if (subscribedClock != null)
             {
                 subscribedClock.OnRewindStarted -= BeginRewindVariant;
@@ -134,7 +136,7 @@ namespace SickOfIt.Gameplay
                 rewindFilter.lowpassResonanceQ = 1.2f;
             }
             rewindSrc.clip = main.clip;
-            rewindSrc.pitch = RewindPitchStart;
+            rewindSrc.pitch = score != null ? 1f : RewindPitchStart;
             Volume.Set(rewindSrc, 0f);
             rewindSrc.Play();
             if (main.clip.length > 0.1f)
@@ -161,7 +163,9 @@ namespace SickOfIt.Gameplay
             rewindElapsed += dt;
             float speed = dt / (rewindTarget > rewindLevel ? RewindVariantInSeconds : RewindVariantOutSeconds);
             rewindLevel = Mathf.MoveTowards(rewindLevel, rewindTarget, speed);
-            rewindSrc.pitch = Mathf.Lerp(RewindPitchStart, RewindPitchEnd, Mathf.Clamp01(rewindElapsed / RewindPitchSeconds));
+            rewindSrc.pitch = score != null
+                ? Mathf.Lerp(1f, TapeStopPitch, Mathf.Clamp01(rewindElapsed / TapeStopSeconds))
+                : Mathf.Lerp(RewindPitchStart, RewindPitchEnd, Mathf.Clamp01(rewindElapsed / RewindPitchSeconds));
             Volume.Set(rewindSrc, volume * RewindVariantVolume * rewindLevel);
             if (rewindTarget <= 0f && rewindLevel <= 0f)
                 rewindSrc.Stop();
@@ -209,12 +213,14 @@ namespace SickOfIt.Gameplay
         {
             w.Int(cue);
             w.Float(cueVolume);
+            w.Bool(finaleFlag);
         }
 
         public void LoadState(StateReader r)
         {
             cue = r.Int();
             cueVolume = r.Float();
+            finaleFlag = r.Bool();
             restart = false;
         }
 
@@ -235,6 +241,8 @@ namespace SickOfIt.Gameplay
                 if (!wasRewinding && layer != null)
                     layer.Stop();
                 wasRewinding = true;
+                if (score != null)
+                    TickScoreRewind();
                 return;
             }
             if (wasRewinding)
@@ -243,6 +251,11 @@ namespace SickOfIt.Gameplay
                 wasRewinding = false;
                 fadeStart = -1f;
                 Volume.Set(main, volume);
+            }
+            if (score != null)
+            {
+                TickScore();
+                return;
             }
             Refresh();
             TickFade();
