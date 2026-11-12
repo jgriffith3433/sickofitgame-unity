@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using SickOfIt.Core.Audio;
 using SickOfIt.Core.Flow;
+using SickOfIt.Core.UI;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
@@ -43,6 +46,25 @@ namespace SickOfIt.Core.Progression
 
         private bool isTransitioning = false;
         private MenuCanvas menu;
+        private AudioSource menuBed;
+        private float menuOpenedAt = -1f;
+        private float logoSlamDoneAt = -1f;
+        private int heroSighs;
+
+        /// <summary>Unscaled time the menu finished building (playtest).</summary>
+        public float MenuOpenedAt => menuOpenedAt;
+
+        /// <summary>Unscaled time the title slam finished (≤ opened + 0.5 s), or -1.</summary>
+        public float LogoSlamDoneAt => logoSlamDoneAt;
+
+        /// <summary>How many bored sighs the menu hero has played (playtest).</summary>
+        public int HeroSighs => heroSighs;
+
+        /// <summary>True once every visible main-menu button carries an illustrated plate (playtest).</summary>
+        public bool ButtonsHavePlates { get; private set; }
+
+        /// <summary>Main-menu-only plated button style (never written back into theme.json).</summary>
+        MenuButtonStyle platedButton;
 
         private void Start()
         {
@@ -60,6 +82,20 @@ namespace SickOfIt.Core.Progression
 
             ApplyMenuConfig();
             BuildMenu();
+            // Exactly one EventSystem: additive scenes and the Camera prefab each carry one; two alive makes clicks miss
+            // Play / Continue (backlog f_9ee4fb228e7d). Ensure after the menu canvas builds.
+            EventSystemGuard.Ensure();
+            menuOpenedAt = Time.unscaledTime;
+            // Title slam is theme.titleEntrance (0.5 s Pop); mark done when that duration elapses.
+            float slam = 0.5f;
+            var theme = GameDefinition.Instance != null ? GameDefinition.Instance.menuTheme : null;
+            if (theme != null && theme.titleEntrance != null && theme.titleEntrance.duration > 0f)
+                slam = Mathf.Min(0.5f, theme.titleEntrance.duration);
+            logoSlamDoneAt = menuOpenedAt + slam;
+            MenuLavaBackdrop.OverlordAppeared -= OnOverlordAppeared;
+            MenuLavaBackdrop.OverlordAppeared += OnOverlordAppeared;
+            StartCoroutine(HeroSighLoop());
+            StartCoroutine(StartMenuBedAfterButtons());
             SetupBundleDownloadManager();
             // The ghost lobby (Docs/Story.md "Other climbers"): the menu's hero is a ghost on everyone else's menu.
             GhostLobby.MenuOpen = true;
@@ -72,9 +108,144 @@ namespace SickOfIt.Core.Progression
 
         private void OnDestroy()
         {
+            MenuLavaBackdrop.OverlordAppeared -= OnOverlordAppeared;
             GhostLobby.MenuOpen = false;
+            if (menuBed != null)
+                menuBed.Stop();
             // A level's own load (started at the press) holds the same bundles, so this only lets go of the menu's share.
             SickOfIt.Core.Addressables.GameAssets.Release(MenuHeroOwner);
+        }
+
+        /// <summary>World X of the menu hero's feet, if any (MenuLavaBackdrop seam brightens under him).</summary>
+        public static bool ActiveHeroX(out float x)
+        {
+            x = 0f;
+            var menu = Object.FindAnyObjectByType<MainMenuManager>();
+            if (menu == null) return false;
+            var hero = menu.MenuHero != null ? menu.MenuHero : FindCharacter();
+            if (hero == null) return false;
+            x = hero.position.x;
+            return true;
+        }
+
+        void OnOverlordAppeared()
+        {
+            // Fun-reviewer: the pass is a beat — he glances up with a sigh when the silhouette crosses.
+            var hero = MenuHero != null ? MenuHero : FindCharacter();
+            if (hero == null) return;
+            heroSighs++;
+            StartCoroutine(SighPulse(hero));
+            Sfx.Play("lava_bubble"); // soft breath stand-in until a dedicated sigh clip lands
+        }
+
+        /// <summary>
+        /// How many EventSystems are enabled right now (playtest: must be 1 while the menu is up).
+        /// </summary>
+        public static int EnabledEventSystemCount()
+        {
+            int n = 0;
+            foreach (var es in Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (es != null && es.enabled && es.gameObject.activeInHierarchy)
+                    n++;
+            return n;
+        }
+
+        IEnumerator HeroSighLoop()
+        {
+            // Bored idle on the ledge: every 10–16 s a quiet sigh (animation pulse + a soft UI-adjacent breath).
+            // No new voice clip required: the stand-in / prefab keeps Idle, and we nudge scale so the sigh reads on camera.
+            var wait = new WaitForSecondsRealtime(1f);
+            float next = Time.unscaledTime + 8f;
+            while (!isTransitioning)
+            {
+                yield return wait;
+                if (Time.unscaledTime < next)
+                    continue;
+                next = Time.unscaledTime + 10f + UnityEngine.Random.Range(0f, 6f);
+                var hero = MenuHero != null ? MenuHero : FindCharacter();
+                if (hero == null)
+                    continue;
+                heroSighs++;
+                StartCoroutine(SighPulse(hero));
+                // Soft breath: reuse uiHover as a quiet stand-in if no dedicated sigh clip is wired yet.
+                Sfx.Play(Sfx.Events.uiHover);
+            }
+        }
+
+        static IEnumerator SighPulse(Transform hero)
+        {
+            if (hero == null) yield break;
+            var graphics = hero.Find("Graphics");
+            var t = graphics != null ? graphics : hero;
+            var baseScale = t.localScale;
+            float start = Time.unscaledTime;
+            const float dur = 0.55f;
+            while (Time.unscaledTime - start < dur && t != null)
+            {
+                float u = (Time.unscaledTime - start) / dur;
+                float s = 1f + 0.04f * Mathf.Sin(u * Mathf.PI);
+                t.localScale = new Vector3(baseScale.x * s, baseScale.y * (2f - s), baseScale.z);
+                yield return null;
+            }
+            if (t != null)
+                t.localScale = baseScale;
+        }
+
+        IEnumerator StartMenuBedAfterButtons()
+        {
+            // Bed and theme start after the buttons are up so the phone's 20 s load isn't blocked by music decode.
+            yield return new WaitForSecondsRealtime(LateCoreDelaySeconds);
+            if (isTransitioning || this == null)
+                yield break;
+            if (menuBed == null)
+            {
+                menuBed = gameObject.AddComponent<AudioSource>();
+                menuBed.playOnAwake = false;
+                menuBed.loop = true;
+                menuBed.spatialBlend = 0f;
+            }
+            // Dedicated main theme (k_aea2f5751795) when landed as audio.json "menu_theme"; else the Landing's lava
+            // bed so the diorama is never silent. Only call PlayLoop for an id that exists (avoids a [Sfx] warning).
+            if (Sfx.ClipOf("menu_theme") != null || SoundExists("menu_theme"))
+                Sfx.PlayLoop(menuBed, "menu_theme", 0.55f);
+            else
+                Sfx.PlayLoop(menuBed, "ambience_floor1000", 0.45f);
+        }
+
+        static bool SoundExists(string id)
+        {
+            var cfg = GameDefinition.Instance != null ? GameDefinition.Instance.audio : null;
+            if (cfg == null || cfg.sounds == null || string.IsNullOrEmpty(id))
+                return false;
+            for (int i = 0; i < cfg.sounds.Count; i++)
+                if (cfg.sounds[i] != null && cfg.sounds[i].id == id)
+                    return true;
+            return false;
+        }
+
+        /// <summary>Deep-enough copy so plated sprites never leak into the shared theme (Export would otherwise rewrite theme.json).</summary>
+        static MenuButtonStyle CloneButtonStyle(MenuButtonStyle src)
+        {
+            if (src == null) return null;
+            var copy = src.Clone();
+            if (src.surface != null)
+            {
+                copy.surface = new MenuSurfaceStyle
+                {
+                    shape = src.surface.shape,
+                    sprite = src.surface.sprite,
+                    cornerRadius = src.surface.cornerRadius,
+                    fill = src.surface.fill,
+                    borderColor = src.surface.borderColor,
+                    borderWidth = src.surface.borderWidth,
+                    shadowColor = src.surface.shadowColor,
+                    shadowOffset = src.surface.shadowOffset,
+                    padding = src.surface.padding,
+                };
+            }
+            copy.hoverSprite = src.hoverSprite;
+            copy.pressedSprite = src.pressedSprite;
+            return copy;
         }
 
         // "N climbing now": other players on a level, from the ghost lobby (hidden offline, in the Editor and at 0).
@@ -290,6 +461,13 @@ namespace SickOfIt.Core.Progression
             var gd = GameDefinition.Instance;
             var config = gd != null ? gd.mainMenuConfig : new MainMenuConfig();
             var labels = config.labels ?? new MainMenuLabels();
+            // Illustrated lava plates on the main buttons only (a clone — never mutate theme.json's shared button).
+            platedButton = null;
+            if (gd != null && gd.menuTheme != null && gd.menuTheme.button != null)
+            {
+                platedButton = CloneButtonStyle(gd.menuTheme.button);
+                MenuInkPlates.ApplyTo(platedButton);
+            }
             menu = MenuCanvas.Create("MainMenuUI", gd != null ? gd.menuTheme : null, config.layout, gameObject);
             var list = menu.AddList(config.layout.list, menu.Theme.button.size);
             entries.Clear();
@@ -363,6 +541,18 @@ namespace SickOfIt.Core.Progression
                 Add(list, rageQuitAgain ? labels.rageQuitAgain : labels.quit, OnQuitClicked);
 
             BuildPages(list);
+            ButtonsHavePlates = MenuInkPlates.Ready;
+            if (ButtonsHavePlates)
+            {
+                foreach (var button in menu.GetComponentsInChildren<MenuButton>(true))
+                {
+                    if (button != null && !button.HasIllustratedPlate)
+                    {
+                        ButtonsHavePlates = false;
+                        break;
+                    }
+                }
+            }
 
             if (config.showCumulativeHealth)
             {
@@ -455,7 +645,7 @@ namespace SickOfIt.Core.Progression
                     var entry = entries[i];
                     var press = entry.OnClick;
                     var revealId = entry.RevealId;
-                    var button = menu.AddButton(list, entry.Text, menu.Theme.button, () =>
+                    var button = menu.AddButton(list, entry.Text, platedButton ?? menu.Theme.button, () =>
                     {
                         if (revealId != null)
                         {
@@ -472,7 +662,7 @@ namespace SickOfIt.Core.Progression
                 if (pages > 1)
                 {
                     int target = (p + 1) % pages;
-                    var nav = menu.AddButton(list, p + 1 < pages ? MoreLabel : FirstPageLabel, menu.Theme.button, () => ShowPage(target));
+                    var nav = menu.AddButton(list, p + 1 < pages ? MoreLabel : FirstPageLabel, platedButton ?? menu.Theme.button, () => ShowPage(target));
                     slots.Add(nav.transform.parent.gameObject);
                 }
                 pageSlots.Add(slots);

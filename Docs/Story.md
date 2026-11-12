@@ -2698,8 +2698,8 @@ are there; none is made, the GPU waits for J.
 Teasers and trailers (`Marketing/`, made from the game's own art through Hawkes Gen) tell the prologue's edges, never
 past it, the same way the website does. What they add to the story:
 
-- **The hut on the main menu is the hero's.** The thatched hut at the left of the menu's meadow, with the neighbours'
-  hut beside it, is where he lives. He sleeps in his armour, on a straw bed, his rocket launcher leaning on the wall.
+- **The hut in the teasers is the hero's.** The thatched hut (Video1 / Teaser01's meadow, not the live main menu — the menu is the
+  lava ledge diorama) is where he lives. He sleeps in his armour, on a straw bed, his rocket launcher leaning on the wall.
 - **The nice afternoon** (Video1) starts with him asleep. Sunbeam, dust, a candle, a snore that rattles his visor. He
   is already tired of everything, including sleeping.
 - **His eyes glow when he's had enough.** The visor's orange eyes (his sprite has them) are dark while he sleeps
@@ -2751,11 +2751,21 @@ turns back his own time, never theirs (they are other people, now). A floor with
 In the game: `Core/Progression/GhostLobby.cs` on Hawkes Net (one room for everyone, `lobby` on sickofitgame.com, `t-lobby` on beta and in playtests, through Hawkes Net's standard `HawkesNetLobby`),
 WebGL only, `?ghosts=0` turns it off. Presentation only, never the simulation.
 
-The main menu is already haunted. Before he climbs, the hero stands in the meadow by his house with everyone else who is on the menu right
-now: their ghosts idle and wander the same meadow (wherever their own hero walks, spread along the grass so a crowd of idlers doesn't stand in
-one spot), and a chip in the corner counts the ones already climbing ("12 climbing right now"). Nobody is ever alone in being sick of it.
-In the game: the menu is its own band in the same room (z 0; a level is its number x 1000, nowhere -1000), `GhostLobby.MenuOpen` while
-`MainMenuManager` is up, the chip's words in mainMenu.json `labels.climbingNow`.
+The main menu is already haunted. Before he climbs, the hero stands on the lava ledge (see *The main menu is a living diorama*) with everyone
+else who is on the menu right now: their ghosts idle and wander the same ledge (wherever their own hero walks, spread so a crowd of idlers
+doesn't stand in one spot), and a chip in the corner counts the ones already climbing ("12 climbing right now"). Nobody is ever alone in being
+sick of it. In the game: the menu is its own band in the same room (z 0; a level is its number x 1000, nowhere -1000), `GhostLobby.MenuOpen`
+while `MainMenuManager` is up, the chip's words in mainMenu.json `labels.climbingNow`.
+
+## The main menu is a living diorama (built 2026-11-12)
+
+The first screen is Hell, not the meadow: the hero idles bored on a basalt ledge over a lava sea (ash-to-ember sky, cyan rewind seam, drifting
+embers) while the theme (or the Landing's lava bed until the dedicated theme lands) plays. Far above, the Overlord's black-obsidian silhouette —
+long horns, red eyes, never looking down — climbs past every 15–20 seconds. The camera slowly pushes in 3% over 20 s and back. The title
+**Sick Of It** slams in over half a second on first show, then breathes with a soft pulse. The buttons sit on illustrated basalt-and-ember plates
+with hover and press states; the staged first-visit menu (Play / Settings / Rage Quit) and its button count stay the same. New art loads after the
+buttons are up so a phone still reaches the menu inside 20 s. In the game: `MenuLavaBackdrop` (living embers, Overlord climb, camera breathe),
+`MenuInkPlates` (button plates), `MainMenuManager` (logo slam timing, hero sigh, bed after the buttons). Playtest `living-menu`.
 
 ## Rewind that feels amazing (RewindFx)
 
