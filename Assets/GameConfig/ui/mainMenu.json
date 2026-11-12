@@ -40,8 +40,8 @@
       "rotation": -4.0,
       "fontSize": 130.0,
       "motion": {
-        "type": "Wobble",
-        "amount": 1.5,
+        "type": "Pulse",
+        "amount": 0.018,
         "speed": 0.35,
         "phase": 0.0
       },

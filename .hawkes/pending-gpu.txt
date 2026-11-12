@@ -1,0 +1,1 @@
+dedicated main theme (k_aea2f5751795) — audio.music → audio.json id menu_theme; menu beds with ambience_floor1000 until that lands. Estimate ~$0.18 GPU (+ idle tail if a server stays up). Not made here: fleet has no GPU (AWS keys missing) and theme is owned by that task.

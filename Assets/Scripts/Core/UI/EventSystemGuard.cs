@@ -33,23 +33,43 @@ namespace SickOfIt.Core.UI
                 return EventSystem.current;
             if (keeper == null)
             {
-                var go = new GameObject("[EventSystem]");
-                Object.DontDestroyOnLoad(go);
-                keeper = go.AddComponent<EventSystem>();
-                go.AddComponent<InputSystemUIInputModule>();
-                go.AddComponent<Watcher>();
+                // Prefer a scene / Camera-prefab EventSystem that already has an Input System UI module: its actions
+                // stay wired. A brand-new empty module can miss pointer/touch events and leave Play / Continue dead
+                // (backlog f_9ee4fb228e7d: smoke sits on the menu forever).
+                foreach (var es in Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                {
+                    if (es == null || es.GetComponent<InputSystemUIInputModule>() == null)
+                        continue;
+                    keeper = es;
+                    Object.DontDestroyOnLoad(es.gameObject);
+                    if (es.GetComponent<Watcher>() == null)
+                        es.gameObject.AddComponent<Watcher>();
+                    break;
+                }
+                if (keeper == null)
+                {
+                    var go = new GameObject("[EventSystem]");
+                    Object.DontDestroyOnLoad(go);
+                    keeper = go.AddComponent<EventSystem>();
+                    go.AddComponent<InputSystemUIInputModule>();
+                    go.AddComponent<Watcher>();
+                }
             }
 
             foreach (var other in Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
-                if (other == keeper || !other.enabled)
+                if (other == keeper)
                     continue;
+                // Switch off even if already disabled so a late Awake that re-enables it loses its modules first.
                 foreach (var module in other.GetComponents<BaseInputModule>())
                     module.enabled = false;
                 other.enabled = false;
             }
             if (!keeper.enabled)
                 keeper.enabled = true;
+            foreach (var module in keeper.GetComponents<BaseInputModule>())
+                if (module != null && !module.enabled)
+                    module.enabled = true;
             EventSystem.current = keeper;
             return keeper;
         }

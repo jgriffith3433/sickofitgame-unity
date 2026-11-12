@@ -104,6 +104,10 @@ namespace SickOfIt.Data.Config
         public Color hoverFill = Color.clear;
         [Tooltip("Fill while held down. Transparent = a darker version of the fill.")]
         public Color pressedFill = Color.clear;
+        [Tooltip("Optional illustrated plate while hovered (9-sliced). Null = keep the surface sprite.")]
+        public Sprite hoverSprite;
+        [Tooltip("Optional illustrated plate while pressed (9-sliced). Null = keep the surface sprite.")]
+        public Sprite pressedSprite;
         public Color disabledFill = new Color(0.35f, 0.35f, 0.35f, 0.8f);
         [Tooltip("Label color while hovered. Transparent = unchanged.")]
         public Color hoverLabelColor = Color.clear;

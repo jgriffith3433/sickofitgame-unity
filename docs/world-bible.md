@@ -89,9 +89,20 @@ Each is an area when built and must clear the bar above before it ships, in orde
 shrines), **III the Bastion** (fortress walls), **II the Keep** (courtyard, dungeon), **I the Throne Stair** (the Overlord's
 palace, daylight leaking in). Shared rule: each Circle opens with a *vista* beat in its first 10 s (see *Landmarks*).
 
+### The main menu ledge (living diorama, built)
+- **Mood:** bored pause before the climb; Hell's glow, not the meadow's daylight.
+- **Look and sound:** ash-to-ember sky, lava sea, basalt ledge with a cyan rewind seam, drifting orange/cyan embers; the hero
+  idles bored with an occasional sigh; the Overlord's silhouette climbs the far cliff every 15–20 s; camera breathes ±3% over
+  20 s; title slams in 0.5 s then pulses. Bed: `menu_theme` when landed, else `ambience_floor1000`. Buttons on illustrated
+  basalt-ember plates (hover/press).
+- **Size:** as long as the player stays. **In/out:** boot / quit-to-menu; out by Play / Continue / New Run / the staged buttons.
+- **Landmark:** the Overlord climbing past above the ledge.
+- **Life:** embers, lava shimmer, Overlord pass, hero sigh, other climbers as pale ghosts (`climbingNow` chip).
+- **Interactions:** press a plated button, walk the hero on the ledge, watch the Overlord, open Settings / shop / Codex when earned.
+
 ### Menus and the climb's ghosts
-The main menu is the Meadow in daylight with the hero idling (a playable `PlayerController`) and **other climbers as pale
-ghosts** around him (Hawkes Net; `climbingNow` chip). Out: Continue, New Run, New Game, Videos, Shop, Codex.
+The main menu ledge (above) hosts the hero and **other climbers as pale ghosts** around him (Hawkes Net; `climbingNow` chip).
+Out: Continue, New Run, New Game, Videos, Shop, Codex (staged: first visit is Play, Settings, Rage Quit).
 
 ---
 
@@ -101,6 +112,7 @@ One per area, readable from far, to steer by. The camera shows it early and the 
 
 | Area | Landmark | Seen from | What it does |
 |---|---|---|---|
+| Main menu ledge | The Overlord's silhouette climbing the far cliff above the lava | whole screen | Passes every 15–20 s; never looks down |
 | Meadow | The Overlord's silhouette, colossal on the hills, red eyes; the village's mill | spawn | His eyes track; the mill's sails turn until the laser |
 | Shaft | The stack of Circles, the tiny glowing marker and the dark Waystones above it | whole screen | The marker pulses; each reached Waystone lights |
 | Yooba's counter | A hanging green lantern shaped like his own grin | the door | Swings, brightens when a ware sells |
@@ -295,6 +307,8 @@ Waystone only if the run ends. The run feels like the loop, not a penalty.
 
 Each beat is lived, not read. Format: **where / when -> what happens (events, sound, voice) -> text, if any.**
 
+0. **Waiting on the ledge (main menu).** The hero idles on basalt over lava; embers drift; the Overlord climbs past
+   above; the title slams and breathes; a plated button waits. *Sound:* lava bed / theme. *Text:* the title only.
 1. **The nice afternoon (Meadow, 0:00-0:25).** The hero idles on the hill: a hen crosses, a neighbour waves, the mill
    turns. *Voice:* a quiet sigh (`vo_hero_*`). *Text:* none.
 2. **Then the sky opened (Meadow, 0:25).** A shadow slides over the field; the Overlord's silhouette rises; a low

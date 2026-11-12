@@ -214,6 +214,12 @@ namespace SickOfIt.Core.UI.Menus
             var root = MenuGraphics.NewRect("Backdrop", transform);
             MenuGraphics.Fill(root);
             root.gameObject.AddComponent<RectMask2D>();
+            // The lava world is drawn behind the UI: the backdrop must never steal clicks from Play / Continue
+            // (finding f_9ee4fb228e7d: smoke sat on the menu with New Game never taken).
+            if (!root.TryGetComponent<CanvasGroup>(out var group))
+                group = root.gameObject.AddComponent<CanvasGroup>();
+            group.blocksRaycasts = false;
+            group.interactable = false;
             if (backdrop.image != null)
             {
                 var image = MenuGraphics.NewImage(root, "Image", backdrop.imageTint);
