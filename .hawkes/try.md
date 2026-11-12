@@ -1,4 +1,4 @@
-1. Open beta and wait for the main menu (or `?playtest=living-menu`).
-2. Watch the hero on the lava ledge, drifting embers, and the Overlord’s silhouette climbing past within ~20 s; the title should pop in within half a second.
-3. Hover and press Play / Continue — each button should show an illustrated plate (brighter on hover, darker when pressed) and the click must leave the menu.
-4. On a phone (390×844): hero above the button stack, buttons ≥48 px tall, menu up within 20 s.
+1. Open the beta game and wait for the main menu (lava ledge, not the meadow).
+2. Watch ~20 s: the hero idles on the ledge, embers drift, the title slams then pulses, and the Overlord's silhouette climbs past above.
+3. Hover and press Play / Settings — each button sits on a basalt-ember plate that brightens on hover and darkens on press.
+4. On a phone (or 390×844), confirm the hero sits above the button stack and buttons are thumb-sized; Play starts a New Game.

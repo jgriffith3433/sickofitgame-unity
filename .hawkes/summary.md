@@ -1,25 +1,35 @@
-# Living main-menu diorama — Gen plates + click harden
+# Living main-menu diorama — Gen plates restored
 
 ## What was wrong
-PR #386 (c_c5316e3aee93) shipped the living ledge with Gen button plates as LFS, then Studio re-queued this pass to replace stand-ins and to keep Play/Continue answering (backlog f_9ee4fb228e7d). Sparse worktrees only had LFS pointers for `MenuButtonPlate*.png`; the dedicated `menu_theme` is still owned by k_aea2f5751795.
+Studio re-queued this task after c_122c4bc2781f / c_c5316e3aee93 merged the living ledge: sparse worktrees only had LFS pointers for `MenuButtonPlate*.png`, so `MenuInkPlates.FromGen` could fall back to procedural stand-ins. The brief asked to replace stand-ins with real Gen art; fleet has **no GPU** (AWS keys missing), so no new generate. Dedicated `menu_theme` stays owned by k_aea2f5751795.
 
 ## What changed
-- **Gen plates (real bytes, trimmed):** re-imported cutout + hover/press from library (`a_382b2cf…` → trim `a_7c8ebf9b…`; hover `a_1cfe5b64…`; pressed `a_0b58bedc…`) into `Assets/Resources/UI/MenuButtonPlate{,Hover,Pressed}.png` (256×96, transparent, distinct hover/press centres) with Sprite `.meta` (9-slice borders, readable). Free `image.transform` only — no new GPU generate.
-- **Clicks / EventSystem:** `EventSystemGuard.Ensure` now **adopts** an existing Input System UI EventSystem (keeps its actions) instead of always spawning a blank module; re-enables the keeper’s modules; `RebuildMenu` calls Ensure again; `MenuMotionDriver` keeps `blocksRaycasts` on while open (only off during exit).
-- **Playtest `living-menu`:** Ensure before the click check; gates Gen plates (`livingMenu.platesFromGen`). Named in `.hawkes/scenario.txt`.
-- **Still pending:** `menu_theme` — listed in `.hawkes/pending-gpu.txt` (ambience_floor1000 bed until then). Fleet has no GPU (AWS keys missing); music estimate ~$0.18.
+- **Gen plates (real bytes):** re-imported trimmed library plates (`a_7c8ebf9b…` / `a_1cfe5b64…` / `a_0b58bedc…` → new transform writes) into `Assets/Resources/UI/MenuButtonPlate{,Hover,Pressed}.png` (256×96, transparent corners; hover brighter / press darker centres). Existing Sprite `.meta` kept (9-slice borders, readable). Free import/transform only — **$0 GPU**.
+- **Living ledge code** already on beta from #386/#387: `MenuLavaBackdrop` (embers, Overlord every 15–20 s, camera breathe), logo slam 0.5 s + title Pulse, plated buttons, EventSystem adopt, `living-menu` playtest. Not reworked.
+- **Scenario:** `.hawkes/scenario.txt` → `living-menu`.
+- **Still pending:** `menu_theme` in `.hawkes/pending-gpu.txt` (beds with `ambience_floor1000`).
 
-## Fun-reviewer (self-pass)
-**Verdict: living** for the menu ledge (not a demo). Scores: Full 4 (embers, Overlord, hero, seam, bed), Breathing 5, Interactions 4 (walk / watch / plated press / settings), Story-as-experience 4 (silhouette + hum, no text beat), Soul 4 (matches Story/bible ledge). Gaps left: (1) dedicated menu theme, (2) Overlord still procedural quads, (3) sigh uses uiHover/lava_bubble stand-ins — out of this budget / other tasks.
+## Fun-reviewer (self-pass per fun-reviewer.md)
+**Verdict: living** for the menu ledge (not a demo).
+- Full 4 — embers, ledge+cyan seam, Overlord landmark, hero, lava bed, Gen plates
+- Breathing 5 — camera ±3%/20 s, ember rise, glow pulse, Overlord every 15–20 s, hero sigh, title Pulse, seam brightens under him
+- Interactions 4 — walk the ledge, watch the climb, plated hover/press, Settings; staged first-visit count unchanged
+- Story-as-experience 4 — Overlord pass + magma_rumble hum; no text-only beat
+- Soul 4 — matches Docs/Story.md + world-bible ledge (Hell glow, bored pause)
+Gaps left (not this budget / other tasks): (1) dedicated `menu_theme`, (2) Overlord still procedural quads (far sheets kept out of menu load), (3) sigh uses uiHover/lava_bubble stand-ins.
 
-## Reviewer (self-pass)
-**Merge** on criteria 1–4 once beta `living-menu` (phone) runs: Gen plates on disk, Overlord ≤20 s already in #386, logo slam + click harden here. Theme music still the Landing bed (called out in pending-gpu).
+## Reviewer (self-pass per reviewer.md)
+**Merge** on criteria 1–4 once beta `living-menu` (phone) runs: Gen plates on disk again, Overlord ≤20 s / logo slam / click harden already merged. Theme music still the Landing bed (pending-gpu). Scope stayed on plates + hawkes docs; no shared-file fights with enemy-roster c_9c4e54748bbe.
 
 ## Checks
-- Plate PNGs: RGBA, transparent corners, hover brighter / press darker (pixel sample).
-- C# read for duplicate members / missing usings on changed files — clean.
+- Plate PNGs: valid RGBA, transparent corners, distinct hover/press centres (pixel sample).
+- C# untouched this pass (no duplicate-member risk).
 - **Unity compile not run here** (no editor).
-- Conflicts: none. Stayed out of c_9c4e54748bbe EnemyInk.
+- Conflicts: none. Stayed out of enemy-roster change c_9c4e54748bbe.
+- GPU spend: **$0** (library import only). Fleet: no servers / AWS keys missing.
 
-## GPU spend
-$0 this pass (transform/import only). Prior plates already in Gen library from c_c5316e3aee93 (~$0.016).
+## Acceptance map
+1. Hero on ledge + Overlord ≤20 s — `MenuLavaBackdrop` + `living-menu` gates  
+2. Embers + logo slam ≤0.5 s — same  
+3. Illustrated plates with hover/press — Gen Resources plates + `MenuButton`  
+4. [phone] hero above buttons, ≥48 px, menu ≤20 s — `living-menu` portrait gates  

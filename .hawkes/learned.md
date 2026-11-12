@@ -1,5 +1,5 @@
-- canon: Main menu ledge — Hell's basalt ledge over lava; Overlord silhouette every 15–20 s; title slam 0.5 s; Gen plates in Resources/UI/MenuButtonPlate*.png.
-- convention: Menu plates — clone menuTheme.button before MenuInkPlates.ApplyTo; never mutate the shared theme.
-- convention: Main menu clicks — EventSystemGuard adopts an existing InputSystemUIInputModule; backdrop blocksRaycasts=false; MenuMotionDriver keeps raycasts on while open.
-- lesson: sparse + LFS — Resources/UI PNGs show as 130-byte pointers until sparse-add + studio_gen_import writes real bytes.
-- lesson: Gen project id — hawkesgen_* needs org_eb0d5c82e8da8c2d.sickofit (short sickofit → no access).
+- convention: Menu plates — clone `menuTheme.button` before `MenuInkPlates.ApplyTo`; never mutate the shared theme or Export rewrites theme.json as Sprite/null.
+- convention: Main menu clicks — backdrop CanvasGroup.blocksRaycasts=false and EventSystemGuard adopts an existing InputSystemUIInputModule after BuildMenu.
+- lesson: sparse + Gen plates — Resources/UI PNGs are outside the default sparse cone (LFS pointers only); `git sparse-checkout add Assets/Resources/UI/` then `studio_gen_import` writes real bytes.
+- lesson: Gen fleet this pass — hawkesgen_fleet returned no servers and AWS keys missing; reuse library assets, do not queue GPU generate.
+- canon: Main menu ledge — Hell's basalt ledge over lava; Overlord silhouette every 15–20 s; title slam 0.5 s then Pulse; Gen plates in Resources/UI/MenuButtonPlate*.png.
