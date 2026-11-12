@@ -2004,6 +2004,24 @@ none of it has anything to do with the hero. It is there so the climb looks like
 The deeper Circles get theirs when they are built: a new Circle's `ambience` is part of building it (two or three kinds of weather, at least two kinds
 of life, a depth layer or two, a set no other Circle has). The chases are never explained and never resolved: they cross, they leave, they come back.
 
+### Living screens (Meadow, Shaft, Floors 1000-997)
+
+Every early screen of Hell moves on its own so the world feels alive (2026-11-12; Ori-style drifting air). A level's own
+`script.ambience` overrides the Circle when set. Each pack has `liveWeather` (players see the bits; Circle defaults stay
+quiet so deeper floors don't return to "far too many particles"), ≥3 weather kinds, timed `events` every ~10–15 s, and a
+**foreground silhouette** row on `Foreground1` at α ≤ 0.6 (grass/fence in the Meadow; chains, cages, stalactites below)
+that parallaxes faster over the play area without hiding bullets. Phone tier: half the bits (`Quality` 0.5), no heat
+shimmer. Playtest `living-air`.
+
+| Place | Particles | Timed events | Foreground |
+|---|---|---|---|
+| Meadow | pollen, motes, raid embers | birds scatter + smoke when the sky opens (`meadow:raid`); chimney steam | grass and fence posts |
+| Shaft | wind streaks, falling debris, ash | debris fall every 10–15 s | chain silhouettes on the window |
+| Floor 1000 | rising embers, ash, heat dust + heat shimmer (desktop) | glow pulse, steam, ember spit | hanging chains |
+| Floor 999 | furnace sparks, steam, slag grit | steam vents, furnace belch, spark burst | cages |
+| Floor 998 | ash snow, soul wisps, bone dust | soul drift, ash cascade, choir glow | hanging cages |
+| Floor 997 | obsidian dust, magenta sparks, ash | background lava geyser every 10–15 s, spit, dust fall | obsidian stalactites |
+
 ## Hell's tricks (five mechanics)
 
 Hell is repetition, so its monsters have a few tricks and use them forever. Five are built as JSON abilities so floors
