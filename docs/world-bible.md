@@ -27,6 +27,7 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 - **Look and sound:** green hills, the village's thatch, a single path; Video1's footage as the sky layer. Bed: wind, a far
   rooster, a mill creaking. Then the Overlord's hum, lasers, burning thatch.
 - **Music (Nov 11):** its own track, not the film's audio: "A nice day", a plucked D-major figure over a soft drone with a soft flute (`meadow_calm`, 84 BPM), which turns to its raid (`meadow_raid`: the same tune in D minor, 128 BPM, double kicks and alarms) the moment the sky opens (`playMusic`, 6 s in). Rewinding bends whatever is playing (slowed, low-passed) and it snaps back on release.
+- **Adaptive score (Nov 12):** explore / fight / finale loops at 112 BPM, D minor (pastoral folk turned frantic), crossfading on the beat or bar with the raid; see Docs/Story.md "The adaptive score". Falls back to `meadow_calm`/`meadow_raid` until the clips are made.
 - **Sound (Nov 11):** every verb has three takes that never repeat in a row (`player_shoot`, `hit_pop` + `kill_pop` layered on the enemy's own sounds, `graze_tick`, `pickup_diamond`, jump, land, dash, rewind start and stop), Music ducks 8 dB under each voice line, and the bed sits on its own Ambience bus (Docs/SoundAudit.md "Takes, buses and beds").
 - **Size:** ~2 min (30 s of calm, imp raid, the portal scene ≤10 s locked, skippable).
 - **In/out:** New Game (no Video1, no difficulty card) lands here; out through the fire portal into the Shaft plunge on a

@@ -1661,6 +1661,19 @@ the picks and the trims are recorded in `Tools/Audio/music.json` and made by `To
 - **The Shaft:** the plunge after Video2 is a **falling riser** that **slams** as the marker hits Floor 1,000; each
   climb gets a **short rising sting** as the marker goes up.
 
+### The adaptive score (Meadow, Floors 1000-997)
+
+Each of the first five levels has three loops at one tempo and key: **explore** (sparse, the floor's motif), **fight** (full drums,
+distorted guitar, choir stabs) and **finale** (the set piece at the floor's end, its own cue, never the fight loop). The Meadow is
+pastoral folk turned frantic (112 BPM, D minor); 1000 sulphur and brass (120, A minor); 999 furnace industrial (124, E minor);
+998 bone-percussion and choir (108, F# minor); 997 the Overlord's organ (116, C minor). `LevelConfig.score` (`ScoreConfig`), played by
+`StageMusic` (the one music player; `StageMusic.Score.cs` is its director): the three loops play on one playhead and only their gains
+move. Fight comes in on the next beat when an enemy is alive or two hostile shots are on screen, leaves on the next bar a second after
+the wave's last enemy is down; the floor's finale signal (`floors:<n>:finale`, the Meadow's `portal:telegraph`) takes the finale cue.
+A rewind tape-stops the music (pitch down over 0.3 s) and the three loops come back on one playhead when it ends; a death cuts to a
+1 s sting, then explore. The cue table is `Tools/Audio/adaptive_score.py` (`--manifest`, `--wire`, `--check`); the existing per-level
+tracks are the fallback for a floor with no `score`. Playtest `score-floors`.
+
 ## The systems, in story terms
 
 Mechanics keep working as they do; their names and reasons come from here. Rename UI text (`ui/theme.json`

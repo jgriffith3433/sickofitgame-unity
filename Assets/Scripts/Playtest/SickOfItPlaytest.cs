@@ -914,6 +914,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(MusicLayersId, $"The intensity music layer (Docs/Story.md \"Music\"): Floor 997 (level {MusicLayersLevel}) loaded directly (setup shortcut) and played by the bot through real input for 150 s of game time. " +
                 "The Circle's layer (a stand-in loop until the real stems are made, nothing is generated) must be silent on the empty floor, fade in as enemies and shots crowd the screen and fade out again as it empties. " +
                 "`musicLayer` events log its level (0-100%) and the crowd; each beat is a check event", MusicLayersSeconds, "level"));
+            list.Add(new PlaytestScenario(ScoreFloorsId, "The adaptive score (Docs/Story.md \"Music\"): the Meadow and Floors 1000-997 each loaded directly and played by the bot; at least 2 score layer changes per floor, fight layer within 2 s of the first wave, the floor's own finale cue, a held R tape-stopping the score within 0.3 s and the score back after (`musicState`, `musicTapeStop` events). Floors without wired clips are skipped. Run it at 390x844 touch too.", 900f, "level"));
             list.Add(new PlaytestScenario(AdaptiveMusicId, "Adaptive music (Docs/Story.md \"Music\"): touch only, a virtual touchscreen taps the sound prompt and New Game; Level 1 plays its own composed Meadow track (not the background video's audio) within 1 s of opening, calm and then the raid's track when the sky opens. " +
                 $"Then Floor 997 (level {AdaptiveMusicFloorLevel}, loaded directly: a setup shortcut) played by the bot: the Circle's loop, the intensity layer rising with the crowd and falling when it clears, and a held R playing the bent (slowed, low-passed) variant with the normal track back within 0.5 s of letting go. " +
                 "Then Floor 901: the Magma King's theme takes over as the arena locks. `music`, `musicLayer` and `musicRewind` events; each beat is a check event", AdaptiveMusicSeconds, "level"));
@@ -1477,6 +1478,8 @@ namespace SickOfIt.Playtest
             }
             else if (id == MusicLayersId)
                 yield return session.MusicLayersRun();
+            else if (id == ScoreFloorsId)
+                yield return session.ScoreFloorsRun();
             else if (id == AdaptiveMusicId)
                 yield return session.AdaptiveMusicRun();
             else if (id == UnarmedHeroId)
