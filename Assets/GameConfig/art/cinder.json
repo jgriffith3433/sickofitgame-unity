@@ -2,10 +2,13 @@
   "schemaVersion": 1,
   "entity": "cinder",
   "name": "Cinder",
-  "description": "a will-o'-the-wisp: a single floating fireball shaped like a teardrop, the size of a fist, white-yellow hot core and orange-red flickering edges, with a cute mischievous face painted inside the flame (two beady black eyes and a grin), a wisp of smoke and a few sparks trailing behind it",
+  "description": "a will-o'-the-wisp: a single floating fireball shaped like a teardrop, fist-sized, white-yellow hot core and orange-red flickering edges, cute mischievous face painted inside the flame (two beady black eyes and a grin), a wisp of smoke and a few sparks trailing behind it, heavy ink outline",
   "height": 0.35,
   "poses": {
     "stand": "floating in the air, its flame tip flickering upward",
+    "windup": "puffed up larger, core flaring white-hot with a thick cyan glow rim, eyes wide and grin huge, held still for a Cuphead wind-up beat before it lunges",
+    "lunge": "stretched forward to the right, flame streaming back, mid-lunge",
+    "struck": "jolted, eyes crossed, sparks flying off",
     "popped": "bursting apart into a scatter of tiny sparks and a puff of smoke"
   },
   "clips": {
@@ -19,6 +22,25 @@
       "action": "leans forward and drifts toward the right, its flame streaming backward, staying in the same spot in the frame",
       "seconds": 1.5
     },
+    "windup": {
+      "from": "stand",
+      "to": "windup",
+      "action": "swells up and HOLDS the puffed glowing wind-up pose with a bright rim, no forward motion yet",
+      "seconds": 0.7,
+      "loop": true,
+      "state": "Windup"
+    },
+    "attack": {
+      "from": "windup",
+      "to": "lunge",
+      "action": "lunges forward to the right in a short pop-charge, then settles",
+      "seconds": 0.6
+    },
+    "hurt": {
+      "from": "stand",
+      "action": "is struck, jerks and sheds sparks, then recovers",
+      "seconds": 0.8
+    },
     "die": {
       "from": "stand",
       "to": "popped",
@@ -30,5 +52,16 @@
     "standFromText": "Paint {description}. Seen from the side, small and centered in the frame with lots of empty space around it. It is a ball of fire that floats in the air by itself. {style} {background}",
     "pose": "Image 1 is {description}. Show this exact same object, the same design, {action}. Keep its shape, colors, size and position in the frame and the painterly art style of image 1. {background}"
   },
-  "style": "Painterly digital painting in the style of dark fantasy video game art: soft visible brush strokes, rich shading, gritty and detailed, warm hellfire rim light, high resolution and smooth (not pixel art, not a cartoon)."
+  "style": "Hand-inked 2D arcade character like Hollow Knight and Cuphead: heavy warm near-black outline (#140B0D), flat two-tone cel colour (base + one shadow), one thin rim of hellfire light, a readable silhouette at 48 px, no soft airbrush, no gradients beyond two tones, no pure black #000000, side view facing right",
+  "background": "Plain flat pure green background (#00ff00), no floor, no shadow, no scenery, even studio lighting.",
+  "negative": "photorealistic, 3d render, soft airbrush, gradient shading, watercolor wash, pure black outline, text, watermark, busy background, extra limbs, blurry, low contrast silhouette, camera movement, zoom, pan",
+  "takes": {
+    "pose": 2,
+    "clip": 1
+  },
+  "animator": {
+    "parameters": [],
+    "transitions": [],
+    "attackBool": "IsWinding"
+  }
 }

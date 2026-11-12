@@ -424,14 +424,80 @@ namespace SickOfIt.Gameplay.Content
         [EffectRef, Doc("Status effect applied on hit.")] public string effect = "";
         [Doc("Push the target away with this impulse.")] public float knockback;
         [Doc("Burst on touching something hostile: hits it, then dies (running onDeath, e.g. to splatter; no loot, not a kill).")] public bool dieOnHit;
+        [Doc("Seconds of held wind-up (glow + Windup pose) before contact can hurt. 0 = immediate. Cuphead-style telegraph.")]
+        public float windup;
+        [Doc("Start winding when the player is this close (world units). 0 = 1.4.")] public float windupRange;
+        [Doc("Animator bool set while winding up.")] public string windupBool = "";
 
         float lastHitAt = -999f;
+        float windupEndsAt = -1f;
+        bool armed;
 
-        public override void OnSpawn() => lastHitAt = -999f;
+        public override void OnSpawn()
+        {
+            lastHitAt = -999f;
+            windupEndsAt = -1f;
+            armed = windup <= 0.001f;
+            SetWindup(false);
+        }
+
+        float ArmRange => windupRange > 0.001f ? windupRange : 1.4f;
+
+        void SetWindup(bool on)
+        {
+            if (string.IsNullOrEmpty(windupBool) || Owner?.Animation == null)
+                return;
+            Owner.Animation.SetBool(windupBool, on);
+        }
+
+        public override void Tick(float now, float dt)
+        {
+            if (windup <= 0.001f)
+                return;
+            float dist = DistanceToPlayer();
+            float range = ArmRange;
+            if (armed)
+            {
+                if (dist > range * 1.6f)
+                {
+                    armed = false;
+                    windupEndsAt = -1f;
+                    SetWindup(false);
+                }
+                return;
+            }
+            if (windupEndsAt < 0f && dist <= range)
+            {
+                float lead = Mathf.Max(0.3f, windup);
+                windupEndsAt = now + lead;
+                Owner.HoldPosition(windupEndsAt);
+                SetWindup(true);
+                Owner.World.Telemetry?.Record("windup", Owner.DefId, Mathf.RoundToInt(lead * 1000f), $"contact windup {lead:0.00}s");
+                var fx = ShotTelegraphFx.Attach(Owner);
+                fx?.BeginSpread(windupEndsAt, Owner.DefId);
+                Owner.RecordNow();
+            }
+            if (windupEndsAt >= 0f && now >= windupEndsAt)
+            {
+                windupEndsAt = -1f;
+                armed = true;
+                SetWindup(false);
+                if (Owner.TryGetComponent<ShotTelegraphFx>(out var fx))
+                    fx.EndAndLog("spread");
+                // Pulse Attack so the strike clip plays once the wind-up ends.
+                if (Owner.Animation != null && Owner.Animation.HasParameter("IsAttacking"))
+                    Owner.Animation.Pulse("IsAttacking");
+                Owner.RecordNow();
+            }
+            else if (windupEndsAt >= 0f)
+                SetWindup(true);
+        }
 
         public override void OnContact(Entity other, bool entering)
         {
             if (!Owner.IsAlive || !other.IsAlive || !Owner.IsHostileTo(other))
+                return;
+            if (windup > 0.001f && !armed)
                 return;
             float now = Owner.Now;
             if (!entering && (interval <= 0f || now - lastHitAt < interval))
@@ -446,13 +512,26 @@ namespace SickOfIt.Gameplay.Content
                 Owner.Die(DeathCause.Self);
         }
 
-        public override void SaveState(StateWriter writer) => writer.Float(lastHitAt);
-        public override void LoadState(StateReader reader) => lastHitAt = reader.Float();
+        public override void SaveState(StateWriter writer)
+        {
+            writer.Float(lastHitAt);
+            writer.Float(windupEndsAt);
+            writer.Float(armed ? 1f : 0f);
+        }
+
+        public override void LoadState(StateReader reader)
+        {
+            lastHitAt = reader.Float();
+            windupEndsAt = reader.Float();
+            armed = reader.Float() > 0.5f;
+            SetWindup(windupEndsAt >= 0f && !armed);
+        }
     }
 
     [Serializable, JsonType("shoot")]
     [Doc("Fires projectile entities in a pattern. With 'interval' it attacks on a timer; with 'fireOnEvent' the shot happens on that animation frame (the timer then just starts the animation). " +
-         "Aimed enemy shots telegraph with a muzzle flash and a thin aim line for 'telegraph' seconds (0.4 by default when aim is Player/Predictive; -1 = auto, 0 = off). Spread patterns flash the emitter.")]
+         "Aimed enemy shots telegraph with a muzzle flash and a thin aim line for 'telegraph' seconds (0.4 by default when aim is Player/Predictive; -1 = auto, 0 = off). Spread patterns flash the emitter. " +
+         "With 'windupBool' the Windup pose is held for the whole telegraph (at least 'windupMin' seconds) before Attack starts — Cuphead-style.")]
     public sealed class ShootAbility : Ability
     {
         [Required, EntityRef, Doc("Entity id of the projectile.")] public string projectile = "";
@@ -468,6 +547,8 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Only attack when the player is closer than this (0 = any distance).")] public float range;
         [Doc("Animation event that releases the shot.")] public string fireOnEvent = "";
         [Doc("Animator parameter pulsed when an attack starts (a trigger, or a bool set for one tick).")] public string animTrigger = "";
+        [Doc("Animator bool set while telegraphing (the held wind-up pose). Cleared when Attack starts.")] public string windupBool = "";
+        [Doc("Floor on the telegraph when windupBool is set (Cuphead held wind-up). 0.35 by default.")] public float windupMin = 0.35f;
         [Doc("Damage per shot; 0 = the projectile's own.")] public int damage;
         [Doc("Seconds of muzzle flash + aim line (or emitter flash for a spread) before the volley. -1 = auto (0.4 for aimed enemy shots, 0.35 for spreads, 0 otherwise). 0 = off.")]
         public float telegraph = -1f;
@@ -481,6 +562,7 @@ namespace SickOfIt.Gameplay.Content
         Vector2 lockedAim;
         bool telegraphing;
         bool pendingFireOnEvent;
+        bool attackArmed;
 
         public override void OnSpawn()
         {
@@ -493,6 +575,8 @@ namespace SickOfIt.Gameplay.Content
             lockedAim = Vector2.right;
             telegraphing = false;
             pendingFireOnEvent = false;
+            attackArmed = false;
+            SetWindup(false);
         }
 
         /// <summary>The first attack comes initialDelay after spawning, or after entering the state that has this ability.</summary>
@@ -500,28 +584,53 @@ namespace SickOfIt.Gameplay.Content
 
         float EffectiveTelegraph()
         {
+            float lead;
             if (telegraph >= 0f)
-                return telegraph;
-            if (Owner == null || Owner.Team != Team.Enemy)
-                return 0f;
-            if (pattern is SpreadPattern || pattern is RadialPattern)
-                return 0.35f;
-            if (aim == Aim.Player || aim == Aim.Predictive)
-                return 0.4f;
-            return 0f;
+                lead = telegraph;
+            else if (Owner == null || Owner.Team != Team.Enemy)
+                lead = 0f;
+            else if (pattern is SpreadPattern || pattern is RadialPattern)
+                lead = 0.35f;
+            else if (aim == Aim.Player || aim == Aim.Predictive)
+                lead = 0.4f;
+            else
+                lead = 0f;
+            if (!string.IsNullOrEmpty(windupBool) && Owner != null && Owner.Team == Team.Enemy)
+                lead = Mathf.Max(lead, Mathf.Max(0.3f, windupMin));
+            return lead;
         }
 
         bool IsSpreadPattern => pattern is SpreadPattern || pattern is RadialPattern;
 
+        void SetWindup(bool on)
+        {
+            if (string.IsNullOrEmpty(windupBool) || Owner?.Animation == null)
+                return;
+            Owner.Animation.SetBool(windupBool, on);
+        }
+
         public override void Tick(float now, float dt)
         {
-            if (telegraphing && now >= telegraphUntil && (string.IsNullOrEmpty(fireOnEvent) || fireOnEventHold))
+            if (telegraphing && now >= telegraphUntil)
             {
                 telegraphing = false;
-                fireOnEventHold = false;
-                StartBurst(now);
+                SetWindup(false);
+                if (fireOnEventHold || string.IsNullOrEmpty(fireOnEvent))
+                {
+                    fireOnEventHold = false;
+                    StartBurst(now);
+                }
+                else if (!attackArmed)
+                {
+                    // Wind-up held for the telegraph; now start Attack so fireOnEvent can release the shot.
+                    attackArmed = true;
+                    if (!string.IsNullOrEmpty(animTrigger))
+                        Owner.Animation.Pulse(animTrigger);
+                    pendingFireOnEvent = true;
+                    Owner.RecordNow();
+                }
             }
-            if (interval > 0f && now >= nextAttackAt && !telegraphing && burstLeft <= 0)
+            if (interval > 0f && now >= nextAttackAt && !telegraphing && burstLeft <= 0 && !attackArmed)
             {
                 bool inRange = range <= 0f || DistanceToPlayer() <= range;
                 if (inRange)
@@ -529,7 +638,10 @@ namespace SickOfIt.Gameplay.Content
                     float density = Owner.Team == Team.Enemy ? SickOfIt.Data.Difficulty.Density : 1f;
                     nextAttackAt = now + interval / Mathf.Max(0.01f, Owner.Stat(Stat.AttackSpeed, 1f) * density);
                     BeginTelegraph(now);
-                    if (!string.IsNullOrEmpty(animTrigger))
+                    bool hasWindup = !string.IsNullOrEmpty(windupBool) && EffectiveTelegraph() > 0.001f;
+                    if (hasWindup)
+                        SetWindup(true);
+                    else if (!string.IsNullOrEmpty(animTrigger))
                         Owner.Animation.Pulse(animTrigger);
                     if (string.IsNullOrEmpty(fireOnEvent))
                     {
@@ -538,7 +650,7 @@ namespace SickOfIt.Gameplay.Content
                             StartBurst(now);
                         // else StartBurst runs when telegraphUntil elapses
                     }
-                    else
+                    else if (!hasWindup)
                         pendingFireOnEvent = true;
                     Owner.RecordNow();
                 }
@@ -570,6 +682,7 @@ namespace SickOfIt.Gameplay.Content
                 }
                 pendingFireOnEvent = false;
                 fireOnEventHold = false;
+                attackArmed = false;
                 StartBurst(now);
             }
         }
@@ -585,6 +698,9 @@ namespace SickOfIt.Gameplay.Content
             telegraphUntil = now + Mathf.Max(0f, lead);
             telegraphing = lead > 0.001f;
             fireOnEventHold = false;
+            attackArmed = false;
+            if (telegraphing && !string.IsNullOrEmpty(windupBool))
+                Owner.World.Telemetry?.Record("windup", Owner.DefId, Mathf.RoundToInt(lead * 1000f), $"shoot windup {lead:0.00}s");
             var fx = ShotTelegraphFx.Attach(Owner);
             if (fx == null)
                 return;
@@ -603,6 +719,8 @@ namespace SickOfIt.Gameplay.Content
             telegraphing = false;
             pendingFireOnEvent = false;
             fireOnEventHold = false;
+            attackArmed = false;
+            SetWindup(false);
             Owner.PlayAttackSound();
             burstLeft = Mathf.Max(1, burst);
             nextVolleyAt = now;
@@ -639,6 +757,7 @@ namespace SickOfIt.Gameplay.Content
             writer.Float(telegraphing ? 1f : 0f);
             writer.Float(pendingFireOnEvent ? 1f : 0f);
             writer.Float(fireOnEventHold ? 1f : 0f);
+            writer.Float(attackArmed ? 1f : 0f);
         }
 
         public override void LoadState(StateReader reader)
@@ -653,6 +772,8 @@ namespace SickOfIt.Gameplay.Content
             telegraphing = reader.Float() > 0.5f;
             pendingFireOnEvent = reader.Float() > 0.5f;
             fireOnEventHold = reader.Float() > 0.5f;
+            attackArmed = reader.Float() > 0.5f;
+            SetWindup(telegraphing && !string.IsNullOrEmpty(windupBool));
         }
     }
 

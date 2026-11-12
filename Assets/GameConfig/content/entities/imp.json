@@ -4,10 +4,16 @@
   "hint": "Slow embers. Keep moving.",
   "note": "Throws embers like it's the only thing it knows. It is.",
   "hintVoice": "vo_hero_hint_imp",
-  "onSpawn": [{ "type": "hintOnce" }],
+  "onSpawn": [
+    {
+      "type": "hintOnce"
+    }
+  ],
   "extends": "shooter",
   "health": 2,
-  "tags": ["imp"],
+  "tags": [
+    "imp"
+  ],
   "visual": {
     "fxColor": "#FF7A3A",
     "deathPunch": 0.35,
@@ -24,6 +30,11 @@
         {
           "name": "Hurt",
           "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsWinding",
+          "type": "Bool",
           "defaultValue": 0
         }
       ],
@@ -59,6 +70,13 @@
           "spriteSheet": "Art/Enemies/Imp/Imp_die.png",
           "fps": 12,
           "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Windup",
+          "spriteSheet": "Art/Enemies/Imp/Imp_attack.png",
+          "fps": 8,
+          "loop": true,
           "events": []
         }
       ],
@@ -102,6 +120,58 @@
           "hasExitTime": true,
           "exitTime": 1,
           "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Windup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
         }
       ],
       "defaultStateName": "Idle"
@@ -132,13 +202,23 @@
       "projectile": "projectileEnemy",
       "speed": 3.2,
       "aim": "Player",
-      "muzzle": [0.09, 0.09375],
+      "muzzle": [
+        0.09,
+        0.09375
+      ],
       "interval": 2.8,
       "initialDelay": 2,
       "animTrigger": "IsAttacking",
       "fireOnEvent": "FireProjectile",
-      "damage": 1
+      "damage": 1,
+      "windupBool": "IsWinding",
+      "windupMin": 0.35,
+      "telegraph": 0.4
     }
   ],
-  "sounds": { "hurtSound": "imp_hurt", "deathSound": "imp_die", "attackSound": "imp_attack" }
+  "sounds": {
+    "hurtSound": "imp_hurt",
+    "deathSound": "imp_die",
+    "attackSound": "imp_attack"
+  }
 }

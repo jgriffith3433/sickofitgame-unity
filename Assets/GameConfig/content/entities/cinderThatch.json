@@ -7,7 +7,10 @@
   "extends": "cinder",
   "health": 2,
   "moveSpeed": 1.1,
-  "tags": ["cinder", "cinderThatch"],
+  "tags": [
+    "cinder",
+    "cinderThatch"
+  ],
   "visual": {
     "scale": 0.17,
     "fxColor": "#FFB45C",
@@ -20,6 +23,16 @@
         },
         {
           "name": "Hurt",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsWinding",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsAttacking",
           "type": "Trigger",
           "defaultValue": 0
         }
@@ -52,6 +65,25 @@
           "fps": 12,
           "loop": false,
           "events": []
+        },
+        {
+          "stateName": "Windup",
+          "spriteSheet": "Art/Enemies/CinderThatch/CinderThatch_move.png",
+          "fps": 8,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/CinderThatch/CinderThatch_move.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 2,
+              "functionName": "FireProjectile"
+            }
+          ]
         }
       ],
       "transitions": [
@@ -113,6 +145,104 @@
           "hasExitTime": true,
           "exitTime": 1,
           "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Windup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Windup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
         }
       ],
       "defaultStateName": "Idle"
@@ -129,14 +259,20 @@
       "type": "spawn",
       "entity": "cinderSpark",
       "anchor": "Self",
-      "at": [-0.3, 0.2],
+      "at": [
+        -0.3,
+        0.2
+      ],
       "facePlayer": false
     },
     {
       "type": "spawn",
       "entity": "cinderSpark",
       "anchor": "Self",
-      "at": [0.3, 0.2],
+      "at": [
+        0.3,
+        0.2
+      ],
       "facePlayer": false
     },
     {

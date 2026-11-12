@@ -12,7 +12,9 @@
   "extends": "chaser",
   "health": 1,
   "moveSpeed": 1.4,
-  "tags": ["cinder"],
+  "tags": [
+    "cinder"
+  ],
   "body": {
     "radius": 2.5
   },
@@ -23,6 +25,21 @@
         {
           "name": "IsMoving",
           "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsWinding",
+          "type": "Bool",
+          "defaultValue": 0
+        },
+        {
+          "name": "IsAttacking",
+          "type": "Trigger",
+          "defaultValue": 0
+        },
+        {
+          "name": "Hurt",
+          "type": "Trigger",
           "defaultValue": 0
         }
       ],
@@ -44,6 +61,32 @@
         {
           "stateName": "Die",
           "spriteSheet": "Art/Enemies/Cinder/Cinder_die.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        },
+        {
+          "stateName": "Windup",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_move.png",
+          "fps": 8,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Attack",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_move.png",
+          "fps": 12,
+          "loop": false,
+          "events": [
+            {
+              "frame": 2,
+              "functionName": "FireProjectile"
+            }
+          ]
+        },
+        {
+          "stateName": "Hurt",
+          "spriteSheet": "Art/Enemies/Cinder/Cinder_idle.png",
           "fps": 12,
           "loop": false,
           "events": []
@@ -75,6 +118,137 @@
               "threshold": 0
             }
           ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Windup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Windup",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Idle",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsWinding",
+              "mode": "IfNot",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Attack",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "IsAttacking",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Attack",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
+        },
+        {
+          "fromState": "Idle",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Move",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Windup",
+          "toState": "Hurt",
+          "hasExitTime": false,
+          "exitTime": 1,
+          "conditions": [
+            {
+              "parameterName": "Hurt",
+              "mode": "If",
+              "threshold": 0
+            }
+          ]
+        },
+        {
+          "fromState": "Hurt",
+          "toState": "Idle",
+          "hasExitTime": true,
+          "exitTime": 1,
+          "conditions": []
         }
       ],
       "defaultStateName": "Idle"
@@ -91,7 +265,10 @@
     {
       "type": "contactDamage",
       "damage": 1,
-      "dieOnHit": true
+      "dieOnHit": true,
+      "windup": 0.35,
+      "windupRange": 1.5,
+      "windupBool": "IsWinding"
     },
     {
       "type": "chase",

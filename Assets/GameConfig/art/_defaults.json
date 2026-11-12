@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "about": "Game-wide art defaults for Tools/Art/art.mjs (docs/art-bible.md). Specs may override.",
+  "style": "Hand-inked 2D arcade character like Hollow Knight and Cuphead: heavy warm near-black outline (#140B0D), flat two-tone cel colour (base + one shadow), one thin rim of hellfire light, a readable silhouette at 48 px, no soft airbrush, no gradients beyond two tones, no pure black #000000, side view facing right",
+  "background": "Plain flat pure green background (#00ff00), no floor, no shadow, no scenery, even studio lighting.",
+  "negative": "photorealistic, 3d render, soft airbrush, gradient shading, watercolor wash, pure black outline, text, watermark, busy background, extra limbs, blurry, low contrast silhouette, camera movement, zoom, pan"
+}
