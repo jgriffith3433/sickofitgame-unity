@@ -1,3 +1,4 @@
-1. Open beta (or the change preview) and start Floor 998; ride the hay cart until the thief pops — it should **glow / hold** ~0.4 s (new Windup sheet) before the launcher snatch and fists.
-2. Or run playtest `enemy-ink` (`?playtest=enemy-ink`); after the sack station the thief appears and should wind up when you get close (distinct Windup art, not the Move loop).
-3. On a 390x844 phone run of the same scenario, each roster foe including the thief should read ≥40 px tall with a clear silhouette.
+1. Open beta, start playtest `enemy-ink` on device phone (390x844).
+2. Watch the lineup: imp, cinder, thatch, brute, spark, sack, launcher thief — each should wind up ≥0.3 s before the hit.
+3. Thief and thatch: silhouette readable, Windup glow visible (held sheets until Gen motion lands after the fleet pause).
+4. On Floor 998 in a normal climb, the thief should glow before the snatch.

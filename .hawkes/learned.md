@@ -1,4 +1,5 @@
-- convention: Hawkes Gen project id over MCP is `org_eb0d5c82e8da8c2d.sickofit` (plain `sickofit` returns no access).
-- lesson: launcherThief dead `a_0396dffd2fa61f26` — REJECT chest-cannon / firing sack; redo from framed stand, never seed die from that asset.
-- convention: Held windup/attack sheets must stay ≤2048 px wide (WebGL); scale the figure and use fewer cells before shipping interim stills.
-- canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles (incl. launcher thief on 998/994) share hand-inked Cuphead wind-ups of at least 0.3 s (`docs/art-bible.md` §9).
+- lesson: Gen fleet pause — when J says pause until fleet works, keep pending-gpu, clear failed ids from waiting-jobs, do not requeue; Studio resumes the same change once keys/servers exist.
+- lesson: Gen wait_for_server with missing AWS keys — jobs flip queued→failed "No GPU" in seconds ($0); never park those failed ids as live waits.
+- lesson: org credits gate video.i2v at 40 — below that, queue fails before GPU even if a server exists.
+- convention: Hawkes Gen project id over MCP is `org_eb0d5c82e8da8c2d.sickofit`.
+- canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles (incl. launcher thief) share hand-inked Cuphead wind-ups ≥0.3 s (`docs/art-bible.md` §9).

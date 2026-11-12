@@ -1,32 +1,24 @@
-# Enemy ink — judged poses, held sheets, i2v queued
+# Enemy ink — paused until Gen fleet works
 
-## Wrong
-`launcherThief` Windup/Attack still pointed at Move; `cinderThatch` windup/attack needed limbless motion after bird-leg i2v fails. Prior Gen pose batch finished this resume.
+## J's call
+Answered **Pause until Gen fleet works** (no close). Holding this change open; not shipping a “done” close on stills-only thief/thatch motion.
 
-## Judged (poses)
-| Pose | Asset | Verdict |
-|---|---|---|
-| thief stand | `a_35b1d63f3bd6a42f` | **PASS** — imp + launcher sack silhouette |
-| thief windup | `a_63f46cfb1eb5804b` | **PASS** — chamber/exhaust glow telegraph |
-| thief attack | `a_ee2ba6e3ad30e7df` | **PASS** — lunge + sack/launcher |
-| thief struck | `a_0de3446e74a7d32e` | **PASS** |
-| thief dead | `a_0396dffd2fa61f26` | **FAIL** — chest-cannon firing a horned sack (not death). Rejected → `_rejected/launcherThief_dead_chestcannon.png` |
-| thatch windup limbless | `a_eb77a64dd91899f6` | **PASS** — no legs/arms |
+## Status
+- Gen fleet still broken: `hawkesgen_fleet` → servers `[]`, error AWS keys missing in `hawkesgen/.env`.
+- Prior requeues failed instantly (No GPU, $0). Org credits were also under the video.i2v floor (40).
+- **No new Gen jobs this pass** (per pause + memory: don’t requeue while keys are missing).
+- Held Windup/Attack sheets + entity wiring from `08d5614` still ship. Scenario `enemy-ink` (phone). Remaining GPU work listed in `.hawkes/pending-gpu.txt`.
+- Unity compile not run here.
 
-Pose GPU spend so far **~$0.21** of **$0.86**.
+## Still to make (when fleet works)
+1. launcherThief dead pose redo + die i2v + bake
+2. launcherThief idle/windup/attack/hurt i2v + bake over held sheets
+3. cinderThatch limbless windup/attack i2v + bake (never `a_f5d9ad823922f967`)
 
-## Done this pass
-- Free `image.frame` ×5 → framed thief stand/windup/attack/struck + thatch windup (`a_ceb84e1b929c3e44`, `a_3b1a590b412a0ef4`, `a_b9165821785cd2b2`, `a_6aaca8f81a5afad0`, `a_af6820a9ba56e675`).
-- **Held** Windup/Attack sheets for thief (keyed stills, ≤2048); entity Windup/Attack no longer use Move.
-- Replaced thatch Windup held sheet from limbless framed pose.
-- Queued GPU (`wait_for_server`): dead redo + thief idle/windup/attack/hurt i2v + thatch windup/attack i2v. First queue failed (no GPU / no AWS keys, $0); **requeued** — ids in `.hawkes/waiting-jobs.txt`. Est. **~$0.35** more (fits budget); die i2v after dead PASS.
-- Playtest scenario remains `enemy-ink` + phone device.
+Est. ~$0.32 of remaining budget once GPU + credits are available.
 
-## Fun review
-**thin** on the ink arena alone (QA lineup), but Floor 998 glow-before-snatch + thief station keep the climb beat. Gaps for next resume: motion bake replacing held sheets; dead/die; hero-side screenshot for PR.
+## Fun review (prior pass, still stands)
+**Verdict: thin** — Floor 998 theft beat + roster wind-ups live; held stills weaken the Cuphead bounce until motion lands.
 
 ## Conflicts
-None with other agents. Left unrelated `videos/hello-hole` LFS dirty files unstaged (sparse/LFS churn).
-
-## Checks
-Entity JSON parse OK. Unity compile not run here. GPU jobs queued, not waited.
+None.

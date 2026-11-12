@@ -1,3 +1,4 @@
-launcherThief die clip — waits on dead pose redo j_ee32b195ebc0 (FAIL a_0396dffd2fa61f26 was chest-cannon); then frame + die i2v + bake
-launcherThief idle/windup/attack/hurt motion — queued j_33ea85c86bac j_cae94d8624ff j_02a98ed38efc j_d4419fd26947; held Windup/Attack sheets ship until PASS bake
-cinderThatch windup/attack motion — queued j_b121fd39259b j_6f098c0a62b2 (limbless framed windup a_af6820a9ba56e675); held limbless windup ships; never use a_f5d9ad823922f967
+PAUSED — J: Pause until Gen fleet works (2026-11-12). Do not requeue while hawkesgen_fleet shows AWS keys missing / servers []. Resume when fleet can launch and org credits ≥ 40 for video.i2v.
+launcherThief dead pose redo — image.edit from framed stand a_ceb84e1b929c3e44; REJECT chest-cannon (FAIL a_0396dffd2fa61f26); then frame + die i2v struck→dead + bake Die
+launcherThief idle/windup/attack/hurt i2v — framed a_ceb84e1b929c3e44 / a_3b1a590b412a0ef4 / a_b9165821785cd2b2 / a_6aaca8f81a5afad0; held Windup/Attack ship until PASS bake
+cinderThatch windup/attack i2v — limbless stand a_bb81b3c6ba63b46a → framed windup a_af6820a9ba56e675 / lunge a_268b14b1ea7b805e; REJECT bird legs; never a_f5d9ad823922f967

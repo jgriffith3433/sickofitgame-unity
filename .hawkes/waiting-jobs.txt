@@ -1,11 +1,7 @@
-j_ee32b195ebc0 launcherThief dead pose REDO (image.edit from framed stand a_ceb84e1b929c3e44): judge death burst + launcher sack still on back; REJECT if chest-cannon / firing sack (like FAIL a_0396dffd2fa61f26). If PASS: image.frame 640/00ff00/fill 0.78 → framed/launcherThief_dead.png, then queue die i2v start a_6aaca8f81a5afad0 (struck) end framed-dead; bake Die sheet
-j_33ea85c86bac launcherThief idle i2v (stand↔stand a_ceb84e1b929c3e44): judge wings/sack bounce on green; if PASS bake Idle+Move (idle+move share stand loop) via art.mjs --build
-j_cae94d8624ff launcherThief windup i2v (stand→framed windup a_3b1a590b412a0ef4): need held glow ≥0.3s on launcher chambers; if PASS bake over held LauncherThief_windup.png
-j_02a98ed38efc launcherThief attack i2v (windup→attack a_b9165821785cd2b2): if PASS bake over held LauncherThief_attack.png
-j_d4419fd26947 launcherThief hurt i2v (stand→struck a_6aaca8f81a5afad0): if PASS bake Hurt sheet
-j_b121fd39259b cinderThatch windup i2v (limbless stand a_bb81b3c6ba63b46a → framed windup a_af6820a9ba56e675): REJECT if any legs/arms; if PASS bake over CinderThatch_windup.png
-j_6f098c0a62b2 cinderThatch attack i2v (stand a_bb81b3c6ba63b46a → lunge a_268b14b1ea7b805e): REJECT if bird legs; if PASS bake over CinderThatch_attack.png
-
-AFTER all PASS + dead framed: queue die i2v within remaining budget (~$0.86 − $0.21 poses − this batch); bake thief+thatch sheets with SOI_ART_WORK + art.mjs --build --no-unity; keep Windup/Attack entity paths; update JUDGE.md + framed/manifest.json; delete cleared pending-gpu lines; screenshot thief beside hero for PR.
-
-NOTE: prior queue j_37cb7fd02f2d / j_c88a4f0e7dd5 / j_3dafe2303a57 / j_474b64c7fb16 / j_e14f3d830821 / j_803e6858cca5 / j_155a3b54681f failed (no GPU in 15m, $0 charged); this batch is the requeue with wait_for_server.
+# PAUSED — no live Gen jobs. See .hawkes/pending-gpu.txt.
+# When Gen fleet works (AWS keys in hawkesgen/.env, servers ready, org credits ≥ 40):
+# 1. image.edit launcherThief dead from framed stand a_ceb84e1b929c3e44 (REJECT chest-cannon like FAIL a_0396dffd2fa61f26)
+# 2. frame PASS dead 640/00ff00/fill 0.78 → framed/launcherThief_dead.png
+# 3. video.i2v batch (wait_for_server): thief idle/windup/attack/hurt + thatch windup/attack (seed assets in pending-gpu)
+# 4. die i2v struck a_6aaca8f81a5afad0 → framed-dead; bake thief+thatch via art.mjs --build --no-unity
+# 5. keep Windup/Attack entity paths; screenshot thief beside hero; delete pending-gpu when clear
