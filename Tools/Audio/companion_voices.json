@@ -202,10 +202,52 @@
       "prompt": "That's where I was going."
     },
     {
-      "id": "vo_wick999_intro0",
+      "id": "vo_wick999_lamp0",
       "voice": "wick",
-      "subtitle": "Oh. Someone. ...Mind the dark. I'll light it.",
-      "prompt": "Oh. Someone. ...Mind the dark. I'll light it."
+      "subtitle": "Oh. Someone. ...Mind the dark.",
+      "prompt": "Oh. Someone. ...Mind the dark."
+    },
+    {
+      "id": "vo_wick999_lamp1",
+      "voice": "wick",
+      "subtitle": "I'll light it.",
+      "prompt": "I'll light it."
+    },
+    {
+      "id": "vo_wick999_lamp2",
+      "voice": "wick",
+      "subtitle": "The lava rises here.",
+      "prompt": "The lava rises here."
+    },
+    {
+      "id": "vo_wick999_warn0",
+      "voice": "wick",
+      "subtitle": "Don't stand still.",
+      "prompt": "Don't stand still."
+    },
+    {
+      "id": "vo_wick999_warn1",
+      "voice": "wick",
+      "subtitle": "This ledge holds.",
+      "prompt": "This ledge holds."
+    },
+    {
+      "id": "vo_wick999_warn2",
+      "voice": "wick",
+      "subtitle": "Stay in the light.",
+      "prompt": "Stay in the light."
+    },
+    {
+      "id": "vo_wick999_bye0",
+      "voice": "wick",
+      "subtitle": "Light's on. Go quick.",
+      "prompt": "Light's on. Go quick."
+    },
+    {
+      "id": "vo_wick999_bye1",
+      "voice": "wick",
+      "subtitle": "I'll be ahead.",
+      "prompt": "I'll be ahead."
     },
     {
       "id": "vo_wick999_hurt0",

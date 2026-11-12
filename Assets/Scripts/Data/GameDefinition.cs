@@ -123,6 +123,8 @@ namespace SickOfIt.Data
         public ShaftConfig shaft = new ShaftConfig();
         [Tooltip("Yooba's talking portrait and lines on the Shaft and in the shop (ui/yooba.json)")]
         public YoobaConfig yooba = new YoobaConfig();
+        [Tooltip("Rook on the Shaft: chalk tally wall of rewinds and one line per visit (ui/rook.json)")]
+        public RookConfig rook = new RookConfig();
         [Tooltip("The Codex: what the hero has seen, from the main and pause menus (ui/codex.json)")]
         public CodexConfig codex = new CodexConfig();
         [Tooltip("Shared look of all menus (ui/theme.json)")]

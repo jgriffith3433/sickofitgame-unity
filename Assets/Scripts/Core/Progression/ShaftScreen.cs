@@ -88,6 +88,8 @@ namespace SickOfIt.Core.Progression
         public bool IsPreview => preview;
         /// <summary>Yooba's portrait on this Shaft, or null (before he has met the hero).</summary>
         public YoobaPortrait Yooba => yooba;
+        /// <summary>Rook and his chalk tally wall on this Shaft, or null.</summary>
+        public RookShaft Rook => rook;
         /// <summary>Waystones marked on the map, and how many of them are lit (reached).</summary>
         public int WaystonesShown { get; private set; }
         public int WaystonesLit { get; private set; }
@@ -146,6 +148,7 @@ namespace SickOfIt.Core.Progression
         MenuButton continueButton;
         MenuButton yoobaButton;
         YoobaPortrait yooba;
+        RookShaft rook;
         bool shopOpen;
         bool firstDrop;
         string restartText;
@@ -488,6 +491,11 @@ namespace SickOfIt.Core.Progression
             var yoobaConfig = GameDefinition.Instance != null ? GameDefinition.Instance.yooba : null;
             if (yoobaConfig != null && yoobaConfig.enabled && (Kind == Mode.Meet || (Kind == Mode.Climb || Kind == Mode.Drop) && YoobaProgress.Met))
                 yooba = YoobaPortrait.Create(menu, stage, yoobaConfig, yoobaConfig.shaftPortrait, yoobaConfig.shaftPortraitPortrait);
+
+            // Rook on every Shaft stop: chalk tally of the hero's real rewind count (Docs/Story.md "The Climbers").
+            var rookConfig = GameDefinition.Instance != null ? GameDefinition.Instance.rook : null;
+            if (rookConfig != null && rookConfig.enabled)
+                rook = RookShaft.Create(menu, stage, rookConfig, rookConfig.shaftPortrait, rookConfig.shaftPortraitPortrait);
 
             flash = MenuGraphics.NewImage(stage, "Flash", new Color(1f, 0.95f, 0.85f, 0f));
             flash.rectTransform.offsetMin = new Vector2(-400f, -400f);
@@ -1069,6 +1077,7 @@ namespace SickOfIt.Core.Progression
                 yield return Wait(heroWait);
             }
             Report("plunge", $"done in {Time.unscaledTime - started:0.00}s (skip={skip})");
+            yield return SayRook();
             Finish();
         }
 
@@ -1183,6 +1192,7 @@ namespace SickOfIt.Core.Progression
                 if (!preview)
                     YoobaPortrait.Heard(line);
             }
+            yield return SayRook();
             Finish();
         }
 
@@ -1262,6 +1272,7 @@ namespace SickOfIt.Core.Progression
                 YoobaProgress.Met = true;
                 YoobaPortrait.Heard(null);
             }
+            yield return SayRook();
             Finish();
         }
 
@@ -1324,7 +1335,17 @@ namespace SickOfIt.Core.Progression
                 float length = Sfx.LengthOf(sound);
                 yield return Wait((length > 0f ? length : 2.5f) + 0.3f);
             }
+            yield return SayRook();
             Finish();
+        }
+
+        /// <summary>Rook's one tally line for this Shaft stop (skipped with the animation).</summary>
+        IEnumerator SayRook()
+        {
+            if (rook == null || skip)
+                yield break;
+            yield return rook.SayVisit(() => skip);
+            Report("rook", rook.LastSaid != "" ? $"tally {Achievements.Get("rewinds")}: {rook.LastSaid}" : "silent");
         }
 
         IEnumerator FlashBand(Image image)

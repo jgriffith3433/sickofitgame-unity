@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": ["prop", "wickLamp", "lit"],
+  "body": {
+    "radius": 0.25,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.45,
+    "placeholderColor": "#BFE6C8",
+    "placeholderSize": 1.05,
+    "placeholderLabel": true,
+    "layer": "Foreground1",
+    "sortingOrder": 3,
+    "hurtFlash": false,
+    "deathPop": false,
+    "color": "#BFE6C8"
+  },
+  "healthBar": {
+    "show": false
+  }
+}

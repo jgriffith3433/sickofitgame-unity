@@ -1,2 +1,5 @@
-vo_ch1_* dialogue stems (6 lines via audio.dialogue so Overlord/hero react): needs Gen org credits (≥16) then audio.dialogue; import to Assets/Audio/Generated/vo_ch1_*.mp3 and wire audio.json clips; drop from pending_clips.json
-music_chapter_one_sting (audio.music, ~$0.18 GPU within budget): needs GPU server + org credits if any; import to Assets/Audio/Generated/music_chapter_one_sting.ogg; wire audio.json
+Rook ScratchMark clip (idle/talk exist as sheet.json only in this worktree): image.generate concept + image.edit pose + video.i2v on flat 00ff00 + sprite.sheet keyed 00ff00 → Assets/Art/Enemies/Rook/; wire art/rook.json clip scratch + RookShaft portrait sheets
+Rook Talk clip for Shaft portrait: same pipeline → Rook_talk sheet; ui/rook.json clips.talk.sheet
+Wick LightLamp clip: same pipeline → Assets/Art/Enemies/Wick/Wick_light.png; art/wick.json
+Wick Talk clip: same pipeline if Talk sheet missing
+wickLamp / wickLampLit prop art (pole + pale green flame): image.generate in inked lava style, cutout, place under Assets/Art/Props/WickLamp/
