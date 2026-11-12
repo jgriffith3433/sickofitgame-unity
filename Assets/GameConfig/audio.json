@@ -201,13 +201,14 @@
     "playerWallCling": "player_wall_cling",
     "playerWallJump": "player_wall_jump",
     "enemyHit": "hit_pop",
-    "killPop": "kill_pop"
+    "killPop": "kill_pop",
+    "bulletImpact": "bullet_impact"
   },
   "sounds": [
     {
       "id": "player_shoot",
       "kind": "Effect",
-      "prompt": "Punchy bright arcade shot: a crisp snappy pop with a short sparkly zap on top, tight and clear, retro video game blaster. One-shot, dry, no music. Very short, ends immediately.",
+      "prompt": "Arcade rocket launcher shot: a short punchy low thump with a bright snapping crack on top, tight and dry, no tail. One-shot, no music.",
       "durationSeconds": 0.5,
       "promptInfluence": 0.6,
       "loop": false,
@@ -216,11 +217,12 @@
       "clip": "Audio/Generated/Core/player_shoot_t1.ogg",
       "takes": [
         "Audio/Generated/Core/player_shoot_t2.ogg",
-        "Audio/Generated/Core/player_shoot_t3.ogg"
+        "Audio/Generated/Core/player_shoot_t3.ogg",
+        "Audio/Generated/Core/player_shoot_t4.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
-      "volume": 0.5,
+      "generatedFrom": "effect|0.5|0.6|False|Arcade rocket launcher shot: a short punchy low thump with a bright snapping crack on top, tight and dry, no tail. One-shot, no music.",
+      "volume": 0.55,
       "pitchVariation": 0.06,
       "maxVoices": 4,
       "cooldown": 0.05
@@ -228,8 +230,8 @@
     {
       "id": "player_jump",
       "kind": "Effect",
-      "prompt": "Light quick springy whoosh of a person jumping, a soft rising swish with a tiny boing. One-shot, dry, no music.",
-      "durationSeconds": 0.5,
+      "prompt": "A person jumping: a light springy push-off, a soft rising swish and a tiny boing. One-shot, dry, no music.",
+      "durationSeconds": 0.45,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
@@ -237,10 +239,11 @@
       "clip": "Audio/Generated/Core/player_jump_t1.ogg",
       "takes": [
         "Audio/Generated/Core/player_jump_t2.ogg",
-        "Audio/Generated/Core/player_jump_t3.ogg"
+        "Audio/Generated/Core/player_jump_t3.ogg",
+        "Audio/Generated/Core/player_jump_t4.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "effect|0.45|0.6|False|A person jumping: a light springy push-off, a soft rising swish and a tiny boing. One-shot, dry, no music.",
       "volume": 0.45,
       "pitchVariation": 0.06,
       "maxVoices": 3,
@@ -249,8 +252,8 @@
     {
       "id": "player_land",
       "kind": "Effect",
-      "prompt": "Feet landing on soft grass, a short muffled thud with a puff of dust. One-shot, close-up, dry. Very short, ends immediately.",
-      "durationSeconds": 0.5,
+      "prompt": "Boots landing on stone ground: a short solid thud with a puff of grit. One-shot, close-up, dry, no music.",
+      "durationSeconds": 0.45,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
@@ -261,7 +264,7 @@
         "Audio/Generated/Core/player_land_t3.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "effect|0.45|0.6|False|Boots landing on stone ground: a short solid thud with a puff of grit. One-shot, close-up, dry, no music.",
       "volume": 0.45,
       "pitchVariation": 0.06,
       "maxVoices": 3,
@@ -270,8 +273,8 @@
     {
       "id": "player_hurt",
       "kind": "Effect",
-      "prompt": "Cartoon hero getting hit: a sharp punchy slap impact with a short grunting buzz falling in pitch. One-shot, dry, no music.",
-      "durationSeconds": 0.5,
+      "prompt": "Cartoon hero taking a hit: a sharp punchy slap transient and a low painful thump with a short grunt falling in pitch. One-shot, dry, no music.",
+      "durationSeconds": 0.7,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
@@ -279,29 +282,36 @@
       "clip": "Audio/Generated/Core/player_hurt_t1.ogg",
       "takes": [
         "Audio/Generated/Core/player_hurt_t2.ogg",
-        "Audio/Generated/Core/player_hurt_t3.ogg"
+        "Audio/Generated/Core/player_hurt_t3.ogg",
+        "Audio/Generated/Core/player_hurt_t4.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "effect|0.7|0.6|False|Cartoon hero taking a hit: a sharp punchy slap transient and a low painful thump with a short grunt falling in pitch. One-shot, dry, no music.",
       "volume": 0.9,
       "pitchVariation": 0.06,
-      "maxVoices": 3,
+      "maxVoices": 4,
       "cooldown": 0.2
     },
     {
       "id": "player_die",
       "kind": "Effect",
-      "prompt": "Cartoon character knocked out: a big comedic bonk on the head, then a body flopping onto the ground with a soft thud. One-shot, dry, no music, no instruments.",
-      "durationSeconds": 1.2,
-      "promptInfluence": 0.65,
+      "prompt": "Cartoon hero knocked out: a big comedic bonk, a falling slide whistle and a sad little thud. One-shot, dry, no music.",
+      "durationSeconds": 1.6,
+      "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Generated/player_die.mp3",
-      "generatedFrom": "effect|1.2|0.65|False|Cartoon character knocked out: a big comedic bonk on the head, then a body flopping onto the ground with a soft thud. One-shot, dry, no music, no instruments.",
-      "volume": 1,
-      "pitchVariation": 0,
-      "maxVoices": 3,
+      "clip": "Audio/Generated/Core/player_die_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/player_die_t2.ogg",
+        "Audio/Generated/Core/player_die_t3.ogg",
+        "Audio/Generated/Core/player_die_t4.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|1.6|0.6|False|Cartoon hero knocked out: a big comedic bonk, a falling slide whistle and a sad little thud. One-shot, dry, no music.",
+      "volume": 0.9,
+      "pitchVariation": 0.06,
+      "maxVoices": 4,
       "cooldown": 0.04
     },
     {
@@ -355,7 +365,7 @@
     {
       "id": "pickup_diamond",
       "kind": "Effect",
-      "prompt": "Small crystal being picked up: two quick bright sparkly pings rising, clean and short. Video game pickup, one-shot, no melody.",
+      "prompt": "A single bright crystal ping, clean glassy and sparkly, short, one clear pitch. One-shot, no melody, no music.",
       "durationSeconds": 0.5,
       "promptInfluence": 0.6,
       "loop": false,
@@ -364,14 +374,15 @@
       "clip": "Audio/Generated/Core/pickup_diamond_t1.ogg",
       "takes": [
         "Audio/Generated/Core/pickup_diamond_t2.ogg",
-        "Audio/Generated/Core/pickup_diamond_t3.ogg"
+        "Audio/Generated/Core/pickup_diamond_t3.ogg",
+        "Audio/Generated/Core/pickup_diamond_t4.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "effect|0.5|0.6|False|A single bright crystal ping, clean glassy and sparkly, short, one clear pitch. One-shot, no melody, no music.",
       "volume": 0.6,
       "pitchVariation": 0.06,
-      "maxVoices": 3,
-      "cooldown": 0.04
+      "maxVoices": 4,
+      "cooldown": 0.0
     },
     {
       "id": "pickup_rewind",
@@ -498,17 +509,22 @@
     {
       "id": "upgrade_pick",
       "kind": "Effect",
-      "prompt": "Satisfying power-up: a bright rising zap ending in a sparkle. One-shot, no music.",
+      "prompt": "Buying a good in a shop: a coin clink, a satisfying cash-register ka-ching and a bright sparkle. One-shot, no music.",
       "durationSeconds": 0.6,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Generated/upgrade_pick.mp3",
-      "generatedFrom": "effect|0.6|0.6|False|Satisfying power-up: a bright rising zap ending in a sparkle. One-shot, no music.",
+      "clip": "Audio/Generated/Core/upgrade_pick_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/upgrade_pick_t2.ogg",
+        "Audio/Generated/Core/upgrade_pick_t3.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|0.6|0.6|False|Buying a good in a shop: a coin clink, a satisfying cash-register ka-ching and a bright sparkle. One-shot, no music.",
       "volume": 0.8,
-      "pitchVariation": 0,
-      "maxVoices": 3,
+      "pitchVariation": 0.06,
+      "maxVoices": 4,
       "cooldown": 0.04
     },
     {
@@ -12338,32 +12354,44 @@
     {
       "id": "imp_hurt",
       "kind": "Effect",
-      "prompt": "A small imp yelping: a sharp high squeal with a crackle of embers. One-shot, dry, no music. Very short, ends immediately.",
+      "prompt": "A small soot imp hit: a sharp high squeal over a snappy thump, crackle of embers. One-shot, dry, no music.",
       "durationSeconds": 0.5,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Generated/imp_hurt.mp3",
-      "generatedFrom": "effect|0.5|0.6|False|A small imp yelping: a sharp high squeal with a crackle of embers. One-shot, dry, no music. Very short, ends immediately.",
+      "clip": "Audio/Generated/Core/imp_hurt_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/imp_hurt_t2.ogg",
+        "Audio/Generated/Core/imp_hurt_t3.ogg",
+        "Audio/Generated/Core/imp_hurt_t4.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|0.5|0.6|False|A small soot imp hit: a sharp high squeal over a snappy thump, crackle of embers. One-shot, dry, no music.",
       "volume": 0.48,
-      "pitchVariation": 0.08,
+      "pitchVariation": 0.06,
       "maxVoices": 4,
       "cooldown": 0.08
     },
     {
       "id": "imp_die",
       "kind": "Effect",
-      "prompt": "A small imp popping into cinders: a squeaky shriek, then a dry fiery pop and falling sparks. One-shot, dry, no music. Very short, ends immediately.",
+      "prompt": "A small imp bursting into cinders: a squeaky shriek, a bassy pop and falling sparks. One-shot, dry, no music.",
       "durationSeconds": 0.9,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Generated/imp_die.mp3",
-      "generatedFrom": "effect|0.9|0.6|False|A small imp popping into cinders: a squeaky shriek, then a dry fiery pop and falling sparks. One-shot, dry, no music. Very short, ends immediately.",
+      "clip": "Audio/Generated/Core/imp_die_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/imp_die_t2.ogg",
+        "Audio/Generated/Core/imp_die_t3.ogg",
+        "Audio/Generated/Core/imp_die_t4.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|0.9|0.6|False|A small imp bursting into cinders: a squeaky shriek, a bassy pop and falling sparks. One-shot, dry, no music.",
       "volume": 0.6,
-      "pitchVariation": 0.08,
+      "pitchVariation": 0.06,
       "maxVoices": 4,
       "cooldown": 0.1
     },
@@ -12386,32 +12414,44 @@
     {
       "id": "cinder_hurt",
       "kind": "Effect",
-      "prompt": "A living cinder hit: a crackling hiss and a shower of tiny sparks. One-shot, dry, no music. Very short, ends immediately.",
+      "prompt": "A living ember cinder hit: a crackling snap with a hiss and a shower of tiny sparks, a dull body thud. One-shot, dry, no music.",
       "durationSeconds": 0.5,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Generated/cinder_hurt.mp3",
-      "generatedFrom": "effect|0.5|0.6|False|A living cinder hit: a crackling hiss and a shower of tiny sparks. One-shot, dry, no music. Very short, ends immediately.",
-      "volume": 0.44000000000000006,
-      "pitchVariation": 0.08,
+      "clip": "Audio/Generated/Core/cinder_hurt_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/cinder_hurt_t2.ogg",
+        "Audio/Generated/Core/cinder_hurt_t3.ogg",
+        "Audio/Generated/Core/cinder_hurt_t4.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|0.5|0.6|False|A living ember cinder hit: a crackling snap with a hiss and a shower of tiny sparks, a dull body thud. One-shot, dry, no music.",
+      "volume": 0.44,
+      "pitchVariation": 0.06,
       "maxVoices": 4,
       "cooldown": 0.08
     },
     {
       "id": "cinder_die",
       "kind": "Effect",
-      "prompt": "A glowing cinder snuffing out: a soft whoomph, a sizzle and a puff of ash. One-shot, dry, no music. Very short, ends immediately.",
+      "prompt": "A glowing cinder snuffing out: a soft whoomph with a bass thump, a sizzle and a puff of ash. One-shot, dry, no music.",
       "durationSeconds": 0.9,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Generated/cinder_die.mp3",
-      "generatedFrom": "effect|0.9|0.6|False|A glowing cinder snuffing out: a soft whoomph, a sizzle and a puff of ash. One-shot, dry, no music. Very short, ends immediately.",
+      "clip": "Audio/Generated/Core/cinder_die_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/cinder_die_t2.ogg",
+        "Audio/Generated/Core/cinder_die_t3.ogg",
+        "Audio/Generated/Core/cinder_die_t4.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|0.9|0.6|False|A glowing cinder snuffing out: a soft whoomph with a bass thump, a sizzle and a puff of ash. One-shot, dry, no music.",
       "volume": 0.55,
-      "pitchVariation": 0.08,
+      "pitchVariation": 0.06,
       "maxVoices": 4,
       "cooldown": 0.1
     },
@@ -12434,16 +12474,22 @@
     {
       "id": "cinderThatch_die",
       "kind": "Effect",
-      "prompt": "A clump of burning thatch collapsing: a crackly crunch, then a soft pop of sparks. One-shot, dry, no music. Very short, ends immediately.",
+      "prompt": "A clump of burning thatch collapsing: a crackly crunch with a low thump and a soft pop of sparks. One-shot, dry, no music.",
       "durationSeconds": 0.9,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Generated/cinderThatch_die.mp3",
-      "generatedFrom": "effect|0.9|0.6|False|A clump of burning thatch collapsing: a crackly crunch, then a soft pop of sparks. One-shot, dry, no music. Very short, ends immediately.",
+      "clip": "Audio/Generated/Core/cinderThatch_die_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/cinderThatch_die_t2.ogg",
+        "Audio/Generated/Core/cinderThatch_die_t3.ogg",
+        "Audio/Generated/Core/cinderThatch_die_t4.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|0.9|0.6|False|A clump of burning thatch collapsing: a crackly crunch with a low thump and a soft pop of sparks. One-shot, dry, no music.",
       "volume": 0.55,
-      "pitchVariation": 0.08,
+      "pitchVariation": 0.06,
       "maxVoices": 4,
       "cooldown": 0.1
     },
@@ -12466,16 +12512,22 @@
     {
       "id": "impSack_die",
       "kind": "Effect",
-      "prompt": "A sack imp falling over: a gruff yelp, a thud and a spill of clinking gems. One-shot, dry, no music. Very short, ends immediately.",
+      "prompt": "A sack imp falling over: a gruff yelp, a heavy thud and a spill of clinking gems. One-shot, dry, no music.",
       "durationSeconds": 0.9,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
       "voiceId": "",
-      "clip": "Audio/Generated/impSack_die.mp3",
-      "generatedFrom": "effect|0.9|0.6|False|A sack imp falling over: a gruff yelp, a thud and a spill of clinking gems. One-shot, dry, no music. Very short, ends immediately.",
+      "clip": "Audio/Generated/Core/impSack_die_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/impSack_die_t2.ogg",
+        "Audio/Generated/Core/impSack_die_t3.ogg",
+        "Audio/Generated/Core/impSack_die_t4.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|0.9|0.6|False|A sack imp falling over: a gruff yelp, a heavy thud and a spill of clinking gems. One-shot, dry, no music.",
       "volume": 0.6,
-      "pitchVariation": 0.08,
+      "pitchVariation": 0.06,
       "maxVoices": 4,
       "cooldown": 0.1
     },
@@ -13842,8 +13894,8 @@
     {
       "id": "graze_tick",
       "kind": "Effect",
-      "prompt": "Tiny sharp glassy tick, a bullet whipping past very close, quick bright zip with a small sparkle. One-shot, dry, no music.",
-      "durationSeconds": 0.5,
+      "prompt": "A bullet whipping past very close: a thin fast whoosh with a bright glassy zip and a tiny sparkle. One-shot, dry, no music.",
+      "durationSeconds": 0.4,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
@@ -13851,10 +13903,11 @@
       "clip": "Audio/Generated/Core/graze_tick_t1.ogg",
       "takes": [
         "Audio/Generated/Core/graze_tick_t2.ogg",
-        "Audio/Generated/Core/graze_tick_t3.ogg"
+        "Audio/Generated/Core/graze_tick_t3.ogg",
+        "Audio/Generated/Core/graze_tick_t4.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "effect|0.4|0.6|False|A bullet whipping past very close: a thin fast whoosh with a bright glassy zip and a tiny sparkle. One-shot, dry, no music.",
       "volume": 0.45,
       "pitchVariation": 0.06,
       "maxVoices": 3,
@@ -15351,7 +15404,7 @@
     {
       "id": "player_dash",
       "kind": "Effect",
-      "prompt": "A quick whoosh of a person dashing forward in a burst, cloth snapping, a short rising air swipe. One-shot, dry, no music.",
+      "prompt": "A quick dash burst: a snapping cloth whoosh with a rising air swipe and a soft low puff. One-shot, dry, no music.",
       "durationSeconds": 0.5,
       "promptInfluence": 0.6,
       "loop": false,
@@ -15360,10 +15413,11 @@
       "clip": "Audio/Generated/Core/player_dash_t1.ogg",
       "takes": [
         "Audio/Generated/Core/player_dash_t2.ogg",
-        "Audio/Generated/Core/player_dash_t3.ogg"
+        "Audio/Generated/Core/player_dash_t3.ogg",
+        "Audio/Generated/Core/player_dash_t4.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "effect|0.5|0.6|False|A quick dash burst: a snapping cloth whoosh with a rising air swipe and a soft low puff. One-shot, dry, no music.",
       "volume": 0.55,
       "pitchVariation": 0.06,
       "maxVoices": 3,
@@ -18811,8 +18865,8 @@
     {
       "id": "hit_pop",
       "kind": "Effect",
-      "prompt": "A bullet landing on an enemy: a short punchy slap-pop with a tiny crunchy crackle, bright and tight. One-shot, dry, no music. Very short, ends immediately.",
-      "durationSeconds": 0.5,
+      "prompt": "A bullet landing on an enemy: a bright sharp transient slap with a meaty low body thud right behind it, tight and punchy. One-shot, dry, no music.",
+      "durationSeconds": 0.45,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
@@ -18820,10 +18874,11 @@
       "clip": "Audio/Generated/Core/hit_pop_t1.ogg",
       "takes": [
         "Audio/Generated/Core/hit_pop_t2.ogg",
-        "Audio/Generated/Core/hit_pop_t3.ogg"
+        "Audio/Generated/Core/hit_pop_t3.ogg",
+        "Audio/Generated/Core/hit_pop_t4.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "effect|0.45|0.6|False|A bullet landing on an enemy: a bright sharp transient slap with a meaty low body thud right behind it, tight and punchy. One-shot, dry, no music.",
       "volume": 0.55,
       "pitchVariation": 0.06,
       "maxVoices": 4,
@@ -18832,8 +18887,8 @@
     {
       "id": "kill_pop",
       "kind": "Effect",
-      "prompt": "An enemy defeated: a fat satisfying pop with a low thump under it and a quick sparkly shimmer on top, arcade kill sound. One-shot, dry, no music. Short, ends immediately.",
-      "durationSeconds": 0.6,
+      "prompt": "An enemy bursting: a crunchy pop transient, a fat low thump body and a quick shower of sparkly bits, Bullet Kin style. One-shot, dry, no music.",
+      "durationSeconds": 0.8,
       "promptInfluence": 0.6,
       "loop": false,
       "voice": "",
@@ -18841,10 +18896,11 @@
       "clip": "Audio/Generated/Core/kill_pop_t1.ogg",
       "takes": [
         "Audio/Generated/Core/kill_pop_t2.ogg",
-        "Audio/Generated/Core/kill_pop_t3.ogg"
+        "Audio/Generated/Core/kill_pop_t3.ogg",
+        "Audio/Generated/Core/kill_pop_t4.ogg"
       ],
       "bus": "Sfx",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "effect|0.8|0.6|False|An enemy bursting: a crunchy pop transient, a fat low thump body and a quick shower of sparkly bits, Bullet Kin style. One-shot, dry, no music.",
       "volume": 0.8,
       "pitchVariation": 0.06,
       "maxVoices": 4,
@@ -18903,6 +18959,28 @@
       "pitchVariation": 0,
       "maxVoices": 1,
       "cooldown": 0.1
+    },
+    {
+      "id": "bullet_impact",
+      "kind": "Effect",
+      "prompt": "A bullet hitting a stone wall: a sharp dry tick of impact with a short gritty puff of rock dust, very short. One-shot, no music.",
+      "durationSeconds": 0.5,
+      "promptInfluence": 0.6,
+      "loop": false,
+      "voice": "",
+      "voiceId": "",
+      "clip": "Audio/Generated/Core/bullet_impact_t1.ogg",
+      "takes": [
+        "Audio/Generated/Core/bullet_impact_t2.ogg",
+        "Audio/Generated/Core/bullet_impact_t3.ogg",
+        "Audio/Generated/Core/bullet_impact_t4.ogg"
+      ],
+      "bus": "Sfx",
+      "generatedFrom": "effect|0.5|0.6|False|A bullet hitting a stone wall: a sharp dry tick of impact with a short gritty puff of rock dust, very short. One-shot, no music.",
+      "volume": 0.5,
+      "pitchVariation": 0.06,
+      "maxVoices": 4,
+      "cooldown": 0.04
     }
   ]
 }

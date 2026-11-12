@@ -240,3 +240,13 @@ at once; Music at least 6 dB under each voice line (the duck's own samples and t
 Level 1 logs an ambient bed and the Meadow's turns to its burning one; Floor 1000 logs its own and it is audible; the page's first tap
 started sound and the master limiter is on the page; the main menu loaded within 20 s (WebGL). Metrics `audio.count.<verb>`,
 `audio.voiceLines`, `audio.menuSeconds`.
+
+## Hawkes Gen takes for the core verbs (Nov 12)
+
+Eighteen events now have 3-4 takes made by Hawkes Gen (`audio.sfx-open`, Stable Audio 3, one prompt variant per take) in `Assets/Audio/Generated/Core/<id>_t<n>.ogg`:
+`player_shoot`, `bullet_impact` (new, event `bulletImpact`), `hit_pop`, `kill_pop`, `player_hurt`, `player_die`, `graze_tick`, `player_dash`, `player_jump`, `player_land`,
+`pickup_diamond`, `upgrade_pick` (the shop purchase), `imp_hurt`, `imp_die`, `cinder_hurt`, `cinder_die`, `impSack_die`, `cinderThatch_die`.
+`Tools/Audio/bake_gen_takes.py` cuts leading silence, caps the length, levels every take to -17 dB RMS under a limiter and writes the .ogg and its .meta (a git-known .meta keeps its GUID);
+`Tools/Audio/core_sfx.py` (table `GEN`) writes audio.json, with `generatedFrom` the Sound Generator's own key so the editor shows them Ready.
+Ask Gen for `duration >= 1` with `trim: false`: a short request came back as a near-silent file (-70 LUFS) for graze, jump, dash, diamond and the imps' hurts.
+`pickup_diamond` is exact-pitch and climbs a semitone per diamond inside 1 s (`GameplayHud.Diamond.cs`; playtest `audio`: 5 diamonds in 2 s, 5 rising pitches), maxVoices 4, cooldown 0.
