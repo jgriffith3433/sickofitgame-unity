@@ -1,4 +1,3 @@
-1. Open beta, start playtest `enemy-ink` on device phone (390x844).
-2. Watch the lineup: imp, cinder, thatch, brute, spark, sack, launcher thief — each should wind up ≥0.3 s before the hit.
-3. Thief and thatch: silhouette readable, Windup glow visible (held sheets until Gen motion lands after the fleet pause).
-4. On Floor 998 in a normal climb, the thief should glow before the snatch.
+1. Open Settings on the main menu: drag Music, Effects and Voice — they should be thick enough for a thumb and stay where you left them after closing and reopening.
+2. Play Level 1 (or New Game): when a voiced line plays, the music should pull back clearly; Esc/P pause should muffle the music and quiet combat SFX while UI clicks still work.
+3. Take hits down to one heart: a heartbeat loop should come in under a quieter music bed, then stop when you heal (or die).

@@ -137,12 +137,14 @@ namespace SickOfIt.Core
         public void Pause()
         {
             isPaused = true;
+            SickOfIt.Core.Audio.AudioBuses.SetPause(true);
             OnPaused?.Invoke();
         }
 
         public void Resume()
         {
             isPaused = false;
+            SickOfIt.Core.Audio.AudioBuses.SetPause(false);
             OnResumed?.Invoke();
         }
 
@@ -151,6 +153,8 @@ namespace SickOfIt.Core
             isPaused = false;
             isRewinding = false;
             timeScale = 1f;
+            SickOfIt.Core.Audio.AudioBuses.SetPause(false);
+            SickOfIt.Core.Audio.AudioBuses.SetRewind(false);
             OnResumed?.Invoke();
         }
 
@@ -164,6 +168,7 @@ namespace SickOfIt.Core
             if (isRewinding) return;
             isRewinding = true;
             timeScale = rewindSpeed;
+            SickOfIt.Core.Audio.AudioBuses.SetRewind(true);
             OnRewindStarted?.Invoke();
         }
 
@@ -175,6 +180,7 @@ namespace SickOfIt.Core
             RewindsEnded++;
             LastRewindEndedAt = UnityEngine.Time.unscaledTime;
             BeginPostRewindClamp();
+            SickOfIt.Core.Audio.AudioBuses.SetRewind(false);
             OnRewindStopped?.Invoke();
         }
 

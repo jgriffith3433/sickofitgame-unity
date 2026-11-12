@@ -50,6 +50,9 @@ namespace SickOfIt.Core.Audio
         static readonly HashSet<string> warned = new HashSet<string>();
         static AudioSource[] pool;
         static string[] poolIds;
+        static int[] poolPriority;
+        static Bus[] poolBus;
+        static float[] poolAuthored; // sound.volume * call volume (before settings / buses)
         static int next;
 
         /// <summary>The event-to-sound table (never null).</summary>
@@ -112,7 +115,7 @@ namespace SickOfIt.Core.Audio
                 return;
             bool isVoice = sound.kind == SoundKind.Voice;
             int cap = isVoice ? Mathf.Max(1, sound.maxVoices) : Mathf.Clamp(sound.maxVoices, 1, MaxCopies);
-            if (CountPlaying(id) >= cap)
+            if (CountPlaying(id) >= cap && !TryStealSameId(id, sound.priority))
                 return;
             lastPlayed[id] = now;
 
@@ -123,20 +126,28 @@ namespace SickOfIt.Core.Audio
                 return;
             }
 
-            var source = NextSource();
+            var source = NextSource(sound.priority);
             if (source == null)
                 return;
             var bus = AudioConfig.BusOf(sound);
             var clip = PickTake(sound, out int take, out int takeCount);
             source.clip = clip;
             source.loop = false;
-            source.volume = Mathf.Clamp01(sound.volume * volume * GameSettings.SfxVolume * AudioBuses.Gain(bus));
+            float authored = sound.volume * volume;
+            source.volume = Mathf.Clamp01(authored * SettingOf(bus) * AudioBuses.Gain(bus));
             float variation = exactPitch ? 0f : Mathf.Clamp(sound.pitchVariation, 0f, 0.2f);
             source.pitch = Mathf.Clamp(pitch * (1f + Random.Range(-variation, variation)), 0.1f, 3f);
             source.Play();
-            poolIds[System.Array.IndexOf(pool, source)] = id;
+            int slot = System.Array.IndexOf(pool, source);
+            poolIds[slot] = id;
+            poolPriority[slot] = sound.priority;
+            poolBus[slot] = bus;
+            poolAuthored[slot] = authored;
             Played?.Invoke(new PlayedSound { id = id, take = take, takes = takeCount, pitch = source.pitch, volume = source.volume, bus = bus, time = now });
         }
+
+        static float SettingOf(Bus bus) =>
+            bus == Bus.Voice ? GameSettings.VoiceVolume : GameSettings.SfxVolume;
 
         /// <summary>
         /// One of a sound's takes (its clip and 'takes' that are loaded), random but never the one picked last time for this sound.
@@ -207,13 +218,13 @@ namespace SickOfIt.Core.Audio
                 WarnOnce(id, $"[Sfx] Sound \"{id}\" has no clip yet. Generate it: SickOfIt > Audio > Sound Generator.");
                 return false;
             }
-            float setting = sound.kind == SoundKind.Voice ? GameSettings.VoiceVolume : GameSettings.SfxVolume;
+            var bus = AudioConfig.BusOf(sound);
             source.clip = sound.clip;
             source.loop = true;
             source.pitch = 1f;
-            source.volume = Mathf.Clamp01(sound.volume * volume * setting * AudioBuses.Gain(AudioConfig.BusOf(sound)));
+            source.volume = Mathf.Clamp01(sound.volume * volume * SettingOf(bus) * AudioBuses.Gain(bus));
             source.Play();
-            Played?.Invoke(new PlayedSound { id = id, take = 0, takes = 1, pitch = 1f, volume = source.volume, bus = AudioConfig.BusOf(sound), time = Time.unscaledTime });
+            Played?.Invoke(new PlayedSound { id = id, take = 0, takes = 1, pitch = 1f, volume = source.volume, bus = bus, time = Time.unscaledTime });
             return true;
         }
 
@@ -266,11 +277,34 @@ namespace SickOfIt.Core.Audio
             return count;
         }
 
-        static AudioSource NextSource()
+        /// <summary>Stops the lowest-priority playing copy of this id when a higher-priority one needs the slot.</summary>
+        static bool TryStealSameId(string id, int priority)
+        {
+            if (pool == null) return false;
+            int victim = -1;
+            int lowest = priority;
+            for (int i = 0; i < pool.Length; i++)
+            {
+                if (pool[i] == null || !pool[i].isPlaying || poolIds[i] != id)
+                    continue;
+                if (poolPriority[i] < lowest)
+                {
+                    lowest = poolPriority[i];
+                    victim = i;
+                }
+            }
+            if (victim < 0)
+                return false;
+            pool[victim].Stop();
+            poolIds[victim] = null;
+            return true;
+        }
+
+        static AudioSource NextSource(int priority)
         {
             if (pool == null || pool[0] == null)
                 CreatePool();
-            // Prefer an idle source; otherwise take over the oldest one.
+            // Prefer an idle source; otherwise take over the lowest-priority playing one (or the oldest if tied).
             for (int i = 0; i < pool.Length; i++)
             {
                 int index = (next + i) % pool.Length;
@@ -280,9 +314,21 @@ namespace SickOfIt.Core.Audio
                     return pool[index];
                 }
             }
-            var stolen = pool[next];
-            next = (next + 1) % pool.Length;
-            return stolen;
+            int victim = next;
+            int lowest = poolPriority[next];
+            for (int i = 0; i < pool.Length; i++)
+            {
+                int index = (next + i) % pool.Length;
+                if (poolPriority[index] < lowest)
+                {
+                    lowest = poolPriority[index];
+                    victim = index;
+                }
+            }
+            if (priority < lowest)
+                return null; // every playing voice is more important
+            next = (victim + 1) % pool.Length;
+            return pool[victim];
         }
 
         static void CreatePool()
@@ -291,6 +337,9 @@ namespace SickOfIt.Core.Audio
             Object.DontDestroyOnLoad(host);
             pool = new AudioSource[PoolSize];
             poolIds = new string[PoolSize];
+            poolPriority = new int[PoolSize];
+            poolBus = new Bus[PoolSize];
+            poolAuthored = new float[PoolSize];
             for (int i = 0; i < PoolSize; i++)
             {
                 var source = host.AddComponent<AudioSource>();
@@ -298,6 +347,22 @@ namespace SickOfIt.Core.Audio
                 source.spatialBlend = 0f;
                 source.ignoreListenerPause = true;
                 pool[i] = source;
+            }
+            GameSettings.Changed -= ReapplyPlaying;
+            AudioBuses.Changed -= ReapplyPlaying;
+            GameSettings.Changed += ReapplyPlaying;
+            AudioBuses.Changed += ReapplyPlaying;
+        }
+
+        /// <summary>Pause mute / rewind trim / volume sliders: keep every live one-shot at the new bus gain.</summary>
+        static void ReapplyPlaying()
+        {
+            if (pool == null) return;
+            for (int i = 0; i < pool.Length; i++)
+            {
+                if (pool[i] == null || !pool[i].isPlaying)
+                    continue;
+                pool[i].volume = Mathf.Clamp01(poolAuthored[i] * SettingOf(poolBus[i]) * AudioBuses.Gain(poolBus[i]));
             }
         }
 

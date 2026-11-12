@@ -1,30 +1,30 @@
-# Enemy ink — still paused (fleet AWS keys missing)
+# Audio mix: buses, ducking, pause/low-health/rewind, Settings sliders
 
-## J's call (holds)
-**Pause until Gen fleet works** — do not requeue launcherThief / cinderThatch i2v while `hawkesgen_fleet` shows AWS keys missing / `servers: []`. Held Windup/Attack sheets + `.hawkes/pending-gpu.txt` stay; resume when fleet can launch and org credits cover `video.i2v` (≥ 40).
+## What was wrong
+The game already had software Music/Voice/SFX/Ambience buses and an −8 dB Music duck under voice, but not the full mix the brief asked for: UI bus, Ambience duck, 80 ms attack, Pause / Low-health / Rewind snapshots, a one-heart heartbeat, drag sliders that persist, or a playtest that logs ducks and snapshots.
 
-## This pass (`c_8ec024977cdc`)
-- Rechecked fleet: error `AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are not in hawkesgen/.env`; `servers: []`; no requeue; $0 GPU spend.
-- No gameplay/art edits — beta already has the pause merge (#395 / prior `c_666db16040a6`): held thief Windup/Attack, limbless thatch windup hold, Floor 998 glow-before-snatch, playtest `enemy-ink` (phone).
-- Refreshed `.hawkes/pending-gpu.txt`, `.hawkes/waiting-jobs.txt` (no live job ids), scenario / try / learned for Studio’s resume gate.
+## What changed
+- **AudioBuses**: Music −8 dB + Ambience −4 dB under voice (80 ms / 400 ms); snapshots Pause (Music −10, SFX mute), LowHealth (Music −4), Rewind (SFX −6); `SnapshotChanged` for the playtest log. Master remains `AudioListener` / MasterVolume (WebGL still has no usable mixer DSP).
+- **UI bus** + `SoundDef.priority` (cap/steal); `ui_click` / `ui_back` on Ui so pause menu clicks survive SFX mute.
+- **HeartbeatMix**: at 1 heart plays `player_heartbeat` (procedural pulse until Gen credits allow a real `audio.sfx` loop); wired from LevelRuntime.
+- **GameClock** sets Pause/Rewind snapshots on pause/rewind events.
+- **Settings**: Music / Effects / Voice are drag sliders (≥48 px, touch-grown); menus playtest drags them.
+- **Playtest `audio-mix`**: sliders persist, voice duck ≥6 dB, pause ≥8 dB, heartbeat at 1 heart.
+- **docs/audio-mix.md**, Story / SoundAudit / world-bible notes.
 
-## Still to make (when fleet works)
-1. launcherThief dead pose redo + die i2v + bake (never chest-cannon `a_0396dffd2fa61f26`)
-2. launcherThief idle/windup/attack/hurt i2v + bake over held sheets (framed seeds in pending-gpu)
-3. cinderThatch limbless windup/attack i2v + bake (never `a_f5d9ad823922f967` / bird-leg seeds)
-4. Floor score loops remain credit-blocked in pending-gpu (other item; not this GPU budget)
-
-Est. ~$0.32 of the approved $0.86 once GPU + credits exist.
-
-## Conflicts
-None this pass (no merge; working tree was clean from beta).
+## Gen / credits
+Studio org credits were **1** (`audio.sfx` needs **8**). Heartbeat is procedural; loudness analyze/process not run. Listed in `.hawkes/pending-gpu.txt`. Project id used: `org_eb0d5c82e8da8c2d.sickofit`.
 
 ## Checks
-- `hawkesgen_fleet` — blocked (documented above).
-- Unity compile not run here (no editor; no C# changed).
-- Scenario still `enemy-ink` + `{"device":"phone"}`.
+- Unity compile **not run here** (no editor/dotnet Unity refs in this sandbox).
+- Edited C# scanned for duplicate members / conflict markers (none).
+- EditMode `SoundTakesTests` extended for 80 ms attack, ambience duck, snapshots, Ui bus (not executed here).
 
-## Fun review
-**Verdict: thin** (unchanged) — early-floor roster + Floor 998 theft beat read as a world beat; held stills for thief/thatch wind-up/attack still weaken the Cuphead bounce until motion lands after the fleet pause.
-Full 3 / Breathing 3 / Interactions 3 / Story-as-experience 3 / Soul 4.
-Gaps when resumed: (1) thief motion sheets over held Windup/Attack, (2) thatch limbless windup/attack motion, (3) thief Die from a non-chest-cannon dead pose.
+## Fun reviewer
+**thin** — breathing/story scores high for the mix; gaps: Gen heartbeat clip, LUFS pass (credits), unrelated bare-floor one-shots (out of scope).
+
+## Conflicts
+None.
+
+## Left
+Gen `player_heartbeat` + optional LUFS pass when credits ≥ 8; then clear pending-gpu lines.

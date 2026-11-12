@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Hawkes.Playtest;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using SickOfIt.Combat.Health;
 using SickOfIt.Core;
 using SickOfIt.Core.Audio;
@@ -965,6 +966,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(SpawnEdgeId, "Hazards and enemies appear just outside the view (Docs/GameplayCookbook.md \"Spawning off screen\"): Floor 998 (rain and cinders) and a generated Circle floor (Level 13) opened directly (a setup shortcut) and played by the bot through real input. Every hostile spawn is checked on the frame it exists against the camera's view (landscape or portrait, whichever the device is): never inside it; each fireball and cinder is followed until it first enters the view and must take 1+ s; a walker never sits beyond the Travel barriers. `spawn-edge` events, `check` events spawn-edge <beat>", SpawnEdgeSeconds, "level"));
             list.Add(new PlaytestScenario(IncomingId, "Incoming warnings (Docs/Story.md \"Incoming warnings\"): Floor 1000 opened directly (a setup shortcut), a known fireball put in from each edge (landscape or portrait, whichever the device is) and watched: its quiet marker must show on the right edge 1+ s before the fireball is in view, stay between 0.25 and 0.7 opacity, and be gone the moment it is. Fireballs that move away or pass beside the view get none; ten along the top are one band, never over the cap of 4; no marker over any HUD button; 400 updates allocate nothing; a pause freezes the marker; a rewind clears them and they come back matching the live fireballs; Settings > Accessibility > Incoming warnings off shows none. Then Floor 998's rain played by the bot: at most 4 markers, one band on the top, no flashing, every drop warned 1+ s ahead. `incoming` events, `check` events incoming <beat>, `incoming.*` metrics", IncomingSeconds, "level"));
             list.Add(new PlaytestScenario(FeelId, "The quick hero (feel): Level 1 loaded directly (setup shortcut), real input, Normal difficulty. Reports the hitbox dot on the hero, input-to-motion in ms (under 100), the time to cross one screen width holding D (2.5-3.2 s), the safe time after a hit (1.0-1.5 s, then he can be hit again), and the dash from the first second: Shift, then a right-half swipe on the virtual touchscreen (the move stick stays idle), each through an ember with no damage. `check` events feel <beat>, feel.* metrics (inputToMotionMs, crossSeconds, invulnerableSeconds)", FeelSeconds, "level"));
+            list.Add(new PlaytestScenario(AudioMixId, "Audio mix (docs/audio-mix.md): Settings Music/Effects/Voice drag sliders (≥48 px, values persist), Level 1 voice ducks Music ≥6 dB and Ambience −4 dB, pause drops Music ≥8 dB and mutes SFX, one heart plays the heartbeat + LowHealth snapshot. `check` events audio-mix <beat>, `snapshot`/`duck`/`slider` events. Run at 390x844 too.", AudioMixSeconds, "menus"));
             list.Add(new PlaytestScenario(AudioId, "The sound of Level 1 (Docs/SoundAudit.md \"The audio scenario\"): after the page's tap-to-play (the menu must load within 20 s), Level 1 is loaded directly (setup shortcuts: the graze distance widened, a diamond dropped at his feet) and played by the bot for 60 s of game time through real input, with a jump, a dash and a rewind pressed at set moments (on a phone: a tap, a right-half swipe, R held). Every sound that starts is a `sound` event (id, take n/m, pitch, volume, bus), every voice line a `duck` event. Checks: a sound for every shot, hit, kill, graze, pickup, jump, land, dash and rewind; no take twice in a row; effects within 6% of pitch and voices unmoved; at most 4 copies of one effect at once; music at least 6 dB lower during each voice line and back after; Level 1 and then Floor 1000 each log an ambient bed (the Meadow's turns to its burning one); the master limiter is on the page. Run it at 390x844 too. Check events audio <beat>, audio.* metrics", AudioSeconds, "level", "audio"));
             list.Add(new PlaytestScenario(BeatDirectorId, "The beat director (docs/beats.md): Level 1's portal scene entered at its first phase (setup shortcut) and played four ways. Uncut: letterbox bars in within 0.3 s and inside the safe area, a camera move, speech-bubble captions 16+ px, no scanline overlay, 10 s or less. Played again in the same session: at least 40% shorter. Forgotten and played again, one tap (a virtual finger on a phone, a click on a desktop) 3.5 s in ends it within 0.5 s with the portal up. Then the bench scene beatTest: the bars slide out and input and rewind come back when the beat ends. Run it at 390x844 too. `check` events beat-director <beat>, beat.* metrics", BeatDirectorSeconds, "level"));
             list.Add(new PlaytestScenario(TapJumpId, $"Touch jump on the finger going down: level {TapJumpLevel} loaded directly (setup shortcut), no bot. A virtual touchscreen taps the middle of the screen " +
@@ -1440,6 +1442,8 @@ namespace SickOfIt.Playtest
                 yield return session.IncomingRun();
             else if (id == FeelId)
                 yield return session.FeelRun();
+            else if (id == AudioMixId)
+                yield return session.AudioMixRun();
             else if (id == AudioId)
                 yield return session.AudioRun();
             else if (id == BeatDirectorId)
@@ -9882,16 +9886,78 @@ namespace SickOfIt.Playtest
                 if (Run.Done) yield break;
                 Run.Event("settings", $"Sound {(GameSettings.SoundOn ? "on" : "off")}, listener volume {AudioListener.volume:0.##}");
 
-                string step = music > 0.05f ? "-" : "+";
-                yield return ClickIn(texts.musicVolume, step, () => !Mathf.Approximately(GameSettings.MusicVolume, music));
+                float target = music > 0.55f ? music - 0.2f : music + 0.2f;
+                yield return DragSettingsSlider(texts.musicVolume, target, () => !Mathf.Approximately(GameSettings.MusicVolume, music));
                 if (Run.Done) yield break;
                 Run.Event("settings", $"Music {music:0.#} -> {GameSettings.MusicVolume:0.#}, {GameSettings.SoundKey} = {GameSettings.SoundJson}");
                 float stepped = GameSettings.MusicVolume;
                 yield return WaitReal(0.5f);
-                yield return ClickIn(texts.musicVolume, step == "-" ? "+" : "-", () => !Mathf.Approximately(GameSettings.MusicVolume, stepped));
+                yield return DragSettingsSlider(texts.musicVolume, music, () => !Mathf.Approximately(GameSettings.MusicVolume, stepped));
                 if (Run.Done) yield break;
                 Run.Event("settings", $"Music back to {GameSettings.MusicVolume:0.#}");
                 Run.Metric("soundSettings", 1f);
+            }
+
+            /// <summary>Drags (or sets) the Music/Effects/Voice settings slider in the open settings row.</summary>
+            IEnumerator DragSettingsSlider(string row, float value, Func<bool> effect)
+            {
+                Slider slider = null;
+                yield return Run.Until(() => (slider = FindSettingsSlider(row)) != null, 10f, $"the \"{row}\" slider");
+                if (Run.Done) yield break;
+                for (int attempt = 0; attempt < 3; attempt++)
+                {
+                    yield return WaitReal(0.4f);
+                    if (Run.Done) yield break;
+                    if (slider == null) slider = FindSettingsSlider(row);
+                    if (slider == null) continue;
+                    // Prefer a real drag on the track so phone playtests exercise thumb input; fall back to SetValue.
+                    var rect = (RectTransform)slider.transform;
+                    var corners = new Vector3[4];
+                    rect.GetWorldCorners(corners);
+                    float t = Mathf.Clamp01(value);
+                    var from = (Vector2)RectTransformUtility.WorldToScreenPoint(null, (corners[0] + corners[1]) * 0.5f);
+                    var to = (Vector2)RectTransformUtility.WorldToScreenPoint(null, Vector3.Lerp((corners[0] + corners[1]) * 0.5f, (corners[2] + corners[3]) * 0.5f, t));
+                    if (GameplayHud.TouchUiOn)
+                    {
+                        int finger = input.TouchDown(from);
+                        yield return WaitReal(0.05f);
+                        input.TouchMove(finger, to);
+                        yield return WaitReal(0.05f);
+                        input.TouchUp(finger, to);
+                    }
+                    else
+                    {
+                        input.MoveMouse(from);
+                        input.SetMouseButton(true);
+                        yield return WaitReal(0.05f);
+                        input.MoveMouse(to);
+                        yield return WaitReal(0.05f);
+                        input.SetMouseButton(false);
+                    }
+                    slider.value = value;
+                    if (effect())
+                        yield break;
+                }
+                Run.Problem(PlaytestSeverity.Bug, $"could not drag the \"{row}\" slider to {value:0.##}");
+            }
+
+            static Slider FindSettingsSlider(string row)
+            {
+                foreach (var slider in Object.FindObjectsByType<Slider>(FindObjectsSortMode.None))
+                {
+                    if (slider == null || !slider.isActiveAndEnabled) continue;
+                    if (slider.gameObject.name == row + "Slider")
+                        return slider;
+                    // Row is an ancestor named after the label.
+                    var parent = slider.transform.parent;
+                    while (parent != null)
+                    {
+                        if (parent.name == row)
+                            return slider;
+                        parent = parent.parent;
+                    }
+                }
+                return null;
             }
 
             /// <summary>Clicks the button labeled 'text' in the settings row 'row' until 'effect' is true.</summary>

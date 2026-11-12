@@ -65,8 +65,9 @@ namespace SickOfIt.Tests.Editor
         {
             AudioBuses.ResetForTests();
             Assert.AreEqual(Mathf.Pow(10f, -8f / 20f), AudioBuses.DuckGain, 1e-5f);
+            Assert.AreEqual(Mathf.Pow(10f, -4f / 20f), AudioBuses.AmbienceDuckGain, 1e-5f);
             Assert.Less(AudioBuses.DuckGain, 0.5012f, "at least 6 dB");
-            Assert.AreEqual(0.1f, AudioBuses.AttackSeconds, 1e-5f);
+            Assert.AreEqual(0.08f, AudioBuses.AttackSeconds, 1e-5f);
             Assert.AreEqual(0.4f, AudioBuses.ReleaseSeconds, 1e-5f);
             foreach (Bus bus in System.Enum.GetValues(typeof(Bus)))
                 Assert.AreEqual(1f, AudioBuses.Gain(bus), 1e-5f, bus.ToString());
@@ -76,11 +77,28 @@ namespace SickOfIt.Tests.Editor
         }
 
         [Test]
+        public void PauseLowHealthAndRewindSnapshotsStackOnTheBuses()
+        {
+            AudioBuses.ResetForTests();
+            AudioBuses.SetPause(true);
+            Assert.AreEqual(AudioBuses.PauseMusicDb, AudioBuses.MusicGainDb, 0.05f);
+            Assert.AreEqual(0f, AudioBuses.Gain(Bus.Sfx), 1e-5f);
+            Assert.AreEqual(1f, AudioBuses.Gain(Bus.Ui), 1e-5f);
+            AudioBuses.SetPause(false);
+            AudioBuses.SetLowHealth(true);
+            Assert.AreEqual(AudioBuses.LowHealthMusicDb, AudioBuses.MusicGainDb, 0.05f);
+            AudioBuses.SetRewind(true);
+            Assert.AreEqual(AudioBuses.RewindSfxDb, AudioBuses.SfxGainDb, 0.05f);
+            AudioBuses.ResetForTests();
+        }
+
+        [Test]
         public void SoundsPlayOnTheirKindsBus()
         {
             Assert.AreEqual(Bus.Voice, AudioConfig.BusOf(new SoundDef { kind = SoundKind.Voice }));
             Assert.AreEqual(Bus.Sfx, AudioConfig.BusOf(new SoundDef { kind = SoundKind.Effect }));
             Assert.AreEqual(Bus.Ambience, AudioConfig.BusOf(new SoundDef { kind = SoundKind.Effect, bus = SoundBus.Ambience }));
+            Assert.AreEqual(Bus.Ui, AudioConfig.BusOf(new SoundDef { kind = SoundKind.Effect, bus = SoundBus.Ui }));
         }
 
         static JObject Audio() => JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "GameConfig", "audio.json")));
