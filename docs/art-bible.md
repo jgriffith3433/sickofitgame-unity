@@ -99,7 +99,28 @@ All through Hawkes Gen under project `org_eb0d5c82e8da8c2d.sickofit` (the short 
 
 Checks without GPU: `node Tools/Art/art.mjs hero --check` (spec vs wiring, 604x340 at 100 PPU), `python3 Tools/Art/art_inventory.py`.
 
-## 8. Inked HUD atlas
+## 8. Feel VFX atlas (combat flipbooks)
+
+Dead Cells-style hand-inked bursts for every combat verb (`FeelVfx`, playtest `vfx-kit`):
+
+| Row (top → bottom) | Kind | Look |
+|---|---|---|
+| 0 | Muzzle | warm amber flash at the launcher |
+| 1 | Impact | gold star spark on a shot landing |
+| 2 | Hit | white/orange flash ring on an enemy |
+| 3 | DeathImp | black soot puff + orange embers |
+| 4 | DeathCinder | grey ash shatter + sparks |
+| 5 | DeathSack | soot puff with gold diamond flecks (Floor 997 threats) |
+| 6 | Diamond | cyan gem sparkle |
+| 7 | HeroHurt | red flash ring |
+| 8 | HeroDeath | large red-orange ring burst |
+| 9 | Dash | cyan horizontal afterimage smear |
+| 10 | Graze | warm streak past the hero |
+| 11 | RewindRipple | teal expanding rings |
+
+Atlas: 10 frames × 12 rows, 128 px cells (`Assets/Resources/Effects/FeelVfxAtlas.png`), outline `#140B0D`, flat cel, green `#00ff00` key at Gen time. Pipeline: `image.generate` keyframe on `#00ff00` → short `video.i2v` → `sprite.sheet` (key `00ff00`, 8–10 frames, 256 px then packed to 128). Procedural stand-ins ship until Gen sheets land. Diamonds also fly to the HUD gem within 0.6 s (`DiamondFlyer`).
+
+## 9. Inked HUD atlas
 
 Hand-inked UI widgets for the in-level HUD (`HudInkAtlas`, `GameplayHud.Ink`), Hollow Knight cabinet feel:
 
@@ -112,7 +133,7 @@ Hand-inked UI widgets for the in-level HUD (`HudInkAtlas`, `GameplayHud.Ink`), H
 
 Outline `#140B0D`, ember `#FF5B3A`/`#FF8A1F`, brass `#C89A3A`, rewind teal `#4CE0D2`. Flat cel, no soft airbrush. Packed into one atlas at `Assets/Resources/UI/HudInkAtlas.png` (Gen `image.generate` + `image.transform` trim/pot). Grouped top-left (vessels + reel) and top-right (gem + dial); phone rewind button ≥72 px bottom-right.
 
-## 9. Enemy redraw (Meadow and Floors 1000-997)
+## 10. Enemy redraw (Meadow and Floors 1000-997)
 
 Every hostile type on the Meadow and Floors 1000-997 (imp, cinder, thatch cinder, cinder brute, cinder spark, sack
 imp; the launcher thief shares the same ink rules) ships the same five clips as the hero's combat set, plus a held
@@ -136,7 +157,7 @@ brute/sack full motion). Launcher thief: PASS poses framed; held Windup/Attack s
 redo + idle/windup/attack/hurt i2v queued (`c_666db16040a6`; Floors 998/994). Playtest `enemy-ink` (roster
 includes `launcherThief`).
 
-## 10. The hero redraw (done)
+## 11. The hero redraw (done)
 
 - Design is fixed: armoured knight, battered dark bronze plate, brass trim, closed helm with two glowing orange eye slots, tattered maroon cloth, heavy gauntlets and greaves, broad and tired. Launcher from the start. Never a man in a jacket.
 - Shipped on beta (#385 / c_409228146ca5): concept `a_babf8d7bca383dae`, magenta key poses, eight `video.i2v` clips baked into `Assets/Art/Sprites/Player/` (Idle, Walk, Jump, Land, Dash, DeathBurn, Rewind, Victory) with existing `.meta` guids and pivots kept. Walk `fps` 32 matches `moveSpeed` 3.8. Compare stills in `Assets/Art/HeroInk/compare/`. Judge log: `Assets/Art/HeroInk/JUDGE.md`.
