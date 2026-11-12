@@ -466,7 +466,9 @@ namespace SickOfIt.Core.Progression
 
         private void SetupAudio()
         {
-            if (config.music == null) return;
+            var score = config.score != null && config.score.Complete ? config.score : null;
+            var track = score != null ? score.explore : config.music;
+            if (track == null) return;
 
             // Create AudioSource if none exists
             if (musicSource == null)
@@ -481,8 +483,10 @@ namespace SickOfIt.Core.Progression
             musicSource.playOnAwake = false;
             musicSource.spatialBlend = 0f;
             musicSource.dopplerLevel = 0f;
-            musicSource.clip = config.music;
-            SickOfIt.Core.Audio.MusicVolume.Set(musicSource, config.musicVolume);
+            musicSource.clip = track;
+            SickOfIt.Core.Audio.MusicVolume.Set(musicSource, score != null ? score.volume : config.musicVolume);
+            if (score != null)
+                SickOfIt.Gameplay.ScoreCues.Attach(musicSource.gameObject, score);
             musicSource.loop = true;
             if (musicSource.GetComponent<RewindableAudioSource>() == null)
                 musicSource.gameObject.AddComponent<RewindableAudioSource>();

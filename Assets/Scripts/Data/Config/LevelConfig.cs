@@ -35,6 +35,9 @@ namespace SickOfIt.Data.Config
         [Range(0f, 1f)]
         public float musicVolume = 1f;
 
+        [Tooltip("The adaptive score: explore / fight / finale loops at one tempo (see ScoreConfig). Empty keeps the single track above.")]
+        public ScoreConfig score = new ScoreConfig();
+
         [Header("Audio - Ambient SFX")]
         [Tooltip("Ambient/environmental sounds that loop during the level")]
         public AudioClip ambientSound;
