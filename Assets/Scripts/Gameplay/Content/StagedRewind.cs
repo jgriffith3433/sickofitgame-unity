@@ -10,7 +10,7 @@ namespace SickOfIt.Gameplay.Content
     [Serializable, JsonType("stagedRewind")]
     [Doc("The first rewind, taught by a hit nobody can dodge (Level 1). The first time it runs in a level: a ring of 'shot' converges on the hero, the hit drops time to 'slowScale' " +
          "(presentation only, like the hit-freeze, until a rewind starts), the HUD rewind button grows and pulses, the hero says 'line' with one short caption, and the slow motion holds " +
-         "until the player rewinds; when that rewind ends he says 'reliefLine'. Every later run (the replay after that rewind) fires one crossing 'shot' he can jump instead.")]
+         "for 1.5 real seconds at most (or until the player rewinds), then time returns by itself; when that rewind ends he says 'reliefLine'. Every later run (the replay after that rewind) fires one crossing 'shot' he can jump instead.")]
     public sealed class StagedRewindAction : GameAction
     {
         [Required, EntityRef] public string shot = "";
@@ -50,14 +50,20 @@ namespace SickOfIt.Gameplay.Content
     /// </summary>
     public sealed class FirstRewindStage : MonoBehaviour
     {
-        public enum Stage { Idle, Armed, Slow, Rewinding, Done }
+        public enum Stage { Idle, Armed, Slow, Released, Rewinding, Done }
+
+        /// <summary>The slow motion's hard cap in real (unscaled) seconds: it can never hold longer, rewind or not.</summary>
+        public const float SlowSeconds = 1.5f;
+        /// <summary>After the slow motion lets go the button keeps pulsing this long, so the lesson can still be taken.</summary>
+        const float PulseAfterSeconds = 4f;
 
         static FirstRewindStage instance;
         static GameplayWorld stagedIn;
 
         public static Stage Current { get; private set; } = Stage.Idle;
         /// <summary>True while the HUD's rewind button should grow and pulse.</summary>
-        public static bool Pulsing => Current == Stage.Slow;
+        public static bool Pulsing => Current == Stage.Slow || Current == Stage.Released;
+        float slowAt;
         /// <summary>Times it happened this session (playtest).</summary>
         public static int Hits { get; private set; }
         public static int Relieved { get; private set; }
@@ -99,10 +105,18 @@ namespace SickOfIt.Gameplay.Content
             var clock = GameClock.Instance;
             if (world == null || health == null || clock == null)
             {
+                EndSlow();
                 Current = Stage.Idle;
                 return;
             }
             bool rewinding = clock.IsRewinding;
+            // The hero died during the beat: the beat is over and time is his again.
+            if (health.CurrentHealth <= 0 && Current != Stage.Rewinding)
+            {
+                EndSlow();
+                Current = Stage.Done;
+                return;
+            }
             switch (Current)
             {
                 case Stage.Armed:
@@ -112,8 +126,9 @@ namespace SickOfIt.Gameplay.Content
                     {
                         Current = Stage.Slow;
                         Hits++;
-                        HitFreeze.Freeze(600f, action.slowScale, 0f, "firstRewind");
-                        world.Hud?.ShowText(action.lineText, TextStyle.Subtitle, new Color(1f, 0.96f, 0.84f), float.PositiveInfinity);
+                        slowAt = Time.unscaledTime;
+                        HitFreeze.Freeze(SlowSeconds, action.slowScale, 0f, "firstRewind");
+                        world.Hud?.ShowText(action.lineText, TextStyle.Subtitle, new Color(1f, 0.96f, 0.84f), world.Now + SlowSeconds + 0.5f);
                         SickOfIt.Core.Audio.Sfx.Play(action.line);
                     }
                     break;
@@ -121,9 +136,20 @@ namespace SickOfIt.Gameplay.Content
                     if (rewinding)
                     {
                         Current = Stage.Rewinding;
-                        HitFreeze.Cancel();
-                        world.Hud?.ShowText("", TextStyle.Subtitle, Color.white, 0f);
+                        EndSlow();
                     }
+                    else if (Time.unscaledTime - slowAt >= SlowSeconds)
+                    {
+                        // Hard cap, real time: back to full speed on its own; the button keeps pulsing a little longer.
+                        EndSlow();
+                        Current = Stage.Released;
+                    }
+                    break;
+                case Stage.Released:
+                    if (rewinding)
+                        Current = Stage.Rewinding;
+                    else if (Time.unscaledTime - slowAt >= SlowSeconds + PulseAfterSeconds)
+                        Current = Stage.Done;
                     break;
                 case Stage.Rewinding:
                     if (!rewinding)
@@ -137,8 +163,18 @@ namespace SickOfIt.Gameplay.Content
             }
         }
 
+        /// <summary>Puts time back and takes the caption down: every way out of the slow motion goes through here.</summary>
+        void EndSlow()
+        {
+            HitFreeze.Cancel();
+            world?.Hud?.ShowText("", TextStyle.Subtitle, Color.white, 0f);
+        }
+
+        void OnDisable() => HitFreeze.Cancel();
+
         void OnDestroy()
         {
+            HitFreeze.Cancel();
             if (instance == this)
                 instance = null;
             Current = Stage.Idle;

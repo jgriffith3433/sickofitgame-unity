@@ -15,6 +15,9 @@ namespace SickOfIt.Core.Fx
         static float baseScale = 1f;
         static float frozenScale = -1f;
         static float cooldownSeconds;
+        static float staleScale = -1f;
+        /// <summary>No freeze or slow motion may outlast this, in real seconds, whatever asked for it.</summary>
+        public const float MaxSeconds = 3f;
 
         /// <summary>Freezes so far this session, and the real seconds of the last one (for the playtest).</summary>
         public static int Count { get; private set; }
@@ -27,6 +30,7 @@ namespace SickOfIt.Core.Fx
         {
             if (seconds <= 0f || !Application.isPlaying)
                 return false;
+            seconds = Mathf.Min(seconds, MaxSeconds);
             var clock = GameClock.Instance;
             if (clock == null || clock.IsRewinding || clock.IsPaused)
                 return false;
@@ -70,7 +74,9 @@ namespace SickOfIt.Core.Fx
                 return;
             // Only put it back if nobody else changed it meanwhile (a pause, the results screen, the playtest's speed).
             if (Mathf.Approximately(Time.timeScale, frozenScale))
-                Time.timeScale = baseScale;
+                Time.timeScale = RestoreScale;
+            else if (Time.timeScale <= 0f)
+                staleScale = frozenScale; // A pause holds it at 0 and will hand the frozen value back: the safety net in Tick undoes that.
             endsAt = -1f;
             frozenScale = -1f;
             // A freeze cut short (a rewind, a pause, a scene change) hands its cooldown back: 'readyAt' was set for the full
@@ -79,10 +85,22 @@ namespace SickOfIt.Core.Fx
             readyAt = Mathf.Min(readyAt, Time.unscaledTime + cooldownSeconds);
         }
 
+        static float RestoreScale => baseScale > 0f ? baseScale : 1f;
+
         static void Tick()
         {
             if (!Active)
+            {
+                // Safety net: a freeze that ended while a pause/picker held the scale at 0 must not come back when they restore
+                // the value they saved (the frozen one). No freeze is running, so a scale equal to the old frozen one is stale.
+                if (staleScale > 0f && Time.timeScale > 0f)
+                {
+                    if (Mathf.Approximately(Time.timeScale, staleScale))
+                        Time.timeScale = RestoreScale;
+                    staleScale = -1f;
+                }
                 return;
+            }
             var clock = GameClock.Instance;
             if (clock == null || clock.IsRewinding || Time.unscaledTime >= endsAt)
                 Cancel();
