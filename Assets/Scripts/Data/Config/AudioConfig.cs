@@ -145,6 +145,17 @@ namespace SickOfIt.Data.Config
         public string uiHover = "ui_hover";
         public string uiClick = "ui_click";
         public string uiBack = "ui_back";
+        [Tooltip("Settings / Accessibility toggle.")] public string uiToggle = "ui_toggle";
+        [Tooltip("Any overlay panel opening (Settings, pause, results).")] public string uiPanelOpen = "ui_panel_open";
+        [Tooltip("Yooba's shop door: bell + slime squelch.")] public string uiShopOpen = "ui_shop_open";
+        [Tooltip("Buying from Yooba: cash register + slurp.")] public string uiPurchase = "ui_purchase";
+        [Tooltip("Trying to buy without enough diamonds.")] public string uiCantAfford = "ui_cant_afford";
+        [Tooltip("Short unlock fanfare (NEW sticker, weapon unlock).")] public string uiUnlock = "ui_unlock";
+        [Tooltip("Results rank letter stamp slam.")] public string uiRankStamp = "ui_rank_stamp";
+        [Tooltip("New personal-best jingle on the results screen.")] public string uiNewBest = "ui_new_best";
+        [Tooltip("Death screen sting (before the announcer).")] public string uiDeathSting = "ui_death_sting";
+        [Tooltip("Main menu theme (intro when menu_theme_loop exists).")] public string menuTheme = "menu_theme";
+        [Tooltip("Seamless loop body of the main menu theme (after the intro).")] public string menuThemeLoop = "menu_theme_loop";
         [Tooltip("Loop under the hero at one heart (AudioBuses LowHealth + HeartbeatMix).")]
         public string lowHealthHeartbeat = "player_heartbeat";
         [UnityEngine.Tooltip("A hero shot lands on an enemy: a short layered pop on top of the enemy's own hurt sound.")] public string enemyHit = "hit_pop";

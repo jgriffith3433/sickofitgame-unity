@@ -267,7 +267,8 @@ namespace SickOfIt.Core.UI.Menus
     }
 
     /// <summary>
-    /// Menu button sounds: the theme's own clips if it sets them, otherwise audio.json's uiHover/uiClick sounds.
+    /// Menu button sounds: always through <see cref="SickOfIt.Core.Audio.UiSounds"/> (UI bus), never a per-button source.
+    /// Theme hover/click clips are ignored so every screen shares one crafted kit.
     /// </summary>
     public sealed class MenuSounds
     {
@@ -276,15 +277,8 @@ namespace SickOfIt.Core.UI.Menus
         public AudioClip Click;
         public float Volume = 1f;
 
-        public void PlayHover() => Play(Hover, Volume * 0.6f, SickOfIt.Core.Audio.Sfx.Events.uiHover);
-        public void PlayClick() => Play(Click, Volume, SickOfIt.Core.Audio.Sfx.Events.uiClick);
-
-        void Play(AudioClip clip, float volume, string fallback)
-        {
-            if (clip != null && Source != null)
-                Source.PlayOneShot(clip, volume * SickOfIt.Data.GameSettings.SfxVolume);
-            else
-                SickOfIt.Core.Audio.Sfx.Play(fallback);
-        }
+        public void PlayHover() => SickOfIt.Core.Audio.UiSounds.Hover();
+        public void PlayClick() => SickOfIt.Core.Audio.UiSounds.Press();
     }
 }
+

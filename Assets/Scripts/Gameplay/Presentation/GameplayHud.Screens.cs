@@ -223,8 +223,9 @@ namespace SickOfIt.Gameplay
             Time.timeScale = 0f;
             GameClock.Instance?.Pause();
             PlayAnalytics.ResultsShown(world);
-            Sfx.Play(Sfx.Events.levelClear);
+            UiSounds.LevelClear();
             Sfx.Play(Sfx.Events.levelClearVoice);
+            resultsNewBestPending = newBest;
 
             var overlay = Overlay.Create(menu, "Results", 0.78f);
             resultsRoot = overlay.Root;
@@ -351,6 +352,7 @@ namespace SickOfIt.Gameplay
 
         float gradeSoundAt = -1f;
         string gradeSting = "";
+        bool resultsNewBestPending;
 
         static string FormatTime(float seconds)
         {
@@ -435,6 +437,7 @@ namespace SickOfIt.Gameplay
                         SetPaused(false);
                     if (!deathAnnounced)
                     {
+                        UiSounds.DeathSting();
                         Sfx.Play(Sfx.Events.deathVoice);
                         deathAnnounced = true;
                     }
@@ -517,8 +520,14 @@ namespace SickOfIt.Gameplay
             if (gradeSoundAt > 0f && Time.unscaledTime >= gradeSoundAt)
             {
                 gradeSoundAt = -1f;
+                UiSounds.RankStamp();
                 Sfx.Play(Sfx.Events.gradeReveal);
                 Sfx.Play(gradeSting);
+                if (resultsNewBestPending)
+                {
+                    resultsNewBestPending = false;
+                    UiSounds.NewBest();
+                }
             }
         }
     }

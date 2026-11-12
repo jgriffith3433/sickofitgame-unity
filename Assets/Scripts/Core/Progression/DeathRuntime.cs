@@ -144,6 +144,7 @@ namespace SickOfIt.Core.Progression
         /// <summary>A corner button (out of the way of the death animation) that leaves for the main menu.</summary>
         private void BuildRageQuitButton()
         {
+            SickOfIt.Core.Audio.UiSounds.DeathSting();
             var gd = GameDefinition.Instance;
             var theme = gd != null ? gd.menuTheme : new SickOfIt.Data.Config.MenuTheme();
             var layout = new SickOfIt.Data.Config.MenuLayoutConfig();

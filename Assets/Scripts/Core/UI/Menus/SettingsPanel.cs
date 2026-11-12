@@ -77,7 +77,7 @@ namespace SickOfIt.Core.UI.Menus
             {
                 if (overlay.Root == null)
                     return;
-                Sfx.Play(Sfx.Events.uiBack);
+                UiSounds.Back();
                 menu.Back = previousBack;
                 Overlay.Close(overlay.Root);
                 onClosed?.Invoke();
@@ -151,7 +151,7 @@ namespace SickOfIt.Core.UI.Menus
             {
                 if (overlay.Root == null)
                     return;
-                Sfx.Play(Sfx.Events.uiBack);
+                UiSounds.Back();
                 menu.Back = previousBack;
                 Overlay.Close(overlay.Root);
             }
@@ -223,7 +223,7 @@ namespace SickOfIt.Core.UI.Menus
             {
                 if (overlay.Root == null || chosen)
                     return;
-                Sfx.Play(Sfx.Events.uiBack);
+                UiSounds.Back();
                 menu.Back = previousBack;
                 Overlay.Close(overlay.Root);
                 onBack?.Invoke();
@@ -383,6 +383,8 @@ namespace SickOfIt.Core.UI.Menus
             {
                 set(!get());
                 button.SetText(get() ? texts.on : texts.off);
+                // Press already fired ui_click; the toggle tick is the distinct answer for ON/OFF rows.
+                UiSounds.Toggle();
             });
         }
     }
@@ -403,6 +405,7 @@ namespace SickOfIt.Core.UI.Menus
             MenuGraphics.Fill(inner);
             inner.gameObject.AddComponent<MenuSafeArea>();
             PanelAnim.Add(image.gameObject, inner);
+            SickOfIt.Core.Audio.UiSounds.PanelOpen();
             return new Overlay { Root = image.gameObject, Inner = inner };
         }
 

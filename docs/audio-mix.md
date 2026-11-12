@@ -12,7 +12,7 @@ Content groups live in `AudioBuses` / `Sfx` / `MusicVolume` / `AmbienceBed` / `H
 | SFX | Combat one-shots, heartbeat | Settings → Effects (drag slider) |
 | Voice | Spoken lines | Settings → Voice (drag slider) |
 | Ambience | Level beds | Follows Effects |
-| UI | Menu clicks (`ui_click`, `ui_back`) | Follows Effects; **not** muted on Pause |
+| UI | Menu kit via `UiSounds` (`ui_hover`/`ui_click`/`ui_back`/`ui_toggle`/`ui_panel_open`/`ui_shop_open`/`ui_purchase`/`ui_cant_afford`/`ui_unlock`/`ui_rank_stamp`/`ui_new_best`/`ui_death_sting`, plus `level_clear`) | Follows Effects; **not** muted on Pause |
 
 ## Dynamics (script gains)
 
