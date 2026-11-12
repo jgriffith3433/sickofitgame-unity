@@ -12,7 +12,8 @@ namespace SickOfIt.Core.Audio
         public static void Hover() => PlayOr("ui_hover", Sfx.Events.uiHover);
         public static void Press() => PlayOr("ui_click", Sfx.Events.uiClick);
         public static void Back() => PlayOr("ui_back", Sfx.Events.uiBack);
-        public static void Toggle() => PlayOr(Sfx.Events.uiToggle, Sfx.Events.uiClick);
+        // Press already answered the tap; only add the distinct toggle tick when Gen has made it.
+        public static void Toggle() => PlayIfPresent(Sfx.Events.uiToggle);
         public static void PanelOpen() => PlayOr(Sfx.Events.uiPanelOpen, Sfx.Events.pause);
         public static void ShopOpen() => PlayOr(Sfx.Events.uiShopOpen, Sfx.Events.pause);
         public static void Purchase() => PlayOr(Sfx.Events.uiPurchase, Sfx.Events.upgradePick);
@@ -29,6 +30,12 @@ namespace SickOfIt.Core.Audio
                 Sfx.Play(preferred);
             else if (!string.IsNullOrEmpty(fallback))
                 Sfx.Play(fallback);
+        }
+
+        static void PlayIfPresent(string id)
+        {
+            if (!string.IsNullOrEmpty(id) && Sfx.ClipOf(id) != null)
+                Sfx.Play(id);
         }
     }
 }
