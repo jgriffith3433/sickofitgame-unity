@@ -199,6 +199,12 @@ Per area: interactions (at least three kinds), events on their own, ambient soun
 - **On their own:** the road splits in time with the hum; spires grow a notch each floor; wind howls through cracks.
 - **Ambient:** a stone hum; cracks; Pointer's creak when he points. **Changes:** the Great Spire gets taller each floor.
 
+### Hell's cabinet HUD (inked widgets, built Nov 12)
+The announcer's frame on every floor: **ember vessels** for hearts (crack on a hit, glow on a heal), a **tape reel** for
+rewind juice (spins while held, drains as juice spends), a **gem** that pulses when a diamond lands, a **brass elevator dial**
+that ticks the floor down. Two corners only (health+reel top-left, gem+dial top-right); on a phone the rewind button is the
+big bottom-right reel (≥72 px). Same game state as before; art from `HudInkAtlas` (Gen sheet under Resources/UI). Playtest `hud-ink`.
+
 ### The chase (the Overlord escaping upward, built Nov 11)
 The Overlord is always one floor ahead, and the hero only ever sees it when time goes backward. **When a rewind starts inside a
 death's undo window** (the hero has died, then holds R or the rewind button), the HUD shows the Overlord's silhouette (horns,

@@ -99,7 +99,20 @@ All through Hawkes Gen under project `org_eb0d5c82e8da8c2d.sickofit` (the short 
 
 Checks without GPU: `node Tools/Art/art.mjs hero --check` (spec vs wiring, 604x340 at 100 PPU), `python3 Tools/Art/art_inventory.py`.
 
-## 8. The hero redraw (in progress)
+## 8. Inked HUD atlas
+
+Hand-inked UI widgets for the in-level HUD (`HudInkAtlas`, `GameplayHud.Ink`), Hollow Knight cabinet feel:
+
+| Tile (128 px) | What |
+|---|---|
+| Ember vessel full / cracked / empty | hearts; crack plays ≥0.3 s; heal glows |
+| Tape reel | rewind juice meter + the hold-to-rewind button icon |
+| Gem | diamond counter icon; pulses ≤0.2 s on pickup |
+| Brass elevator dial | floor counter; needle ticks down each floor |
+
+Outline `#140B0D`, ember `#FF5B3A`/`#FF8A1F`, brass `#C89A3A`, rewind teal `#4CE0D2`. Flat cel, no soft airbrush. Packed into one atlas at `Assets/Resources/UI/HudInkAtlas.png` (Gen `image.generate` + `image.transform` trim/pot). Grouped top-left (vessels + reel) and top-right (gem + dial); phone rewind button ≥72 px bottom-right.
+
+## 9. The hero redraw (in progress)
 
 - Design is fixed: armoured knight, battered dark bronze plate, brass trim, closed helm with two glowing orange eye slits, tattered maroon cloth, heavy gauntlets and greaves, broad and tired. Launcher from the start. Never a man in a jacket.
 - Order: concepts (3) from the current Idle sheet -> pick -> key poses (`image.edit` each) -> clips (`video.i2v`, still camera, 00ff00) -> bake -> hand-pick frames -> wire into `player.json` replacing the old sheets (same state names, same cell, same pivot) -> match walk fps to `moveSpeed`.
