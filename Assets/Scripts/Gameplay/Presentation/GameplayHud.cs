@@ -759,6 +759,7 @@ namespace SickOfIt.Gameplay
             c.a = left > 0f ? flashColor.a * (left / flashDuration) : 0f;
             flash.color = c;
             UpdateFade();
+            UpdateFloorCard();
             UpdateBeat();
             UpdateHealthAndDiamonds();
             UpdateProgressBar();
@@ -826,6 +827,24 @@ namespace SickOfIt.Gameplay
             // The boss bar normally sits top-center too; move it under the readout.
             if (bossRoot != null)
                 Lay(bossRoot, l => l.bossBarWithFloor, MenuElementKind.Panel);
+        }
+
+        bool floorCardTried;
+
+        /// <summary>The stamped title card on a floor's arrival (once per level load; scenes and rewinds never show one).</summary>
+        void UpdateFloorCard()
+        {
+            if (floorCardTried || world == null)
+                return;
+            floorCardTried = true;
+            if (!string.IsNullOrEmpty(world.SceneId))
+                return;
+            var config = GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(world.LevelNumber) : null;
+            if (config == null)
+                return;
+            var m = System.Text.RegularExpressions.Regex.Match(config.displayName ?? "", @"Floor\s+(\d+)\s*:");
+            string quip = m.Success && Sfx.Has("vo_card_" + m.Groups[1].Value) ? "vo_card_" + m.Groups[1].Value : null;
+            FloorCard.TryShow(config.displayName, menu.TitleFont, quip);
         }
 
         void UpdateFloor()

@@ -1225,6 +1225,7 @@ namespace SickOfIt.Playtest
                 "the same card with enough (buy), Back (goodbye). Each beat is a check event", YoobaSeconds, "menus"));
             list.Add(new PlaytestScenario(NetOutageId, "The Hawkes Net server is down (setup shortcut: every attempt fails with 502, then 410): at most one short warning per retry and no errors, " +
                 "retries on a growing timer, the menu's quiet offline chip, Level 1 played through, a 410 stops the retries, then the server returns and the game is online again with no reload. Each beat is a check event", NetOutageSeconds, "menus"));
+            list.Add(new PlaytestScenario(FloorCardId, "Floors 1000-997 each opened directly (setup shortcut): the stamped floor card shows its number and name, the stamp sound plays, it sits inside the safe area, is gone within 1.5 s and never locks input or leaves a dark screen. Run it at 390x844 touch too. Each beat is a check event", FloorCardSeconds, "level"));
             list.Add(new PlaytestScenario(IntroSkipId, "The intro film (Video1, loaded directly: setup shortcut): it plays or the game moves on within 2 s (no black wait), " +
                 "the on-screen buttons are 48+ px tall, and one click on empty screen skips it within 1 s. Each beat is a check event", IntroSkipSeconds, "menus"));
             list.Add(new PlaytestScenario(FirstFiveId, "First five minutes (Docs/Story.md \"First five minutes\"): fresh save, New Game with no difficulty card, play from what is on " +
@@ -1371,6 +1372,8 @@ namespace SickOfIt.Playtest
                 yield return session.NetOutageRun();
             else if (id == IntroSkipId)
                 yield return session.IntroSkipRun();
+            else if (id == FloorCardId)
+                yield return session.FloorCardRun();
             else if (id == FirstFiveId)
                 yield return session.FirstFiveRun();
             else if (id == PhoneLoadId)
