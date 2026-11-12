@@ -1,4 +1,5 @@
-- convention: Gen sickofit project id — hawkesgen_* needs `org_eb0d5c82e8da8c2d.sickofit`; short `sickofit` returns No access (m_ed02b1f5332c).
-- lesson: audio.music-loop / audio.analyze need Studio org credits (8 each) even when GPU$ is 0 — a batch dies mid-queue when credits < 8.
-- convention: Adaptive score cues — `Tools/Audio/adaptive_score.py` owns the table; `--manifest` / `--wire` / `--check`; clips at `Assets/Audio/Music/score_<floor>_<role>.ogg` with loadType 1.
-- canon: Adaptive score — Meadow 112 D minor, 1000 120 A minor, 999 124 E minor, 998 108 F# minor, 997 116 C minor (explore/fight/finale).
+- lesson: Gen fleet pause — when J says pause until fleet works, keep pending-gpu, clear failed ids from waiting-jobs, do not requeue; Studio resumes the same change once keys/servers exist.
+- lesson: Gen wait_for_server with missing AWS keys — jobs flip queued→failed "No GPU" in seconds ($0); never park those failed ids as live waits.
+- lesson: org credits gate video.i2v at 40 — below that, queue fails before GPU even if a server exists; audio.music-loop / audio.analyze need 8 Studio credits each even when GPU$ is 0.
+- convention: Hawkes Gen project id over MCP is `org_eb0d5c82e8da8c2d.sickofit` (short `sickofit` returns No access); adaptive score cues live in `Tools/Audio/adaptive_score.py` (`--manifest` / `--wire` / `--check`), clips at `Assets/Audio/Music/score_<floor>_<role>.ogg` loadType 1.
+- canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles (incl. launcher thief) share hand-inked Cuphead wind-ups ≥0.3 s (`docs/art-bible.md` §9). Adaptive score — Meadow 112 D minor, 1000 120 A minor, 999 124 E minor, 998 108 F# minor, 997 116 C minor (explore/fight/finale).

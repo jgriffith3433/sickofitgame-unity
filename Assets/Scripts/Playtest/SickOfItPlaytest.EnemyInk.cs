@@ -11,9 +11,10 @@ namespace SickOfIt.Playtest
     public static partial class SickOfItPlaytest
     {
         /// <summary>
-        /// Enemy ink redraw (docs/art-bible.md): Meadow + Floors 1000-997 hostiles show Idle, Windup, Attack, Hurt and Die,
-        /// each attack is preceded by a wind-up of at least 0.3 s (telegraph / contact swell), and at 390x844 each is
-        /// at least 40 px tall with a distinct silhouette. Arena content/scenes/enemyInk.json on Level 1's stage.
+        /// Enemy ink redraw (docs/art-bible.md): Meadow + Floors 1000-997 hostiles (imp, cinders, sack, launcher thief)
+        /// show Idle, Windup, Attack, Hurt and Die; each attack/tell is preceded by a wind-up of at least 0.3 s
+        /// (telegraph / contact swell), and at 390x844 each is at least 40 px tall with a distinct silhouette.
+        /// Arena content/scenes/enemyInk.json on Level 1's stage.
         /// </summary>
         public const string EnemyInkId = "enemy-ink";
         public const string EnemyInkScene = "enemyInk";
@@ -24,7 +25,7 @@ namespace SickOfIt.Playtest
 
         static readonly string[] EnemyInkRoster =
         {
-            "imp", "cinder", "cinderThatch", "cinderBrute", "cinderSpark", "impSack",
+            "imp", "cinder", "cinderThatch", "cinderBrute", "cinderSpark", "impSack", "launcherThief",
         };
 
         sealed partial class Session

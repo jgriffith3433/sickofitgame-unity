@@ -1,4 +1,5 @@
-1. Open beta, tap once (unlocks audio), New Game into the Meadow.
-2. Listen: sparse explore bed, then the fight layer when imps show, then the finale swell on the portal telegraph; hold R — music tape-stops and resumes.
-3. Climb Floors 1000-997 (or run playtest `score-floors`): each floor should log at least 2 score layer changes; fight in within ~2 s of a wave, out after it clears.
-4. On a phone (390x844), same path: score starts on the first tap, layer changes with no gap at 30+ fps.
+1. Open beta, start playtest `enemy-ink` on device phone (390x844).
+2. Watch the lineup: imp, cinder, thatch, brute, spark, sack, launcher thief — each should wind up ≥0.3 s before the hit.
+3. Thief and thatch: silhouette readable, Windup glow visible (held sheets until Gen motion lands after the fleet pause).
+4. On Floor 998 in a normal climb, the thief should glow before the snatch.
+5. (Also on beta from the merged adaptive-score change) New Game Meadow: explore→fight→finale layers; hold R for tape-stop; Floors 1000-997 via `score-floors` when checking score cues.

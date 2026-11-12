@@ -1,28 +1,32 @@
-# Adaptive score cues: Meadow Gen-looped; floors wait on credits
+# Enemy ink — paused; merged origin/beta (adaptive score)
 
-## What was wrong
-#375/#378 already shipped ScoreConfig, MusicDirector, `adaptive_score.py`, the 15 `audio.music` takes (project `org_eb0d5c82e8da8c2d.sickofit`), level `score` wiring, `.meta` (loadType 1 / Vorbis / streamed), and playtests `score-floors` / `adaptive-music` (accepts `score_*` with old tracks as fallback). What was still open: seamless `audio.music-loop` + `audio.analyze` on every cue.
+## J's call
+**Pause until Gen fleet works** (no close). Holding this change open; not shipping a “done” close on stills-only thief/thatch motion.
 
-## What changed
-- Gen-looped the three Meadow cues (`j_2d285323c61f` → `a_c9b6aabc8de1aecb` explore, `j_1c2bf8602b82` → `a_1e2b8a4cc2bfd6ed` fight, `j_ff775b00c240` → `a_eded7a4eb46db363` finale; Gen check ok) and wrote them over `Assets/Audio/Music/score_meadow_{explore,fight,finale}.ogg` (kept existing GUIDs in `.meta`).
-- Floors 1000-997 keep the #378 takes: Studio credits hit the floor after the Meadow batch (each music-loop needs 8 credits, 7 left). Listed in `.hawkes/pending-gpu.txt` with library asset ids.
-- Scenario: `score-floors`. `python3 Tools/Audio/adaptive_score.py --check` OK. No level JSON edits this pass (already wired).
-- Stayed out of enemy-roster redraw (`Floor998.json` / playtest files that agent owns).
+## Status
+- Gen fleet still broken: AWS keys missing in `hawkesgen/.env`; no requeue this pass.
+- Held Windup/Attack sheets + entity wiring from `08d5614` still ship. Scenario `enemy-ink` (phone).
+- Merged `origin/beta`: took Meadow Gen-looped score cues (`score_meadow_{explore,fight,finale}.ogg`) from the adaptive-score change; floor loops remain credit-blocked in pending-gpu.
 
-## Fun-reviewer
-**thin** — Meadow score can breathe; floors still on older takes; no footage yet for fight slam / phone layers. Gaps: Gen-loop floors 1000-997; prove fight≤2s + distinct finale; phone 390x844 via `score-floors`.
+## Still to make (when fleet works)
+1. launcherThief dead pose redo + die i2v + bake
+2. launcherThief idle/windup/attack/hurt i2v + bake over held sheets
+3. cinderThatch limbless windup/attack i2v + bake (never `a_f5d9ad823922f967`)
 
-## Reviewer
-**revise → shipping first part** — Meadow loops + pending list for the 12; scenario pointed at `score-floors`; hello-hole dirt not committed. Full brief done once credits allow the 12 loops + analyze.
+Est. ~$0.32 of remaining budget once GPU + credits are available.
+
+## Conflicts (merge origin/beta)
+- `.hawkes/learned.md` — kept both: fleet-pause / No-GPU / i2v-credit lessons + enemy-ink canon; folded in adaptive-score credit lesson, Gen project-id convention, and score BPM canon (≤5 lines).
+- `.hawkes/pending-gpu.txt` — kept enemy-ink pause + thief/thatch GPU list **and** beta’s 12 floor `audio.music-loop` credit-blocked rows.
+- `.hawkes/scenario.txt` — kept **this** change’s `enemy-ink` + phone device (beta had `score-floors` for the already-merged adaptive-score PR).
+- `.hawkes/summary.md` — rewritten for this merge (enemy-ink pause + conflict notes); beta’s adaptive-score summary intent preserved above.
+- `.hawkes/try.md` — kept enemy-ink steps; appended a short note for Meadow score layers now on beta.
+- `.hawkes/waiting-jobs.txt` — **modify/delete**: beta deleted (no live waits after Meadow loops); kept our PAUSED resume checklist (no live job ids).
 
 ## Checks
-- `adaptive_score.py --check` OK; meadow clips 30s ogg Vorbis; metas loadType 1 unchanged.
+- `python3 Tools/Audio/adaptive_score.py --check` (after merge).
 - Unity compile not run here (no editor).
-- Conflicts: none. GPU $0 this pass (music-loop is local; reuse of existing music takes). Credits spent: 3× music-loop.
-- Leftover: 12× `audio.music-loop` + `audio.analyze` when Studio credits ≥8 each (~96).
+- No GPU spend this pass.
 
-## Acceptance map
-1. Fight within 2s — `score-floors` / MusicDirector (needs beta playtest)
-2. Distinct finale — wired `score.finale` per floor
-3. Tape-stop 0.3s — MusicDirector + `score-floors`
-4. [phone] — `score-floors` at 390x844 touch
+## Fun review (prior pass, still stands)
+**Verdict: thin** — Floor 998 theft beat + roster wind-ups live; held stills weaken the Cuphead bounce until motion lands.

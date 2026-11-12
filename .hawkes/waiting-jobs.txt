@@ -1,0 +1,8 @@
+# PAUSED — no live Gen jobs. See .hawkes/pending-gpu.txt.
+# When Gen fleet works (AWS keys in hawkesgen/.env, servers ready, org credits ≥ 40):
+# 1. image.edit launcherThief dead from framed stand a_ceb84e1b929c3e44 (REJECT chest-cannon like FAIL a_0396dffd2fa61f26)
+# 2. frame PASS dead 640/00ff00/fill 0.78 → framed/launcherThief_dead.png
+# 3. video.i2v batch (wait_for_server): thief idle/windup/attack/hurt + thatch windup/attack (seed assets in pending-gpu)
+# 4. die i2v struck a_6aaca8f81a5afad0 → framed-dead; bake thief+thatch via art.mjs --build --no-unity
+# 5. keep Windup/Attack entity paths; screenshot thief beside hero; delete pending-gpu when clear
+# (beta deleted waiting-jobs for the adaptive-score change — those Meadow music-loop jobs finished; floor loops stay in pending-gpu above.)

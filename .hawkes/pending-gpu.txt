@@ -1,3 +1,7 @@
+PAUSED — J: Pause until Gen fleet works (2026-11-12). Do not requeue while hawkesgen_fleet shows AWS keys missing / servers []. Resume when fleet can launch and org credits ≥ 40 for video.i2v.
+launcherThief dead pose redo — image.edit from framed stand a_ceb84e1b929c3e44; REJECT chest-cannon (FAIL a_0396dffd2fa61f26); then frame + die i2v struck→dead + bake Die
+launcherThief idle/windup/attack/hurt i2v — framed a_ceb84e1b929c3e44 / a_3b1a590b412a0ef4 / a_b9165821785cd2b2 / a_6aaca8f81a5afad0; held Windup/Attack ship until PASS bake
+cinderThatch windup/attack i2v — limbless stand a_bb81b3c6ba63b46a → framed windup a_af6820a9ba56e675 / lunge a_268b14b1ea7b805e; REJECT bird legs; never a_f5d9ad823922f967
 score_f1000_{explore,fight,finale}: audio.music-loop + audio.analyze (loop:true) on library a_aec49689d6753df8 / a_bbb074b23f8660c9 / a_842dc3de5647efe4 — blocked: Studio credits (needs 8, 7 left)
 score_f999_{explore,fight,finale}: same on a_44588cf4dc14bf68 / a_a62c0f6a4af3f378 / a_aa2d641a474a609a — credits
 score_f998_{explore,fight,finale}: same on a_ff0b503ab096bbbb / a_2bba6702aace9473 / a_4f78c40e4d2c6298 — credits

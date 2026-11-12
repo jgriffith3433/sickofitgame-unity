@@ -129,3 +129,34 @@ All five PASS (oversized diamond sack): idle `a_111bc53f7c8af4ac`, windup `a_c95
 
 Baked with stub DoD + `SOI_ART_WORK` → `Assets/Art/Enemies/{CinderThatch,CinderBrute,ImpSack,CinderSpark}` + animator apply. Previews under `EnemyInk/previews/`.
 **Still pending:** `launcherThief` (~$0.50); optional thatch windup/attack motion redo.
+
+## Resume 2026-11-12e (c_666db16040a6 — pose judge + frame + i2v queue)
+
+Pose GPU **~$0.21** of **$0.86**. Framed free.
+
+### launcherThief poses
+| File | Asset | Verdict | Notes |
+|---|---|---|---|
+| `poses/launcherThief_stand.png` | `a_35b1d63f3bd6a42f` | PASS | Imp silhouette + launcher sack |
+| `poses/launcherThief_windup.png` | `a_63f46cfb1eb5804b` | PASS | Exhaust/chamber glow telegraph |
+| `poses/launcherThief_attack.png` | `a_ee2ba6e3ad30e7df` | PASS | Forward lunge + sack |
+| `poses/launcherThief_struck.png` | `a_0de3446e74a7d32e` | PASS | Recoil / impact |
+| `_rejected/launcherThief_dead_chestcannon.png` | `a_0396dffd2fa61f26` | FAIL | Chest-cannon firing horned sack — not death. Redo queued `j_37cb7fd02f2d` |
+
+### cinderThatch windup limbless redo
+| File | Asset | Verdict | Notes |
+|---|---|---|---|
+| `poses/cinderThatch_windup_limbless_redo.png` | `a_eb77a64dd91899f6` | PASS | No legs/arms; cyan flame core. Framed `a_af6820a9ba56e675` (replaces leggy `a_773bbd2466a05ef6`) |
+
+### Framed (640 / fill 0.78)
+| File | Asset |
+|---|---|
+| `framed/launcherThief_stand.png` | `a_ceb84e1b929c3e44` |
+| `framed/launcherThief_windup.png` | `a_3b1a590b412a0ef4` |
+| `framed/launcherThief_attack.png` | `a_b9165821785cd2b2` |
+| `framed/launcherThief_struck.png` | `a_6aaca8f81a5afad0` |
+| `framed/cinderThatch_windup.png` | `a_af6820a9ba56e675` |
+
+### Interim sheets + queue
+Held thief Windup/Attack (and thatch Windup) baked from framed stills; entity Windup/Attack off Move.
+Queued i2v: thief idle/windup/attack/hurt + thatch windup/attack + dead redo — see `.hawkes/waiting-jobs.txt` / `framed/manifest.json` `queued_c_666db16040a6_i2v`.

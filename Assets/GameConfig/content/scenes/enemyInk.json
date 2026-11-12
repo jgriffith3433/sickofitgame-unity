@@ -180,11 +180,42 @@
         {
           "name": "sack done",
           "when": { "type": "allDead", "target": { "tag": "station" } },
-          "do": [{ "type": "goToPhase", "phase": "lineup" }]
+          "do": [{ "type": "goToPhase", "phase": "thief" }]
         },
         {
           "name": "sack timeout",
           "when": { "type": "after", "seconds": 45 },
+          "do": [
+            { "type": "despawn", "target": { "tag": "station" } },
+            { "type": "goToPhase", "phase": "thief" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "thief",
+      "onEnter": [
+        { "type": "heal", "target": { "player": true }, "amount": 5 },
+        {
+          "type": "spawn",
+          "entity": "launcherThief",
+          "anchor": "Camera",
+          "at": [2.4, 0.5],
+          "tags": ["station"],
+          "facePlayer": true
+        },
+        { "type": "playSound", "sound": "thief_snatch" },
+        { "type": "emit", "signal": "ink:launcherThief" }
+      ],
+      "rules": [
+        {
+          "name": "thief done",
+          "when": { "type": "allDead", "target": { "tag": "station" } },
+          "do": [{ "type": "goToPhase", "phase": "lineup" }]
+        },
+        {
+          "name": "thief timeout",
+          "when": { "type": "after", "seconds": 35 },
           "do": [
             { "type": "despawn", "target": { "tag": "station" } },
             { "type": "goToPhase", "phase": "lineup" }
@@ -196,7 +227,6 @@
       "name": "lineup",
       "onEnter": [
         { "type": "heal", "target": { "player": true }, "amount": 5 },
-        { "type": "showText", "text": "SIDE BY SIDE WITH THE HERO.", "duration": 2.5, "color": "#FFD27A" },
         {
           "type": "spawn",
           "entity": "imp",
@@ -218,6 +248,14 @@
           "entity": "cinderThatch",
           "anchor": "Camera",
           "at": [4.4, 0.4],
+          "tags": ["lineup", "station"],
+          "facePlayer": true
+        },
+        {
+          "type": "spawn",
+          "entity": "launcherThief",
+          "anchor": "Camera",
+          "at": [5.4, 0.7],
           "tags": ["lineup", "station"],
           "facePlayer": true
         },
