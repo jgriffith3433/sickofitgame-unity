@@ -2345,5 +2345,14 @@
         ]
       }
     ]
+  },
+  "score": {
+    "explore": "Audio/Music/score_f997_explore.ogg",
+    "fight": "Audio/Music/score_f997_fight.ogg",
+    "finale": "Audio/Music/score_f997_finale.ogg",
+    "bpm": 116,
+    "volume": 0.9,
+    "finaleSignal": "floors:997:finale",
+    "fightHoldSeconds": 1.0
   }
 }

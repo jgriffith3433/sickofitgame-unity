@@ -319,3 +319,7 @@ pointer at the one ware the hero can buy. *Landmark:* the glowing card. Details 
 ### Floor 999 dressing and the death screen's record (Nov 11)
 - **Floor 999 (Only 999 To Go)** now reads differently from 1000's bare bank: a red glow from the climbing sea, tally marks scratched on the rock (the counted wall, for the soul that counts the same stone), rising ash. Props in `levels/Floor999.json` `world.props`.
 - **Death screen:** always shows `BEST: FLOOR n` (kept for good, `BestFloorRecord`, "(NEW!)" on a new best) over the next unlock (cheapest good, next Waystone or the top).
+
+### Floor arrival cards and the ember iris (Nov 12)
+- Every screen change closes and opens as an **ember iris** (`ScreenTransition`: the picture shrinks to a ring of burning edge in 0.35 s, opens from it in 0.55 s; a pulse of ember light sits in the middle while a load holds it shut, so it is never plain black).
+- Arriving on Floors 1000-997 slams a **stamped card** ("FLOOR 1000" over "THE LANDING", tilted, dark plate, ember rim) with the stamp thump and one announcer quip (`vo_card_1000` "Welcome to the bottom!", `vo_card_999` "Only nine ninety-nine to go!", `vo_card_998` "Mind the spill!", `vo_card_997` "Imp run!"); gone by 1.5 s while play is live. `Gameplay/Presentation/FloorCard.cs`; playtest `floor-card`.

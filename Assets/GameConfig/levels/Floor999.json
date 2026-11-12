@@ -984,5 +984,14 @@
         ]
       }
     ]
+  },
+  "score": {
+    "explore": "Audio/Music/score_f999_explore.ogg",
+    "fight": "Audio/Music/score_f999_fight.ogg",
+    "finale": "Audio/Music/score_f999_finale.ogg",
+    "bpm": 124,
+    "volume": 0.9,
+    "finaleSignal": "floors:999:finale",
+    "fightHoldSeconds": 1.0
   }
 }

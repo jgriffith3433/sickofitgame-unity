@@ -143,6 +143,7 @@ namespace SickOfIt.Data.Config
         public string uiBack = "ui_back";
         [UnityEngine.Tooltip("A hero shot lands on an enemy: a short layered pop on top of the enemy's own hurt sound.")] public string enemyHit = "hit_pop";
         [UnityEngine.Tooltip("An enemy dies: a layered pop on top of the enemy's own death sound.")] public string killPop = "kill_pop";
+        [UnityEngine.Tooltip("A shot hits a wall or floor.")] public string bulletImpact = "bullet_impact";
     }
 
     /// <summary>All sounds and the ElevenLabs settings used to make them (audio.json).</summary>

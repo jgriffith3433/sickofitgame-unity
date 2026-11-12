@@ -349,7 +349,7 @@ namespace SickOfIt.Gameplay
             var go = new GameObject("HazardWarn");
             go.transform.SetParent(transform, false);
             glow = go.AddComponent<SpriteRenderer>();
-            glow.sprite = Orb();
+            glow.sprite = EffectAtlas.WhiteCore != null ? EffectAtlas.WhiteCore : Orb();
             glow.sortingLayerName = SpriteLayer.Foreground1.ToString();
             glow.sortingOrder = 70;
         }

@@ -78,7 +78,7 @@ namespace SickOfIt.Core.Audio
         }
 
         /// <summary>Plays a sound by id. 'volume' and 'pitch' multiply the sound's own settings.</summary>
-        public static void Play(string id, float volume = 1f, float pitch = 1f)
+        public static void Play(string id, float volume = 1f, float pitch = 1f, bool exactPitch = false)
         {
             if (string.IsNullOrEmpty(id) || !Application.isPlaying)
                 return;
@@ -99,7 +99,7 @@ namespace SickOfIt.Core.Audio
                     SickOfIt.Core.Addressables.GameAssets.Request(scope, () =>
                     {
                         if (sound.clip != null && (sound.kind == SoundKind.Voice || Time.unscaledTime - asked < 0.4f))
-                            Play(id, volume, pitch);
+                            Play(id, volume, pitch, exactPitch);
                     });
                     return;
                 }
@@ -131,7 +131,7 @@ namespace SickOfIt.Core.Audio
             source.clip = clip;
             source.loop = false;
             source.volume = Mathf.Clamp01(sound.volume * volume * GameSettings.SfxVolume * AudioBuses.Gain(bus));
-            float variation = Mathf.Clamp(sound.pitchVariation, 0f, 0.2f);
+            float variation = exactPitch ? 0f : Mathf.Clamp(sound.pitchVariation, 0f, 0.2f);
             source.pitch = Mathf.Clamp(pitch * (1f + Random.Range(-variation, variation)), 0.1f, 3f);
             source.Play();
             poolIds[System.Array.IndexOf(pool, source)] = id;

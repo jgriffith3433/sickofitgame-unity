@@ -1925,5 +1925,14 @@
         ]
       }
     ]
+  },
+  "score": {
+    "explore": "Audio/Music/score_f998_explore.ogg",
+    "fight": "Audio/Music/score_f998_fight.ogg",
+    "finale": "Audio/Music/score_f998_finale.ogg",
+    "bpm": 108,
+    "volume": 0.9,
+    "finaleSignal": "floors:998:finale",
+    "fightHoldSeconds": 1.0
   }
 }
