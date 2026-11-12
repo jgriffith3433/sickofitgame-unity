@@ -1,3 +1,4 @@
-1. Open beta Sick of It and start Level 1 (or `?playtest=vfx-kit`).
-2. Fire, kill an imp, dash, graze a shot, pick up a diamond, take a hit, hold R: each should show its own short flipbook burst; the diamond should fly up to the gem counter within about half a second.
-3. On a phone (390×844), do the same — bursts should stay clear of the touch stick and the game should stay smooth.
+1. Open beta, New Game or jump to Floor 997 (Imp Run).
+2. Climb to the landing after the Lift Stop finale — the camera finds the Overlord; dodge his telegraphed lens in three phrases while lines play.
+3. Watch him flee up laughing; the CHAPTER ONE card shows time, deaths, rewinds and diamonds, then the daylight hook.
+4. Continue → Grudge pick → Shaft as today. Clear Floor 997 again: Skip should be offered.

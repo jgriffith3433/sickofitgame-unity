@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "extends": "overlordChapter",
+  "abilities": [
+    {
+      "type": "screenAnchor",
+      "offset": [
+        1.4,
+        1.55
+      ],
+      "drift": [
+        0.08,
+        0.03
+      ],
+      "driftAfter": 0.0
+    },
+    {
+      "type": "laserSweep",
+      "damage": 1,
+      "interval": 5.2,
+      "initialDelay": 0.4,
+      "warning": 0.5,
+      "sweepTime": 1.5,
+      "sweepDegrees": 80,
+      "aimAtPlayer": true,
+      "length": 13,
+      "width": 0.5,
+      "warningSound": "overlord_beam_charge",
+      "beamSound": "overlord_beam_strike"
+    }
+  ]
+}

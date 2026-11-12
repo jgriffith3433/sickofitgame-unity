@@ -1,25 +1,41 @@
-# Feel VFX kit (Dead Cells bursts)
+# Chapter One payoff at the end of Floor 997
 
-## Wrong / ask
-Combat verbs only had procedural dots/sparks (`Fx.Spark`/`Burst`) and glow — no hand-made flipbook kit, no diamond arc to the HUD.
+## What was wrong
+Floor 997’s Imp Run finale ended on a banner + Grudge with no first face-off. The Overlord stayed a far-ledge cameo; chapter one never closed.
 
-## Changed
-- **`FeelVfx` / `VfxPool` / `DiamondFlyer`** (`Assets/Scripts/Gameplay/Presentation/FeelVfx.cs`): 12 flipbook kinds (muzzle, impact, hit, deathImp/Cinder/Sack, diamond, heroHurt/Death, dash, graze, rewindRipple), pooled (64 desktop / 32 phone, no Instantiate in play), procedural stand-in frames until Gen atlas lands at `Resources/Effects/FeelVfxAtlas`.
-- Wired into `GameFeel`, projectile hit/solid impact, `StyleSystem` graze, `AddDiamondsAction` + legacy `PointsPickup`, `PlayerHealth` death, dash / rewind hooks.
-- Diamonds arc to the HUD gem within **0.6 s**.
-- Playtest **`vfx-kit`** (Level 1; also for phone 390x844): each verb, diamond fly, 50-effect fps ≥ 30, feel.hitStopMs.
-- Story / art bible / world bible + `docs/metrics.json` + `Tools/Art/fx/feel-vfx.json` for the Gen bake.
+## What changed (this task)
+- **Story / bible:** `Docs/Story.md` “Chapter One closes on Floor 997”; `docs/world-bible.md` beat + Overlord moment; `Docs/LevelDesign.md` Floor 997 note; `docs/metrics.json` (feel floors).
+- **Playable face-off:** `Tools/Levels/chapter_one.py` patches Floor 997 — landing → `chapterOne` (BeatDirector find, three escalating `laserSweep` phrases @ 0.5 s telegraph, five `say` lines, death-rewind Flee), `chapterOneEscape` (laugh + up), `chapterOneCard`.
+- **Entities:** `overlordChapter` / `P2` / `P3` (taunt art + lens).
+- **UI:** `showChapterCard` + `offerChapterSkip` (`chapter1.seen`); CHAPTER ONE card (time / deaths / rewinds / diamonds, hook VO, Continue ≥48 px design) **before** the Grudge; normal results skipped after.
+- **Audio prompts** in `audio.json` (clips pending); listed in `pending_clips.json`.
+- **Playtest:** `chapter-one` (`.hawkes/scenario.txt`).
 
-## Gen / GPU
-**$0 spent.** `image.generate` refused: org has **1 credit**, needs **5** per image. Fleet also reports AWS keys missing. Procedural stand-ins ship; `.hawkes/pending-gpu.txt` lists the 12 sheets (estimate ~$0.35 under the $0.59 budget once credits refill). No waiting-jobs (nothing queued).
+## Merge with origin/beta (this pass)
 
-## Checks
-- **Compile fix (this pass):** `DiamondFlyer` had nested struct `Fly` and method `Fly` → CS0102; renamed the struct to `FlySlot` (`FeelVfx.cs:574`). Public `DiamondFlyer.Fly(...)` unchanged.
-- Scenario named in `.hawkes/scenario.txt`: `vfx-kit`.
-- Conflicts with c_43322668c9d9 (Floor 997 payoff) / c_4601f4040056 (OverlordTaunts): **none** (no shared files; that other fix is a different CS0103).
+Beta moved first with **VFX kit** (#402 / `63c6848`). Merged `origin/beta` and resolved:
+
+| File | Result |
+|---|---|
+| `Assets/Scripts/Playtest/SickOfItPlaytest.cs` | **Auto-merged.** Kept both: `VfxKitId` registration/dispatch and `ChapterOneId` registration/dispatch. |
+| `Docs/Story.md` | **Auto-merged.** Kept “The feel of a hit” flipbook section (beta) and “Chapter One closes on Floor 997” (ours). |
+| `docs/world-bible.md` | **Auto-merged.** Kept Feel VFX bullet (beta) and Chapter One beat / Overlord arc+moment (ours). |
+| `docs/metrics.json` | **Conflict (add/add).** Combined: our measured jump/feel numbers + notes from player.json; beta’s corridor aliases (`narrow`/`standard`/`wide`) and `screenShakeMs` / `diamondFlyMs` (600 for the VFX diamond arc). `hitStopMs` kept at 80 (matches `feel.freeze.heroHurtSeconds 0.08`). |
+
+`.hawkes/*` from beta (`vfx-kit` scenario, Feel VFX pending-gpu/summary) were restored to this task’s chapter-one scenario, pending voice/sting GPU list, and this summary. Beta’s Feel VFX convention line kept in `learned.md`.
 
 ## Fun reviewer
-**Verdict: living** on the feel axis (verbs answer with motion; Meadow already has life/sound). Gaps: Gen inked sheets still pending (stand-ins are readable but not art-bible final); phone fps must be proven on beta.
+**thin** — Full 3, Breathing 3, Interactions 2, Story-as-experience 3, Soul 4.
+Gaps (biggest first): (1) wire `vo_ch1_*` + sting clips (blocked on Gen credits); (2) more Imp Run life on the landing during the duel; (3) stage a real ascent escape + a second verb beyond dodge.
 
-## Reviewer
-**Verdict: revise later for Gen art only** — code/criteria wiring is in; acceptance “hand-made” finishes when pending-gpu atlas lands. Mergeable as a first part with stand-ins + playtest.
+## Stuck
+Gen org credits: 1 left; `audio.voice` needs 8, `audio.dialogue-open` needs 16. See `.hawkes/stuck.md`. GPU $ budget ($0.47) would cover music + open dialogue once credits exist.
+
+## Reviewer (merge pass)
+**merge** — both intents kept; playtest registrations coexist; metrics combined without dropping `diamondFlyMs` or measured feel notes; scenario restored to `chapter-one`. No binary/scene conflicts.
+
+## Checks (after merge)
+- `python3 Tools/Levels/chapter_one.py --check` — up to date
+- JSON parse of Floor997 / audio / entities / theme / metrics — ok
+- No conflict markers left in the four named files
+- Unity compile not run here (no batch editor on this agent host)

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "displayName": "The Overlord",
+  "team": "Enemy",
+  "health": 0,
+  "shootable": false,
+  "activationRange": 0,
+  "tags": [
+    "overlordChapter",
+    "overlordCameo"
+  ],
+  "body": {
+    "radius": 0.4,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.15,
+    "placeholderColor": "#2A2030",
+    "placeholderSize": 1.9,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 4,
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/OverlordTaunt/OverlordTaunt_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Laugh",
+          "spriteSheet": "Art/Enemies/OverlordTaunt/OverlordTaunt_laugh.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Point",
+          "spriteSheet": "Art/Enemies/OverlordTaunt/OverlordTaunt_point.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Flee",
+          "spriteSheet": "Art/Enemies/OverlordTaunt/OverlordTaunt_flee.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "screenAnchor",
+      "offset": [
+        1.4,
+        1.55
+      ],
+      "drift": [
+        0.05,
+        0.02
+      ],
+      "driftAfter": 0.0
+    },
+    {
+      "type": "laserSweep",
+      "damage": 1,
+      "interval": 7.5,
+      "initialDelay": 1.2,
+      "warning": 0.5,
+      "sweepTime": 1.4,
+      "sweepDegrees": 55,
+      "aimAtPlayer": true,
+      "length": 12,
+      "width": 0.45,
+      "warningSound": "overlord_beam_charge",
+      "beamSound": "overlord_beam_strike"
+    }
+  ]
+}

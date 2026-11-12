@@ -1,3 +1,6 @@
-- convention: Feel VFX kit — `FeelVfx` + pooled `VfxPool` / `DiamondFlyer`; atlas `Resources/Effects/FeelVfxAtlas` (12×10 @ 128 px); Gen job `Tools/Art/fx/feel-vfx.json`; playtest `vfx-kit`.
-- lesson: Gen org credits — `image.generate` needs 5 credits; with 1 left the whole keyframe batch is refused (fleet AWS keys also missing); ship procedural stand-ins and list work in `.hawkes/pending-gpu.txt`.
-- canon: Feel flipbooks — every shot/hit/kill/graze/dash/diamond/rewind plays an inked burst; diamonds arc to the HUD gem in ≤0.6 s (Docs/Story.md "The feel of a hit").
+- canon: Chapter One closes on Floor 997 — after Imp Run’s finale a playable Overlord lens face-off (he never answers; hero replies); CHAPTER ONE card then Grudge; hook foreshadows Floor 500 daylight; flag `chapter1.seen` offers Skip.
+- convention: chapter_one.py — run after long_floors / first_floors / overlord_cameos / companions; landing goes to phase `chapterOne`, not an instant clear.
+- lesson: Gen org credits ≠ GPU$ budget — audio.voice/dialogue-open can refuse with 1 credit left even when the brief’s GPU dollars would cover the job; write stuck.md and leave clips in pending_clips.
+- convention: showChapterCard before cleared — Continue offers the Grudge then sets `cleared`; ShowResults no-ops when `chapterCardShown` so the card is not doubled.
+- convention: Feel VFX kit — `FeelVfx` + pooled `VfxPool` / `DiamondFlyer`; atlas `Resources/Effects/FeelVfxAtlas`; playtest `vfx-kit` (kept from beta merge #402).
+- lesson: merge with beta — only `docs/metrics.json` conflicted (add/add); Story/world-bible/SickOfItPlaytest.cs auto-merged both VFX kit and Chapter One; restore `.hawkes/scenario.txt` to this task’s scenario after merge (beta overwrites it with `vfx-kit`).

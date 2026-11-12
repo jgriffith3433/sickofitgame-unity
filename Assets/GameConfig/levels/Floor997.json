@@ -1141,6 +1141,10 @@
       {
         "name": "ovlOn",
         "value": 0.0
+      },
+      {
+        "name": "chapterOne",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1228,49 +1232,18 @@
         "maxTimes": 1,
         "do": [
           {
-            "type": "runSequence",
-            "steps": [
-              {
-                "type": "setFloor",
-                "floor": 996,
-                "skipMilestones": true
-              },
-              {
-                "type": "setCounter",
-                "name": "lavaSpeed",
-                "value": 0.0
-              },
-              {
-                "type": "showText",
-                "text": "IMP RUN: SURVIVED",
-                "duration": 2.4,
-                "style": "Banner",
-                "sound": "vo_imprun_clear",
-                "color": "#FFD27A"
-              },
-              {
-                "type": "playSound",
-                "sound": "sting_rank_s",
-                "volume": 1.0
-              },
-              {
-                "type": "emit",
-                "signal": "floors:997:payoff"
-              },
-              {
-                "type": "wait",
-                "seconds": 2.6
-              },
-              {
-                "type": "offerUpgrades",
-                "title": "Pick a grudge"
-              },
-              {
-                "type": "setCounter",
-                "name": "cleared",
-                "value": 1
-              }
-            ]
+            "type": "setFloor",
+            "floor": 996,
+            "skipMilestones": true
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.0
+          },
+          {
+            "type": "goToPhase",
+            "phase": "chapterOne"
           }
         ]
       },
@@ -2395,6 +2368,371 @@
             ]
           }
         ]
+      },
+      {
+        "name": "chapterOne",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "stopHazard",
+            "id": "rain"
+          },
+          {
+            "type": "stopHazard",
+            "id": "aimed"
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "wave"
+            }
+          },
+          {
+            "type": "despawn",
+            "target": {
+              "tag": "brute"
+            }
+          },
+          {
+            "type": "emit",
+            "signal": "chapter1:start"
+          },
+          {
+            "type": "playSound",
+            "sound": "amb_chain_rattle",
+            "volume": 0.55
+          },
+          {
+            "type": "offerChapterSkip",
+            "title": "CHAPTER ONE",
+            "watchLabel": "Face him again",
+            "skipLabel": "Skip",
+            "onSkip": [
+              {
+                "type": "emit",
+                "signal": "chapter1:skipped"
+              },
+              {
+                "type": "goToPhase",
+                "phase": "chapterOneCard"
+              }
+            ],
+            "onWatch": [
+              {
+                "type": "runSequence",
+                "steps": [
+                  {
+                    "type": "beatStart",
+                    "id": "chapterOneFind",
+                    "maxSeconds": 4.5,
+                    "unlockAtEnd": true,
+                    "onSkip": [
+                      {
+                        "type": "spawn",
+                        "entity": "overlordChapter",
+                        "id": "ovlChapter",
+                        "anchor": "Camera",
+                        "at": [
+                          1.4,
+                          1.55
+                        ],
+                        "facePlayer": false
+                      },
+                      {
+                        "type": "emit",
+                        "signal": "chapter1:found"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 0.35
+                  },
+                  {
+                    "type": "cameraFocus",
+                    "target": "player",
+                    "at": [
+                      1.2,
+                      0.8
+                    ],
+                    "size": 5.2,
+                    "seconds": 0.55
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "overlordChapter",
+                    "id": "ovlChapter",
+                    "anchor": "Camera",
+                    "at": [
+                      1.4,
+                      1.55
+                    ],
+                    "facePlayer": false
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "chapter1:found"
+                  },
+                  {
+                    "type": "cameraShake",
+                    "intensity": 0.12,
+                    "duration": 0.35
+                  },
+                  {
+                    "type": "playSound",
+                    "sound": "overlord_beam_charge",
+                    "volume": 0.85
+                  },
+                  {
+                    "type": "say",
+                    "actor": "ovlChapter",
+                    "text": "Mm. ... Caught up.",
+                    "sound": "vo_ch1_ovl_caught",
+                    "color": "#C9A0FF",
+                    "minSeconds": 0.9,
+                    "pad": 0.1
+                  },
+                  {
+                    "type": "beatEnd"
+                  },
+                  {
+                    "type": "cameraReset",
+                    "duration": 0.4
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "chapter1:phrase1"
+                  },
+                  {
+                    "type": "say",
+                    "actor": "player",
+                    "text": "Been looking for you.",
+                    "sound": "vo_ch1_hero_looking",
+                    "minSeconds": 0.7,
+                    "pad": 0.1
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 5.5
+                  },
+                  {
+                    "type": "despawn",
+                    "target": {
+                      "id": "ovlChapter"
+                    }
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "overlordChapterP2",
+                    "id": "ovlChapter",
+                    "anchor": "Camera",
+                    "at": [
+                      1.4,
+                      1.55
+                    ],
+                    "facePlayer": false
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "chapter1:phrase2"
+                  },
+                  {
+                    "type": "playEntityAnimation",
+                    "target": {
+                      "id": "ovlChapter"
+                    },
+                    "animation": "Point"
+                  },
+                  {
+                    "type": "say",
+                    "actor": "ovlChapter",
+                    "text": "Mm. ... Watch.",
+                    "sound": "vo_ch1_ovl_watch",
+                    "color": "#C9A0FF",
+                    "minSeconds": 0.8,
+                    "pad": 0.1
+                  },
+                  {
+                    "type": "say",
+                    "actor": "player",
+                    "text": "I always do.",
+                    "sound": "vo_ch1_hero_always",
+                    "minSeconds": 0.6,
+                    "pad": 0.1
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 6.0
+                  },
+                  {
+                    "type": "despawn",
+                    "target": {
+                      "id": "ovlChapter"
+                    }
+                  },
+                  {
+                    "type": "spawn",
+                    "entity": "overlordChapterP3",
+                    "id": "ovlChapter",
+                    "anchor": "Camera",
+                    "at": [
+                      1.4,
+                      1.55
+                    ],
+                    "facePlayer": false
+                  },
+                  {
+                    "type": "emit",
+                    "signal": "chapter1:phrase3"
+                  },
+                  {
+                    "type": "say",
+                    "actor": "ovlChapter",
+                    "text": "Mm. ... Not far enough.",
+                    "sound": "vo_ch1_ovl_far",
+                    "color": "#C9A0FF",
+                    "minSeconds": 0.9,
+                    "pad": 0.1
+                  },
+                  {
+                    "type": "wait",
+                    "seconds": 5.0
+                  },
+                  {
+                    "type": "goToPhase",
+                    "phase": "chapterOneEscape"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "name": "chapter1: death-rewind shows his back",
+            "when": {
+              "type": "heroRewound"
+            },
+            "maxTimes": 3,
+            "do": [
+              {
+                "type": "playEntityAnimation",
+                "target": {
+                  "id": "ovlChapter"
+                },
+                "animation": "Flee"
+              },
+              {
+                "type": "emit",
+                "signal": "chapter1:back"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "chapterOneEscape",
+        "onEnter": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "chapter1:escape"
+              },
+              {
+                "type": "playEntityAnimation",
+                "target": {
+                  "id": "ovlChapter"
+                },
+                "animation": "Laugh"
+              },
+              {
+                "type": "playSound",
+                "sound": "vo_ovl_t_higher",
+                "volume": 0.7
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.2,
+                "duration": 0.55
+              },
+              {
+                "type": "wait",
+                "seconds": 0.7
+              },
+              {
+                "type": "playEntityAnimation",
+                "target": {
+                  "id": "ovlChapter"
+                },
+                "animation": "Flee"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.1
+              },
+              {
+                "type": "despawn",
+                "target": {
+                  "id": "ovlChapter"
+                }
+              },
+              {
+                "type": "playSound",
+                "sound": "music_chapter_one_sting",
+                "volume": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "chapter1:sting"
+              },
+              {
+                "type": "wait",
+                "seconds": 0.9
+              },
+              {
+                "type": "goToPhase",
+                "phase": "chapterOneCard"
+              }
+            ]
+          }
+        ],
+        "rules": []
+      },
+      {
+        "name": "chapterOneCard",
+        "onEnter": [
+          {
+            "type": "lockTravel"
+          },
+          {
+            "type": "setFlag",
+            "flag": "chapter1.seen"
+          },
+          {
+            "type": "setCounter",
+            "name": "chapterOne",
+            "value": 1
+          },
+          {
+            "type": "emit",
+            "signal": "chapter1:card"
+          },
+          {
+            "type": "emit",
+            "signal": "floors:997:payoff"
+          },
+          {
+            "type": "showChapterCard",
+            "title": "CHAPTER ONE",
+            "hookSound": "vo_ch1_hero_daylight",
+            "hookText": "Daylight's still up there. Somewhere."
+          }
+        ],
+        "rules": []
       }
     ]
   },

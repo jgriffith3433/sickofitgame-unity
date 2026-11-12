@@ -11,6 +11,13 @@
     "ui_rank_stamp",
     "ui_shop_open",
     "ui_toggle",
-    "ui_unlock"
+    "ui_unlock",
+    "vo_ch1_ovl_caught",
+    "vo_ch1_hero_looking",
+    "vo_ch1_ovl_watch",
+    "vo_ch1_hero_always",
+    "vo_ch1_ovl_far",
+    "vo_ch1_hero_daylight",
+    "music_chapter_one_sting"
   ]
 }
