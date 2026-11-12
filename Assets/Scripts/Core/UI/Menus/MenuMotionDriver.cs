@@ -99,7 +99,10 @@ namespace SickOfIt.Core.UI.Menus
             rect.localScale = Vector3.one * (scale * ExtraScale);
             rect.localRotation = Quaternion.Euler(0f, 0f, BaseRotation + rotation + ExtraRotation);
             group.alpha = alpha;
-            group.blocksRaycasts = t >= 0.99f || exitStartedAt < 0f;
+            // Keep buttons clickable while open (including during the short entrance). Only mute raycasts while
+            // the exit fade runs — otherwise Play / Continue can sit dead under a CanvasGroup that never opened.
+            bool exiting = exitStartedAt >= 0f && Time.unscaledTime >= exitStartedAt;
+            group.blocksRaycasts = !exiting;
         }
 
         static void ApplyEntrance(MenuEntrance entrance, float t, ref Vector2 offset, ref float scale, ref float alpha, ref float rotation)

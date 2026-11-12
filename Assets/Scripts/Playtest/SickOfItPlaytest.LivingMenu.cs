@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using SickOfIt.Core.Progression;
+using SickOfIt.Core.UI;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
 using SickOfIt.Gameplay;
@@ -162,12 +163,15 @@ namespace SickOfIt.Playtest
                 }
 
                 // Exactly one EventSystem; then a real click on Play / New Game must leave the menu.
+                EventSystemGuard.Ensure();
                 int systems = MainMenuManager.EnabledEventSystemCount();
                 Run.Metric("livingMenu.eventSystems", systems);
                 Gate("one EventSystem", systems == 1, $"{systems} enabled EventSystem(s)");
                 EventSystemGuardNote();
+                Run.Metric("livingMenu.platesFromGen", MenuInkPlates.FromGen ? 1 : 0);
+                Gate("Gen button plates", MenuInkPlates.FromGen, MenuInkPlates.FromGen ? "Resources/UI plates" : "procedural fallback still in use");
 
-                // Real click: Play / New Game answers (bot mouse). Don't require a full level load — leaving the menu is enough.
+                // Real click: Play / New Game answers (bot mouse / touch). Don't require a full level load — leaving the menu is enough.
                 string go = MenuReveal.IsFirstRun ? labels.play : labels.newGame;
                 if (FindButton(go) == null)
                     go = labels.settings; // last resort: Settings still proves clicks work
