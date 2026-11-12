@@ -1,4 +1,1 @@
-- canon: Meadow raid sky — the Meadow's sky swaps to a darker raid sky when the imps phase begins, and goes back if the player rewinds past it.
-- canon: Floors 1000-997 backdrops — each floor has its own four-layer painted backdrop (sky, far, mid, near) instead of the shared Circle footage.
-- Background layers can drift (`driftSpeed`) and swap sprite/tint on the raid (`raidSprite`, `raidTint`); stand-in PNGs live in Assets/Art/Backdrops and are replaced by file name.
-- The portal scene probe no longer needs a video layer; it falls back to the camera-anchored portal spot.
+- none
