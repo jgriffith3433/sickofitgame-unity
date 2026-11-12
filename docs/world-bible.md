@@ -159,6 +159,68 @@ dragging a chain across a distant ledge, sparks falling like rain. They cross th
 
 ---
 
+## Characters
+
+The named characters, each with a want, an arc, a moment the player lives, and the voice and clips that play it.
+
+### The Hero
+- Want: To get out of Hell and back to the meadow, one floor at a time.
+- Arc: Sick of it, then stubborn, then something like at peace on the last floor.
+- Moment: A graze streak: he flinches, mutters a one-liner, and the HUD vessels crack or glow with what happens.
+- Personality: tired, dry, stubborn
+- Voice: `player` (lines `vo_hero_*`)
+- Animations: Idle, Walk, Jump, Fall, Fire, Dash, Hurt, Victory (art/hero.json)
+
+### Yooba
+- Want: To keep the climber alive and sell him goods, and to find his Lost Things.
+- Arc: A shop-slime in the gaps who starts out bargaining, remembers every death, and ends as a friend.
+- Moment: He rides the Shaft and the shop, hacks up a diamond and counts floors aloud as the hero buys.
+- Personality: wobbly, warm, nosy
+- Voice: `yooba`
+- Animations: Idle, Walk, Talk, Laugh, Cough (ui/yooba.json portrait)
+
+### The Announcer
+- Want: To make Hell a show and every floor a headline.
+- Arc: Delighted at first, mournful on deaths, impressed by the end.
+- Moment: He calls each new floor as the elevator dial ticks down, louder on a graze streak.
+- Personality: loud, theatrical, gleeful
+- Voice: `announcer`
+- Animations: Idle, Walk, Talk (banner and voice only)
+
+### The Overlord
+- Want: Up and out, to the surface, ahead of the hero.
+- Arc: Seen far off and never answering, until Floor 1 where he rewinds too.
+- Moment: A glimpse on the far ledge: a taunt, a dropped ember, a laser sweep, then he is gone upward.
+- Personality: bored, enormous, stuck
+- Voice: `overlord`
+- Animations: Idle, Walk, Talk (art/overlordFar.json)
+
+### Rook
+- Want: To reach the top first and be seen doing it.
+- Arc: Rival who shows off, then cuts in, then leaves a mess the hero can use.
+- Moment: He sprints past on Floor 996 and kicks loose a ledge the hero has to cross.
+- Personality: brash, vain, sly
+- Voice: `rook` (subtitles; recipe in Tools/Audio/companion_voices.json)
+- Animations: Idle, Walk, Talk, Hiccup (art/rook.json)
+
+### Wick
+- Want: To keep Circle X's lamps lit, because someone must.
+- Arc: Repeats himself, then helps, then lights the last lamp for the hero.
+- Moment: He lights a lamp on Floor 999 as the hero passes and the dark ledge shows its path.
+- Personality: patient, repetitive, kind
+- Voice: `wick` (recipe in Tools/Audio/companion_voices.json)
+- Animations: Idle, Walk, Talk, Hiccup (art/wick.json)
+
+### Pointer
+- Want: To show the way, even when it is the wrong one.
+- Arc: Points wrong kindly, then points right once the hero has earned it.
+- Moment: He points up a stairwell on Floor 900; the real way is the crack beside it.
+- Personality: earnest, mistaken, gentle
+- Voice: `pointer` (recipe in Tools/Audio/companion_voices.json)
+- Animations: Idle, Walk, Talk, Hiccup (art/pointer.json)
+
+---
+
 ## What happens
 
 Per area: interactions (at least three kinds), events on their own, ambient sound, what changes.
