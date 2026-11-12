@@ -225,6 +225,7 @@ namespace SickOfIt.Core.UI.Menus
     /// </summary>
     public sealed class ScreenTransition : MonoBehaviour
     {
+        // The ember iris: the screen closes to a ring of burning edge (0.35 s) and opens from it (0.55 s); both under 1 s.
         public const float CoverSeconds = 0.35f;
         public const float RevealSeconds = 0.55f;
 
@@ -239,7 +240,11 @@ namespace SickOfIt.Core.UI.Menus
         public static int Reveals { get; private set; }
         public static string LastLabel { get; private set; } = "";
 
-        Image cover, band, barFill;
+        Image cover, band, barFill, glow;
+        RawImage iris;
+        readonly Image[] fillers = new Image[4];
+        static Texture2D irisTexture, glowTexture;
+        const float HoleRatio = 0.125f; // the iris texture's hole radius as a fraction of the texture's width
         TextMeshProUGUI label, loadingText;
         CanvasGroup labelGroup, loadingGroup;
         float alpha, from, target, startAt, duration = 0.01f;
@@ -274,6 +279,26 @@ namespace SickOfIt.Core.UI.Menus
         {
             cover = MenuGraphics.NewImage(transform, "Cover", new Color(0.04f, 0.02f, 0.05f, 0f));
             cover.raycastTarget = false;
+            var irisGo = new GameObject("Iris", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage));
+            irisGo.transform.SetParent(transform, false);
+            iris = irisGo.GetComponent<RawImage>();
+            iris.texture = IrisTexture();
+            iris.raycastTarget = false;
+            for (int i = 0; i < fillers.Length; i++)
+            {
+                fillers[i] = MenuGraphics.NewImage(transform, "IrisFill" + i, IrisDark);
+                fillers[i].raycastTarget = false;
+                fillers[i].rectTransform.anchorMin = fillers[i].rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            }
+            // A pulse of ember light in the middle while the screen is shut, so a long load is never a plain black screen.
+            var glowGo = new GameObject("EmberGlow", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage));
+            glowGo.transform.SetParent(transform, false);
+            var glowRaw = glowGo.GetComponent<RawImage>();
+            glowRaw.texture = GlowTexture();
+            glowRaw.raycastTarget = false;
+            glowRaw.rectTransform.sizeDelta = new Vector2(1500f, 1500f);
+            glowRaw.color = new Color(1f, 1f, 1f, 0f);
+            emberGlow = glowRaw;
             band = MenuGraphics.NewImage(transform, "Band", new Color(1f, 0.45f, 0.12f, 0f));
             band.raycastTarget = false;
             var slot = MenuGraphics.NewRect("Label", transform);
@@ -328,6 +353,96 @@ namespace SickOfIt.Core.UI.Menus
         }
 
         RectTransform hero;
+        RawImage emberGlow;
+        static readonly Color IrisDark = new Color(0.04f, 0.02f, 0.05f, 1f);
+
+        /// <summary>A square, transparent in a round hole in the middle, ringed by a burning ember edge, dark outside.</summary>
+        static Texture2D IrisTexture()
+        {
+            if (irisTexture != null)
+                return irisTexture;
+            const int n = 256;
+            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, name = "EmberIris" };
+            var px = new Color32[n * n];
+            float hole = HoleRatio * 2f; // in units of the half-width
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n * 2f - 1f, dy = (y + 0.5f) / n * 2f - 1f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    float edge = (d - hole) / 0.06f; // 0 at the hole's edge, 1 at the end of the ember rim
+                    Color c;
+                    if (edge < 0f)
+                        c = new Color(1f, 0.55f, 0.15f, 0f);
+                    else if (edge < 1f)
+                    {
+                        // From clear through white-hot to orange to dark: a burn-through edge, with flecks of noise.
+                        float flick = 0.85f + 0.15f * Mathf.Sin(Mathf.Atan2(dy, dx) * 23f + d * 40f);
+                        var hot = Color.Lerp(new Color(1f, 0.9f, 0.55f), new Color(1f, 0.38f, 0.08f), edge) * flick;
+                        c = new Color(hot.r, hot.g, hot.b, Mathf.Clamp01(edge * 2.2f));
+                    }
+                    else
+                        c = IrisDark;
+                    px[y * n + x] = c;
+                }
+            tex.SetPixels32(px);
+            tex.Apply(false, true);
+            return irisTexture = tex;
+        }
+
+        static Texture2D GlowTexture()
+        {
+            if (glowTexture != null)
+                return glowTexture;
+            const int n = 64;
+            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, name = "EmberGlow" };
+            var px = new Color32[n * n];
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n * 2f - 1f, dy = (y + 0.5f) / n * 2f - 1f;
+                    float a = Mathf.Clamp01(1f - Mathf.Sqrt(dx * dx + dy * dy));
+                    px[y * n + x] = new Color(1f, 0.42f, 0.1f, a * a);
+                }
+            tex.SetPixels32(px);
+            tex.Apply(false, true);
+            return glowTexture = tex;
+        }
+
+        /// <summary>Sizes the iris for this frame: 0 = open, 1 = shut. The four fillers dark out what the square does not reach.</summary>
+        void LayoutIris(float closed)
+        {
+            var rect = ((RectTransform)transform).rect;
+            float w = rect.width, h = rect.height;
+            float rMax = 0.5f * Mathf.Sqrt(w * w + h * h) * 1.12f;
+            bool open = closed <= 0.002f;
+            bool shut = closed >= 0.998f;
+            iris.enabled = !open && !shut;
+            for (int i = 0; i < fillers.Length; i++)
+                fillers[i].enabled = !open && !shut;
+            cover.enabled = shut;
+            cover.color = IrisDark;
+            if (open || shut)
+                return;
+            float r = rMax * (1f - closed);
+            float size = Mathf.Max(8f, r / HoleRatio);
+            iris.rectTransform.anchorMin = iris.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            iris.rectTransform.sizeDelta = new Vector2(size, size);
+            iris.rectTransform.anchoredPosition = Vector2.zero;
+            float half = size * 0.5f;
+            // left, right, bottom, top slabs, each reaching past the screen edge.
+            Place(fillers[0].rectTransform, -half, 0f, w * 2f, h * 3f, 1f, 0.5f);
+            Place(fillers[1].rectTransform, half, 0f, w * 2f, h * 3f, 0f, 0.5f);
+            Place(fillers[2].rectTransform, 0f, -half, size + 2f, h * 2f, 0.5f, 1f);
+            Place(fillers[3].rectTransform, 0f, half, size + 2f, h * 2f, 0.5f, 0f);
+        }
+
+        static void Place(RectTransform rt, float x, float y, float width, float height, float pivotX, float pivotY)
+        {
+            rt.pivot = new Vector2(pivotX, pivotY);
+            rt.anchoredPosition = new Vector2(x, y);
+            rt.sizeDelta = new Vector2(width, height);
+        }
 
         /// <summary>The words under the walking hero (themed, never "LOADING" or a percentage; the playtest reads them).</summary>
         public const string LoadingWords = "HERE WE GO AGAIN";
@@ -396,7 +511,9 @@ namespace SickOfIt.Core.UI.Menus
                 Go(0f, RevealSeconds);
             float t = Mathf.Clamp01((now - startAt) / duration);
             alpha = Mathf.Lerp(from, target, t * t * (3f - 2f * t));
-            cover.color = new Color(0.04f, 0.02f, 0.05f, alpha);
+            LayoutIris(alpha);
+            float pulse = 0.65f + 0.35f * Mathf.Sin(now * 5f);
+            emberGlow.color = new Color(1f, 1f, 1f, Mathf.Clamp01((alpha - 0.6f) * 2.5f) * 0.55f * pulse);
             // The label shows while the screen is mostly black, and goes with it.
             labelGroup.alpha = Mathf.Clamp01((alpha - 0.5f) * 2f);
             // The bar eases toward the progress (bundles arrive in steps) and fades in after a moment (a quick load shows none).
