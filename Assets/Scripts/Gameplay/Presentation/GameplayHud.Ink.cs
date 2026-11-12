@@ -268,6 +268,12 @@ namespace SickOfIt.Gameplay
 
         static readonly Color BrassLabel = new Color(0.78f, 0.6f, 0.23f, 1f);
 
+        Image rewindButtonRing;
+        float rewindRingShown = 1f;
+
+        /// <summary>0..1 fill on the hold-to-rewind button's ring (drains while held; phone playtest).</summary>
+        public float RewindButtonRingFill { get; private set; } = 1f;
+
         /// <summary>Applies the reel sprite to the hold-to-rewind button (and grows it to ≥72 px on touch).</summary>
         void DressRewindButtonWithReel()
         {
@@ -286,6 +292,52 @@ namespace SickOfIt.Gameplay
             }
             if (rewindButton.Label != null)
                 MenuGraphics.SetText(rewindButton.Label, "");
+
+            // Fill ring around the button: drains with juice while rewind is held (phone critic check).
+            if (rewindRoot != null && rewindButtonRing == null)
+            {
+                var ringSlot = MenuGraphics.NewRect("FillRing", rewindRoot);
+                ringSlot.anchorMin = Vector2.zero;
+                ringSlot.anchorMax = Vector2.one;
+                ringSlot.offsetMin = new Vector2(-10f, -10f);
+                ringSlot.offsetMax = new Vector2(10f, 10f);
+                ringSlot.SetAsFirstSibling();
+                rewindButtonRing = ringSlot.gameObject.AddComponent<Image>();
+                rewindButtonRing.sprite = MenuGraphics.Shape(MenuShape.Circle, 0f);
+                rewindButtonRing.type = Image.Type.Filled;
+                rewindButtonRing.fillMethod = Image.FillMethod.Radial360;
+                rewindButtonRing.fillOrigin = (int)Image.Origin360.Top;
+                rewindButtonRing.fillClockwise = true;
+                rewindButtonRing.color = new Color(style.rewind.r, style.rewind.g, style.rewind.b, 0.85f);
+                rewindButtonRing.raycastTarget = false;
+                // Hollow look: a slightly smaller clear hole is the button face; the ring reads as a rim.
+                var hole = MenuGraphics.NewRect("RingHole", ringSlot);
+                MenuGraphics.Fill(hole, 14f);
+                var holeImg = hole.gameObject.AddComponent<Image>();
+                holeImg.sprite = MenuGraphics.Shape(MenuShape.Circle, 0f);
+                holeImg.color = new Color(0.1f, 0.07f, 0.1f, 0.92f);
+                holeImg.raycastTarget = false;
+            }
+        }
+
+        void UpdateRewindButtonRing()
+        {
+            if (rewindButtonRing == null)
+                return;
+            var budget = SickOfIt.Core.Rewind.RewindBudget.Instance;
+            var clock = SickOfIt.Core.GameClock.Instance;
+            bool rewinding = clock != null && clock.IsRewinding;
+            float juice = budget != null ? budget.Juice : 1f;
+            float cap = budget != null ? Mathf.Max(0.01f, budget.Max) : 1f;
+            float target = Mathf.Clamp01(juice / cap);
+            // While held, chase the live juice so the ring visibly drains; otherwise ease to the current fill.
+            float speed = rewinding ? 4f : 2f;
+            rewindRingShown = Mathf.MoveTowards(rewindRingShown, target, Time.unscaledDeltaTime * speed);
+            RewindButtonRingFill = rewindRingShown;
+            rewindButtonRing.fillAmount = rewindRingShown;
+            rewindButtonRing.color = rewindRingShown < 0.05f
+                ? style.rewindEmpty
+                : new Color(style.rewind.r, style.rewind.g, style.rewind.b, rewinding ? 1f : 0.75f);
         }
 
         void UpdateInkHealth()

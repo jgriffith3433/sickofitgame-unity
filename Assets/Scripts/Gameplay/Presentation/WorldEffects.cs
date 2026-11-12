@@ -585,11 +585,17 @@ namespace SickOfIt.Gameplay
         {
             if (!SickOfIt.Data.GameSettings.ScreenShake)
                 return;
+            // Critic feel: hits never rumble longer than 0.3 s (docs/metrics.json feel.shakeMaxMs).
+            duration = Mathf.Min(duration, 0.3f);
             shakeIntensity = SickOfIt.Data.GameSettings.ReducedShake ? intensity * 0.3f : intensity;
             shakeEndsAt = Time.unscaledTime + duration;
             movesCamera = true;
             LastShakeIntensity = shakeIntensity;
+            LastShakeDuration = duration;
         }
+
+        /// <summary>How long the last shake was set to run (capped at 0.3 s; playtest).</summary>
+        public float LastShakeDuration { get; private set; }
 
         /// <summary>The strength of the last shake started, after the accessibility setting (the playtest reads it).</summary>
         public float LastShakeIntensity { get; private set; }

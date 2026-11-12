@@ -8,46 +8,54 @@ using SickOfIt.Data;
 namespace SickOfIt.Gameplay
 {
     /// <summary>
-    /// What rewinding looks and sounds like (Docs/Story.md "Rewind that feels amazing"): while R is held the picture goes
-    /// to tape: scrolling scanlines, a cyan/magenta colour split at the edges, a tracking bar sweeping up the screen and
-    /// speed streaks trailing off to the side; and a reversed tape whirr loops with its pitch climbing the longer the
-    /// rewind runs, fading out when it ends. Scanlines and glitch overlays stay on the letterbox / screen frame and off
-    /// the playfield (Docs/lighting.md). All presentation: real time, no simulation state, nothing saved, no
-    /// allocation per frame (a fixed set of Images and one AudioSource). Reduced Flash turns off the jitter and halves
-    /// the strength.
+    /// What rewinding looks and sounds like (Docs/Story.md "Rewind that feels amazing"): gold time-ripple and optional
+    /// scanlines only on the outer ~8% of the screen, sand/ember motes streaming backwards, and a 0.2 s colour snap-back
+    /// on release. World desat, hero ghosts and bullet streaks live in <see cref="RewindWorldLook"/>. A reversed tape
+    /// whirr loops with its pitch climbing. All presentation: real time, no sim state, no per-frame allocation beyond
+    /// the fixed Image / particle pool. Reduced Flash halves it and stops the wobble.
     /// </summary>
     public sealed class RewindFx : MonoBehaviour
     {
         const string LoopSound = "rewind_start";
-        const int Streaks = 10;
+        const int Motes = 18;
         const float ScanPeriod = 6f;
+        const float OuterFrac = 0.08f;
         const float PitchStart = 0.8f, PitchEnd = 1.9f, PitchRamp = 4.5f;
+        static readonly Color Gold = new Color(1f, 0.78f, 0.22f, 1f);
 
         RectTransform root;
-        RectTransform scanRect;
-        Image scan, fringeCyan, fringeMagenta, band;
-        readonly Image[] streak = new Image[Streaks];
-        readonly float[] streakSeed = new float[Streaks];
+        RectTransform scanTop, scanBot, scanLeft, scanRight;
+        Image scanTopImg, scanBotImg, scanLeftImg, scanRightImg;
+        Image goldTop, goldBot, goldLeft, goldRight;
+        readonly Image[] mote = new Image[Motes];
+        readonly float[] moteSeed = new float[Motes];
         AudioSource source;
         float reportedPitch;
         AudioClip reversed;
         float intensity;
         float rewindingFor;
         float volume;
+        float snapLeft;
+        bool wasRewinding;
 
         // What the playtest reads: the effect's state this frame.
         public static float Intensity { get; private set; }
-        public static bool Active => Intensity > 0.02f;
+        public static bool Active => Intensity > 0.02f || SnapBackActive;
         public static bool SoundPlaying { get; private set; }
         public static float Pitch { get; private set; }
         public static float SoundVolume { get; private set; }
         public static int VisibleLayers { get; private set; }
-        /// <summary>How much of the screen the effect tints on the last rewinding frame, 0..1 (scanlines + fringes + wash).</summary>
+        /// <summary>How much of the *outer frame* the effect tints, 0..1 (never the central playfield).</summary>
         public static float Coverage { get; private set; }
+        /// <summary>Fraction of the screen covered by scan/glitch overlays that sit inside the central 84% (should stay ~0).</summary>
+        public static float PlayfieldGlitchCoverage { get; private set; }
         public static bool ReversedClip { get; private set; }
+        public static bool SnapBackActive { get; private set; }
+        public static int SandMotesVisible { get; private set; }
 
         public static RewindFx Create(Transform hud, Color tint, int siblingIndex)
         {
+            RewindWorldLook.Ensure();
             var go = new GameObject("RewindFx", typeof(RectTransform));
             go.transform.SetParent(hud, false);
             var fx = go.AddComponent<RewindFx>();
@@ -58,43 +66,32 @@ namespace SickOfIt.Gameplay
 
         void Build(Color tint)
         {
+            _ = tint; // HUD wash colour still comes from GameplayHud.rewindTint; kept for call-site compat.
             root = (RectTransform)transform;
             root.anchorMin = Vector2.zero;
             root.anchorMax = Vector2.one;
             root.offsetMin = root.offsetMax = Vector2.zero;
             root.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
 
-            // Scanlines: a tiled one-in-six dark row, taller than the screen so it can scroll by whole periods.
-            scan = MenuGraphics.NewImage(root, "Scanlines", Color.clear);
-            scan.sprite = ScanSprite();
-            scan.type = Image.Type.Tiled;
-            scanRect = scan.rectTransform;
-            scanRect.offsetMin = new Vector2(0f, -ScanPeriod * 2f);
-            scanRect.offsetMax = new Vector2(0f, ScanPeriod * 2f);
+            // Four scanline strips + four gold ripple strips — never a full-screen overlay on the playfield.
+            scanTopImg = EdgeScan(root, "ScanTop", out scanTop);
+            scanBotImg = EdgeScan(root, "ScanBot", out scanBot);
+            scanLeftImg = EdgeScan(root, "ScanLeft", out scanLeft);
+            scanRightImg = EdgeScan(root, "ScanRight", out scanRight);
+            goldTop = MenuGraphics.NewImage(root, "GoldTop", Color.clear);
+            goldBot = MenuGraphics.NewImage(root, "GoldBot", Color.clear);
+            goldLeft = MenuGraphics.NewImage(root, "GoldLeft", Color.clear);
+            goldRight = MenuGraphics.NewImage(root, "GoldRight", Color.clear);
 
-            // The colour split: the vignette twice, one cyan nudged right, one magenta nudged left.
-            fringeCyan = MenuGraphics.NewImage(root, "FringeCyan", Color.clear);
-            fringeCyan.sprite = MenuGraphics.Vignette();
-            fringeMagenta = MenuGraphics.NewImage(root, "FringeMagenta", Color.clear);
-            fringeMagenta.sprite = MenuGraphics.Vignette();
-
-            // A tracking bar, like a tape's: a soft bright band sweeping upward.
-            band = MenuGraphics.NewImage(root, "TrackingBar", Color.clear);
-            var bandRect = band.rectTransform;
-            bandRect.anchorMin = new Vector2(0f, 0f);
-            bandRect.anchorMax = new Vector2(1f, 0f);
-            bandRect.pivot = new Vector2(0.5f, 0.5f);
-            bandRect.sizeDelta = new Vector2(0f, 46f);
-
-            for (int i = 0; i < Streaks; i++)
+            for (int i = 0; i < Motes; i++)
             {
-                var s = MenuGraphics.NewImage(root, "Streak" + i, Color.clear);
+                var s = MenuGraphics.NewImage(root, "Mote" + i, Color.clear);
                 var r = s.rectTransform;
-                r.anchorMin = new Vector2(0f, 0f);
-                r.anchorMax = new Vector2(0f, 0f);
-                r.pivot = new Vector2(0f, 0.5f);
-                streak[i] = s;
-                streakSeed[i] = Hash(i * 7.31f);
+                r.anchorMin = r.anchorMax = new Vector2(0f, 0f);
+                r.pivot = new Vector2(0.5f, 0.5f);
+                r.sizeDelta = new Vector2(6f, 6f);
+                mote[i] = s;
+                moteSeed[i] = Hash(i * 11.17f);
             }
             root.gameObject.SetActive(false);
 
@@ -103,6 +100,15 @@ namespace SickOfIt.Gameplay
             source.spatialBlend = 0f;
             source.loop = true;
             source.ignoreListenerPause = false;
+        }
+
+        static Image EdgeScan(RectTransform parent, string name, out RectTransform rect)
+        {
+            var img = MenuGraphics.NewImage(parent, name, Color.clear);
+            img.sprite = ScanSprite();
+            img.type = Image.Type.Tiled;
+            rect = img.rectTransform;
+            return img;
         }
 
         static float Hash(float x) => Mathf.Repeat(Mathf.Sin(x * 12.9898f) * 43758.5453f, 1f);
@@ -155,20 +161,35 @@ namespace SickOfIt.Gameplay
             return reversed;
         }
 
-        /// <summary>True while a beat runs: no scanlines, colour split or tracking bar over the play area.</summary>
+        /// <summary>True while a beat runs: no scanlines or gold ripple over the play area.</summary>
         public static bool BeatHidden;
 
         void Update()
         {
             var clock = GameClock.Instance;
-            // A beat (Docs/beats.md) keeps the tape look off the play area.
             bool rewinding = clock != null && clock.IsRewinding && !BeatHidden;
             float dt = Time.unscaledDeltaTime;
-            intensity = Mathf.MoveTowards(intensity, rewinding ? 1f : 0f, dt * (rewinding ? 9f : 5f));
-            rewindingFor = rewinding ? rewindingFor + dt : 0f;
-            Intensity = intensity;
 
-            bool shown = intensity > 0.001f;
+            if (rewinding)
+            {
+                intensity = Mathf.MoveTowards(intensity, 1f, dt * 9f);
+                rewindingFor += dt;
+            }
+            else
+            {
+                if (wasRewinding && intensity > 0.15f)
+                    snapLeft = 0.2f;
+                intensity = Mathf.MoveTowards(intensity, 0f, dt * (snapLeft > 0f ? 12f : 5f));
+                rewindingFor = 0f;
+            }
+            if (snapLeft > 0f)
+                snapLeft -= dt;
+
+            wasRewinding = rewinding;
+            Intensity = intensity;
+            SnapBackActive = snapLeft > 0f;
+
+            bool shown = intensity > 0.001f || snapLeft > 0f;
             if (root.gameObject.activeSelf != shown)
                 root.gameObject.SetActive(shown);
             if (shown)
@@ -177,6 +198,8 @@ namespace SickOfIt.Gameplay
             {
                 VisibleLayers = 0;
                 Coverage = 0f;
+                PlayfieldGlitchCoverage = 0f;
+                SandMotesVisible = 0;
             }
             Sound(rewinding, dt);
         }
@@ -185,99 +208,127 @@ namespace SickOfIt.Gameplay
         {
             bool calm = GameSettings.ReducedFlash;
             float k = intensity * (calm ? 0.5f : 1f);
+            // Snap-back flash: brief gold wash on the rim as colour returns.
+            float snap = snapLeft > 0f ? (snapLeft / 0.2f) : 0f;
             float t = Time.unscaledTime;
-            float jitter = calm ? 0f : 1f;
             float h = root.rect.height;
             float w = root.rect.width;
-            // Playfield in HUD space: the camera's viewport, or a centre band when the screen is already 16:9.
-            // Scanlines / fringes / streaks stay in the frame outside it so the play area stays readable (critic).
-            GetPlayfieldPad(w, h, out float padL, out float padR, out float padB, out float padT);
+            // Critic: scan/glitch/gold only on the outer 8% of the *screen* (central 84% stays clear).
+            float top = h * OuterFrac;
+            float bot = h * OuterFrac;
+            float left = w * OuterFrac;
+            float right = w * OuterFrac;
 
-            // Scanlines only in the letterbox / edge frame (top and bottom strips).
-            float bandH = Mathf.Max(padT, padB, h * 0.08f);
-            var c = scan.color; c.a = 0.22f * k; scan.color = c;
-            scanRect.anchorMin = new Vector2(0f, 0f);
-            scanRect.anchorMax = new Vector2(1f, 1f);
-            scanRect.offsetMin = new Vector2(0f, h - bandH - ScanPeriod * 2f);
-            scanRect.offsetMax = new Vector2(0f, bandH + ScanPeriod * 2f);
-            // Hide the middle of the tiled scan by shrinking it to the top strip only.
-            scanRect.anchorMin = new Vector2(0f, 1f);
-            scanRect.anchorMax = new Vector2(1f, 1f);
-            scanRect.pivot = new Vector2(0.5f, 1f);
-            scanRect.sizeDelta = new Vector2(0f, bandH + ScanPeriod);
-            scanRect.anchoredPosition = new Vector2(0f, Mathf.Repeat(t * 40f, ScanPeriod));
+            PlaceScanStrip(scanTop, scanTopImg, 0f, 1f, 1f, 1f, 0f, top, t, k, horizontal: true);
+            PlaceScanStrip(scanBot, scanBotImg, 0f, 0f, 1f, 0f, 0f, bot, t, k, horizontal: true);
+            PlaceScanStrip(scanLeft, scanLeftImg, 0f, 0f, 0f, 1f, left, 0f, t, k * 0.6f, horizontal: false);
+            PlaceScanStrip(scanRight, scanRightImg, 1f, 0f, 1f, 1f, right, 0f, t, k * 0.6f, horizontal: false);
 
-            // Colour split: vignette fringes sit on the outer frame, punched away from the playfield centre.
-            float shift = 16f + 8f * Mathf.Sin(t * 9f) * jitter;
-            fringeCyan.color = new Color(0.1f, 0.95f, 1f, 0.45f * k);
-            fringeMagenta.color = new Color(1f, 0.15f, 0.8f, 0.4f * k);
-            // Keep the vignette, but inset so the hot centre of the playfield is clear.
-            fringeCyan.rectTransform.offsetMin = new Vector2(padL * 0.35f + shift, padB * 0.35f);
-            fringeCyan.rectTransform.offsetMax = new Vector2(-(padR * 0.35f) + shift, -(padT * 0.35f));
-            fringeMagenta.rectTransform.offsetMin = new Vector2(padL * 0.35f - shift, padB * 0.35f);
-            fringeMagenta.rectTransform.offsetMax = new Vector2(-(padR * 0.35f) - shift, -(padT * 0.35f));
-            // Soften the middle by lowering fringe alpha when pads are thin (full-bleed playfield).
-            if (padL + padR + padT + padB < w * 0.05f)
+            // Gold time-ripple: four edge fills only (same pad as scan), never a full-screen vignette.
+            float pulse = 0.55f + 0.2f * Mathf.Sin(t * 7f) * (calm ? 0f : 1f);
+            float goldA = (0.55f * k + 0.45f * snap) * pulse;
+            PlaceGoldStrip(goldTop, 0f, 1f, 1f, 1f, top, goldA, topEdge: true);
+            PlaceGoldStrip(goldBot, 0f, 0f, 1f, 0f, bot, goldA * 0.9f, topEdge: false);
+            PlaceGoldStrip(goldLeft, 0f, 0f, 0f, 1f, left, goldA * 0.75f, leftEdge: true);
+            PlaceGoldStrip(goldRight, 1f, 0f, 1f, 1f, right, goldA * 0.75f, leftEdge: false);
+
+            // Sand / ember motes streaming backwards (right → left while rewinding), kept in the outer bands.
+            int motesOn = 0;
+            int moteBudget = calm ? Motes / 2 : Motes;
+            float playfieldGlitch = 0f;
+            for (int i = 0; i < Motes; i++)
             {
-                fringeCyan.color = new Color(0.1f, 0.95f, 1f, 0.22f * k);
-                fringeMagenta.color = new Color(1f, 0.15f, 0.8f, 0.2f * k);
-            }
-
-            // Tracking bar rides the top or bottom letterbox, never through the playfield middle.
-            float rise = Mathf.Repeat(t / 1.4f, 1f);
-            bool topBand = rise > 0.5f;
-            band.color = new Color(0.7f, 1f, 1f, 0.16f * k);
-            var bandRect = band.rectTransform;
-            bandRect.anchorMin = new Vector2(0f, topBand ? 1f : 0f);
-            bandRect.anchorMax = new Vector2(1f, topBand ? 1f : 0f);
-            bandRect.pivot = new Vector2(0.5f, 0.5f);
-            bandRect.sizeDelta = new Vector2(0f, Mathf.Min(46f, bandH));
-            bandRect.anchoredPosition = new Vector2(0f, topBand ? -bandH * rise * 2f : bandH * (1f - rise) * 2f);
-
-            // Speed streaks only along the top and bottom edges (and side letterbox).
-            for (int i = 0; i < Streaks; i++)
-            {
-                float life = Mathf.Repeat(t * (0.9f + streakSeed[i]) + streakSeed[i] * 9f, 1f);
-                int cycle = Mathf.FloorToInt(t * (0.9f + streakSeed[i]) + streakSeed[i] * 9f);
-                bool top = (i & 1) == 0;
-                float y = top
-                    ? h - Hash(i * 3.7f + cycle * 1.9f) * bandH
-                    : Hash(i * 3.7f + cycle * 1.9f) * bandH;
-                float len = w * (0.12f + 0.28f * Hash(i + cycle * 5.1f));
-                float x = Mathf.Lerp(-len, w, life);
-                var r = streak[i].rectTransform;
-                r.anchorMin = r.anchorMax = new Vector2(0f, 0f);
-                r.pivot = new Vector2(0f, 0.5f);
+                if (i >= moteBudget || k < 0.05f)
+                {
+                    mote[i].color = Color.clear;
+                    continue;
+                }
+                float life = Mathf.Repeat(t * (0.55f + moteSeed[i] * 0.7f) + moteSeed[i] * 5f, 1f);
+                float x = Mathf.Lerp(w + 20f, -20f, life);
+                bool topBand = (i & 1) == 0;
+                float y = topBand
+                    ? h - Hash(i * 2.3f) * top
+                    : Hash(i * 4.1f) * bot;
+                var r = mote[i].rectTransform;
                 r.anchoredPosition = new Vector2(x, y);
-                r.sizeDelta = new Vector2(len, 2f + 3f * streakSeed[i]);
-                float fade = Mathf.Sin(life * Mathf.PI);
-                streak[i].color = new Color(0.75f, 1f, 1f, 0.5f * fade * k * (calm ? 0.6f : 1f));
+                float size = 3f + 5f * moteSeed[i];
+                r.sizeDelta = new Vector2(size, size * (0.4f + 0.6f * moteSeed[i]));
+                float fade = Mathf.Sin(life * Mathf.PI) * k;
+                bool ember = moteSeed[i] > 0.55f;
+                mote[i].color = ember
+                    ? new Color(1f, 0.45f + 0.3f * moteSeed[i], 0.12f, 0.7f * fade)
+                    : new Color(0.92f, 0.82f, 0.55f, 0.55f * fade);
+                if (fade > 0.05f)
+                    motesOn++;
+                // Motes that land inside the central 84% count as playfield glitch (should stay ~0).
+                if (fade > 0.05f && x > w * OuterFrac && x < w * (1f - OuterFrac)
+                    && y > h * OuterFrac && y < h * (1f - OuterFrac))
+                    playfieldGlitch += (size * size) / Mathf.Max(1f, w * h);
             }
-            VisibleLayers = 3 + Streaks;
-            // Coverage is the tinted *frame* share (letterbox / edge), not the playfield centre.
+            SandMotesVisible = motesOn;
+
+            // Rim sizes are fixed at OuterFrac; any mote inside the centre already added above.
+            // Also count if a gold/scan strip depth somehow exceeds the outer band.
+            float maxRimFrac = Mathf.Max(Mathf.Max(top, bot) / Mathf.Max(1f, h), Mathf.Max(left, right) / Mathf.Max(1f, w));
+            if (maxRimFrac > OuterFrac + 0.002f)
+                playfieldGlitch += (maxRimFrac - OuterFrac);
+
+            VisibleLayers = 4 + 4 + motesOn
+                + (RewindWorldLook.GhostVisible > 0 ? 1 : 0)
+                + (RewindWorldLook.BulletStreaks > 0 ? 1 : 0);
             float area = Mathf.Max(1f, w * h);
-            float edge = padL * h + padR * h + padT * w + padB * w;
-            Coverage = Mathf.Clamp01(k) * Mathf.Clamp01(Mathf.Max(edge / area, 0.12f));
+            float edge = top * w + bot * w + left * h + right * h;
+            Coverage = Mathf.Clamp01(k) * Mathf.Clamp01(Mathf.Max(edge / area, OuterFrac * 2f));
+            PlayfieldGlitchCoverage = Mathf.Clamp01(playfieldGlitch);
         }
 
-        /// <summary>Letterbox / pillarbox padding in HUD pixels; falls back to an 8% frame when the playfield is full-bleed.</summary>
-        static void GetPlayfieldPad(float w, float h, out float padL, out float padR, out float padB, out float padT)
+        static void PlaceGoldStrip(Image img, float ax0, float ay0, float ax1, float ay1, float depth, float alpha,
+            bool topEdge = false, bool leftEdge = false)
         {
-            padL = padR = padB = padT = 0f;
-            var cam = Camera.main;
-            Rect view = cam != null ? cam.rect : new Rect(0f, 0f, 1f, 1f);
-            if (cam != null && cam.TryGetComponent(out SickOfIt.Core.Device.AspectRatioController aspect))
-                view = aspect.LastViewport;
-            padL = view.xMin * w;
-            padR = (1f - view.xMax) * w;
-            padB = view.yMin * h;
-            padT = (1f - view.yMax) * h;
-            if (padL + padR + padB + padT < 1f)
+            if (img == null)
+                return;
+            var rect = img.rectTransform;
+            rect.anchorMin = new Vector2(ax0, ay0);
+            rect.anchorMax = new Vector2(ax1, ay1);
+            if (ax0 != ax1)
             {
-                // Full-bleed: keep a thin outer frame so glitches never sit on the hero.
-                padL = padR = w * 0.06f;
-                padB = padT = h * 0.08f;
+                // Horizontal strip (top/bot).
+                rect.pivot = new Vector2(0.5f, topEdge ? 1f : 0f);
+                rect.sizeDelta = new Vector2(0f, depth);
+                rect.anchoredPosition = Vector2.zero;
             }
+            else
+            {
+                rect.pivot = new Vector2(leftEdge ? 0f : 1f, 0.5f);
+                rect.sizeDelta = new Vector2(depth, 0f);
+                rect.anchoredPosition = Vector2.zero;
+            }
+            img.color = new Color(Gold.r, Gold.g, Gold.b, alpha);
+        }
+
+        static void PlaceScanStrip(RectTransform rect, Image img, float ax0, float ay0, float ax1, float ay1,
+            float sizeA, float sizeB, float t, float k, bool horizontal)
+        {
+            if (rect == null || img == null)
+                return;
+            rect.anchorMin = new Vector2(ax0, ay0);
+            rect.anchorMax = new Vector2(ax1, ay1);
+            rect.pivot = new Vector2((ax0 + ax1) * 0.5f, (ay0 + ay1) * 0.5f);
+            if (horizontal)
+            {
+                rect.sizeDelta = new Vector2(0f, sizeB);
+                rect.anchoredPosition = new Vector2(0f, ay0 > 0.5f ? -sizeB * 0.5f : sizeB * 0.5f);
+                // Scroll the tiled scan along the strip.
+                rect.anchoredPosition += new Vector2(0f, Mathf.Repeat(t * 40f, ScanPeriod) - ScanPeriod * 0.5f);
+            }
+            else
+            {
+                rect.sizeDelta = new Vector2(sizeA, 0f);
+                rect.anchoredPosition = new Vector2(ax0 > 0.5f ? -sizeA * 0.5f : sizeA * 0.5f, 0f);
+            }
+            var c = img.color;
+            c.a = 0.2f * k;
+            img.color = c;
         }
 
         void Sound(bool rewinding, float dt)
@@ -294,7 +345,6 @@ namespace SickOfIt.Gameplay
                     source.pitch = PitchStart;
                     reportedPitch = PitchStart;
                     source.Play();
-                    // Studio's audio probe: the rewind whoosh starts (its pitch then climbs with the scrub).
                     SickOfIt.Core.Audio.AudioProbeBridge.Report(LoopSound, SickOfIt.Data.Config.Bus.Sfx, PitchStart, 0.55f);
                 }
                 target = 0.55f * GameSettings.SfxVolume * SickOfIt.Core.Audio.AudioBuses.Gain(SickOfIt.Data.Config.Bus.Sfx);
@@ -302,10 +352,8 @@ namespace SickOfIt.Gameplay
             volume = Mathf.MoveTowards(volume, target, dt * (rewinding ? 6f : 8f));
             if (source.isPlaying)
             {
-                // The pitch climbs the longer it runs (a rewind winding up) and drops back with the stop.
                 float climb = 1f - Mathf.Exp(-rewindingFor / PitchRamp);
                 source.pitch = Mathf.Lerp(PitchStart, PitchEnd, climb);
-                // The probe hears the scrub's pitch as it climbs, one report per 0.3 step (never per frame).
                 if (rewinding && source.pitch >= reportedPitch + 0.3f)
                 {
                     reportedPitch = source.pitch;
@@ -328,6 +376,9 @@ namespace SickOfIt.Gameplay
             SoundVolume = 0f;
             VisibleLayers = 0;
             Coverage = 0f;
+            PlayfieldGlitchCoverage = 0f;
+            SnapBackActive = false;
+            SandMotesVisible = 0;
             if (reversed != null && ReversedClip)
                 Destroy(reversed);
             ReversedClip = false;

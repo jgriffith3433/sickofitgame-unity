@@ -1,5 +1,4 @@
-- canon: Shaft Rook — On every Shaft stop Rook stands by a chalk tally of Achievements.rewinds (bundles of five); one line per visit by band 0/1-5/6-20/20+; voice id stays tyqG7NyoJ3HhzdkhAsW7 (bright, boastful).
-- canon: Wick Floor 999 lamp walk — Wick walks ahead lighting ≥3 lamps that stay lit; BeatDirector say keeps input live; voice id nXyPsMINc4YNXaqnmYmR.
-- convention: world-bible Shaft merge — when living air and Rook tally both edit The Shaft *What happens*, keep Rook scratch + chalk ambient/changes *and* beta’s Living air sentence; don’t drop either.
-- lesson: Gen audio.voice ElevenLabs — org credits wall (needs 8, had 1); stop after one test; put ids in pending_clips.json until clips land.
-- convention: companions Floor 999 — build_wick999 in Tools/Levels/companions.py (edit table/helpers, run the script; never hand-edit the wick lamp sequence alone).
+- canon: Rewind look — time pouring backwards: world ~20% saturation with hero/bullets full colour, 8 (phone 4) ghosts, reverse bullet streaks, gold outer-8% rim, 0.2 s snap-back; no playfield scanlines (Docs/Story.md).
+- canon: Hit feel — white hero-sprite flash ≤0.15 s, shove ≥0.3 u, red edge vignette; shakes ≤0.3 s; never a full-screen white wash over bullets.
+- convention: Hero hit shove — `PlayerController.ApplyHitPush` + `hitPush*` in `MoveState` / `HeroMoves` SaveState (controller overwrites velocity.x each FixedUpdate, so AddForce alone does not stick).
+- convention: Rewind world look — `RewindWorldLook` (desat/ghosts/streaks) beside HUD `RewindFx`; playtest reads static probes (`Desaturation`, `GhostVisible`, `BulletStreaks`, `PlayfieldGlitchCoverage`).

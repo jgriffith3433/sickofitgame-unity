@@ -15,10 +15,17 @@
     "coyoteMs": 100,
     "jumpBufferMs": 120,
     "hitStopMs": 80,
-    "shakeMs": 120,
+    "shakeMs": 250,
     "shakeAmplitude": 0.15,
-    "screenShakeMs": 100,
-    "diamondFlyMs": 600
+    "screenShakeMs": 250,
+    "shakeMaxMs": 300,
+    "heroFlashMs": 120,
+    "heroKnockback": 0.35,
+    "diamondFlyMs": 600,
+    "rewindGhosts": 8,
+    "rewindGhostsPhone": 4,
+    "rewindSnapMs": 200,
+    "rewindSaturation": 0.2
   },
-  "notes": "From player.json moveSpeed 3.8, jumpForce 9, gravityScale 1.8; coyote wallJump 0.1 s; JumpLatch buffer 0.12 s; feel.freeze.heroHurtSeconds 0.08. diamondFlyMs 600 = FeelVfx HUD gem arc (vfx-kit)."
+  "notes": "From player.json moveSpeed 3.8, jumpForce 9, gravityScale 1.8; coyote wallJump 0.1 s; JumpLatch buffer 0.12 s; feel.freeze.heroHurtSeconds 0.08. diamondFlyMs 600 = FeelVfx HUD gem arc (vfx-kit). Rewind look: Sands-of-Time desat + ghosts + reverse streaks; hit flash on hero only ≤150 ms; shakes capped at 300 ms."
 }

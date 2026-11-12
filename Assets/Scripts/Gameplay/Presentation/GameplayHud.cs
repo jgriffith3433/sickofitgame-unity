@@ -394,7 +394,9 @@ namespace SickOfIt.Gameplay
                 wasRewinding = rewinding;
             }
 
-            float wash = rewinding ? 0.55f + 0.1f * Mathf.Sin(Time.unscaledTime * 10f) : 0f;
+            // Soft teal wash only — the gold rim / desat / ghosts live in RewindFx + RewindWorldLook; keep this faint
+            // so the central playfield stays readable (critic: no glitch wash over the fight).
+            float wash = rewinding ? 0.12f + 0.04f * Mathf.Sin(Time.unscaledTime * 10f) : 0f;
             var tint = style.rewind;
             rewindTint.color = new Color(tint.r, tint.g, tint.b, Mathf.MoveTowards(rewindTint.color.a, wash, Time.unscaledDeltaTime * 4f));
             var rewindingSlot = rewindingText.transform.parent.gameObject;
@@ -415,6 +417,8 @@ namespace SickOfIt.Gameplay
             lastHealth = health;
             if (hintSlot.activeSelf && (rewinding || Time.unscaledTime - hintShownAt > 4.5f))
                 hintSlot.SetActive(false);
+
+            UpdateRewindButtonRing();
         }
 
         /// <summary>The mobile UI prefab's own small rewind button sat top-left, under the health bar; the HUD has its own.</summary>

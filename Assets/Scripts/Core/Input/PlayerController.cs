@@ -1196,6 +1196,11 @@ namespace SickOfIt.Core.Input
             velocity.x = runVx + CarrierVelocity.x + swingMomentum + WindVelocity.x;
             if (now < kickUntil)
                 velocity.x = kickDir * moves.wallJump.kickSpeed;
+            if (now < hitPushUntil)
+            {
+                velocity.x += hitPushX;
+                velocity.y += hitPushY;
+            }
             if (wallSide != 0)
                 velocity.y = Mathf.Max(velocity.y, -moves.wallJump.slideSpeed);
             rb.linearVelocity = velocity;
@@ -1511,6 +1516,7 @@ namespace SickOfIt.Core.Input
         public struct MoveState
         {
             public float dashEnd, dashInvulnUntil, dashReadyAt, dashDir, wallCoyoteUntil, kickUntil, kickDir;
+            public float hitPushUntil, hitPushX, hitPushY;
             public int airDashesLeft, wallSide, lastWallSide;
         }
 
@@ -1518,6 +1524,7 @@ namespace SickOfIt.Core.Input
         {
             dashEnd = dashEnd, dashInvulnUntil = dashInvulnUntil, dashReadyAt = dashReadyAt, dashDir = dashDir,
             wallCoyoteUntil = wallCoyoteUntil, kickUntil = kickUntil, kickDir = kickDir,
+            hitPushUntil = hitPushUntil, hitPushX = hitPushX, hitPushY = hitPushY,
             airDashesLeft = airDashesLeft, wallSide = wallSide, lastWallSide = lastWallSide,
         };
 
@@ -1525,10 +1532,36 @@ namespace SickOfIt.Core.Input
         {
             dashEnd = s.dashEnd; dashInvulnUntil = s.dashInvulnUntil; dashReadyAt = s.dashReadyAt; dashDir = s.dashDir;
             wallCoyoteUntil = s.wallCoyoteUntil; kickUntil = s.kickUntil; kickDir = s.kickDir;
+            hitPushUntil = s.hitPushUntil; hitPushX = s.hitPushX; hitPushY = s.hitPushY;
             airDashesLeft = s.airDashesLeft; wallSide = s.wallSide; lastWallSide = s.lastWallSide;
             dashRequested = false;
             dashReadyPending = s.dashReadyAt > MoveNow;
         }
+
+        float hitPushUntil, hitPushX, hitPushY;
+
+        /// <summary>
+        /// Brief shove away from a hit (Docs/Story.md "A hit that doesn't hide the fight"). Saved in MoveState so a
+        /// rewind undoes it. Distance is world units travelled over the shove (about 0.12 s).
+        /// </summary>
+        public void ApplyHitPush(Vector2 away, float distance = 0.35f, float seconds = 0.12f)
+        {
+            if (away.sqrMagnitude < 0.0001f)
+                away = Vector2.right * (transform.localEulerAngles.y > 90f ? 1f : -1f);
+            away.Normalize();
+            float dur = Mathf.Max(0.05f, seconds);
+            float dist = Mathf.Max(0.3f, distance);
+            hitPushX = away.x * (dist / dur);
+            hitPushY = away.y * (dist / dur) * 0.35f;
+            hitPushUntil = MoveNow + dur;
+            LastHitPushDistance = dist;
+            LastHitPushAt = Time.unscaledTime;
+        }
+
+        /// <summary>World units the last hit shove was set to travel (playtest).</summary>
+        public static float LastHitPushDistance { get; private set; }
+        /// <summary>Unscaled time the last hit shove was applied (playtest).</summary>
+        public static float LastHitPushAt { get; private set; }
 
         /// <summary>The world unlocks the moves (story flags and Yooba's goods) when a floor starts.</summary>
         /// <summary>Yooba's dash upgrade is bought: one more dash in the air and a shorter cooldown.</summary>

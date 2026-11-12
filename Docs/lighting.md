@@ -38,7 +38,7 @@ Reduced Flash softens bloom and grain further.
 
 ## Rewind
 
-`RewindFx` scanlines, colour split, tracking bar and streaks stay on the letterbox / outer frame and off the playfield centre so the climb stays readable while the tape effect still reads at the edges.
+While rewinding, the world desaturates in presentation (`RewindWorldLook`) with the hero and bullets kept in full colour; gold time-ripple, optional rim scanlines and sand/ember motes sit only on the outer ~8% frame (letterbox / screen edge) so the central playfield stays clear. On release, colour snaps back in 0.2 s with a ripple from the hero.
 
 ## Code
 

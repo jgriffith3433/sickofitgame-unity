@@ -1,27 +1,27 @@
-# Merge origin/beta into Rook/Wick climber-locals
+# Rewind look + hit feel (Sands of Time)
 
-## Conflict
-- **File:** `docs/world-bible.md` (only conflict; everything else auto-merged).
-- **Cause:** beta’s living-floors change (#404) and this branch both edited The Shaft under *What happens*.
-- **Resolution:** kept **both** intents in that section:
-  - *Ours:* Rook scratches chalk when the rewind count rises; ambient chalk scratch; wall fills with fives.
-  - *Beta:* living air (wind streaks, debris every 10–15 s, chain silhouettes).
-  - Merged lines include Rook’s tally behaviour **and** the living-air sentence; ambient and Changes list both Rook’s chalk and beta’s prior bullets.
-- No binary / Unity YAML conflicts. Did not abort.
+## What was wrong
+Rewind still read as a tape glitch (scanlines / cyan-magenta over the frame) instead of time pouring backwards. Hits used a long red wash and shake without a clear hero-sprite flash or shove, so bullets could disappear under feedback.
 
-## Auto-merge (no conflict markers)
-Beta’s ShaftAmbience attach in `ShaftScreen.cs` sits beside our Rook wiring; Floor 999 keeps Wick’s three-lamp walk and gains beta’s furnace ambience pack; `SickOfItPlaytest.cs` registers both `climber-locals` and `living-air`.
+## What I changed
+- **Story / bible / metrics / lighting:** canon for desat+ghosts+reverse streaks+gold rim+snap-back; hero flash ≤0.15 s and knockback ≥0.3; shake cap 0.3 s.
+- **`RewindFx`:** outer-8% gold strips + optional rim scanlines + sand/ember motes; measured `PlayfieldGlitchCoverage`; 0.2 s snap-back; teal HUD wash softened.
+- **`RewindWorldLook` (new):** world desat to ~20% (hero + bullets stay coloured), 8/4 hero ghosts, reverse bullet streaks; release ripple via `FeelVfx.RewindRipple`.
+- **Hit feel:** `ApplyHitPush` (≥0.3 u, saved in `MoveState`/`HeroMoves`); white `SpriteFeel` flash 0.12 s on the hero; red edge vignette pulse; `Shake` capped at 0.3 s.
+- **Phone:** rewind button fill ring drains while held; playtest holds it with `TouchDown` when touch UI is on.
+- **Playtest `rewind-fx`:** hard checks for desat, ≥4 ghosts, ≥1 streak, playfield glitch, flash, knockback, ring drain, fps ≥30.
 
 ## Checks
-- No `<<<<<<<` / `=======` / `>>>>>>>` left in `docs/world-bible.md`
-- World bible still has Areas / Landmarks / Who lives here / Characters / What happens / Story beats; Rook + Wick character blocks intact
-- `python3 Tools/Levels/companions.py --check` → would change: nothing
-- Unity compile not run here (no editor in this worktree)
+- `/opt/unity-check/unity-check` on changed C# — clean.
+- Unity editor compile not run here (no editor in this sandbox).
+- Browser / Studio playtest not started (per brief); scenario named in `.hawkes/scenario.txt`.
 
-## Fun-reviewer (post-merge pass)
-Verdict: **thin**. Shaft is fuller (Rook tally + living air), Floor 999 has Wick’s lamp walk + furnace air; still missing Gen voice/SFX clips and GPU character sheets (`pending-gpu.txt` / prior credits wall). Biggest gaps: land clips so lines are heard; ScratchMark / LightLamp art; phone ≥64 px check on real sheets.
+## Reviews
+- **fun-reviewer:** thin (not demo). Soul of the rewind look is there; asked for deeper world-reacts (neighbours/lava reversing) — out of this task’s acceptance criteria, noted for later.
+- **reviewer:** merge after revise (streak hard-check, real glitch probe, touch hold). Softened leftover teal wash.
 
-## What’s left (unchanged by merge)
-1. Gen credits → make Rook/Wick clips → clear pending
-2. GPU art in `pending-gpu.txt` within $0.88 once free
-3. Beta playtest `climber-locals` (phone 390x844 for size/captions)
+## Conflicts
+None. Did not touch `CircleAmbience` (parallel living-floors agent / already on beta).
+
+## GPU
+$0 spent. Procedural motes + hero-sprite ghosts; no Gen jobs.
