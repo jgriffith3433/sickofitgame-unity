@@ -171,18 +171,45 @@ def emit(sc, what):
     return {"type": "emit", "signal": f"cmp:{sc['who']}:{sc['floor']}:{what}"}
 
 
-def talk(sc, who_key, text, tag=None):
+def talk(sc, who_key, text, tag=None, *, use_say=False):
+    """Subtitle (default) or BeatDirector say (use_say: speech bubble, input stays live)."""
     if who_key == "h":
+        if use_say:
+            step = {"type": "say", "actor": "player", "text": text, "sound": f"vo_hero_cmp_{slug(text)}", "color": "#C9B8A6"}
+            if text in SILENT:
+                step.pop("sound", None)
+            return [step]
         show = {"type": "showText", "text": text, "duration": secs(text), "style": "Subtitle"}
         if text not in SILENT:
             show["sound"] = f"vo_hero_cmp_{slug(text)}"
         return [show, wait(secs(text) + 0.3)]
     w = WHO[sc["who"]]
+    if use_say:
+        step = {"type": "say", "actor": "cmp", "text": text, "color": w["color"]}
+        if text not in SILENT:
+            step["sound"] = f"vo_{sid(sc)}_{tag}"
+        return [step]
     line = f"{w['name']}: {text}"
     show = {"type": "showText", "text": line, "duration": secs(line), "style": "Subtitle", "color": w["color"]}
     if text not in SILENT:
         show["sound"] = f"vo_{sid(sc)}_{tag}"
     return [show, wait(secs(line) + 0.3)]
+
+
+def light_lamp(n, at):
+    """Despawn the dark post, spawn the lit one, flash + crackle, emit wick:lamp:N."""
+    lid = f"lamp{n}"
+    return [
+        {"type": "despawn", "target": {"id": lid}},
+        {"type": "spawn", "entity": "wickLampLit", "id": lid, "anchor": "Player", "at": at, "facePlayer": False},
+        {"type": "spawn", "entity": "teachGlow", "anchor": "Player", "at": [at[0], at[1] + 0.4], "facePlayer": False},
+        {"type": "flash", "color": "#BFE6C8CC", "duration": 0.45},
+        {"type": "playSound", "sound": "sfx_wick_lamp"},
+        {"type": "cameraShake", "intensity": 0.06, "duration": 0.25},
+        {"type": "popText", "text": "lit", "color": [0.75, 0.9, 0.78, 1.0], "at": [at[0], at[1] + 0.9], "anchor": "Player"},
+        {"type": "emit", "signal": f"wick:lamp:{n}"},
+        wait(0.4),
+    ]
 
 
 def spawn(entity, at):
@@ -211,12 +238,12 @@ def reward(code, sc):
     return steps
 
 
-def branch_seq(sc, label, lines, rw):
+def branch_seq(sc, label, lines, rw, *, use_say=False):
     steps = [emit(sc, "branch:" + label)]
     for i, (k, t) in enumerate(lines):
-        steps += talk(sc, k, t, f"{label}{i}")
+        steps += talk(sc, k, t, f"{label}{i}", use_say=use_say)
     for i, (k, t) in enumerate(sc.get("outro", [])):
-        steps += talk(sc, k, t, f"outro{i}")
+        steps += talk(sc, k, t, f"outro{i}", use_say=use_say)
     steps += reward(rw, sc)
     if sc.get("flag"):
         steps.append({"type": "setFlag", "flag": sc["flag"]})
@@ -228,16 +255,58 @@ def branch_seq(sc, label, lines, rw):
     return {"type": "runSequence", "steps": steps}
 
 
-def chain(sc, branches):
+def chain(sc, branches, *, use_say=False):
     """if / else-if / else, each arm starting the branch's own sequence (a wait only works at the top of a sequence)."""
     label, cond, lines, rw = branches[0]
-    seq = branch_seq(sc, label, lines, rw)
+    seq = branch_seq(sc, label, lines, rw, use_say=use_say)
     if cond is None:
         return seq
-    return {"type": "if", "condition": dict(type="heroState", **cond), "then": [seq], "else": [chain(sc, branches[1:])]}
+    return {"type": "if", "condition": dict(type="heroState", **cond), "then": [seq],
+            "else": [chain(sc, branches[1:], use_say=use_say)]}
+
+
+# Floor 999 lamp posts ahead of the hero (Player-relative): Wick walks to each and lights it.
+WICK999_LAMPS = [
+    ([4.5, 0.6], "Oh. Someone. ...Mind the dark.", "lamp0"),
+    ([7.5, 0.9], "I'll light it.", "lamp1"),
+    ([10.5, 0.55], "The lava rises here.", "lamp2"),
+]
+WICK999_WARN = [
+    ("c", "Don't stand still."),
+    ("c", "This ledge holds."),
+    ("c", "Stay in the light."),
+]
+WICK999_FAREWELL = [
+    ("c", "Light's on. Go quick."),
+    ("c", "I'll be ahead."),
+]
+
+
+def build_wick999(sc):
+    """Wick walks ahead lighting 3 lamps; say bubbles keep input live (docs/beats.md)."""
+    steps = [wait(0.8)]
+    for i, (at, _text, _tag) in enumerate(WICK999_LAMPS):
+        steps.append({"type": "spawn", "entity": "wickLamp", "id": f"lamp{i + 1}", "anchor": "Player",
+                      "at": at, "facePlayer": False})
+    steps += [spawn_climber(sc), emit(sc, "enter"), wait(0.6)]
+    # Greeting + light each lamp (3 lights, 3 say lines), then warnings and farewell (8 climber lines total).
+    for i, (at, text, tag) in enumerate(WICK999_LAMPS):
+        steps.append({"type": "walkEntityTo", "target": "cmp", "x": at[0], "relativeTo": "player", "speed": 2.4})
+        steps.append(wait(0.9))
+        steps += talk(sc, "c", text, tag, use_say=True)
+        steps += light_lamp(i + 1, at)
+    for i, (k, t) in enumerate(WICK999_WARN):
+        steps += talk(sc, k, t, f"warn{i}", use_say=True)
+    for i, (k, t) in enumerate(WICK999_FAREWELL):
+        steps += talk(sc, k, t, f"bye{i}", use_say=True)
+    steps.append(chain(sc, sc["branches"], use_say=True))
+    return [{"name": f"{PREFIX} {sc['who']}, Floor {sc['floor']}", "when": {"type": "sectionReached", "section": sc["section"]}, "maxTimes": 1,
+             "do": [{"type": "runSequence", "steps": steps}]}]
 
 
 def build_scene(sc):
+    if sc["who"] == "wick" and sc["floor"] == 999:
+        return build_wick999(sc)
     steps = [wait(1.0), spawn_climber(sc), emit(sc, "enter"), wait(1.0)]
     for i, (k, t) in enumerate(sc["intro"]):
         steps += talk(sc, k, t, f"intro{i}")
@@ -287,7 +356,12 @@ def build_voices():
     lines = []
     for sc in SCENES:
         w = WHO[sc["who"]]
-        all_lines = [(f"intro{i}", t) for i, (k, t) in enumerate(sc["intro"]) if k == "c"]
+        if sc["who"] == "wick" and sc["floor"] == 999:
+            all_lines = [(tag, text) for (_at, text, tag) in WICK999_LAMPS]
+            all_lines += [(f"warn{i}", t) for i, (k, t) in enumerate(WICK999_WARN) if k == "c"]
+            all_lines += [(f"bye{i}", t) for i, (k, t) in enumerate(WICK999_FAREWELL) if k == "c"]
+        else:
+            all_lines = [(f"intro{i}", t) for i, (k, t) in enumerate(sc["intro"]) if k == "c"]
         for label, cond, bl, rw in sc["branches"]:
             all_lines += [(f"{label}{i}", t) for i, (k, t) in enumerate(bl) if k == "c"]
         all_lines += [(f"outro{i}", t) for i, (k, t) in enumerate(sc.get("outro", [])) if k == "c"]

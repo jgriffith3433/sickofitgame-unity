@@ -218,20 +218,20 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Animations: Idle, Walk, Talk, Laugh, Point, Flee (art/overlordFar.json, art/overlordTaunt.json)
 
 ### Rook
-- Want: To reach the top first and be seen doing it.
-- Arc: Rival who shows off, then cuts in, then leaves a mess the hero can use.
-- Moment: He sprints past on Floor 996 and kicks loose a ledge the hero has to cross.
+- Want: To reach the top first and be seen doing it — and to prove the hero's R is cheating by chalking every rewind.
+- Arc: Rival who shows off, then cuts in, then leaves a mess the hero can use; the Shaft wall fills as the hero cheats more.
+- Moment: On every Shaft stop he stands by his chalk tally wall (bundles of five = the hero's real rewind count) and scratches a mark when the count rises; one voiced line per visit by band (0 / 1–5 / 6–20 / 20+).
 - Personality: brash, vain, sly
-- Voice: `rook` (subtitles; recipe in Tools/Audio/companion_voices.json)
-- Animations: Idle, Walk, Talk, Hiccup (art/rook.json)
+- Voice: `rook` (Hawkes Gen voice id `tyqG7NyoJ3HhzdkhAsW7`; bright, boastful — Tools/Audio/companion_voices.json)
+- Animations: Idle, Walk, Talk / ScratchMark, Hiccup (art/rook.json; Shaft portrait uses Idle/Talk/Scratch)
 
 ### Wick
 - Want: To keep Circle X's lamps lit, because someone must.
 - Arc: Repeats himself, then helps, then lights the last lamp for the hero.
-- Moment: He lights a lamp on Floor 999 as the hero passes and the dark ledge shows its path.
+- Moment: On Floor 999 he walks ahead of the hero lighting three lamps that flare and stay lit, warning about the rising lava, while the hero can still move (`say`, input live).
 - Personality: patient, repetitive, kind
-- Voice: `wick` (recipe in Tools/Audio/companion_voices.json)
-- Animations: Idle, Walk, Talk, Hiccup (art/wick.json)
+- Voice: `wick` (Hawkes Gen voice id `nXyPsMINc4YNXaqnmYmR`; soft wheeze — Tools/Audio/companion_voices.json)
+- Animations: Idle, Walk, Talk / LightLamp, Hiccup (art/wick.json)
 
 ### Pointer
 - Want: To show the way, even when it is the wrong one.
@@ -256,11 +256,11 @@ Per area: interactions (at least three kinds), events on their own, ambient soun
 - **Changes:** thatch burns, neighbours flee and a few hide in the cellar (they will be Hell's damned if the hero fails).
 
 ### The Shaft
-- **Interactions:** Continue, Visit Yooba, hover a Waystone for its line, click a Warden silhouette (a ??? or a name).
+- **Interactions:** Continue, Visit Yooba, hear Rook's tally line (no button — he speaks once per stop), hover a Waystone for its line, click a Warden silhouette (a ??? or a name).
 - **On their own:** the marker breathes; embers rise; distant Wardens blink; a soul falls past; a shortcut crack opens at
-  the marker's passing.
-- **Ambient:** the drone; the passing Circle's tone; a Waystone's chime when lit.
-- **Changes:** reached Waystones glow; taken shortcuts become dotted lines; the dead leave a ghost mark on the floor they died.
+  the marker's passing; Rook scratches new chalk marks when the rewind count has risen since last visit.
+- **Ambient:** the drone; the passing Circle's tone; a Waystone's chime when lit; Rook's chalk scratch.
+- **Changes:** reached Waystones glow; taken shortcuts become dotted lines; the dead leave a ghost mark on the floor they died; Rook's wall fills with fives.
 
 ### Yooba's counter
 - **Interactions:** buy, ask, haggle (turned away when broke), take a quest (Lost Things), try goods on the hero.

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "displayName": "ROOK",
+  "speaker": "Rook",
+  "pause": 0.25,
+  "secondsPerCharacter": 0.055,
+  "frame": "#733814",
+  "body": "#F2A93B",
+  "chalk": "#EBE6D1F2",
+  "wall": "#2E1F1AF2",
+  "scratchSound": "sfx_rook_chalk",
+  "clips": [
+    { "name": "idle", "columns": 4, "rows": 2, "frames": 8, "fps": 8 },
+    { "name": "talk", "columns": 4, "rows": 2, "frames": 8, "fps": 12 },
+    { "name": "scratch", "columns": 4, "rows": 2, "frames": 8, "fps": 10 }
+  ],
+  "lines": [
+    { "minRewinds": 0, "maxRewinds": 0, "sound": "vo_rook_shaft_0a", "text": "Zero. Honest. Rare.", "clip": "talk" },
+    { "minRewinds": 0, "maxRewinds": 0, "sound": "vo_rook_shaft_0b", "text": "No rewinds. Rook approves.", "clip": "talk" },
+    { "minRewinds": 0, "maxRewinds": 0, "sound": "vo_rook_shaft_0c", "text": "Clean climb. Leave it.", "clip": "talk" },
+    { "minRewinds": 0, "maxRewinds": 0, "sound": "vo_rook_shaft_0d", "text": "Blank wall. Like my medal days.", "clip": "talk" },
+
+    { "minRewinds": 1, "maxRewinds": 5, "sound": "vo_rook_shaft_1a", "text": "One to five. Rook is counting.", "clip": "scratch" },
+    { "minRewinds": 1, "maxRewinds": 5, "sound": "vo_rook_shaft_1b", "text": "A few cheats. Rook saw.", "clip": "scratch" },
+    { "minRewinds": 1, "maxRewinds": 5, "sound": "vo_rook_shaft_1c", "text": "Scratch. You're warming up.", "clip": "scratch" },
+    { "minRewinds": 1, "maxRewinds": 5, "sound": "vo_rook_shaft_1d", "text": "Under five. Almost impressed.", "clip": "talk" },
+
+    { "minRewinds": 6, "maxRewinds": 20, "sound": "vo_rook_shaft_6a", "text": "Six to twenty. That's a habit.", "clip": "scratch" },
+    { "minRewinds": 6, "maxRewinds": 20, "sound": "vo_rook_shaft_6b", "text": "The wall fills. Rook fills it.", "clip": "scratch" },
+    { "minRewinds": 6, "maxRewinds": 20, "sound": "vo_rook_shaft_6c", "text": "You rewind more than you run.", "clip": "talk" },
+    { "minRewinds": 6, "maxRewinds": 20, "sound": "vo_rook_shaft_6d", "text": "Bundles of five. Rook likes those.", "clip": "scratch" },
+
+    { "minRewinds": 21, "maxRewinds": -1, "sound": "vo_rook_shaft_20a", "text": "Twenty plus. Rook almost lost count.", "clip": "scratch" },
+    { "minRewinds": 21, "maxRewinds": -1, "sound": "vo_rook_shaft_20b", "text": "The wall is full. So is Hell.", "clip": "talk" },
+    { "minRewinds": 21, "maxRewinds": -1, "sound": "vo_rook_shaft_20c", "text": "Cheating champion. Rook is second.", "clip": "talk" },
+    { "minRewinds": 21, "maxRewinds": -1, "sound": "vo_rook_shaft_20d", "text": "Keep scratching. Rook has chalk.", "clip": "scratch" }
+  ],
+  "shaftPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [1.0, 0.0],
+    "offset": [-170.0, 210.0],
+    "size": [280.0, 280.0]
+  },
+  "shaftPortraitPortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [0.0, 1.0],
+    "offset": [150.0, -840.0],
+    "size": [240.0, 240.0]
+  },
+  "subtitle": {
+    "use": true,
+    "hide": false,
+    "anchor": [0.72, 0.2],
+    "offset": [0.0, 0.0],
+    "size": [1000.0, 90.0]
+  },
+  "subtitlePortrait": {
+    "use": true,
+    "hide": false,
+    "anchor": [0.5, 0.0],
+    "offset": [0.0, 700.0],
+    "size": [1000.0, 100.0]
+  }
+}

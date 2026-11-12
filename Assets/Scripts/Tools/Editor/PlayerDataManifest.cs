@@ -240,7 +240,7 @@ namespace SickOfIt.Tools.Editor
         /// </summary>
         public const string LateCore = "core.late";
 
-        static readonly string[] LatePrefixes = { "shaft.", "yooba.", "upgradeShopConfig.", "levelSelectionConfig.", "videoSelectionConfig.", "player.availableUpgrades." };
+        static readonly string[] LatePrefixes = { "shaft.", "yooba.", "rook.", "upgradeShopConfig.", "levelSelectionConfig.", "videoSelectionConfig.", "player.availableUpgrades." };
 
         /// <summary>
         /// The GameDefinition fields whose prefab only a level uses (LevelRuntime's fallback hero, legacy enemies, the pickup and platform

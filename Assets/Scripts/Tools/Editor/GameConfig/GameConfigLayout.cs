@@ -52,6 +52,7 @@ namespace SickOfIt.Tools.Editor.GameConfig
             new SplitFile("upgradeShopConfig", "ui/upgradeShop.json"),
             new SplitFile("shaft", "ui/shaft.json"),
             new SplitFile("yooba", "ui/yooba.json"),
+            new SplitFile("rook", "ui/rook.json"),
             new SplitFile("codex", "ui/codex.json"),
             new SplitFile("menuTheme", "ui/theme.json"),
             new SplitFile("audio", "audio.json"),

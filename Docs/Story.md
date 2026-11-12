@@ -2442,6 +2442,8 @@ The rewards are small on purpose: a diamond or three, a rewind orb, a heart when
 Rook is always **one step ahead and one step behind**: he is ahead on the screen, and he loses. The hero never races him on purpose and never says he wants to win.
 Rook thinks R is cheating, so he keeps a tally, and the tally is his arc (flags `rook.met`, `rook.dared`, `rook.asked`, `rook.sideways`, `rook.second`, `rook.done`).
 
+**On every Shaft stop** he also stands beside a chalk wall of tally marks that shows the hero's **real total rewind count** (`Achievements` stat `rewinds`, bundles of five; new marks scratch in when the count rises since the last visit). He speaks **one voiced line per visit**, picked by the count band (0 / 1–5 / 6–20 / 20+), never the same line twice in a row (16 lines in `ui/rook.json`). Presentation only (`RookShaft`): walking past him needs no button; Continue still ends the stop. Voice stays the cast `rook` id (bright, boastful — not a new design).
+
 | # | Floor, section | What happens | Branches on the hero | Reward | Flag |
 |---|---|---|---|---|---|
 | 1 | 996, *foot* | He is stretching on a ledge ahead. *"First! ...Oh. You're a person."* He announces the race the hero hasn't entered. | **Diamonds 10+:** *"Look at the pockets on you. Cheating."* **Otherwise:** *"Slow and poor. I like it."* The hero: *"I'm just going up."* | Diamonds 10+: nothing (he's offended). Otherwise he tosses a diamond: *"For the effort."* | `rook.met` |
@@ -2458,9 +2460,11 @@ The hero's side of it is all deadpan: *"I'm not racing."*, *"You're ahead."* *"T
 Wick teaches the Wastes by what he lights. The lamp on each of his ledges is lit **once** when the hero reaches it and **stays lit** (the one lamp in Hell that does).
 His arc: he is a stranger who wants a traveller to arrive; by the Heat Stairs he is a friend who says he can stop now. Flags `wick.met`, `wick.lit`, `wick.rested`.
 
+**Floor 999 (his first meeting)** is the full lamp walk: he appears ahead, walks the ledges lighting **at least three** `wickLamp` posts (each flares with a light flash and `sfx_wick_lamp` and stays as `wickLampLit`), speaks with BeatDirector `say` bubbles so **input stays live**, and leaves eight voiced lines across greeting, warnings before the rising lava, and farewell (`vo_wick999_*` / `vo_wick_lamp_*`). The hero can keep climbing while Wick lights; no button required to pass him.
+
 | # | Floor, section | What happens | Branches on the hero | Reward | Flag |
 |---|---|---|---|---|---|
-| 1 | 999, *ledges* | *"Oh. Someone. ...Mind the dark. I'll light it."* The lamp over the next ledge lights. | **Hearts 1:** *"You're running on a wick."* he lights the lamp over him and it heals. **Otherwise:** the usual welcome and a tip: the lava rises. | Hearts 1: a heart. Otherwise a rewind orb. | `wick.met` |
+| 1 | 999, *ledges* | Wick walks ahead lighting three lamps; greeting, lava warnings, farewell (see above). | **Hearts 1:** *"You're running on a wick."* he heals at a lamp. **Otherwise:** tip that the lava rises. | Hearts 1: a heart. Otherwise a rewind orb. | `wick.met` |
 | 2 | 993, *ledges* | *"They throw things here. ...Don't catch them."* He lights the lamp where the hollows are. | **Deaths 3+:** *"You've been up here before. ...So have I."* **Flag `rook.met`:** *"A loud one went by. He said he's winning."* | A rewind orb (two if deaths 3+). | `wick.lit` |
 | 3 | 960, *stones* | He can't keep the lamp lit; the pulleys are loud. *"It keeps going out. ...I'm not crying, it's the smoke."* | **Diamonds 20+:** he asks for one for the oil and gives back two orbs ("I'll owe you"; the diamonds are *not* taken). **Grudges 2+:** *"Hold on to those. They'll get heavy."* | Two rewind orbs, or one. | none |
 | 4 | 902, *stairs* | The last lamp before the Magma King's door. *"I can stop now. ...Can I stop now?"* | **Flag `wick.lit` and `rook.asked`:** *"You talk to everyone, don't you."* **Hearts 1:** he heals him. **Otherwise:** *"Go quiet. He hears everything."* | A heart if low; otherwise three diamonds. | `wick.rested` |
