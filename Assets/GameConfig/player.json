@@ -50,7 +50,7 @@
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
-        "fps": 15,
+        "fps": 32,
         "loop": true,
         "events": [],
         "speed": 1.0
@@ -127,7 +127,7 @@
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
-        "fps": 16,
+        "fps": 12,
         "loop": false,
         "events": [],
         "speed": 1.0
@@ -138,7 +138,7 @@
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
-        "fps": 12,
+        "fps": 25,
         "loop": false,
         "events": [],
         "speed": 1.0
@@ -380,7 +380,7 @@
         "spriteNameFilter": "",
         "firstFrame": 0,
         "frameCount": 0,
-        "fps": 16,
+        "fps": 42,
         "loop": false,
         "events": [],
         "speed": 1.0

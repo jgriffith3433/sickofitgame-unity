@@ -1,15 +1,18 @@
-"""Bakes a hero clip (mp4 on a black plate) into a sliced sprite sheet, without Unity.
+"""Bakes a hero clip (mp4 on a keyed plate) into a sliced sprite sheet, without Unity.
 
-The same result as CharacterSpriteBaker (SickOfIt > Regenerate Player Sprites): black plate keyed out from the frame
-edges (clearCutoff 28) with edge colour bled into the cleared pixels, frames packed left to right, top row first,
-and a .png.meta with one sprite per frame named <State>_0000... (centre pivot, 100 pixels per unit).
+The same result as CharacterSpriteBaker (SickOfIt > Regenerate Player Sprites): the plate is keyed out, frames packed
+left to right, top row first, and a .png.meta with one sprite per frame named <State>_0000... (centre pivot, 100 PPU).
+
+Key modes (--key):
+  black   (default): near-black plate connected to the frame edge (clearCutoff 28), colour bled into cleared pixels.
+  ff00ff / magenta: flat #ff00ff plate (hero ink redraw; bronze armour must not be keyed on green).
 
 Cells are always 604x340, the size of the hero's existing sheets (Idle, Walk, ...: 72 frames each). Sprite size is
 world size, so a clip framed like the Idle video must use the same cell or the hero changes size. (The Unity baker
 picks the cell from the frame count: re-baking a shorter clip there makes the hero bigger.)
 
     python player_clip_sheet.py <clip.mp4> <State> <Assets/Art/Sprites/Player> [--fps 16] [--start S] [--end S]
-        [--template Assets/Art/Sprites/Player/Idle.png.meta] [--cell 604x340] [--ppu 100]
+        [--key black|ff00ff|magenta] [--template Assets/Art/Sprites/Player/Idle.png.meta] [--cell 604x340] [--ppu 100]
 
     python player_clip_sheet.py --idle-reference <Assets/Art/Sprites/Player/Idle.png> <out.png>
         writes Idle's first frame (one 604x340 cell) as a 1280x720 still on black: the reference image for hero poses (art.mjs hero --hero-ref idle).
@@ -35,6 +38,7 @@ CELL_W, CELL_H = 604, 340
 CLEAR_CUTOFF = 28
 MAX_SHEET = 4096
 PPU = 100
+MAGENTA = np.array([255.0, 0.0, 255.0], dtype=np.float32)
 
 
 def extract(mp4, fps, start, end, folder):
@@ -47,6 +51,24 @@ def extract(mp4, fps, start, end, folder):
     cmd += ["-vf", f"fps={fps}", "-start_number", "0", os.path.join(folder, "frame_%04d.png")]
     subprocess.run(cmd, check=True)
     return sorted(os.path.join(folder, f) for f in os.listdir(folder) if f.startswith("frame_"))
+
+
+def _bleed(out, cleared, rings=4):
+    """Grow kept colour into cleared pixels a few rings deep (enough for bilinear scaling)."""
+    has = ~cleared
+    h, w = cleared.shape
+    for _ in range(rings):
+        grow = np.zeros_like(out)
+        count = np.zeros((h, w), np.float32)
+        for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            src_has = np.roll(has, (dy, dx), axis=(0, 1))
+            src = np.roll(out, (dy, dx), axis=(0, 1))
+            grow += src * src_has[..., None]
+            count += src_has
+        fill = ~has & (count > 0)
+        out[fill] = grow[fill] / count[fill][:, None]
+        has = has | fill
+    return out, has
 
 
 def key_black(rgb):
@@ -73,21 +95,31 @@ def key_black(rgb):
                 queue.append((ny, nx))
 
     out = rgb.astype(np.float32)
-    has = ~cleared
-    # Bleed: grow the kept colour into cleared pixels a few rings deep (enough for bilinear scaling).
-    for _ in range(4):
-        grow = np.zeros_like(out)
-        count = np.zeros((h, w), np.float32)
-        for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
-            src_has = np.roll(has, (dy, dx), axis=(0, 1))
-            src = np.roll(out, (dy, dx), axis=(0, 1))
-            grow += src * src_has[..., None]
-            count += src_has
-        fill = ~has & (count > 0)
-        out[fill] = grow[fill] / count[fill][:, None]
-        has = has | fill
+    out, _ = _bleed(out, cleared)
     alpha = np.where(cleared, 0, 255).astype(np.uint8)
     return np.dstack([np.clip(out, 0, 255).astype(np.uint8), alpha])
+
+
+def key_magenta(rgb, near=70.0, far=150.0):
+    """Alpha from distance to #ff00ff (or the border median if close); despill plate colour from edges."""
+    edge = np.concatenate([rgb[0], rgb[-1], rgb[:, 0], rgb[:, -1]]).astype(np.float32)
+    bg = np.median(edge, axis=0)
+    if np.linalg.norm(bg - MAGENTA) > 40:
+        bg = MAGENTA
+    f = rgb.astype(np.float32)
+    d = np.sqrt(((f - bg) ** 2).sum(axis=2))
+    a = np.clip((d - near) / (far - near), 0.0, 1.0)
+    safe = np.maximum(a, 1e-3)[..., None]
+    col = (f - (1.0 - a[..., None]) * bg) / safe
+    a[a < 0.04] = 0.0
+    return np.dstack([np.clip(col, 0, 255), a * 255.0]).astype(np.uint8)
+
+
+def key_frame(rgb, key):
+    k = (key or "black").lower().lstrip("#")
+    if k in ("ff00ff", "magenta", "f0f"):
+        return key_magenta(rgb)
+    return key_black(rgb)
 
 
 def internal_id(rng):
@@ -171,6 +203,7 @@ def main():
     ap.add_argument("--fps", type=float, default=16)
     ap.add_argument("--start", type=float, default=0)
     ap.add_argument("--end", type=float, default=0)
+    ap.add_argument("--key", default="black", help="Plate key: black (legacy) or ff00ff/magenta (hero ink)")
     ap.add_argument("--template", default=None)
     args = ap.parse_args()
 
@@ -189,7 +222,7 @@ def main():
         sheet = Image.new("RGBA", (tex_w, tex_h), (0, 0, 0, 0))
         rects = []
         for i, path in enumerate(frames):
-            rgba = key_black(np.asarray(Image.open(path).convert("RGB")))
+            rgba = key_frame(np.asarray(Image.open(path).convert("RGB")), args.key)
             cell = Image.fromarray(rgba, "RGBA").resize((CELL_W, CELL_H), Image.BILINEAR)
             col, row = i % cols, i // cols
             sheet.paste(cell, (col * CELL_W, row * CELL_H))
@@ -198,7 +231,10 @@ def main():
         png = os.path.join(args.folder, args.state + ".png")
         sheet.save(png, optimize=True)
         write_meta(template, png + ".meta", args.state, rects)
-        print(f"{args.state}: {len(frames)} frames, {cols}x{rows} cells of {CELL_W}x{CELL_H} -> {png} ({tex_w}x{tex_h})")
+        print(
+            f"{args.state}: {len(frames)} frames, {cols}x{rows} cells of {CELL_W}x{CELL_H} "
+            f"key={args.key} -> {png} ({tex_w}x{tex_h})"
+        )
 
 
 if __name__ == "__main__":

@@ -114,7 +114,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -136,7 +136,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -158,7 +158,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -180,7 +180,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -202,7 +202,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -224,7 +224,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 1020
+        y: 680
         width: 604
         height: 340
       alignment: 0
@@ -246,7 +246,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -268,7 +268,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -290,7 +290,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -312,7 +312,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -334,7 +334,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -356,7 +356,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3020
-        y: 680
+        y: 340
         width: 604
         height: 340
       alignment: 0
@@ -378,7 +378,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 340
+        y: 0
         width: 604
         height: 340
       alignment: 0
@@ -400,7 +400,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 340
+        y: 0
         width: 604
         height: 340
       alignment: 0
@@ -422,7 +422,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1208
-        y: 340
+        y: 0
         width: 604
         height: 340
       alignment: 0
@@ -444,7 +444,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1812
-        y: 340
+        y: 0
         width: 604
         height: 340
       alignment: 0
@@ -466,7 +466,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2416
-        y: 340
+        y: 0
         width: 604
         height: 340
       alignment: 0
@@ -479,94 +479,6 @@ TextureImporter:
       bones: []
       spriteID: 36fb214dac63f3d00800000000000000
       internalID: 954541890795126627
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Victory_0017
-      rect:
-        serializedVersion: 2
-        x: 3020
-        y: 340
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 70a9f857aab8da0d0800000000000000
-      internalID: -3409915778616550905
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Victory_0018
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0afd125be1e1bff00800000000000000
-      internalID: 1151547246960041888
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Victory_0019
-      rect:
-        serializedVersion: 2
-        x: 604
-        y: 0
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f02aa3f10ec22bf00800000000000000
-      internalID: 1131015797531648527
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Victory_0020
-      rect:
-        serializedVersion: 2
-        x: 1208
-        y: 0
-        width: 604
-        height: 340
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7f32ec1eb608e1d50800000000000000
-      internalID: 6709941695666856951
       vertices: []
       indices:
       edges: []
@@ -602,10 +514,6 @@ TextureImporter:
       Victory_0014: -882694276187873560
       Victory_0015: 2240875937532580709
       Victory_0016: 954541890795126627
-      Victory_0017: -3409915778616550905
-      Victory_0018: 1151547246960041888
-      Victory_0019: 1131015797531648527
-      Victory_0020: 6709941695666856951
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
