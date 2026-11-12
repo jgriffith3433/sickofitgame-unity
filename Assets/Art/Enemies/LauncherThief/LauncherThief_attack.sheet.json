@@ -1,0 +1,38 @@
+{
+ "generatedBy": "held-pose bake (interim until i2v)",
+ "pixelsPerUnit": 94.829,
+ "pivot": [
+  0.45,
+  0.4
+ ],
+ "sprites": [
+  {
+   "name": "attack_00",
+   "x": 0,
+   "y": 0,
+   "w": 381,
+   "h": 324
+  },
+  {
+   "name": "attack_01",
+   "x": 381,
+   "y": 0,
+   "w": 381,
+   "h": 324
+  },
+  {
+   "name": "attack_02",
+   "x": 762,
+   "y": 0,
+   "w": 381,
+   "h": 324
+  },
+  {
+   "name": "attack_03",
+   "x": 1143,
+   "y": 0,
+   "w": 381,
+   "h": 324
+  }
+ ]
+}

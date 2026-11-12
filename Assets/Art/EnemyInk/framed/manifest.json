@@ -15,7 +15,7 @@
     "cinderSpark_struck": "a_057f154e9fc89a1d",
     "cinderSpark_dead": "a_ab05b318b47b801e",
     "cinderThatch_stand": "a_bb81b3c6ba63b46a",
-    "cinderThatch_windup": "a_773bbd2466a05ef6",
+    "cinderThatch_windup": "a_af6820a9ba56e675",
     "cinderThatch_lunge": "a_268b14b1ea7b805e",
     "cinderThatch_struck": "a_354cacd856ccb667",
     "cinderThatch_dead": "a_9eb8506fb086b8e8",
@@ -26,7 +26,11 @@
     "impSack_stand": "a_d2e670aed500ea5b",
     "impSack_windup": "a_ebc9aafc0e014f98",
     "impSack_struck": "a_c18649d1e0207897",
-    "impSack_dead": "a_55a250844c98b1df"
+    "impSack_dead": "a_55a250844c98b1df",
+    "launcherThief_stand": "a_ceb84e1b929c3e44",
+    "launcherThief_windup": "a_3b1a590b412a0ef4",
+    "launcherThief_attack": "a_b9165821785cd2b2",
+    "launcherThief_struck": "a_6aaca8f81a5afad0"
   },
   "i2vQueued": {
     "estimateUsd": 0.7,
@@ -83,19 +87,36 @@
       "cinderSpark_windup": "a_4c5fed0fbca0470d"
     }
   },
-  "resume": "2026-11-12d: judged 16 i2v; baked thatch (held windup/attack)/brute/sack/spark sheets; launcherThief still pending.",
+  "resume": "2026-11-12e: judged thief poses (dead FAIL); framed PASS; held Windup/Attack wired; i2v+dead redo queued.",
   "queued_c_666db16040a6": {
     "estimateUsd": 0.44,
     "budgetUsd": 0.86,
+    "spentPosesUsd": 0.21,
     "batch": [
-      {"id": "j_643207ac4b56", "entity": "launcherThief", "pose": "stand"},
-      {"id": "j_049536d717ee", "entity": "launcherThief", "pose": "windup"},
-      {"id": "j_765c66f24b31", "entity": "launcherThief", "pose": "attack"},
-      {"id": "j_e9990336a907", "entity": "launcherThief", "pose": "struck"},
-      {"id": "j_8bc7677f243c", "entity": "launcherThief", "pose": "dead"},
-      {"id": "j_439924f978a2", "entity": "cinderThatch", "pose": "windup", "note": "limbless redo; never a_f5d9ad823922f967"},
-      {"id": "j_08a2bfaa8127", "entity": "cinderThatch", "clip": "attack", "note": "NO LEGS i2v from limbless framed stand→lunge"}
+      {"id": "j_643207ac4b56", "entity": "launcherThief", "pose": "stand", "asset": "a_35b1d63f3bd6a42f", "verdict": "PASS"},
+      {"id": "j_049536d717ee", "entity": "launcherThief", "pose": "windup", "asset": "a_63f46cfb1eb5804b", "verdict": "PASS"},
+      {"id": "j_765c66f24b31", "entity": "launcherThief", "pose": "attack", "asset": "a_ee2ba6e3ad30e7df", "verdict": "PASS"},
+      {"id": "j_e9990336a907", "entity": "launcherThief", "pose": "struck", "asset": "a_0de3446e74a7d32e", "verdict": "PASS"},
+      {"id": "j_8bc7677f243c", "entity": "launcherThief", "pose": "dead", "asset": "a_0396dffd2fa61f26", "verdict": "FAIL"},
+      {"id": "j_439924f978a2", "entity": "cinderThatch", "pose": "windup", "asset": "a_eb77a64dd91899f6", "verdict": "PASS"},
+      {"id": "j_08a2bfaa8127", "entity": "cinderThatch", "clip": "attack", "verdict": "FAILED_QUEUE", "note": "GPU timeout; requeued as j_155a3b54681f"}
     ],
-    "next": "judge poses → image.frame → launcherThief 5× i2v + thatch windup i2v → bake; wire Windup/Attack off Move"
+    "next": "done this step: framed + held sheets + i2v queue"
+  },
+  "queued_c_666db16040a6_i2v": {
+    "estimateUsd": 0.35,
+    "budgetUsd": 0.86,
+    "spentSoFarUsd": 0.21,
+    "batch": [
+      {"id": "j_ee32b195ebc0", "entity": "launcherThief", "pose": "dead", "note": "redo from framed stand; requeue after no-GPU fail"},
+      {"id": "j_33ea85c86bac", "entity": "launcherThief", "clip": "idle"},
+      {"id": "j_cae94d8624ff", "entity": "launcherThief", "clip": "windup"},
+      {"id": "j_02a98ed38efc", "entity": "launcherThief", "clip": "attack"},
+      {"id": "j_d4419fd26947", "entity": "launcherThief", "clip": "hurt"},
+      {"id": "j_b121fd39259b", "entity": "cinderThatch", "clip": "windup"},
+      {"id": "j_6f098c0a62b2", "entity": "cinderThatch", "clip": "attack"}
+    ],
+    "failedNoGpu": ["j_37cb7fd02f2d", "j_c88a4f0e7dd5", "j_3dafe2303a57", "j_474b64c7fb16", "j_e14f3d830821", "j_803e6858cca5", "j_155a3b54681f"],
+    "next": "judge → bake; die i2v after dead PASS; screenshot beside hero"
   }
 }

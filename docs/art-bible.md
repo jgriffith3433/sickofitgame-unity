@@ -131,9 +131,10 @@ Outline `#140B0D`, two-tone cel, one rim, green `#00ff00` key, 12 fps. Specs: `A
 (cinders / sack imp). Playtest `enemy-ink` (arena `content/scenes/enemyInk.json`).
 
 **Status:** Imp + Cinder + CinderSpark + Thatch + Brute + Sack ship Idle/Windup/Attack/Hurt/Die sheets (spark wind-up
-cyan redo baked; thatch Windup/Attack stay held limbless frames after i2v grew bird legs — motion redo queued;
-brute/sack full motion). Launcher thief poses + 5 clips queued (`c_666db16040a6`; Floors 998/994); Windup/Attack
-still reuse Move until bake. Playtest `enemy-ink` (roster includes `launcherThief`).
+cyan redo baked; thatch Windup held from limbless framed redo, Attack held limbless — motion i2v re-queued;
+brute/sack full motion). Launcher thief: PASS poses framed; held Windup/Attack sheets wired off Move; dead pose
+redo + idle/windup/attack/hurt i2v queued (`c_666db16040a6`; Floors 998/994). Playtest `enemy-ink` (roster
+includes `launcherThief`).
 
 ## 10. The hero redraw (done)
 

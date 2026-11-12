@@ -1,5 +1,4 @@
-- lesson: pending-gpu other-task — never list `menu_theme` (k_aea2f5751795) in this item's pending-gpu; Studio re-queues the living-menu task forever. Delete pending-gpu when this task's own Gen art is done.
-- convention: Main menu clicks — EventSystemGuard disables StandaloneInputModule, aggressive Ensure 2 s after scene load; MainMenuManager.EnsureClicksReady after BuildMenu.
-- lesson: sparse + Audio/Generated — do not `sparse-checkout add Assets/Audio/Generated/`; LFS smudge dirties hundreds of mp3s and leftover commits can ship them.
-- canon: Main menu ledge — damned soul looks up on Overlord pass; Overlord sheds one ember that lands; occasional lava bursts near the hero.
-- lesson: soul facing — mirror-symmetric quads don't show a flip; keep an asymmetric horn/shoulder so localScale.x reads as a turn.
+- convention: Hawkes Gen project id over MCP is `org_eb0d5c82e8da8c2d.sickofit` (plain `sickofit` returns no access).
+- lesson: launcherThief dead `a_0396dffd2fa61f26` — REJECT chest-cannon / firing sack; redo from framed stand, never seed die from that asset.
+- convention: Held windup/attack sheets must stay ≤2048 px wide (WebGL); scale the figure and use fewer cells before shipping interim stills.
+- canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles (incl. launcher thief on 998/994) share hand-inked Cuphead wind-ups of at least 0.3 s (`docs/art-bible.md` §9).

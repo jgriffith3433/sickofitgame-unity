@@ -1,4 +1,3 @@
-1. Open the beta game and wait for the main menu (painted basalt ledge over lava, not the meadow).
-2. Watch ~20 s: embers drift, a lava burst near the hero, the Overlord climbs with a hum and drops an ember that splashes on the seam; a pale soul looks up and the hero mutters "Still climbing. Of course."
-3. Walk toward the soul (it turns) and onto the cyan seam (it sparks); hover a plated button, then press Play — the click must leave the menu.
-4. On a phone (390×844): hero above the buttons, plates ≥48 px, menu up within 20 s.
+1. Open beta (or the change preview) and start Floor 998; ride the hay cart until the thief pops — it should **glow / hold** ~0.4 s (new Windup sheet) before the launcher snatch and fists.
+2. Or run playtest `enemy-ink` (`?playtest=enemy-ink`); after the sack station the thief appears and should wind up when you get close (distinct Windup art, not the Move loop).
+3. On a 390x844 phone run of the same scenario, each roster foe including the thief should read ≥40 px tall with a clear silhouette.

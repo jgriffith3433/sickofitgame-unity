@@ -84,14 +84,14 @@
         },
         {
           "stateName": "Windup",
-          "spriteSheet": "Art/Enemies/LauncherThief/LauncherThief_move.png",
+          "spriteSheet": "Art/Enemies/LauncherThief/LauncherThief_windup.png",
           "fps": 8,
           "loop": true,
           "events": []
         },
         {
           "stateName": "Attack",
-          "spriteSheet": "Art/Enemies/LauncherThief/LauncherThief_move.png",
+          "spriteSheet": "Art/Enemies/LauncherThief/LauncherThief_attack.png",
           "fps": 12,
           "loop": false,
           "events": [

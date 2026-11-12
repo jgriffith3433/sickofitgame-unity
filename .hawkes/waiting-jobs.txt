@@ -1,16 +1,11 @@
-j_e9a86239e2e9 cinderThatch idle i2v: judge vs limbless straw ball + art bible; if PASS copy into SOI_ART_WORK Generated/cinderThatch/clips/idle.mp4 then bake Idle/Move sheets
-j_23300285c0aa cinderThatch windup i2v: need held glow ≥0.3s, no lunge, no limbs; bake Windup sheet
-j_7875f2aeefe1 cinderThatch attack i2v: sphere lunge only; bake Attack sheet
-j_e7a52dd0b25f cinderThatch hurt i2v: bake Hurt sheet
-j_683a6bbbaa2e cinderThatch die i2v: bake Die sheet; then node Tools/Art/art.mjs cinderThatch --build --apply --no-unity (SOI_ART_WORK set)
-j_9502d714e3f6 cinderBrute idle i2v: judge hulking fireball + stubby fists; bake Idle/Move
-j_cb826e300940 cinderBrute windup i2v: held fist glow; bake Windup
-j_94969b4f2cfa cinderBrute attack i2v: bake Attack
-j_e0ba821a0623 cinderBrute hurt i2v: bake Hurt
-j_6d4ab37bb540 cinderBrute die i2v: bake Die; art.mjs cinderBrute --build --apply --no-unity
-j_5f2d1d2c9b19 impSack idle i2v: judge oversized diamond sack silhouette; bake Idle/Move
-j_507e89df5dfe impSack windup i2v: held yellow loot glow; bake Windup
-j_f388a77093dd impSack attack i2v: bake Attack
-j_251e838f8595 impSack hurt i2v: bake Hurt
-j_60b2c0035a1d impSack die i2v: bake Die; art.mjs impSack --build --apply --no-unity
-j_bc927d9292ba cinderSpark windup i2v REDO: mid frames must show cyan core glow; replace CinderSpark_windup.png if PASS (held still stays if FAIL)
+j_ee32b195ebc0 launcherThief dead pose REDO (image.edit from framed stand a_ceb84e1b929c3e44): judge death burst + launcher sack still on back; REJECT if chest-cannon / firing sack (like FAIL a_0396dffd2fa61f26). If PASS: image.frame 640/00ff00/fill 0.78 → framed/launcherThief_dead.png, then queue die i2v start a_6aaca8f81a5afad0 (struck) end framed-dead; bake Die sheet
+j_33ea85c86bac launcherThief idle i2v (stand↔stand a_ceb84e1b929c3e44): judge wings/sack bounce on green; if PASS bake Idle+Move (idle+move share stand loop) via art.mjs --build
+j_cae94d8624ff launcherThief windup i2v (stand→framed windup a_3b1a590b412a0ef4): need held glow ≥0.3s on launcher chambers; if PASS bake over held LauncherThief_windup.png
+j_02a98ed38efc launcherThief attack i2v (windup→attack a_b9165821785cd2b2): if PASS bake over held LauncherThief_attack.png
+j_d4419fd26947 launcherThief hurt i2v (stand→struck a_6aaca8f81a5afad0): if PASS bake Hurt sheet
+j_b121fd39259b cinderThatch windup i2v (limbless stand a_bb81b3c6ba63b46a → framed windup a_af6820a9ba56e675): REJECT if any legs/arms; if PASS bake over CinderThatch_windup.png
+j_6f098c0a62b2 cinderThatch attack i2v (stand a_bb81b3c6ba63b46a → lunge a_268b14b1ea7b805e): REJECT if bird legs; if PASS bake over CinderThatch_attack.png
+
+AFTER all PASS + dead framed: queue die i2v within remaining budget (~$0.86 − $0.21 poses − this batch); bake thief+thatch sheets with SOI_ART_WORK + art.mjs --build --no-unity; keep Windup/Attack entity paths; update JUDGE.md + framed/manifest.json; delete cleared pending-gpu lines; screenshot thief beside hero for PR.
+
+NOTE: prior queue j_37cb7fd02f2d / j_c88a4f0e7dd5 / j_3dafe2303a57 / j_474b64c7fb16 / j_e14f3d830821 / j_803e6858cca5 / j_155a3b54681f failed (no GPU in 15m, $0 charged); this batch is the requeue with wait_for_server.

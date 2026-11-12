@@ -1,2 +1,3 @@
-launcherThief full ink (shares imp silhouette; concepts optional + image.edit windup/attack/hurt/die + 5 video.i2v) — not started; estimate ~$0.50; Windup/Attack still point at Move sheet; Floors 998/994
-cinderThatch Windup/Attack motion i2v — FAIL bird legs (windup a_0785c49a5e2b2fb7, attack a_ee20ba9c5256acd6); held limbless sheets ship; optional redo ~$0.04–0.08 with “NO LEGS floating ball only” (do not use a_f5d9ad823922f967 — it has legs)
+launcherThief die clip — waits on dead pose redo j_ee32b195ebc0 (FAIL a_0396dffd2fa61f26 was chest-cannon); then frame + die i2v + bake
+launcherThief idle/windup/attack/hurt motion — queued j_33ea85c86bac j_cae94d8624ff j_02a98ed38efc j_d4419fd26947; held Windup/Attack sheets ship until PASS bake
+cinderThatch windup/attack motion — queued j_b121fd39259b j_6f098c0a62b2 (limbless framed windup a_af6820a9ba56e675); held limbless windup ships; never use a_f5d9ad823922f967

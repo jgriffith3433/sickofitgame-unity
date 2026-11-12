@@ -1,0 +1,38 @@
+{
+ "generatedBy": "held-pose bake (interim until i2v)",
+ "pixelsPerUnit": 94.829,
+ "pivot": [
+  0.45,
+  0.4
+ ],
+ "sprites": [
+  {
+   "name": "windup_00",
+   "x": 0,
+   "y": 0,
+   "w": 354,
+   "h": 324
+  },
+  {
+   "name": "windup_01",
+   "x": 354,
+   "y": 0,
+   "w": 354,
+   "h": 324
+  },
+  {
+   "name": "windup_02",
+   "x": 708,
+   "y": 0,
+   "w": 354,
+   "h": 324
+  },
+  {
+   "name": "windup_03",
+   "x": 1062,
+   "y": 0,
+   "w": 354,
+   "h": 324
+  }
+ ]
+}
