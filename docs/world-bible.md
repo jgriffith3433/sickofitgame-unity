@@ -204,7 +204,7 @@ He is on screen on every one of the first four floors, small and far on the uppe
 (imp, shot, hazard, fall), a rewind, a rewind that undoes a death, 30 s untouched, the finale. 30 lines (voice `overlord`: *bored, velvety, enormous*),
 one every 20 s at most, none twice in a session; an undone death is answered at once and his silhouette climbs out of the top (the chase, below).
 Want: to be done with Hell and take the surface; arc: his lines are about the loop, and the hero's rewinds remind him of his own. Idle, laugh, point and flee
-clips (`art/overlordTaunt.json`). `OverlordTaunts`, playtest `overlord-taunts` (run on 390x844 touch).
+clips (`art/overlordTaunt.json`, sheets in `Assets/Art/Enemies/OverlordTaunt/`: he faces the camera, about 1.8 units tall; only Flee shows his back). `OverlordTaunts`, playtest `overlord-taunts` (run on 390x844 touch).
 
 ### The chase (the Overlord escaping upward, built Nov 11)
 The Overlord is always one floor ahead, and the hero only ever sees it when time goes backward. **When a rewind starts inside a
