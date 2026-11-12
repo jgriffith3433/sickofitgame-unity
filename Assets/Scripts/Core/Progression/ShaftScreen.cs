@@ -440,6 +440,9 @@ namespace SickOfIt.Core.Progression
             MenuGraphics.Fill(window);
             window.gameObject.AddComponent<RectMask2D>();
             MenuGraphics.NewImage(window, "Dark", config.wall);
+            // Living air: wind streaks, falling debris, foreground chains (Docs/Story.md "Hell's air"). Phone halves bits.
+            float airQuality = Application.isMobilePlatform ? 0.5f : 1f;
+            ShaftAmbience.Attach(window, airQuality);
 
             content = MenuGraphics.NewRect("Content", window);
             content.anchorMin = new Vector2(0f, 1f);

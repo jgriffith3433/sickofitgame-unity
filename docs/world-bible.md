@@ -251,16 +251,19 @@ Per area: interactions (at least three kinds), events on their own, ambient soun
 - **Interactions:** shoot imps (rockets), rewind a bad hit (R), collect diamonds, talk to a neighbour (walk to him: a
   one-line voice), knock a hay bale, pet a dog (it follows him till the raid).
 - **On their own:** a hen crosses; smoke from the chimney; the mill turns; neighbours go about their routine; at ~25 s the
-  sky opens, imps drop in, the village panics.
+  sky opens, imps drop in, the village panics. Living air: pollen and motes drift; birds cross; when the sky opens
+  (`meadow:raid`) birds scatter and smoke rises from burning houses; grass/fence posts pass in front at low alpha.
 - **Ambient:** wind, a far rooster, a hammer, then alarm bells and fire.
 - **Changes:** thatch burns, neighbours flee and a few hide in the cellar (they will be Hell's damned if the hero fails).
 
 ### The Shaft
 - **Interactions:** Continue, Visit Yooba, hear Rook's tally line (no button — he speaks once per stop), hover a Waystone for its line, click a Warden silhouette (a ??? or a name).
 - **On their own:** the marker breathes; embers rise; distant Wardens blink; a soul falls past; a shortcut crack opens at
-  the marker's passing; Rook scratches new chalk marks when the rewind count has risen since last visit.
+  the marker's passing; Rook scratches new chalk marks when the rewind count has risen since last visit. Living air: wind
+  streaks rush past, debris falls every 10–15 s, chain silhouettes frame the window.
 - **Ambient:** the drone; the passing Circle's tone; a Waystone's chime when lit; Rook's chalk scratch.
-- **Changes:** reached Waystones glow; taken shortcuts become dotted lines; the dead leave a ghost mark on the floor they died; Rook's wall fills with fives.
+- **Changes:** reached Waystones glow; taken shortcuts become dotted lines; the dead leave a ghost mark on the floor they
+  died; Rook's wall fills with fives.
 
 ### Yooba's counter
 - **Interactions:** buy, ask, haggle (turned away when broke), take a quest (Lost Things), try goods on the hero.
@@ -274,6 +277,9 @@ Per area: interactions (at least three kinds), events on their own, ambient soun
 - **On their own:** lava rises or sinks; stones sink by themselves in a fixed lap; geysers on a count; imps haul sacks
   in lockstep; the Overlord's far glimpses; ash falls; far actors cross. *Placement rule:* every 8 s of climb (the build target, inside the 10 s ceiling)
   carries a one-shot sound or a moving thing; a bare ledge is a defect.
+  Floors 1000-997 each override the Circle's air with their own living pack (≥3 particle kinds, a timed event ≤15 s,
+  foreground silhouette ≤0.6 α; 1000 has desktop heat shimmer; 999 steam vents; 998 ash snow + soul wisps; 997 obsidian
+  dust + background lava geysers). Playtest `living-air`.
 - **Ambient:** lava bed, creaks, imp chatter; the Magma King's chuckle from 910 up.
 - **Changes:** floors count down; the lava rises over the long floors; the village's things appear (a rolling pin on 997,
   a mitt on 995, a bell on 992).
