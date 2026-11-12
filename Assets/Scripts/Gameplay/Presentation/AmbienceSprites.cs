@@ -8,13 +8,33 @@ namespace SickOfIt.Gameplay
     /// <summary>
     /// The built-in art of a Circle's air: weather bits and background silhouettes drawn into small white textures once (tinted by the
     /// def's colour), so a Circle with no painted art still has weather and life. White so one sprite serves every colour.
+    /// Gen-painted bits land in <c>Resources/Ambience/particle_*</c> (see Tools/Art/ambience_particles.py); when present they win over
+    /// the procedural Soft() shapes. WeatherDef.sprite also wins via <see cref="BitOr"/>.
     /// </summary>
     internal static class AmbienceSprites
     {
         static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();
+        static readonly Dictionary<string, Sprite> painted = new Dictionary<string, Sprite>();
+        static bool paintedTried;
+        static int paintedCount;
+
+        /// <summary>How many Gen particle textures were found under Resources/Ambience (0 = stand-ins only).</summary>
+        public static int PaintedBitCount
+        {
+            get
+            {
+                EnsurePainted();
+                return paintedCount;
+            }
+        }
+
+        public static bool HasPaintedArt => PaintedBitCount > 0;
 
         public static Sprite Bit(WeatherKind kind)
         {
+            var fromGen = PaintedFor(kind);
+            if (fromGen != null)
+                return fromGen;
             switch (kind)
             {
                 case WeatherKind.Sparks: return Make("spark", 24, (x, y) => Soft(Mathf.Pow(Mathf.Abs(x), 0.55f) + Mathf.Pow(Mathf.Abs(y), 0.55f), 1f, 0.35f));
@@ -30,8 +50,56 @@ namespace SickOfIt.Gameplay
             }
         }
 
-        /// <summary>Optional Gen-painted bit: when a sprite is wired on the weather def it wins over the built-in shape.</summary>
-        public static Sprite BitOr(WeatherKind kind, Sprite painted) => painted != null ? painted : Bit(kind);
+        /// <summary>Optional Gen-painted bit: WeatherDef.sprite wins, then Resources/Ambience, then the built-in shape.</summary>
+        public static Sprite BitOr(WeatherKind kind, Sprite paintedSprite) => paintedSprite != null ? paintedSprite : Bit(kind);
+
+        static string ResourceId(WeatherKind kind)
+        {
+            switch (kind)
+            {
+                case WeatherKind.Sparks: return "spark";
+                case WeatherKind.Pollen: return "pollen";
+                case WeatherKind.Debris: return "debris";
+                case WeatherKind.Steam: return "steam";
+                case WeatherKind.Dust: return "dust";
+                case WeatherKind.Soul: return "soul";
+                case WeatherKind.Cinders: return "spark"; // shared glow fleck until its own sheet lands
+                case WeatherKind.Ash:
+                case WeatherKind.Grit: return "dust";
+                default: return null;
+            }
+        }
+
+        static Sprite PaintedFor(WeatherKind kind)
+        {
+            EnsurePainted();
+            string id = ResourceId(kind);
+            if (id == null)
+                return null;
+            return painted.TryGetValue(id, out var s) ? s : null;
+        }
+
+        static void EnsurePainted()
+        {
+            if (paintedTried)
+                return;
+            paintedTried = true;
+            paintedCount = 0;
+            // Expected files (Tools/Art/ambience_particles.py): particle_pollen/spark/steam/dust/soul/debris.png
+            string[] ids = { "pollen", "spark", "steam", "dust", "soul", "debris" };
+            for (int i = 0; i < ids.Length; i++)
+            {
+                string id = ids[i];
+                var tex = Resources.Load<Texture2D>("Ambience/particle_" + id);
+                if (tex == null)
+                    continue;
+                var sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f),
+                    Mathf.Max(tex.width, tex.height));
+                sprite.name = "particle_" + id;
+                painted[id] = sprite;
+                paintedCount++;
+            }
+        }
 
         public static Sprite Life(LifeShape shape)
         {

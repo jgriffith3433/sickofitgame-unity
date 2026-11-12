@@ -148,7 +148,15 @@ namespace SickOfIt.Core.Progression
             var img = go.GetComponent<Image>();
             img.color = color;
             img.raycastTarget = false;
-            img.sprite = EntityFactory.WhiteSquare;
+            // Shaped weather bits (Gen Resources/Ambience when present, else procedural Soft shapes) beat a flat white square.
+            if (name.StartsWith("Debris") || name == "Debris")
+                img.sprite = AmbienceSprites.Bit(SickOfIt.Gameplay.Content.WeatherKind.Debris);
+            else if (name == "Ash")
+                img.sprite = AmbienceSprites.Bit(SickOfIt.Gameplay.Content.WeatherKind.Ash);
+            else if (name == "Wind")
+                img.sprite = AmbienceSprites.Bit(SickOfIt.Gameplay.Content.WeatherKind.Debris);
+            else
+                img.sprite = EntityFactory.WhiteSquare;
             var rt = img.rectTransform;
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.pivot = new Vector2(0.5f, 0.5f);
