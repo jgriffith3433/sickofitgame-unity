@@ -781,6 +781,16 @@ namespace SickOfIt.Gameplay
                     return false;
                 // Record first: a killing hit ends the level (and its log) inside TakeDamage.
                 World.NotifyDamaged(this, final, source, damageLabel);
+                // Shove away from the shot (Docs/Story.md "A hit that doesn't hide the fight"); presentation flash is GameFeel.
+                if (!ignoreInvincibility && playerController != null)
+                {
+                    Vector2 from = hasHitFrom ? hitFrom : source != null ? source.Position : Position;
+                    Vector2 away = Position - from;
+                    if (away.sqrMagnitude < 0.0001f)
+                        away = new Vector2(facing >= 0f ? -1f : 1f, 0.15f);
+                    playerController.ApplyHitPush(away, 0.35f, 0.12f);
+                    World.Feel?.HeroHurtFrom(from);
+                }
                 playerHealth.TakeDamage(final, ignoreInvincibility);
                 return true;
             }

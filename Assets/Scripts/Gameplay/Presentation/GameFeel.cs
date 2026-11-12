@@ -66,8 +66,18 @@ namespace SickOfIt.Gameplay
             return true;
         }
 
-        /// <summary>The hero was hurt (the HUD's red flash calls it).</summary>
-        public void HeroHurt()
+        /// <summary>White flash on the hero sprite lasts this long (Docs/Story.md; playtest reads it).</summary>
+        public const float HeroFlashSeconds = 0.12f;
+        /// <summary>Unscaled time the last hero flash began; -1 if none this level.</summary>
+        public static float LastHeroFlashAt { get; private set; } = -1f;
+        /// <summary>How long the last hero flash was set to run.</summary>
+        public static float LastHeroFlashSeconds { get; private set; }
+
+        /// <summary>The hero was hurt (the HUD's red edge pulse also calls it).</summary>
+        public void HeroHurt() => HeroHurtFrom(default);
+
+        /// <summary>Hero hurt with a known shot place (white sprite flash + burst; no full-screen wash).</summary>
+        public void HeroHurtFrom(Vector2 from)
         {
             var cfg = Config;
             if (cfg != null && cfg.freeze != null)
@@ -76,6 +86,25 @@ namespace SickOfIt.Gameplay
                 ? (Vector2)world.PlayerController.transform.position
                 : Vector2.zero;
             FeelVfx.Play(FeelVfx.Kind.HeroHurt, at, size: 1.2f);
+
+            // Critic feel: flash the hero sprite only (≤0.15 s), never the whole screen.
+            float flashSec = HeroFlashSeconds;
+            if (GameSettings.ReducedFlash)
+                flashSec *= 0.75f;
+            var renderers = world != null ? world.PlayerRenderers : null;
+            if (renderers != null)
+            {
+                Vector2 away = from.sqrMagnitude > 0.0001f ? (at - from).normalized : Vector2.up;
+                foreach (var r in renderers)
+                {
+                    if (r != null && r.enabled && r.sprite != null)
+                        SpriteFeel.Play(r, Color.white, 0.95f, flashSec, new Vector2(0.06f, -0.04f),
+                            away * 0.08f, flashSec);
+                }
+            }
+            LastHeroFlashAt = Time.unscaledTime;
+            LastHeroFlashSeconds = flashSec;
+            Tell("heroFlash", $"{flashSec * 1000f:0} ms white on hero");
         }
 
         // ─── Enemy hits ───────────────────────────────────────────────

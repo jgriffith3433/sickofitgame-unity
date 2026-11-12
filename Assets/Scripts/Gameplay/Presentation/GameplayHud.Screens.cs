@@ -651,13 +651,18 @@ namespace SickOfIt.Gameplay
             {
                 hurtAt = Time.unscaledTime;
                 world.Effects.Shake(0.22f, 0.25f);
-                // A beat of hit-freeze sells the impact (game.json feel.freeze.heroHurtSeconds). Unity's clock, not the game
-                // clock: the simulation's ticks stay the same, they just come a moment later.
-                world.Feel?.HeroHurt();
+                // Flash / knockback already fired from Entity.Damage → GameFeel.HeroHurtFrom; only call again for
+                // scripted health drops that bypassed the entity path.
+                if (GameFeel.LastHeroFlashAt < Time.unscaledTime - 0.2f)
+                    world.Feel?.HeroHurt();
             }
             lastSeenHealth = health;
+            // Red edge vignette pulse only — never a full-screen white wash over the bullets.
+            const float HurtPulse = 0.28f;
             float age = Time.unscaledTime - hurtAt;
-            float alpha = age < 0.45f ? (SickOfIt.Data.GameSettings.ReducedFlash ? 0.3f : 0.75f) * (1f - age / 0.45f) : 0f;
+            float alpha = age < HurtPulse
+                ? (SickOfIt.Data.GameSettings.ReducedFlash ? 0.28f : 0.7f) * (1f - age / HurtPulse)
+                : 0f;
             hurtVignette.color = new Color(0.9f, 0.08f, 0.1f, alpha);
         }
 

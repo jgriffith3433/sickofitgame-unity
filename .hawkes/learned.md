@@ -1,3 +1,7 @@
+- canon: Rewind look — time pouring backwards: world ~20% saturation with hero/bullets full colour, 8 (phone 4) ghosts, reverse bullet streaks, gold outer-8% rim, 0.2 s snap-back; no playfield scanlines (Docs/Story.md).
+- canon: Hit feel — white hero-sprite flash ≤0.15 s, shove ≥0.3 u, red edge vignette; shakes ≤0.3 s; never a full-screen white wash over bullets.
+- convention: Hero hit shove — `PlayerController.ApplyHitPush` + `hitPush*` in `MoveState` / `HeroMoves` SaveState (controller overwrites velocity.x each FixedUpdate, so AddForce alone does not stick).
+- convention: Rewind world look — `RewindWorldLook` (desat/ghosts/streaks) beside HUD `RewindFx`; playtest reads static probes (`Desaturation`, `GhostVisible`, `BulletStreaks`, `PlayfieldGlitchCoverage`).
 - lesson: Gen org credits ≠ GPU budget — `$0.88` approved and `hawkesgen_estimate` ~`$0.38`, but `image.generate` still refuses at 1 org credit (needs 5); keep pending-gpu, do not requeue until credits clear.
 - convention: Rook/Wick clip specs — add Scratch/Talk and LightLamp/Talk in `art/rook.json` / `art/wick.json` before Gen; Shaft portrait sheets are separate 4×2 atlases wired in `ui/rook.json`, not the long enemy strips.
 - lesson: sparse + LFS — `git sparse-checkout add` on Yooba/Rook art can replace full committed PNGs with 132-byte pointers in the worktree; never stage those; restore with `git cat-file -p HEAD:path > path` if needed.

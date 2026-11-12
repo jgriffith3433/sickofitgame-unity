@@ -1,30 +1,38 @@
-# Rook / Wick real art — blocked on Gen org credits
+# Rewind look + hit feel (Sands of Time) — merge with beta
 
 ## What was wrong
-c_8d29cd9df354 merged gameplay (Rook Shaft tally, Wick Floor 999 lamp walk, playtest `climber-locals`) with stand-in portrait blobs and placeholder lamp props. This pass was to replace them with Gen art within $0.88 GPU.
+Rewind still read as a tape glitch (scanlines / cyan-magenta over the frame) instead of time pouring backwards. Hits used a long red wash and shake without a clear hero-sprite flash or shove, so bullets could disappear under feedback.
 
-## What blocked Gen
-- `image.generate` refused: **org credits need 5, 1 left** (same wall as the prior pass). GPU budget ($0.88) and fleet are separate; estimate for the full batch is **~$0.38 GPU / ~13 min**.
-- Fleet status also reports AWS keys missing in hawkesgen/.env; brief said Studio boots a server — jobs still cannot start without org credits.
-- No Rook/Wick concept assets in the Gen library to reuse.
+## What I changed (this task)
+- **Story / bible / metrics / lighting:** canon for desat+ghosts+reverse streaks+gold rim+snap-back; hero flash ≤0.15 s and knockback ≥0.3; shake cap 0.3 s.
+- **`RewindFx`:** outer-8% gold strips + optional rim scanlines + sand/ember motes; measured `PlayfieldGlitchCoverage`; 0.2 s snap-back; teal HUD wash softened.
+- **`RewindWorldLook` (new):** world desat to ~20% (hero + bullets stay coloured), 8/4 hero ghosts, reverse bullet streaks; release ripple via `FeelVfx.RewindRipple`.
+- **Hit feel:** `ApplyHitPush` (≥0.3 u, saved in `MoveState`/`HeroMoves`); white `SpriteFeel` flash 0.12 s on the hero; red edge vignette pulse; `Shake` capped at 0.3 s.
+- **Phone:** rewind button fill ring drains while held; playtest holds it with `TouchDown` when touch UI is on.
+- **Playtest `rewind-fx`:** hard checks for desat, ≥4 ghosts, ≥1 streak, playfield glitch, flash, knockback, ring drain, fps ≥30.
 
-## What changed (prep only)
-- `Assets/GameConfig/art/rook.json` — poses/clips/animator for **scratch** and **talk** (Shaft portrait loops).
-- `Assets/GameConfig/art/wick.json` — poses/clips/animator for **lightLamp** and **talk**.
-- `.hawkes/pending-gpu.txt` — remaining Gen pieces + estimate.
-- `.hawkes/scenario.txt` — `climber-locals` on phone.
+## Brought in from beta (other change)
+Rook/Wick real-art prep (blocked on Gen org credits): `art/rook.json` Scratch/Talk, `art/wick.json` LightLamp/Talk, `.hawkes/pending-gpu.txt`, Yooba sheet PNG refreshes, living-air / ambience particle tooling. Gameplay locals already on beta; Gen sheets still pending credits.
 
-## Conflicts
-None (no merge this pass). Did not touch the other agent's rewind files.
+## Conflicts (merge `origin/beta`)
+Only `.hawkes` data files conflicted; no binaries, scenes or prefabs.
+
+| File | Resolution |
+|---|---|
+| `.hawkes/learned.md` | Kept **all** bullets from both sides (rewind/hit canon+conventions + Rook/Wick Gen credits lessons and canon voice ids). |
+| `.hawkes/scenario.txt` | Kept **this** change’s `rewind-fx` (acceptance criteria). Beta’s `climber-locals` + phone options stay the scenario for the already-merged Rook/Wick change; noted in try.md so neither side is dropped. |
+| `.hawkes/summary.md` | Combined: this rewind summary + beta’s Rook/Wick blocked-on-credits note + this Conflicts table. |
+| `.hawkes/try.md` | Kept rewind try steps first; appended the Shaft Rook / Floor 999 Wick steps from beta. |
 
 ## Checks
-- Art specs JSON valid.
-- Did not run Unity compile (no editor here).
-- Did not start a browser / playtest (Studio owns that).
-- Fun-reviewer (self-pass): **thin** — gameplay locals already on beta; without sheets/voices the Shaft Rook is still an amber blob and lamps are tinted placeholders. Gaps: Gen sheets, land pending voice clips, phone ≥64 px on real art.
+- `/opt/unity-check/unity-check` on rewind C# — clean (pre-merge); merge touched no C# from this task.
+- Confirmed `RewindFx.cs` / `RewindWorldLook.cs` still present after merge; no conflict markers left in `.hawkes/`.
+- Unity editor compile not run here (no editor in this sandbox).
+- Browser / Studio playtest not started (per brief); scenario named in `.hawkes/scenario.txt`.
 
-## What's left
-1. Top up Gen org credits (≥5, ideally ≥40 for 4× generate + edits + i2v).
-2. Resume: queue concepts → poses → frame → i2v → sprite.sheet; `studio_gen_import` into `Assets/Art/Enemies/Rook|Wick` and `Assets/Art/Props/WickLamp/`; wire `ui/rook.json` sheets + entity animators; then `companions.py` LightLamp play.
-3. Delete `.hawkes/pending-gpu.txt` when nothing remains.
-4. Beta playtest `climber-locals` (phone 390x844).
+## Reviews
+- **fun-reviewer:** thin (not demo). Soul of the rewind look is there; asked for deeper world-reacts (neighbours/lava reversing) — out of this task’s acceptance criteria, noted for later.
+- **reviewer:** merge after revise (streak hard-check, real glitch probe, touch hold). Softened leftover teal wash.
+
+## GPU
+$0 spent on rewind (procedural motes + hero-sprite ghosts). Rook/Wick Gen still blocked on org credits (see beta’s pending-gpu).

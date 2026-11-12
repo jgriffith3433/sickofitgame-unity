@@ -142,6 +142,9 @@ namespace SickOfIt.Gameplay
             w.Float(s.wallCoyoteUntil);
             w.Float(s.kickUntil);
             w.Float(s.kickDir);
+            w.Float(s.hitPushUntil);
+            w.Float(s.hitPushX);
+            w.Float(s.hitPushY);
             w.Int(s.airDashesLeft);
             w.Int(s.wallSide);
             w.Int(s.lastWallSide);
@@ -160,6 +163,9 @@ namespace SickOfIt.Gameplay
                 wallCoyoteUntil = r.Float(),
                 kickUntil = r.Float(),
                 kickDir = r.Float(),
+                hitPushUntil = r.Float(),
+                hitPushX = r.Float(),
+                hitPushY = r.Float(),
                 airDashesLeft = r.Int(),
                 wallSide = r.Int(),
                 lastWallSide = r.Int(),

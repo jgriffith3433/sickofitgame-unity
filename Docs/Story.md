@@ -2846,7 +2846,11 @@ when org credits allow; ids sit in `Tools/Audio/pending_clips.json` until then.
 
 ## Rewind that feels amazing (RewindFx)
 
-Rewind is the hook, so holding R turns the picture into a tape being wound back: scanlines crawl up the screen, the edges split into cyan and magenta, a tracking bar sweeps up and speed streaks trail off to the right, over the old teal wash. A reversed tape whirr loops (the `rewind_start` clip played backwards) and its pitch climbs the longer the rewind runs; on release it fades out and the stop click lands. Reduced Flash halves it and stops the wobble. `Gameplay/Presentation/RewindFx.cs`, presentation only (nothing saved or rewound); playtest `rewind-fx`.
+Rewind is the hook, so holding R turns the picture into **time pouring backwards** (Prince of Persia: The Sands of Time): the world desaturates to about 20% colour while the hero and every bullet stay full-colour; the hero leaves fading ghost copies of his recent places (8 on desktop, 4 on a phone); every bullet draws a short bright streak in its reverse direction; sand and ember motes stream backwards across the screen; and the screen edges (the outer ~8%, never the play area) carry a gold time-ripple. Scanlines, if any, stay only on that outer rim — never over the central playfield (critic feel fix). On release: a 0.2 s colour snap-back and a gold ripple out from the hero (`FeelVfx.RewindRipple`). A reversed tape whirr still loops (`rewind_start` played backwards) with its pitch climbing; Reduced Flash halves the look and stops the wobble. `Gameplay/Presentation/RewindFx.cs` + `RewindWorldLook.cs`, presentation only; playtest `rewind-fx`.
+
+## A hit that doesn't hide the fight
+
+Getting hurt flashes the **hero sprite** white for 0.10–0.15 s (never a full-screen white wash that eats the bullets), shoves him at least 0.3 world units away from the shot, and pulses a red edge vignette. Screen shakes on a hit last 0.3 s or less. The phone rewind button wears a fill ring that drains while held. Playtest `rewind-fx` (phone pass at 390x844).
 
 ## The first rewind (Level 1)
 
