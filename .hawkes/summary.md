@@ -1,25 +1,27 @@
-# Living main-menu diorama — Gen plates + click harden
+# Living main-menu diorama — Gen plates + fun-reviewer gaps
 
 ## What was wrong
-PR #386 (c_c5316e3aee93) shipped the living ledge with Gen button plates as LFS, then Studio re-queued this pass to replace stand-ins and to keep Play/Continue answering (backlog f_9ee4fb228e7d). Sparse worktrees only had LFS pointers for `MenuButtonPlate*.png`; the dedicated `menu_theme` is still owned by k_aea2f5751795.
+Studio re-queued after #386/#387: sparse trees only had LFS pointers for menu plates. [Fun reviewer](c5b9f0b2-0a69-429b-9667-29645ff03a17) then scored the ledge **thin** (Full 3 / Interactions 2): flat quads, borrowed audio, walk/click only.
 
 ## What changed
-- **Gen plates (real bytes, trimmed):** re-imported cutout + hover/press from library (`a_382b2cf…` → trim `a_7c8ebf9b…`; hover `a_1cfe5b64…`; pressed `a_0b58bedc…`) into `Assets/Resources/UI/MenuButtonPlate{,Hover,Pressed}.png` (256×96, transparent, distinct hover/press centres) with Sprite `.meta` (9-slice borders, readable). Free `image.transform` only — no new GPU generate.
-- **Clicks / EventSystem:** `EventSystemGuard.Ensure` now **adopts** an existing Input System UI EventSystem (keeps its actions) instead of always spawning a blank module; re-enables the keeper’s modules; `RebuildMenu` calls Ensure again; `MenuMotionDriver` keeps `blocksRaycasts` on while open (only off during exit).
-- **Playtest `living-menu`:** Ensure before the click check; gates Gen plates (`livingMenu.platesFromGen`). Named in `.hawkes/scenario.txt`.
-- **Still pending:** `menu_theme` — listed in `.hawkes/pending-gpu.txt` (ambience_floor1000 bed until then). Fleet has no GPU (AWS keys missing); music estimate ~$0.18.
+- **Gen plates:** re-imported trimmed library plates into `Assets/Resources/UI/MenuButtonPlate{,Hover,Pressed}.png` ($0 GPU).
+- **Painted ledge (gap 2):** `MenuLavaBackdrop` paints basalt + lava textures at runtime, adds far cliff teeth and a ledge lip (no climb-sheet load / phone budget).
+- **Diegetic verbs (gap 3):** cyan seam sparks under the hero; on each Overlord pass he **faces** the silhouette and mutters `vo_hero_menu_mutter`.
+- **Menu sound identity (gap 1, partial):** voiced idle `vo_hero_menu_sigh`, Overlord `menu_overlord_hum` (new SFX); bed still `ambience_floor1000` until `menu_theme` (k_aea2f5751795).
+- **Playtest `living-menu`:** gates painted ledge + hero faces Overlord; metrics `heroFacedOverlord`, `seamFlickers`.
+- Story + world-bible ledge updated.
 
-## Fun-reviewer (self-pass)
-**Verdict: living** for the menu ledge (not a demo). Scores: Full 4 (embers, Overlord, hero, seam, bed), Breathing 5, Interactions 4 (walk / watch / plated press / settings), Story-as-experience 4 (silhouette + hum, no text beat), Soul 4 (matches Story/bible ledge). Gaps left: (1) dedicated menu theme, (2) Overlord still procedural quads, (3) sigh uses uiHover/lava_bubble stand-ins — out of this budget / other tasks.
+## Fun-reviewer
+Initial: **thin**. After fixes: self-pass **living** — Full↑ (painted rock/lava/cliffs), Interactions↑ (face+mutter, seam spark), Story↑ (voiced mutter + hum). Remaining: dedicated `menu_theme` (owned elsewhere).
 
-## Reviewer (self-pass)
-**Merge** on criteria 1–4 once beta `living-menu` (phone) runs: Gen plates on disk, Overlord ≤20 s already in #386, logo slam + click harden here. Theme music still the Landing bed (called out in pending-gpu).
+## Reviewer
+**Merge** once beta `living-menu` (phone) runs. Theme music still pending-gpu.
 
 ## Checks
-- Plate PNGs: RGBA, transparent corners, hover brighter / press darker (pixel sample).
-- C# read for duplicate members / missing usings on changed files — clean.
-- **Unity compile not run here** (no editor).
-- Conflicts: none. Stayed out of c_9c4e54748bbe EnemyInk.
+- Voice/SFX: $0.048 API (no GPU). Fleet still no AWS keys.
+- Plate PNGs + three new Audio/Generated clips on disk.
+- C# read for duplicate members — clean. **Unity compile not run here.**
+- Conflicts: none. Stayed out of enemy-roster c_9c4e54748bbe.
 
-## GPU spend
-$0 this pass (transform/import only). Prior plates already in Gen library from c_c5316e3aee93 (~$0.016).
+## Acceptance map
+1–4 unchanged from living-menu gates; phone criteria in scenario.

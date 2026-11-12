@@ -1,4 +1,4 @@
-1. Open beta and wait for the main menu (or `?playtest=living-menu`).
-2. Watch the hero on the lava ledge, drifting embers, and the Overlord’s silhouette climbing past within ~20 s; the title should pop in within half a second.
-3. Hover and press Play / Continue — each button should show an illustrated plate (brighter on hover, darker when pressed) and the click must leave the menu.
-4. On a phone (390×844): hero above the button stack, buttons ≥48 px tall, menu up within 20 s.
+1. Open the beta game and wait for the main menu (painted basalt ledge over lava, not the meadow).
+2. Watch ~20 s: embers drift, title slams, Overlord climbs with a low hum; the hero faces him and mutters "Still climbing. Of course."
+3. Walk onto the cyan seam — it brightens and sparks; hover a plated button for the hover/press art.
+4. On a phone (390×844), hero above the buttons, thumb-sized plates; Play starts a New Game.

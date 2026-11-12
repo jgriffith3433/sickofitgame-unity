@@ -50,6 +50,7 @@ namespace SickOfIt.Core.Progression
         private float menuOpenedAt = -1f;
         private float logoSlamDoneAt = -1f;
         private int heroSighs;
+        private int heroFacedOverlord;
 
         /// <summary>Unscaled time the menu finished building (playtest).</summary>
         public float MenuOpenedAt => menuOpenedAt;
@@ -59,6 +60,9 @@ namespace SickOfIt.Core.Progression
 
         /// <summary>How many bored sighs the menu hero has played (playtest).</summary>
         public int HeroSighs => heroSighs;
+
+        /// <summary>How many times the hero faced the Overlord silhouette and muttered (playtest).</summary>
+        public int HeroFacedOverlord => heroFacedOverlord;
 
         /// <summary>True once every visible main-menu button carries an illustrated plate (playtest).</summary>
         public bool ButtonsHavePlates { get; private set; }
@@ -131,12 +135,32 @@ namespace SickOfIt.Core.Progression
 
         void OnOverlordAppeared()
         {
-            // Fun-reviewer: the pass is a beat — he glances up with a sigh when the silhouette crosses.
+            // Fun-reviewer: the pass is a beat — he faces the silhouette and mutters once.
             var hero = MenuHero != null ? MenuHero : FindCharacter();
             if (hero == null) return;
             heroSighs++;
+            heroFacedOverlord++;
+            var lava = MenuLavaBackdrop.Active;
+            float face = lava != null ? lava.OverlordFaceDir : 1f;
+            var controller = hero.GetComponentInChildren<SickOfIt.Core.Input.PlayerController>(true);
+            if (controller != null)
+                controller.Face(face);
+            else
+            {
+                // Stand-in: flip Graphics so he looks toward the climb.
+                var graphics = hero.Find("Graphics");
+                if (graphics != null)
+                {
+                    var s = graphics.localScale;
+                    float ax = Mathf.Abs(s.x) < 0.001f ? 1f : Mathf.Abs(s.x);
+                    graphics.localScale = new Vector3(face > 0f ? -ax : ax, s.y, s.z);
+                }
+            }
             StartCoroutine(SighPulse(hero));
-            Sfx.Play("lava_bubble"); // soft breath stand-in until a dedicated sigh clip lands
+            if (Sfx.ClipOf("vo_hero_menu_mutter") != null || SoundExists("vo_hero_menu_mutter"))
+                Sfx.Play("vo_hero_menu_mutter");
+            else
+                Sfx.Play("lava_bubble");
         }
 
         /// <summary>
@@ -153,8 +177,7 @@ namespace SickOfIt.Core.Progression
 
         IEnumerator HeroSighLoop()
         {
-            // Bored idle on the ledge: every 10–16 s a quiet sigh (animation pulse + a soft UI-adjacent breath).
-            // No new voice clip required: the stand-in / prefab keeps Idle, and we nudge scale so the sigh reads on camera.
+            // Bored idle on the ledge: every 10–16 s a quiet voiced sigh + scale pulse.
             var wait = new WaitForSecondsRealtime(1f);
             float next = Time.unscaledTime + 8f;
             while (!isTransitioning)
@@ -166,10 +189,17 @@ namespace SickOfIt.Core.Progression
                 var hero = MenuHero != null ? MenuHero : FindCharacter();
                 if (hero == null)
                     continue;
+                // Don't stack over an Overlord mutter.
+                if (MenuLavaBackdrop.Active != null && MenuLavaBackdrop.Active.OverlordVisible)
+                    continue;
                 heroSighs++;
                 StartCoroutine(SighPulse(hero));
-                // Soft breath: reuse uiHover as a quiet stand-in if no dedicated sigh clip is wired yet.
-                Sfx.Play(Sfx.Events.uiHover);
+                if (Sfx.ClipOf("vo_hero_menu_sigh") != null || SoundExists("vo_hero_menu_sigh"))
+                    Sfx.Play("vo_hero_menu_sigh");
+                else if (Sfx.ClipOf("vo_hero_menu_mutter") != null || SoundExists("vo_hero_menu_mutter"))
+                    Sfx.Play("vo_hero_menu_mutter");
+                else
+                    Sfx.Play(Sfx.Events.uiHover);
             }
         }
 

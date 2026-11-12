@@ -2763,13 +2763,14 @@ while `MainMenuManager` is up, the chip's words in mainMenu.json `labels.climbin
 
 ## The main menu is a living diorama (built 2026-11-12)
 
-The first screen is Hell, not the meadow: the hero idles bored on a basalt ledge over a lava sea (ash-to-ember sky, cyan rewind seam, drifting
-embers) while the theme (or the Landing's lava bed until the dedicated theme lands) plays. Far above, the Overlord's black-obsidian silhouette —
-long horns, red eyes, never looking down — climbs past every 15–20 seconds. The camera slowly pushes in 3% over 20 s and back. The title
-**Sick Of It** slams in over half a second on first show, then breathes with a soft pulse. The buttons sit on illustrated basalt-and-ember plates
-with hover and press states; the staged first-visit menu (Play / Settings / Rage Quit) and its button count stay the same. New art loads after the
-buttons are up so a phone still reaches the menu inside 20 s. In the game: `MenuLavaBackdrop` (living embers, Overlord climb, camera breathe),
-`MenuInkPlates` (button plates), `MainMenuManager` (logo slam timing, hero sigh, bed after the buttons). Playtest `living-menu`.
+The first screen is Hell, not the meadow: the hero idles bored on a painted basalt ledge over a lava sea (ash-to-ember sky, far cliff teeth, cyan
+rewind seam that sparks under his feet, drifting embers) while the theme (or the Landing's lava bed until the dedicated theme lands) plays. Far
+above, the Overlord's black-obsidian silhouette — long horns, red eyes, never looking down — climbs past every 15–20 seconds with a low hum; the
+hero faces him and mutters "Still climbing. Of course." The camera slowly pushes in 3% over 20 s and back. The title **Sick Of It** slams in over
+half a second on first show, then breathes with a soft pulse. The buttons sit on illustrated basalt-and-ember plates with hover and press states;
+the staged first-visit menu (Play / Settings / Rage Quit) and its button count stay the same. New art loads after the buttons are up so a phone
+still reaches the menu inside 20 s. In the game: `MenuLavaBackdrop` (painted ledge, embers, Overlord climb + hum, seam spark, camera breathe),
+`MenuInkPlates` (button plates), `MainMenuManager` (logo slam, face+mutter, voiced sigh, bed after the buttons). Playtest `living-menu`.
 
 ## Rewind that feels amazing (RewindFx)
 
