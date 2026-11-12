@@ -32,4 +32,6 @@ Refs: concept `a_babf8d7bca383dae`, pose3 colours `a_0960962c0b655f36`.
 
 ## Fall / Hurt motion
 
-Budget already ≥ $0.75 after the 8 clips — **no Fall/Hurt i2v queued**. Interim sheets are 6-frame holds baked from the PASS poses (`clip_Fall_hold.mp4` / `clip_Hurt_hold.mp4`, local ffmpeg, $0). Animated Fall+Hurt clips still need ~$0.06 once budget is raised (see `.hawkes/pending-gpu.txt`).
+Budget already ≥ $0.75 after the 8 clips — **no Fall/Hurt i2v queued**. Interim sheets are 6-frame holds baked from the PASS poses (`clip_Fall_hold.mp4` / `clip_Hurt_hold.mp4`, local ffmpeg, $0).
+
+**Closed 2026-11-12:** J answered "keep the stand-ins" — Fall/Hurt holds stay; no further GPU for this task. No `.hawkes/pending-gpu.txt`.

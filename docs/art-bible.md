@@ -63,7 +63,7 @@ player is the only warm bronze figure on screen (enemies are crimson, slag-black
 
 ## 6. Hero animation set and timing
 
-Same states as `player.json` `animationConfig` (do not rename). Inked set, key 00ff00, 12 fps, 256 px authoring cells:
+Same states as `player.json` `animationConfig` (do not rename). Inked set, key **`ff00ff`** (magenta — bronze armour eats `00ff00`), 12 fps source, 256 px authoring cells; bake with `player_clip_sheet.py --key ff00ff`:
 
 | State | Frames | Notes |
 |---|---|---|
@@ -87,10 +87,10 @@ All through Hawkes Gen under project `org_eb0d5c82e8da8c2d.sickofit` (the short 
 
 | Kind | Tool and where |
 |---|---|
-| Hero and creature stills (poses) | `image.edit` (Qwen-Image-Edit) from a reference pose, flat black or `00ff00` background; `Tools/Art/art.mjs <id> --poses-only`, `--pick pose=seed` |
-| Hero concepts (look-dev only) | `image.generate` x3 with the current sheet as reference; pick one before any pose |
-| Moves (clips) | `video.i2v` (Wan 2.2 first-last-frame), still camera, flat 00ff00; or `video.animate` copying an existing motion (`"motion": "player:Walk"`) |
-| Sheets | `sprite.sheet`-style bake: `Tools/Art/player_clip_sheet.py` (hero), `Tools/Art/sheets.py` (enemies): key, trim, align, pack to 604x340 at 100 PPU |
+| Hero and creature stills (poses) | `image.edit` (Qwen-Image-Edit) from a reference pose; hero on flat **`ff00ff`**, other creatures on `00ff00`; `Tools/Art/art.mjs <id> --poses-only`, `--pick pose=seed` |
+| Hero concepts (look-dev only) | `image.edit` x3 from the current Idle sheet as reference (bare `image.generate` is refused without one); pick one before any pose |
+| Moves (clips) | `video.i2v` (Wan 2.2 first-last-frame), still camera, flat `ff00ff` for the hero / `00ff00` for enemies; or `video.animate` copying an existing motion (`"motion": "player:Walk"`) |
+| Sheets | `sprite.sheet`-style bake: `Tools/Art/player_clip_sheet.py --key ff00ff` (hero), `Tools/Art/sheets.py` (enemies): key, trim, align, pack to 604x340 at 100 PPU |
 | Enemy art | `Assets/GameConfig/art/<id>.json` then `node Tools/Art/art.mjs <id> --start` (Docs/ArtPipeline.md) |
 | Effects, portals, beams | `Tools/Art/fx_make.mjs` / `fx_sheets.py` (key magenta or black) |
 | Climb art | `Tools/Art/climb_art.py` from `Tools/Art/climb/climb.json` |
@@ -134,11 +134,9 @@ Outline `#140B0D`, two-tone cel, one rim, green `#00ff00` key, 12 fps. Specs: `A
 cyan redo baked; thatch Windup/Attack stay held framed poses after i2v grew bird legs; brute/sack full motion).
 Launcher thief still pending (~$0.50; Floors 998/994). Playtest `enemy-ink`.
 
-## 10. The hero redraw (in progress)
+## 10. The hero redraw (done)
 
-- Design is fixed: armoured knight, battered dark bronze plate, brass trim, closed helm with two glowing orange eye slits, tattered maroon cloth, heavy gauntlets and greaves, broad and tired. Launcher from the start. Never a man in a jacket.
-- Order: concepts (3) from the current Idle sheet -> pick -> key poses (`image.edit` each) -> clips (`video.i2v`, still camera, 00ff00) -> bake -> hand-pick frames -> wire into `player.json` replacing the old sheets (same state names, same cell, same pivot) -> match walk fps to `moveSpeed`.
-- Old-versus-new screenshots go in the pull request.
-- **Status (this pass):** Idle frame 0 uploaded to Gen (`blob:bafb…d7c8`, from beta LFS via GitHub media URL). Three inked concept `image.edit` jobs queued (`j_9af016ae8562`, `j_287ea640bd84`, `j_25115eff1637`). Playtest `hero-ink` covers the acceptance checks. Next resume: pick one concept, then 10 key poses → 10 `video.i2v` → sheets → wire into `Assets/Art/Sprites/Player/`.
-- Key poses to edit (00ff00, facing right, same ground line): Idle (bored), Idle-sigh, Walk plant, Walk pass, Jump tuck, Fall flare, Land squash, Dash stretch, Hurt snap-back, DeathBurn start, Victory shrug, Rewind lean.
-- Clips after poses (still camera, 00ff00, 12 fps): idle (+sigh), run, jump, fall, land, dash, hurt, death, rewind, victory.
+- Design is fixed: armoured knight, battered dark bronze plate, brass trim, closed helm with two glowing orange eye slots, tattered maroon cloth, heavy gauntlets and greaves, broad and tired. Launcher from the start. Never a man in a jacket.
+- Shipped on beta (#385 / c_409228146ca5): concept `a_babf8d7bca383dae`, magenta key poses, eight `video.i2v` clips baked into `Assets/Art/Sprites/Player/` (Idle, Walk, Jump, Land, Dash, DeathBurn, Rewind, Victory) with existing `.meta` guids and pivots kept. Walk `fps` 32 matches `moveSpeed` 3.8. Compare stills in `Assets/Art/HeroInk/compare/`. Judge log: `Assets/Art/HeroInk/JUDGE.md`.
+- Fall and Hurt: PASS magenta poses held as 6-frame interim sheets (no i2v — budget spent). **J (2026-11-12): keep those stand-in holds; count the task done.** Do not re-queue Fall/Hurt clips unless a new budget is approved.
+- Playtest `hero-ink` covers the acceptance checks (8 states, foot-slide ≤ 2 px, phone ≥ 48 px).
