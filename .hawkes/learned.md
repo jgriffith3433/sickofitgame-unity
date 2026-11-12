@@ -1,5 +1,4 @@
-- lesson: pending-gpu other-task — never list `menu_theme` (k_aea2f5751795) in this item's pending-gpu; Studio re-queues the living-menu task forever. Delete pending-gpu when this task's own Gen art is done.
-- convention: Main menu clicks — EventSystemGuard disables StandaloneInputModule, aggressive Ensure 2 s after scene load; MainMenuManager.EnsureClicksReady after BuildMenu.
-- lesson: sparse + Audio/Generated — do not `sparse-checkout add Assets/Audio/Generated/`; LFS smudge dirties hundreds of mp3s and leftover commits can ship them.
-- canon: Main menu ledge — damned soul looks up on Overlord pass; Overlord sheds one ember that lands; occasional lava bursts near the hero.
-- lesson: soul facing — mirror-symmetric quads don't show a flip; keep an asymmetric horn/shoulder so localScale.x reads as a turn.
+- convention: Gen sickofit project id — hawkesgen_* needs `org_eb0d5c82e8da8c2d.sickofit`; short `sickofit` returns No access (m_ed02b1f5332c).
+- lesson: audio.music-loop / audio.analyze need Studio org credits (8 each) even when GPU$ is 0 — a batch dies mid-queue when credits < 8.
+- convention: Adaptive score cues — `Tools/Audio/adaptive_score.py` owns the table; `--manifest` / `--wire` / `--check`; clips at `Assets/Audio/Music/score_<floor>_<role>.ogg` with loadType 1.
+- canon: Adaptive score — Meadow 112 D minor, 1000 120 A minor, 999 124 E minor, 998 108 F# minor, 997 116 C minor (explore/fight/finale).

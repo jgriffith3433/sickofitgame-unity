@@ -1,2 +1,4 @@
-launcherThief full ink (shares imp silhouette; concepts optional + image.edit windup/attack/hurt/die + 5 video.i2v) — not started; estimate ~$0.50; Windup/Attack still point at Move sheet; Floors 998/994
-cinderThatch Windup/Attack motion i2v — FAIL bird legs (windup a_0785c49a5e2b2fb7, attack a_ee20ba9c5256acd6); held limbless sheets ship; optional redo ~$0.04–0.08 with “NO LEGS floating ball only” (do not use a_f5d9ad823922f967 — it has legs)
+score_f1000_{explore,fight,finale}: audio.music-loop + audio.analyze (loop:true) on library a_aec49689d6753df8 / a_bbb074b23f8660c9 / a_842dc3de5647efe4 — blocked: Studio credits (needs 8, 7 left)
+score_f999_{explore,fight,finale}: same on a_44588cf4dc14bf68 / a_a62c0f6a4af3f378 / a_aa2d641a474a609a — credits
+score_f998_{explore,fight,finale}: same on a_ff0b503ab096bbbb / a_2bba6702aace9473 / a_4f78c40e4d2c6298 — credits
+score_f997_{explore,fight,finale}: same on a_8a46afc3d93c4d97 / a_1d6ca5f434281781 / a_5ba7bee5ea3ff7b1 — credits
