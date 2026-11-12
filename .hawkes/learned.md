@@ -1,5 +1,6 @@
-- lesson: Gen wall still up — audio.sfx needs 8 org credits with 1 left; hawkesgen_fleet reports AWS keys missing; do not requeue (m_f60905657340), keep pending-gpu.
-- lesson: ElevenLabs audio.sfx is $0 GPU (~$0.14 for 7 beds + 12 oneshots) and fits the $0.28 budget once credits exist; open variants batch estimates ~$0.19 GPU.
-- convention: Gen project id — always `org_eb0d5c82e8da8c2d.sickofit` for hawkesgen_*.
-- convention: floor ambience — tables in `Tools/Audio/floor_ambience.py`; runtime `AmbienceBed` + `AmbientEmitters`; playtest `floor-ambience`.
-- canon: Place beds — Meadow calm/burning, Shaft wind+chains, Floor 1000 lava+screams+ticket bell, 999 furnace+hammer, 998 drips+bone chimes+choir, 997 organ+Overlord laugh; positional prop one-shots on the Ambience bus.
+- canon: Chapter One closes on Floor 997 — after Imp Run’s finale a playable Overlord lens face-off (he never answers; hero replies); CHAPTER ONE card then Grudge; hook foreshadows Floor 500 daylight; flag `chapter1.seen` offers Skip.
+- convention: chapter_one.py — run after long_floors / first_floors / overlord_cameos / companions; landing goes to phase `chapterOne`, not an instant clear.
+- lesson: Gen org credits ≠ GPU$ budget — audio.voice/dialogue-open can refuse with 1 credit left even when the brief’s GPU dollars would cover the job; write stuck.md and leave clips in pending_clips.
+- convention: showChapterCard before cleared — Continue offers the Grudge then sets `cleared`; ShowResults no-ops when `chapterCardShown` so the card is not doubled.
+- convention: Feel VFX kit — `FeelVfx` + pooled `VfxPool` / `DiamondFlyer`; atlas `Resources/Effects/FeelVfxAtlas`; playtest `vfx-kit` (kept from beta merge #402).
+- lesson: merge with beta — only `docs/metrics.json` conflicted (add/add); Story/world-bible/SickOfItPlaytest.cs auto-merged both VFX kit and Chapter One; restore `.hawkes/scenario.txt` to this task’s scenario after merge (beta overwrites it with `vfx-kit`).

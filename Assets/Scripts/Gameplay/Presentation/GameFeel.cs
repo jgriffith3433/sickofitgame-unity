@@ -45,6 +45,8 @@ namespace SickOfIt.Gameplay
         {
             var feel = owner.gameObject.AddComponent<GameFeel>();
             feel.world = owner;
+            FeelVfx.Ensure();
+            FeelVfx.BindRewindClock(GameClock.Instance);
             return feel;
         }
 
@@ -70,6 +72,10 @@ namespace SickOfIt.Gameplay
             var cfg = Config;
             if (cfg != null && cfg.freeze != null)
                 Freeze(cfg.freeze.heroHurtSeconds, "hero hurt");
+            var at = world != null && world.PlayerController != null
+                ? (Vector2)world.PlayerController.transform.position
+                : Vector2.zero;
+            FeelVfx.Play(FeelVfx.Kind.HeroHurt, at, size: 1.2f);
         }
 
         // ─── Enemy hits ───────────────────────────────────────────────
@@ -126,6 +132,7 @@ namespace SickOfIt.Gameplay
                 away * (hit.recoilDistance * (strong ? 1.5f : 1f) * (boss ? 0.5f : 1f)), hit.squashSeconds * (strong ? 1.25f : 1f));
             Hits++;
             Tell("hit", $"{entity.DefId} {damage} dmg{(strong ? " strong" : "")}, squash {s:0.00}");
+            FeelVfx.Play(FeelVfx.Kind.Hit, entity.Position, size: Mathf.Clamp(entity.Radius * 2.2f, 0.55f, 1.4f));
         }
 
         /// <summary>The sprite that shows the entity: its own, or a placeholder child when it has no art.</summary>
@@ -173,6 +180,8 @@ namespace SickOfIt.Gameplay
         {
             var cfg = Config;
             var g = cfg != null ? cfg.glow : null;
+            if (entity != null)
+                FeelVfx.DeathBurst(entity.DefId, at, entity.Radius);
             if (g == null || !g.enabled || entity == null)
                 return;
             float size = Mathf.Clamp(entity.Radius * 3f, 0.5f, 2.5f) * g.deathGlowScale;
@@ -327,8 +336,11 @@ namespace SickOfIt.Gameplay
                     SpriteFeel.Play(r, Color.white, 0f, 0f, squash, offset, fire.seconds);
             }
             var g = Config != null ? Config.glow : null;
+            Vector2 muzzleAt = (Vector2)pc.transform.position + aim * 0.5f;
             if (g != null && g.enabled && g.muzzleGlowSize > 0f && !melee)
-                Glow.Burst((Vector2)pc.transform.position + aim * 0.5f, "muzzle", g.heroShotColor, g.muzzleGlowSize, g.muzzleGlowAlpha, 0.08f);
+                Glow.Burst(muzzleAt, "muzzle", g.heroShotColor, g.muzzleGlowSize, g.muzzleGlowAlpha, 0.08f);
+            if (!melee)
+                FeelVfx.Play(FeelVfx.Kind.Muzzle, muzzleAt, size: 0.7f, tint: g != null ? g.heroShotColor : new Color(1f, 0.75f, 0.35f, 1f));
             Kicks++;
             if (Kicks <= 3 || Kicks % 25 == 0)
                 Tell("kick", $"volley {pc.VolleysFired}{(melee ? " (swing)" : "")}, kick {offset.magnitude:0.000} back from ({aim.x:0.00}, {aim.y:0.00})");

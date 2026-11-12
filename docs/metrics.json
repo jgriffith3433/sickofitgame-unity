@@ -6,14 +6,19 @@
   "corridorWidths": {
     "min": 2.0,
     "comfortable": 3.5,
-    "combat": 6.0
+    "combat": 6.0,
+    "narrow": 2.0,
+    "standard": 4.0,
+    "wide": 6.0
   },
   "feel": {
     "coyoteMs": 100,
     "jumpBufferMs": 120,
     "hitStopMs": 80,
     "shakeMs": 120,
-    "shakeAmplitude": 0.15
+    "shakeAmplitude": 0.15,
+    "screenShakeMs": 100,
+    "diamondFlyMs": 600
   },
-  "notes": "From player.json moveSpeed 3.8, jumpForce 9, gravityScale 1.8; coyote wallJump 0.1 s; JumpLatch buffer 0.12 s; feel.freeze.heroHurtSeconds 0.08."
+  "notes": "From player.json moveSpeed 3.8, jumpForce 9, gravityScale 1.8; coyote wallJump 0.1 s; JumpLatch buffer 0.12 s; feel.freeze.heroHurtSeconds 0.08. diamondFlyMs 600 = FeelVfx HUD gem arc (vfx-kit)."
 }

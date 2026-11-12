@@ -1,4 +1,4 @@
-1. Open beta, tap once for sound, then Pick a Level → Level 1 (Meadow): wind / rooster / mill under the music within a second; occasional mill creaks and rooster crows from left or right.
-2. Quit to the Shaft: rushing wind and distant chains under the map.
-3. Play Floors 1000 → 997: lava + ticket bell → furnace + hammer → drips + bone chimes → organ drone; short prop one-shots keep coming, louder when you stand near them.
-4. On a phone (390×844), after the first tap, fps should stay at 30+.
+1. Open beta, New Game or jump to Floor 997 (Imp Run).
+2. Climb to the landing after the Lift Stop finale — the camera finds the Overlord; dodge his telegraphed lens in three phrases while lines play.
+3. Watch him flee up laughing; the CHAPTER ONE card shows time, deaths, rewinds and diamonds, then the daylight hook.
+4. Continue → Grudge pick → Shaft as today. Clear Floor 997 again: Skip should be offered.

@@ -72,6 +72,8 @@ namespace SickOfIt.Gameplay.Content
             // Fat Diamonds: a pickup can be worth more (keyed on the pickup, so a replay agrees).
             int extra = context.Self != null && context.World != null && context.World.Perks != null ? context.World.Perks.DiamondExtra(context.Self.Serial) : 0;
             SickOfIt.Data.RogueliteManager.Instance?.AddPoints(amount + extra);
+            // Dead Cells-style gem: sparkle at the pickup and arc to the HUD counter within 0.6 s.
+            SickOfIt.Gameplay.FeelVfx.DiamondPickup(context.SelfPosition);
         }
     }
 

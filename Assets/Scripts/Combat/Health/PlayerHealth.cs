@@ -197,6 +197,7 @@ namespace SickOfIt.Combat.Health
             {
                 controller.PlayDeathSound();
                 controller.PlayHeroClip(HeroDeathClips.Next());
+                SickOfIt.Gameplay.FeelVfx.Play(SickOfIt.Gameplay.FeelVfx.Kind.HeroDeath, controller.transform.position, size: 1.8f);
                 controller.enabled = false;
             }
 

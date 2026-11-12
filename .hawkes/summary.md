@@ -1,26 +1,38 @@
-# Place ambience Gen replace — still blocked on credits
+# Chapter One payoff at the end of Floor 997
 
-## What this pass tried
-Resume of #398 (`c_3e1d6d914cbd`): replace synth stand-in beds/oneshots with Hawkes Gen `audio.sfx`. Wiring, playtest `floor-ambience`, world-bible place beds and emitters are already on beta.
+## What was wrong
+Floor 997’s Imp Run finale ended on a banner + Grudge with no first face-off. The Overlord stayed a far-ledge cameo; chapter one never closed.
 
-## Blocker (unchanged Gen wall)
-- Tried one `audio.sfx` (ElevenLabs, loop 30s, project `org_eb0d5c82e8da8c2d.sickofit`): **refused — org credits 1, need 8**.
-- `hawkesgen_fleet`: `servers: []`, `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` missing in `hawkesgen/.env`.
-- Per preference (m_f60905657340 / m_82768131e9d7): **did not requeue**, no fake job ids, kept `.hawkes/pending-gpu.txt`.
+## What changed (this task)
+- **Story / bible:** `Docs/Story.md` “Chapter One closes on Floor 997”; `docs/world-bible.md` beat + Overlord moment; `Docs/LevelDesign.md` Floor 997 note; `docs/metrics.json` (feel floors).
+- **Playable face-off:** `Tools/Levels/chapter_one.py` patches Floor 997 — landing → `chapterOne` (BeatDirector find, three escalating `laserSweep` phrases @ 0.5 s telegraph, five `say` lines, death-rewind Flee), `chapterOneEscape` (laugh + up), `chapterOneCard`.
+- **Entities:** `overlordChapter` / `P2` / `P3` (taunt art + lens).
+- **UI:** `showChapterCard` + `offerChapterSkip` (`chapter1.seen`); CHAPTER ONE card (time / deaths / rewinds / diamonds, hook VO, Continue ≥48 px design) **before** the Grudge; normal results skipped after.
+- **Audio prompts** in `audio.json` (clips pending); listed in `pending_clips.json`.
+- **Playtest:** `chapter-one` (`.hawkes/scenario.txt`).
 
-## Estimate when credits refill (within $0.28 GPU budget)
-- ElevenLabs path: **$0 GPU, ~$0.14 API** for 7 beds + 12 oneshots (preferred while fleet keys are missing).
-- Open `audio.sfx` variants (2 batches): **~$0.19 GPU**.
-- Then: `studio_gen_import` each `a_…` → `Assets/Audio/Generated/Core/<id>.ogg` (keep existing `.meta` GUIDs), `audio.analyze` loop:true on each bed, mark `generatedFrom` in audio.json / leave pending_clips empty.
+## Merge with origin/beta (this pass)
 
-## Checks this pass
-- `python3 -I Tools/Audio/floor_ambience.py --check` — pass
-- Unity compile not run here (no editor)
-- Conflicts: none
-- No browser / build / playtest started (Studio owns those)
+Beta moved first with **VFX kit** (#402 / `63c6848`). Merged `origin/beta` and resolved:
 
-## Fun reviewer (self-pass)
-**Verdict: thin** on the sound axis until Gen clips land. Wired beds + breathing prop emitters give each place a distinct air in data, but synth stand-ins are not the Hollow Knight bar the criteria ask for. Gaps: (1) Gen beds, (2) Gen oneshots + loop analyze, (3) Meadow visual village life (out of scope).
+| File | Result |
+|---|---|
+| `Assets/Scripts/Playtest/SickOfItPlaytest.cs` | **Auto-merged.** Kept both: `VfxKitId` registration/dispatch and `ChapterOneId` registration/dispatch. |
+| `Docs/Story.md` | **Auto-merged.** Kept “The feel of a hit” flipbook section (beta) and “Chapter One closes on Floor 997” (ours). |
+| `docs/world-bible.md` | **Auto-merged.** Kept Feel VFX bullet (beta) and Chapter One beat / Overlord arc+moment (ours). |
+| `docs/metrics.json` | **Conflict (add/add).** Combined: our measured jump/feel numbers + notes from player.json; beta’s corridor aliases (`narrow`/`standard`/`wide`) and `screenShakeMs` / `diamondFlyMs` (600 for the VFX diamond arc). `hitStopMs` kept at 80 (matches `feel.freeze.heroHurtSeconds 0.08`). |
 
-## Reviewer (self-pass)
-**Verdict: hold / revise when credits return** — acceptance criteria 1–2 and phone fps are wired; criterion 3 (`audio.analyze` loop) and “real Gen art” cannot pass until credits ≥8. Do not merge as “done.”
+`.hawkes/*` from beta (`vfx-kit` scenario, Feel VFX pending-gpu/summary) were restored to this task’s chapter-one scenario, pending voice/sting GPU list, and this summary. Beta’s Feel VFX convention line kept in `learned.md`.
+
+## Fun reviewer
+**thin** — Full 3, Breathing 3, Interactions 2, Story-as-experience 3, Soul 4.
+Gaps (biggest first): (1) wire `vo_ch1_*` + sting clips (blocked on Gen credits); (2) more Imp Run life on the landing during the duel; (3) stage a real ascent escape + a second verb beyond dodge.
+
+## Stuck
+Gen org credits: 1 left; `audio.voice` needs 8, `audio.dialogue-open` needs 16. See `.hawkes/stuck.md`. GPU $ budget ($0.47) would cover music + open dialogue once credits exist.
+
+## Checks (after merge)
+- `python3 Tools/Levels/chapter_one.py --check` — up to date
+- JSON parse of Floor997 / audio / entities / theme / metrics — ok
+- No conflict markers left in the four named files
+- Unity compile not run here (no batch editor on this agent host)
