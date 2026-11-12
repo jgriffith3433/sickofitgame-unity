@@ -40,7 +40,17 @@ namespace SickOfIt.Playtest
             AudioSource audioMusic;
             float audioMusicBefore;
             readonly List<float> voiceBefores = new List<float>();
-            bool audioJumped1, audioJumped2, audioDashed, audioDiamond, audioRewound;
+            bool audioJumped1, audioJumped2, audioDashed, audioDiamond, audioRewound, audioChain;
+            readonly List<(int step, float pitch, float t)> audioChimes = new List<(int, float, float)>();
+            int audioVolleys0 = -1, audioVolleys1;
+            float audioFrameSum;
+            int audioFrames, audioSlowFrames;
+
+            void AudioOnChime(int step, float pitch)
+            {
+                audioChimes.Add((step, pitch, Time.unscaledTime));
+                Run.Event("chime", $"diamond {step + 1} of the chain, pitch {pitch.ToString("0.000", CultureInfo.InvariantCulture)}");
+            }
 
             void AudioCheck(string beat, bool ok, string detail)
             {
@@ -110,6 +120,7 @@ namespace SickOfIt.Playtest
                 }
 
                 Sfx.Played += AudioOnPlayed;
+                GameplayHud.DiamondChimes += AudioOnChime;
                 AudioBuses.VoiceChanged += AudioOnVoice;
                 AudioBuses.Changed += AudioOnBuses;
                 try
@@ -143,6 +154,8 @@ namespace SickOfIt.Playtest
                     Run.Metric("audio.level1Sounds", level1Sounds);
 
                     AudioVerbChecks();
+                    AudioChainChecks();
+                    AudioShotChecks();
                     AudioTakeChecks();
                     AudioDuckChecks();
                     AudioAmbienceChecks("Level 1");
@@ -166,6 +179,7 @@ namespace SickOfIt.Playtest
                 finally
                 {
                     Sfx.Played -= AudioOnPlayed;
+                    GameplayHud.DiamondChimes -= AudioOnChime;
                     AudioBuses.VoiceChanged -= AudioOnVoice;
                     AudioBuses.Changed -= AudioOnBuses;
                     input.ReleaseAll();
@@ -186,6 +200,22 @@ namespace SickOfIt.Playtest
                 var hero = world != null ? world.PlayerController : null;
                 if (hero == null)
                     return null;
+                audioVolleys1 = hero.VolleysFired;
+                if (audioVolleys0 < 0)
+                    audioVolleys0 = audioVolleys1;
+                float dt = Time.unscaledDeltaTime;
+                if (dt > 0f && dt < 1f)
+                {
+                    audioFrames++;
+                    audioFrameSum += dt;
+                    if (dt > 1f / 30f)
+                        audioSlowFrames++;
+                }
+                if (!audioChain && now >= 44f)
+                {
+                    audioChain = true;
+                    return AudioDiamondChain();
+                }
                 if (!audioJumped1 && now >= 3f && hero.IsGrounded)
                 {
                     audioJumped1 = true;
@@ -214,6 +244,20 @@ namespace SickOfIt.Playtest
                     return HoldRewind(1.2f);
                 }
                 return null;
+            }
+
+            // Setup shortcut: five diamonds dropped on him 0.3 s apart (1.2 s from first to last); the pickup's own collect does the rest.
+            IEnumerator AudioDiamondChain()
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    var world = GameplayWorld.Instance;
+                    var hero = world != null ? world.PlayerController : null;
+                    if (hero != null)
+                        world.Spawn("diamond", (Vector2)hero.transform.position + new Vector2(0.25f, 0.1f), new SpawnOptions());
+                    Run.Event("shortcut", $"chain diamond {i + 1} of 5 dropped on him");
+                    yield return WaitReal(0.3f);
+                }
             }
 
             IEnumerator AudioJump()
@@ -267,6 +311,8 @@ namespace SickOfIt.Playtest
                     ("shot", e.playerShoot), ("hit", e.enemyHit), ("kill", e.killPop), ("graze", "graze_tick"), ("pickup", e.pickupDiamond),
                     ("jump", e.playerJump), ("land", e.playerLand), ("dash", e.playerDash), ("rewind", e.rewindStart),
                 };
+                // The hero's hurt sound is logged when the bot gets hit; it may not be in a clean minute, so it is counted, not required.
+                Run.Metric("audio.count.hurt", AudioCount(e.playerHurt));
                 var missing = new List<string>();
                 var counts = new List<string>();
                 foreach (var (verb, id) in verbs)
@@ -283,11 +329,43 @@ namespace SickOfIt.Playtest
                 AudioCheck("the rewind's stop is heard too", stops > 0 || AudioCount(e.rewindStart) == 0, $"{stops} x {e.rewindStop}");
             }
 
-            // The verbs played at their own pitch (the graze rises with its streak and the rewind's loop ramps by design).
+            // Five diamonds inside 2 s climb a semitone each: steps 0..4, each pitch above the last, the fifth four semitones (x1.26) over the first.
+            void AudioChainChecks()
+            {
+                bool found = false;
+                string detail = $"{audioChimes.Count} chimes";
+                for (int i = 0; i + 4 < audioChimes.Count && !found; i++)
+                {
+                    if (audioChimes[i].step != 0)
+                        continue;
+                    bool rising = true;
+                    for (int k = 1; k < 5; k++)
+                        rising &= audioChimes[i + k].step == k && audioChimes[i + k].pitch > audioChimes[i + k - 1].pitch;
+                    float span = audioChimes[i + 4].t - audioChimes[i].t;
+                    float ratio = audioChimes[i + 4].pitch / audioChimes[i].pitch;
+                    found = rising && span <= 2f && Mathf.Abs(ratio - 1.2599f) < 0.02f;
+                    detail = $"5 chimes in {span:0.00} s, pitch x{ratio:0.000} first to last";
+                }
+                AudioCheck("5 diamonds within 2 s play 5 rising pitches", found, detail);
+            }
+
+            // Every volley the hero fires has a shot sound (touch or not); the frame rate holds 30+ (the phone's criterion at 390x844).
+            void AudioShotChecks()
+            {
+                int volleys = audioVolleys1 - Mathf.Max(0, audioVolleys0);
+                int shots = AudioCount(Sfx.Events.playerShoot);
+                AudioCheck("the shot sound plays on every volley", volleys > 0 && shots >= Mathf.FloorToInt(volleys * 0.9f),
+                    $"{volleys} volleys, {shots} shot sounds, touch UI {(GameplayHud.TouchUiOn ? "on" : "off")}");
+                float fps = audioFrameSum > 0f ? audioFrames / audioFrameSum : 0f;
+                Run.Metric("audio.fps", fps);
+                AudioCheck("the frame rate holds 30+ fps", fps >= 30f, $"{fps:0.0} fps, {audioSlowFrames} of {audioFrames} frames over 33 ms");
+            }
+
+            // The verbs played at their own pitch (the graze rises with its streak, the diamond chime climbs its chain and the rewind loop ramps, by design).
             static bool AudioPitchChecked(string id)
             {
                 var e = Sfx.Events;
-                return id == e.playerShoot || id == e.enemyHit || id == e.killPop || id == e.playerHurt || id == e.pickupDiamond
+                return id == e.playerShoot || id == e.enemyHit || id == e.killPop || id == e.playerHurt
                     || id == e.playerJump || id == e.playerLand || id == e.playerDash || id == e.rewindStop;
             }
 

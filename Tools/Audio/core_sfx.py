@@ -17,28 +17,17 @@ MARK = 'synth|Tools/Audio/synth_core_sfx.py'   # generatedFrom: made by the synt
 
 # id: (hawkes gen prompt, seconds, influence, volume, maxVoices, cooldown)
 EFFECTS = {
-    'player_shoot': ('Punchy bright arcade shot: a crisp snappy pop with a short sparkly zap on top, tight and clear, retro video game blaster. '
-                     'One-shot, dry, no music. Very short, ends immediately.', 0.5, 0.6, 0.5, 4, 0.05),
-    'hit_pop': ('A bullet landing on an enemy: a short punchy slap-pop with a tiny crunchy crackle, bright and tight. One-shot, dry, no music. '
-                'Very short, ends immediately.', 0.5, 0.6, 0.55, 4, 0.03),
-    'kill_pop': ('An enemy defeated: a fat satisfying pop with a low thump under it and a quick sparkly shimmer on top, arcade kill sound. '
-                 'One-shot, dry, no music. Short, ends immediately.', 0.6, 0.6, 0.8, 4, 0.04),
-    'player_hurt': ('Cartoon hero getting hit: a sharp punchy slap impact with a short grunting buzz falling in pitch. One-shot, dry, no music.',
-                    0.5, 0.6, 0.9, 3, 0.2),
-    'graze_tick': ('Tiny sharp glassy tick, a bullet whipping past very close, quick bright zip with a small sparkle. One-shot, dry, no music.',
-                   0.5, 0.6, 0.45, 3, 0.05),
-    'pickup_diamond': ('Small crystal being picked up: two quick bright sparkly pings rising, clean and short. Video game pickup, one-shot, no melody.',
-                       0.5, 0.6, 0.6, 3, 0.04),
-    'player_jump': ('Light quick springy whoosh of a person jumping, a soft rising swish with a tiny boing. One-shot, dry, no music.', 0.5, 0.6, 0.45, 3, 0.04),
-    'player_land': ('Feet landing on soft grass, a short muffled thud with a puff of dust. One-shot, close-up, dry. Very short, ends immediately.',
-                    0.5, 0.6, 0.45, 3, 0.04),
-    'player_dash': ('A quick whoosh of a person dashing forward in a burst, cloth snapping, a short rising air swipe. One-shot, dry, no music.',
-                    0.5, 0.6, 0.55, 3, 0.1),
     'rewind_start': ('Cassette tape rewinding fast: a high-pitched reverse whirr climbing with a warbly tape wobble. Mechanical, no music.', 1.0, 0.6, 0.7, 1, 0.04),
     'rewind_stop': ('Cassette player stop button: a short plastic click with a soft mechanical clunk and a tape winding down. One-shot, dry. '
                     'Very short, ends immediately.', 0.5, 0.65, 0.6, 3, 0.04),
 }
 TAKES = 3
+
+# Made by Hawkes Gen (audio.sfx-open, Stable Audio 3, 4 prompt variants per event), baked by Tools/Audio/bake_gen_takes.py:
+# id: (prompt of the first take, seconds the take is cut to, influence, volume, maxVoices, cooldown), TAKE_COUNT = takes made.
+# The prompt in audio.json is what was made; generatedFrom is the Sound Generator's own key, so the editor shows them Ready.
+GEN = {'graze_tick': ('A bullet whipping past very close: a thin fast whoosh with a bright glassy zip and a tiny sparkle. One-shot, dry, no music.', 0.4, 0.6, 0.45, 3, 0.05), 'player_jump': ('A person jumping: a light springy push-off, a soft rising swish and a tiny boing. One-shot, dry, no music.', 0.45, 0.6, 0.45, 3, 0.04), 'player_dash': ('A quick dash burst: a snapping cloth whoosh with a rising air swipe and a soft low puff. One-shot, dry, no music.', 0.5, 0.6, 0.55, 3, 0.1), 'pickup_diamond': ('A single bright crystal ping, clean glassy and sparkly, short, one clear pitch. One-shot, no melody, no music.', 0.5, 0.6, 0.6, 4, 0.0), 'imp_hurt': ('A small soot imp hit: a sharp high squeal over a snappy thump, crackle of embers. One-shot, dry, no music.', 0.5, 0.6, 0.48, 4, 0.08), 'cinder_hurt': ('A living ember cinder hit: a crackling snap with a hiss and a shower of tiny sparks, a dull body thud. One-shot, dry, no music.', 0.5, 0.6, 0.44, 4, 0.08), 'player_shoot': ('Arcade rocket launcher shot: a short punchy low thump with a bright snapping crack on top, tight and dry, no tail. One-shot, no music.', 0.5, 0.6, 0.55, 4, 0.05), 'hit_pop': ('A bullet landing on an enemy: a bright sharp transient slap with a meaty low body thud right behind it, tight and punchy. One-shot, dry, no music.', 0.45, 0.6, 0.55, 4, 0.03), 'kill_pop': ('An enemy bursting: a crunchy pop transient, a fat low thump body and a quick shower of sparkly bits, Bullet Kin style. One-shot, dry, no music.', 0.8, 0.6, 0.8, 4, 0.04), 'player_hurt': ('Cartoon hero taking a hit: a sharp punchy slap transient and a low painful thump with a short grunt falling in pitch. One-shot, dry, no music.', 0.7, 0.6, 0.9, 4, 0.2), 'player_land': ('Boots landing on stone ground: a short solid thud with a puff of grit. One-shot, close-up, dry, no music.', 0.45, 0.6, 0.45, 3, 0.04), 'bullet_impact': ('A bullet hitting a stone wall: a sharp dry tick of impact with a short gritty puff of rock dust, very short. One-shot, no music.', 0.5, 0.6, 0.5, 4, 0.04), 'player_die': ('Cartoon hero knocked out: a big comedic bonk, a falling slide whistle and a sad little thud. One-shot, dry, no music.', 1.6, 0.6, 0.9, 4, 0.04), 'upgrade_pick': ('Buying a good in a shop: a coin clink, a satisfying cash-register ka-ching and a bright sparkle. One-shot, no music.', 0.6, 0.6, 0.8, 4, 0.04), 'imp_die': ('A small imp bursting into cinders: a squeaky shriek, a bassy pop and falling sparks. One-shot, dry, no music.', 0.9, 0.6, 0.6, 4, 0.1), 'cinder_die': ('A glowing cinder snuffing out: a soft whoomph with a bass thump, a sizzle and a puff of ash. One-shot, dry, no music.', 0.9, 0.6, 0.55, 4, 0.1), 'impSack_die': ('A sack imp falling over: a gruff yelp, a heavy thud and a spill of clinking gems. One-shot, dry, no music.', 0.9, 0.6, 0.6, 4, 0.1), 'cinderThatch_die': ('A clump of burning thatch collapsing: a crackly crunch with a low thump and a soft pop of sparks. One-shot, dry, no music.', 0.9, 0.6, 0.55, 4, 0.1)}
+TAKE_COUNT = {'player_land': 3, 'upgrade_pick': 3}
 
 # id: (prompt, seconds, volume)
 BEDS = {
@@ -50,7 +39,7 @@ BEDS = {
                            'stone. Seamless loop, no music, no melody.', 20, 0.8),
 }
 
-EVENTS = {'enemyHit': 'hit_pop', 'killPop': 'kill_pop'}
+EVENTS = {'enemyHit': 'hit_pop', 'killPop': 'kill_pop', 'bulletImpact': 'bullet_impact'}
 
 
 def load(path):
@@ -87,11 +76,17 @@ def build():
             index[entry['id']] = len(audio['sounds'])
             audio['sounds'].append(entry)
 
-    for sid, (prompt, seconds, influence, volume, voices, cooldown) in EFFECTS.items():
+    table = dict(EFFECTS)
+    table.update(GEN)
+    for sid, (prompt, seconds, influence, volume, voices, cooldown) in table.items():
         old = audio['sounds'][index[sid]] if sid in index else None
+        n_takes = TAKE_COUNT.get(sid, 4) if sid in GEN else TAKES
+        made = MARK
+        if sid in GEN:
+            made = f"effect|{('%.2f' % seconds).rstrip('0').rstrip('.')}|{('%.2f' % influence).rstrip('0').rstrip('.')}|False|{prompt}"
         put(sound_entry(old, id=sid, prompt=prompt, durationSeconds=seconds, promptInfluence=influence, loop=False,
-                        clip=f'{FOLDER}/{sid}_t1.ogg', takes=[f'{FOLDER}/{sid}_t{n}.ogg' for n in range(2, TAKES + 1)],
-                        bus='Sfx', generatedFrom=MARK, volume=volume, pitchVariation=0.06, maxVoices=voices, cooldown=cooldown))
+                        clip=f'{FOLDER}/{sid}_t1.ogg', takes=[f'{FOLDER}/{sid}_t{n}.ogg' for n in range(2, n_takes + 1)],
+                        bus='Sfx', generatedFrom=made, volume=volume, pitchVariation=0.06, maxVoices=voices, cooldown=cooldown))
     for sid, (prompt, seconds, volume) in BEDS.items():
         old = audio['sounds'][index[sid]] if sid in index else None
         put(sound_entry(old, id=sid, prompt=prompt, durationSeconds=seconds, promptInfluence=0.5, loop=True, clip=f'{FOLDER}/{sid}.ogg',
@@ -152,8 +147,8 @@ def level_edits():
 
 def check_files():
     problems = []
-    for sid in EFFECTS:
-        for n in range(1, TAKES + 1):
+    for sid in list(EFFECTS) + list(GEN):
+        for n in range(1, (TAKE_COUNT.get(sid, 4) if sid in GEN else TAKES) + 1):
             p = os.path.join(ROOT, 'Assets', FOLDER, f'{sid}_t{n}.ogg')
             if not os.path.exists(p) or not os.path.exists(p + '.meta'):
                 problems.append(f'missing take {p}')
