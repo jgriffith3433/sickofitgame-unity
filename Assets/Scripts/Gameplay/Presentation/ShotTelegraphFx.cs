@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SickOfIt.Core;
+using SickOfIt.Data;
 using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Gameplay

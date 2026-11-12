@@ -3,6 +3,7 @@ using UnityEngine;
 using SickOfIt.Combat.Health;
 using SickOfIt.Core;
 using SickOfIt.Core.Audio;
+using SickOfIt.Core.Input;
 using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Gameplay
