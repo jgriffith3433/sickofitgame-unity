@@ -5,3 +5,4 @@
 # 3. video.i2v batch (wait_for_server): thief idle/windup/attack/hurt + thatch windup/attack (seed assets in pending-gpu)
 # 4. die i2v struck a_6aaca8f81a5afad0 → framed-dead; bake thief+thatch via art.mjs --build --no-unity
 # 5. keep Windup/Attack entity paths; screenshot thief beside hero; delete pending-gpu when clear
+# (beta deleted waiting-jobs for the adaptive-score change — those Meadow music-loop jobs finished; floor loops stay in pending-gpu above.)
