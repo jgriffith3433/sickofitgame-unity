@@ -1051,6 +1051,52 @@ namespace SickOfIt.Gameplay
             }
         }
 
+        /// <summary>Chapter One replay: Watch again vs Skip (Docs/Story.md "Chapter One closes on Floor 997").</summary>
+        public void OfferChapterSkip(OfferChapterSkipAction action, ActionContext context)
+        {
+            if (action == null || world == null)
+                return;
+            int index = context.Director != null ? context.Director.IndexOfAction(action) : 0;
+            if (!world.TryGrantOnce("chapterSkip:" + index))
+                return;
+            // First play: no skip offer, run the face-off at once.
+            if (!UnlockFlags.Has("chapter1.seen"))
+            {
+                world.RunActions(action.onWatch, context);
+                return;
+            }
+            if (PickerOpen)
+            {
+                world.RunActions(action.onWatch, context);
+                return;
+            }
+            var stay = new MenuCardData
+            {
+                Badge = "1",
+                Title = string.IsNullOrEmpty(action.watchLabel) ? Texts.chapterOneWatch : action.watchLabel,
+                Description = "The face-off on the landing.",
+                Status = "Watch",
+            };
+            var take = new MenuCardData
+            {
+                Badge = "2",
+                Title = string.IsNullOrEmpty(action.skipLabel) ? Texts.chapterOneSkip : action.skipLabel,
+                Description = "On to the chapter card.",
+                Status = "Skip",
+            };
+            string title = string.IsNullOrEmpty(action.title) ? Texts.chapterOneTitle : action.title;
+            ShowShortcutChoice(title, stay, take, new Color(0.78f, 0.55f, 1f), "", "", pick =>
+            {
+                if (pick == 1)
+                {
+                    world.Telemetry?.Record("signal", "chapter1:skipped", 1);
+                    world.RunActions(action.onSkip, context);
+                }
+                else
+                    world.RunActions(action.onWatch, context);
+            });
+        }
+
         public void Choose(int index)
         {
             if (!PickerOpen || index < 0 || index >= pickerCount || (pickerLocked != null && pickerLocked.Contains(index)))

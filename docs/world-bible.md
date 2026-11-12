@@ -210,11 +210,11 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 
 ### The Overlord
 - Want: Up and out, to the surface, ahead of the hero.
-- Arc: Seen far off and never answering, until Floor 1 where he rewinds too.
-- Moment: A glimpse on the far ledge: a taunt, a dropped ember, a laser sweep, then he is gone upward.
+- Arc: Seen far off and never answering; first face-off on Floor 997 (Chapter One) still without answering; until Floor 1 where he rewinds too.
+- Moment: Chapter One on Floor 997: his lens sweeps while he talks past the hero, then he escapes up the Shaft laughing.
 - Personality: bored, enormous, stuck
 - Voice: `overlord`
-- Animations: Idle, Walk, Talk (art/overlordFar.json)
+- Animations: Idle, Walk, Talk, Laugh, Point, Flee (art/overlordFar.json, art/overlordTaunt.json)
 
 ### Rook
 - Want: To reach the top first and be seen doing it.
@@ -304,6 +304,12 @@ away again". `OverlordEscape` (`Gameplay/Presentation`, made by `GameplayHud.Bui
 saved. It is the quiet spine of the eight far-ledge glimpses and of the Floor 1 reveal that the loop was his first.
 Playtest `overlord-chase` (run on 390x844 touch: a finger on the rewind button, 44+ px).
 
+### Chapter One (Floor 997 landing, built Nov 12)
+After Imp Run's finale the camera finds the Overlord on the landing ledge (BeatDirector), then a 20–40 s playable exchange: his
+lens in three escalating phrases (0.5 s telegraph each), five voiced lines (he never answers the hero; the hero replies), then
+he flees up the Shaft laughing. A CHAPTER ONE card (time, deaths, rewinds, diamonds) closes on the hero's daylight hook
+(Floor 500 foreshadow). Flag `chapter1.seen` offers Skip on replay. Entity `overlordChapter`; playtest `chapter-one`.
+
 ### Death and the Waystone loop
 On death: the hero blinks, the announcer gloats, a quip, and **Again!** at once; the Shaft drops the marker to the last
 Waystone only if the run ends. The run feels like the loop, not a penalty.
@@ -337,19 +343,21 @@ Each beat is lived, not read. Format: **where / when -> what happens (events, so
    ninety-nine", the hero replies once. *Voice* both sides.
 8. **The theft (Floor 998).** The launcher is taken from his hands in play (animation, a snatch sound, imps cheer);
    he gets fists. *Voice:* the hero's line. *Text:* the beat line only.
-9. **The Foreman falls (Floor 991).** A voiced intro, the pile rises, the whip cracks; at the defeat, slow motion and
+9. **Chapter One (Floor 997 landing).** After the Imp Run finale the camera finds the Overlord; a playable lens exchange
+   (three phrases, voiced lines); he escapes up laughing; CHAPTER ONE card + daylight hook. *Voice* both. *Text:* card title only.
+10. **The Foreman falls (Floor 991).** A voiced intro, the pile rises, the whip cracks; at the defeat, slow motion and
    a wave of diamonds; the Sack Lift offers a fare.
-10. **The Overlord's glimpses (997-806).** A taunt, a dropped ember, a lift, a laser, a stolen diamond, a rewind, a
-    summons, a dropped diamond: each with his one line and the hero's reply. He never answers.
-11. **Wick and Rook (Circle X).** Rook cuts in, shoots the same imp, leaves a mess; Wick lights a lamp the hero needs;
+11. **The Overlord's glimpses (994-806).** A dropped ember, a lift, a laser, a stolen diamond, a rewind, a
+    summons, a dropped diamond (997's far-ledge taunt still plays mid-floor before the landing face-off): each with his one line and the hero's reply. He never answers.
+12. **Wick and Rook (Circle X).** Rook cuts in, shoots the same imp, leaves a mess; Wick lights a lamp the hero needs;
     each scene branches on his hearts, diamonds and Grudges and sets a flag the later scenes read.
-12. **The Magma King's knock (Floor 902).** A chuckle through the door, then a knock heard from the other side; the
+13. **The Magma King's knock (Floor 902).** A chuckle through the door, then a knock heard from the other side; the
     door opens; he does not stand. *Voice:* the King. The fight ends in the Waystone's light.
-13. **Circle IX wakes (Shaft).** The marker climbs; the hum of the Spire Fiend rises; Pointer's first scene (900).
-14. **The Fiend counts (Floor 801).** He whispers the hero's steps back; the rewind enrages him; the spire shatters.
-15. **Midpoint, Floor 500.** The hero is offered a shortcut home: a lit door, daylight in it, the sound of the
+14. **Circle IX wakes (Shaft).** The marker climbs; the hum of the Spire Fiend rises; Pointer's first scene (900).
+15. **The Fiend counts (Floor 801).** He whispers the hero's steps back; the rewind enrages him; the spire shatters.
+16. **Midpoint, Floor 500.** The hero is offered a shortcut home: a lit door, daylight in it, the sound of the
     meadow. He walks past. *Voice:* hero. *Text:* none.
-16. **Floor 1.** The Overlord rewinds too; the gate cracks onto the meadow; daylight pours in. The endings play through
+17. **Floor 1.** The Overlord rewinds too; the gate cracks onto the meadow; daylight pours in. The endings play through
     gameplay, then the knock from underground.
 
 Every beat above is an event first. A beat that is only a `showText` is a defect.

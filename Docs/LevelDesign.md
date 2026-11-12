@@ -536,7 +536,8 @@ the thumb (the stick lives in the control strip below the playfield in portrait,
 - **Lines:** Announcer: *"FLOOR NINE NINETY-SEVEN! IMP RUN!"* Hero: *"Those are ours."* At the breather: *"One less
   sack for his gate."*
 - **Long floor (2026-10-25):** the floor keeps its opening as it was (the idea above, its first beats and its lines) and goes on for ~150-195 s (the camera at 0.95, no timer on the landing): a riser, then five set pieces after it, each its own section and phase, in this order: **The Sack Route** (ledges with sack imps swinging over every second gap), **The High Haul** (a climb with imps swinging beside it), **Diamond Shower**, **Chains Everywhere** (an imp over every gap) and **The Lift Stop** (the finale). The idea: the hauling chains' sack imps, only now a whole route of them; fists only (Floors 998-994): the cinders and sparks come with the usual fists brutes. Recipe: "A long bullet-hell floor" below; built by `Tools/Levels/long_floors.py`.
-- **Length:** ~175 s (declared in the script; `long_floors.py` computes it from the path).
+- **Chapter One (2026-11-12):** after the Lift Stop finale, the landing starts phase `chapterOne` (not an instant clear): BeatDirector finds the Overlord, a 20–40 s playable lens exchange (three escalating `laserSweep` phrases, 0.5 s telegraph), five voiced lines, he escapes up laughing, then a CHAPTER ONE card (time, deaths, rewinds, diamonds) with the daylight hook. Flag `chapter1.seen` offers Skip on replay. `Tools/Levels/chapter_one.py`; playtest `chapter-one`.
+- **Length:** ~175 s climb + ~30 s face-off (declared in the script; `long_floors.py` computes the climb from the path).
 
 #### Floor 996: The Slag Falls
 

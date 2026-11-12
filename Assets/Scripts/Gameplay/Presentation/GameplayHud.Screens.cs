@@ -10,6 +10,7 @@ using SickOfIt.Core.Audio;
 using SickOfIt.Core.UI.Menus;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
+using SickOfIt.Gameplay.Content;
 
 namespace SickOfIt.Gameplay
 {
@@ -190,17 +191,149 @@ namespace SickOfIt.Gameplay
         /// Shows the end-of-level results (time, kills, hits, rewinds, diamonds) and a grade, paused, until the
         /// player continues. Score: 100, minus 12 per hit taken and 4 per rewind.
         /// </summary>
+        bool chapterCardShown;
+
+        /// <summary>
+        /// CHAPTER ONE card before the Grudge pick (Docs/Story.md). Continue offers a Grudge, then clears the floor;
+        /// <see cref="ShowResults"/> then skips so the card is not shown twice.
+        /// </summary>
+        public void ShowChapterCard(ShowChapterCardAction action, ActionContext context)
+        {
+            if (resultsRoot != null || action == null)
+                return;
+            if (Paused)
+                SetPaused(false);
+            chapterCardShown = true;
+            world.SetCounter("chapterOne", 1f);
+            var summary = world.Telemetry.Summarize("chapter");
+            int points = RogueliteManager.Instance != null ? RogueliteManager.Instance.GetPoints() : 0;
+            int diamondsGained = pointsAtStart >= 0 ? Mathf.Max(0, points - pointsAtStart) : 0;
+            int heroDeaths = Mathf.Max(0, Mathf.RoundToInt(world.GetCounter("heroDeaths")));
+
+            Time.timeScale = 0f;
+            GameClock.Instance?.Pause();
+            PlayAnalytics.ResultsShown(world);
+            UiSounds.LevelClear();
+            string hookSound = string.IsNullOrEmpty(action.hookSound) ? Texts.chapterOneHookSound : action.hookSound;
+            if (string.IsNullOrEmpty(hookSound))
+                hookSound = "vo_ch1_hero_daylight";
+            Sfx.Play(hookSound);
+            string hookText = string.IsNullOrEmpty(action.hookText) ? Texts.chapterOneHook : action.hookText;
+            world.Telemetry?.Record("signal", "chapter1:hook", 1, hookText);
+
+            var overlay = Overlay.Create(menu, "ChapterCard", 0.78f);
+            resultsRoot = overlay.Root;
+            var inner = overlay.Inner;
+            string title = string.IsNullOrEmpty(action.title)
+                ? (string.IsNullOrEmpty(Texts.chapterOneTitle) ? "CHAPTER ONE" : Texts.chapterOneTitle)
+                : action.title;
+            menu.AddText(inner, "Title", title, theme.title, new Vector2(0.5f, 0.85f), Vector2.zero, new Vector2(1500f, 170f),
+                out _, Mathf.Min(theme.title.fontSize, 130f), menu.TitleFont, theme.titleEntrance,
+                new MenuMotion { type = MenuMotionType.Wobble, amount = 1.2f, speed = 0.4f }, -3f);
+
+            var stats = new List<(string label, string value, int amount, Func<int, string> format)>
+            {
+                (Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)),
+                (Texts.resultsDeaths, heroDeaths.ToString(), heroDeaths, s => s.ToString()),
+                (Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()),
+                (Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s),
+            };
+            ResultsSummary = string.Join(" | ", stats.Select(r => r.label + ": " + r.value));
+            world.Telemetry?.Record("signal", "chapter1:cardShown", 1, ResultsSummary);
+
+            var screens = Screens;
+            for (int i = 0; i < stats.Count; i++)
+            {
+                float y = 0.66f - i * 0.085f;
+                float tallY = screens.resultsStatsTop - i * screens.resultsStatsStep;
+                var label = menu.AddText(inner, "Stat", stats[i].label, theme.heading, new Vector2(0.36f, y), Vector2.zero,
+                    new Vector2(520f, 70f), out _, 44f, null, theme.entrance);
+                label.alignment = TextAlignmentOptions.MidlineLeft;
+                MenuResponsive.Track((RectTransform)label.transform.parent, MenuPlacement.At(0.36f, y, 0f, 0f, 520f, 70f),
+                    MenuPlacement.At(screens.resultsLabelX, tallY, 0f, 0f, 520f, 70f), MenuElementKind.Text, menu.Responsive);
+                var value = menu.AddText(inner, "Value", stats[i].value, theme.heading, new Vector2(0.52f, y), Vector2.zero,
+                    new Vector2(300f, 70f), out _, 48f, null, theme.entrance);
+                MenuResponsive.Track((RectTransform)value.transform.parent, MenuPlacement.At(0.52f, y, 0f, 0f, 300f, 70f),
+                    MenuPlacement.At(screens.resultsValueX, tallY, 0f, 0f, 300f, 70f), MenuElementKind.Text, menu.Responsive);
+                value.alignment = TextAlignmentOptions.MidlineRight;
+                value.enableVertexGradient = false;
+                value.color = theme.accent;
+                var ticker = NumberTicker.On(value, stats[i].format);
+                ticker.Snap(0);
+                ticker.CountTo(stats[i].amount, 0.7f, 0.55f + i * 0.14f);
+            }
+
+            var stamp = MenuGraphics.NewRect("Grade", inner);
+            MenuGraphics.Place(stamp, new Vector2(0.72f, 0.5f), Vector2.zero, new Vector2(330f, 330f));
+            MenuGraphics.Surface(stamp, new MenuSurfaceStyle
+            {
+                shape = MenuShape.Burst,
+                fill = new Color(0.72f, 0.45f, 0.95f, 1f),
+                borderColor = theme.title.outlineColor,
+                borderWidth = 9f,
+                shadowColor = theme.title.outlineColor,
+                shadowOffset = new Vector2(8f, -10f),
+            });
+            var letter = MenuGraphics.Text(stamp, "Letter", "I", theme.title, menu.TitleFont, 170f);
+            letter.enableVertexGradient = false;
+            letter.color = new Color(1f, 0.97f, 0.88f, 1f);
+            var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
+                new MenuEntrance { type = MenuEntranceType.Pop, duration = 0.45f, delay = 0f }, 12f);
+            MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
+            stampMotion.EntranceDelay = 0.9f;
+
+            var quip = menu.AddText(inner, "Quip", string.IsNullOrEmpty(hookText) ? "Daylight's still up there. Somewhere." : hookText,
+                theme.subtitle, new Vector2(0.72f, 0.27f), Vector2.zero, new Vector2(620f, 100f),
+                out var quipMotion, 36f, null, theme.entrance, null, 4f);
+            MenuResponsive.Track((RectTransform)quip.transform.parent, MenuPlacement.At(0.72f, 0.27f, 0f, 0f, 620f, 100f), screens.resultsQuip,
+                MenuElementKind.Text, menu.Responsive);
+            quipMotion.EntranceDelay = 1.2f;
+
+            var go = theme.button.Clone();
+            go.size = new Vector2(420f, Mathf.Max(100f, go.size.y));
+            menu.AddButtonAt(new Vector2(0.5f, 0.1f), Vector2.zero, Texts.continueText, go, () =>
+            {
+                if (!continuing)
+                    StartCoroutine(ContinueChapterCard(context));
+            }, inner, screens.resultsContinue);
+            world.Telemetry?.Record("signal", "chapter1:continueReady", Mathf.RoundToInt(go.size.y), "continueH");
+        }
+
+        System.Collections.IEnumerator ContinueChapterCard(ActionContext context)
+        {
+            continuing = true;
+            PanelAnim.CloseAndDestroy(resultsRoot);
+            resultsRoot = null;
+            continuing = false;
+            Time.timeScale = 1f;
+            GameClock.Instance?.Resume();
+            // Grudge pick after the card, then clear — Continue leads on as today.
+            var offer = new OfferUpgradesAction { title = "Pick a grudge", count = 3 };
+            world.Upgrades.Offer(offer, context);
+            float waitUntil = Time.unscaledTime + 90f;
+            while (PickerOpen && Time.unscaledTime < waitUntil)
+                yield return null;
+            world.SetCounter("cleared", 1f);
+        }
+
         public void ShowResults(Action onContinue)
         {
             if (resultsRoot != null)
                 return;
+            // Chapter card already celebrated this clear: go on without a second results screen.
+            if (chapterCardShown && world.GetCounter("chapterOne") >= 1f)
+            {
+                onContinue?.Invoke();
+                return;
+            }
             if (Paused)
                 SetPaused(false);
             var summary = world.Telemetry.Summarize("complete");
             int points = RogueliteManager.Instance != null ? RogueliteManager.Instance.GetPoints() : 0;
             int diamondsGained = pointsAtStart >= 0 ? Mathf.Max(0, points - pointsAtStart) : 0;
+            bool chapterOne = world.GetCounter("chapterOne") >= 1f;
             // The floor's rank (S/A/B/C: par time, no hits, grazes, rewind use), saved per floor when it is the best.
-            var rank = world.Style != null && world.Style.Active ? world.Style.Rank(summary) : (FloorRank?)null;
+            var rank = !chapterOne && world.Style != null && world.Style.Active ? world.Style.Rank(summary) : (FloorRank?)null;
             int cleanKills = Mathf.Clamp(Mathf.RoundToInt(world.GetCounter("cleanKills")), 0, summary.kills);
             world.Telemetry?.Record("cleanKills", "level " + world.LevelNumber, cleanKills, $"kills {summary.kills} time {summary.duration:0.0}");
             int score = Mathf.Clamp(100 - summary.playerHits * 12 - summary.rewinds * 4, 0, 100);
@@ -224,29 +357,50 @@ namespace SickOfIt.Gameplay
             GameClock.Instance?.Pause();
             PlayAnalytics.ResultsShown(world);
             UiSounds.LevelClear();
-            Sfx.Play(Sfx.Events.levelClearVoice);
+            if (chapterOne)
+            {
+                string hookSound = string.IsNullOrEmpty(Texts.chapterOneHookSound) ? "vo_ch1_hero_daylight" : Texts.chapterOneHookSound;
+                Sfx.Play(hookSound);
+                world.Telemetry?.Record("signal", "chapter1:hook", 1, Texts.chapterOneHook);
+            }
+            else
+                Sfx.Play(Sfx.Events.levelClearVoice);
             resultsNewBestPending = newBest;
 
             var overlay = Overlay.Create(menu, "Results", 0.78f);
             resultsRoot = overlay.Root;
             var inner = overlay.Inner;
-            menu.AddText(inner, "Title", Texts.resultsTitle, theme.title, new Vector2(0.5f, 0.85f), Vector2.zero, new Vector2(1500f, 170f),
+            string title = chapterOne
+                ? (string.IsNullOrEmpty(Texts.chapterOneTitle) ? "CHAPTER ONE" : Texts.chapterOneTitle)
+                : Texts.resultsTitle;
+            menu.AddText(inner, "Title", title, theme.title, new Vector2(0.5f, 0.85f), Vector2.zero, new Vector2(1500f, 170f),
                 out _, Mathf.Min(theme.title.fontSize, 130f), menu.TitleFont, theme.titleEntrance,
                 new MenuMotion { type = MenuMotionType.Wobble, amount = 1.2f, speed = 0.4f }, -3f);
 
-            var stats = new List<(string label, string value, int amount, Func<int, string> format)>
+            int heroDeaths = Mathf.Max(0, Mathf.RoundToInt(world.GetCounter("heroDeaths")));
+            var stats = new List<(string label, string value, int amount, Func<int, string> format)>();
+            if (chapterOne)
             {
-                (rank.HasValue ? string.Format(Texts.resultsTimePar, FormatTime(rank.Value.Par)) : Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)),
-                (Texts.resultsKills, summary.kills.ToString(), summary.kills, s => s.ToString()),
-                (Texts.resultsCleanKills, cleanKills.ToString(), cleanKills, s => s.ToString()),
-                (Texts.resultsHits, summary.playerHits.ToString(), summary.playerHits, s => s.ToString()),
-            };
-            if (rank.HasValue)
-                stats.Add((Texts.resultsGrazes, rank.Value.Grazes.ToString(), rank.Value.Grazes, s => s.ToString()));
-            stats.Add((Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()));
-            stats.Add((Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s));
+                stats.Add((Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)));
+                stats.Add((Texts.resultsDeaths, heroDeaths.ToString(), heroDeaths, s => s.ToString()));
+                stats.Add((Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()));
+                stats.Add((Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s));
+            }
+            else
+            {
+                stats.Add((rank.HasValue ? string.Format(Texts.resultsTimePar, FormatTime(rank.Value.Par)) : Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)));
+                stats.Add((Texts.resultsKills, summary.kills.ToString(), summary.kills, s => s.ToString()));
+                stats.Add((Texts.resultsCleanKills, cleanKills.ToString(), cleanKills, s => s.ToString()));
+                stats.Add((Texts.resultsHits, summary.playerHits.ToString(), summary.playerHits, s => s.ToString()));
+                if (rank.HasValue)
+                    stats.Add((Texts.resultsGrazes, rank.Value.Grazes.ToString(), rank.Value.Grazes, s => s.ToString()));
+                stats.Add((Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()));
+                stats.Add((Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s));
+            }
             ResultsSummary = string.Join(" | ", stats.Select(r => r.label + ": " + r.value));
             ResultsCleanKills = cleanKills;
+            if (chapterOne)
+                world.Telemetry?.Record("signal", "chapter1:cardShown", 1, ResultsSummary);
             // Landscape: the stats on the left, the grade beside them. Portrait: stats on top, grade under them.
             var screens = Screens;
             for (int i = 0; i < stats.Count; i++)
@@ -271,19 +425,20 @@ namespace SickOfIt.Gameplay
                 ticker.CountTo(stats[i].amount, 0.7f, 0.55f + i * 0.14f);
             }
 
-            // The grade: a stamped starburst that slams in after the stats.
+            // The grade (or Chapter One's "I" stamp): a stamped starburst that slams in after the stats.
             var stamp = MenuGraphics.NewRect("Grade", inner);
             MenuGraphics.Place(stamp, new Vector2(0.72f, 0.5f), Vector2.zero, new Vector2(330f, 330f));
+            var stampColor = chapterOne ? new Color(0.72f, 0.45f, 0.95f, 1f) : grade.color;
             MenuGraphics.Surface(stamp, new MenuSurfaceStyle
             {
                 shape = MenuShape.Burst,
-                fill = grade.color,
+                fill = stampColor,
                 borderColor = theme.title.outlineColor,
                 borderWidth = 9f,
                 shadowColor = theme.title.outlineColor,
                 shadowOffset = new Vector2(8f, -10f),
             });
-            var letter = MenuGraphics.Text(stamp, "Letter", grade.grade, theme.title, menu.TitleFont, 170f);
+            var letter = MenuGraphics.Text(stamp, "Letter", chapterOne ? "I" : grade.grade, theme.title, menu.TitleFont, 170f);
             letter.enableVertexGradient = false;
             letter.color = new Color(1f, 0.97f, 0.88f, 1f);
             var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
@@ -291,10 +446,13 @@ namespace SickOfIt.Gameplay
             MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
             stampMotion.EntranceDelay = 0.9f;
             gradeSoundAt = Time.unscaledTime + 0.95f;
-            gradeSting = grade.stingSound;
-            var quip = menu.AddText(inner, "Quip", grade.quip, theme.subtitle, new Vector2(0.72f, 0.27f), Vector2.zero, new Vector2(620f, 80f),
+            gradeSting = chapterOne ? "" : grade.stingSound;
+            string quipText = chapterOne
+                ? (string.IsNullOrEmpty(Texts.chapterOneHook) ? "Daylight's still up there. Somewhere." : Texts.chapterOneHook)
+                : grade.quip;
+            var quip = menu.AddText(inner, "Quip", quipText, theme.subtitle, new Vector2(0.72f, 0.27f), Vector2.zero, new Vector2(620f, 100f),
                 out var quipMotion, 36f, null, theme.entrance, null, 4f);
-            MenuResponsive.Track((RectTransform)quip.transform.parent, MenuPlacement.At(0.72f, 0.27f, 0f, 0f, 620f, 80f), screens.resultsQuip,
+            MenuResponsive.Track((RectTransform)quip.transform.parent, MenuPlacement.At(0.72f, 0.27f, 0f, 0f, 620f, 100f), screens.resultsQuip,
                 MenuElementKind.Text, menu.Responsive);
             quipMotion.EntranceDelay = 1.2f;
 
@@ -325,12 +483,15 @@ namespace SickOfIt.Gameplay
             NextGoalBridge.BuildResultsCard?.Invoke(menu, inner, goalFloor);
 
             var go = theme.button.Clone();
-            go.size = new Vector2(420f, 100f);
+            // Phone acceptance: Continue at least 48 px tall (100 design units keeps it well above on 390x844).
+            go.size = new Vector2(420f, Mathf.Max(100f, go.size.y));
             menu.AddButtonAt(new Vector2(0.5f, 0.1f), Vector2.zero, Texts.continueText, go, () =>
             {
                 if (!continuing)
                     StartCoroutine(ContinueThroughCover(onContinue));
             }, inner, screens.resultsContinue);
+            if (chapterOne)
+                world.Telemetry?.Record("signal", "chapter1:continueReady", Mathf.RoundToInt(go.size.y), "continueH");
         }
 
         bool continuing;
@@ -440,6 +601,8 @@ namespace SickOfIt.Gameplay
                         UiSounds.DeathSting();
                         Sfx.Play(Sfx.Events.deathVoice);
                         deathAnnounced = true;
+                        // Chapter One card counts every death window opened on this floor (undone ones too).
+                        world?.AddCounter("heroDeaths", 1f);
                     }
                     Sfx.Play(Sfx.Events.deathWarning);
                 }

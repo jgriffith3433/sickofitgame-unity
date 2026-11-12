@@ -2326,6 +2326,33 @@ Not only on the far ledges: when the hero dies and undoes it, rewinding past the
 the top of the screen, eyes red, a low hum rising. He is always ahead; time backward is the only way to see his back. A rewind
 that undoes no death shows nothing. (`OverlordEscape`; world bible "The chase".)
 
+## Chapter One closes on Floor 997 (built 2026-11-12)
+
+Floors 1000–997 are the **opening climb**: one new threat each, taught then pushed into a finale. After Floor 997's Imp Run
+finale (the Lift Stop), the hero **catches up** with the Overlord for the first time — not a Warden fight, a 20–40 s playable
+face-off on the landing ledge.
+
+**Canon holds.** The Overlord still never answers the hero and never turns to him. He talks to the air (or past the hero);
+the hero's lines are deadpan replies. Dying here and holding R still shows his back for a moment (the chase / Flee clip).
+His signature is the **lens**: a thin warning line for 0.5 s, then a `laserSweep` in three escalating phrases (wider, faster).
+Survivable on Assist and Normal: every phrase telegraphs.
+
+**Lines (voice `overlord` / `player`, made as one dialogue then split to stems):**
+
+| # | Who | Line |
+|---|---|---|
+| 1 | Overlord | *"Mm. ... Caught up."* |
+| 2 | Hero | *"Been looking for you."* |
+| 3 | Overlord | *"Mm. ... Watch."* |
+| 4 | Hero | *"I always do."* |
+| 5 | Overlord | *"Mm. ... Not far enough."* |
+
+He escapes **up the Shaft** laughing; music resolves into a short chapter sting. A **CHAPTER ONE** complete card shows time,
+deaths, rewinds and diamonds, then one voiced hook that foreshadows Floor 500's door with daylight: hero *"Daylight's still
+up there. Somewhere."* Continue leads on as today (Grudge pick, Shaft to 996). Flag `chapter1.seen` (kept until New Game):
+a replay offers Skip. Written by `Tools/Levels/chapter_one.py`; playtest `chapter-one`. This is the player-facing close of
+the opening climb, not the end of Act 1 (Circles X–VIII in the act table above).
+
 ## The Overlord watches the climb (Floors 1000-997, built 2026-11-12)
 
 The first four floors gave him no face; now he has one. On Floors 1000-997 the Overlord is on screen again and again, small and far on the

@@ -499,11 +499,14 @@ namespace SickOfIt.Data.Config
         public string done = "Done";
 
         public string resultsTitle = "Level Clear!";
+        [Tooltip("Floor 997 Chapter One complete card title.")]
+        public string chapterOneTitle = "CHAPTER ONE";
         public string resultsTime = "Time";
         public string resultsKills = "Kills";
         [Tooltip("Results row: kills with the hero unhurt (no hit in the last cleanKillSeconds).")]
         public string resultsCleanKills = "Clean Kills";
         public string resultsHits = "Hits Taken";
+        public string resultsDeaths = "Deaths";
         public string resultsRewinds = "Rewinds";
         public string resultsDiamonds = "Diamonds";
         [Tooltip("{0} = par time.")]
@@ -513,7 +516,14 @@ namespace SickOfIt.Data.Config
         public string resultsNewBest = "NEW BEST";
         [Tooltip("{0} = the floor's best rank.")]
         public string resultsBest = "Best: {0}";
+        [Tooltip("Chapter One card hook (Floor 500 daylight foreshadow); audio.json vo_ch1_hero_daylight.")]
+        public string chapterOneHook = "Daylight's still up there. Somewhere.";
+        public string chapterOneHookSound = "vo_ch1_hero_daylight";
         public string continueText = "Continue";
+        [Tooltip("Chapter One replay: watch the face-off again.")]
+        public string chapterOneWatch = "Face him again";
+        [Tooltip("Chapter One replay: skip the face-off.")]
+        public string chapterOneSkip = "Skip";
 
         public string deathTitle = "You Died";
         public string deathRewind = "Hold R to undo it!";

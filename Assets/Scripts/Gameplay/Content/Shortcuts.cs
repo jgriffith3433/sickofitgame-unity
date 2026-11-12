@@ -48,6 +48,39 @@ namespace SickOfIt.Gameplay.Content
             return choice.HasValue && choice.Value == taken;
         }
     }
+
+    [Serializable, JsonType("offerChapterSkip")]
+    [Doc("Chapter One replay (Floor 997): when chapter1.seen is set, pauses and offers Watch again vs Skip. " +
+         "Skip runs onSkip; Watch runs onWatch. First play / no flag: runs onWatch at once (the face-off). Once per play.")]
+    public sealed class OfferChapterSkipAction : GameAction
+    {
+        public string title = "CHAPTER ONE";
+        public string watchLabel = "Face him again";
+        public string skipLabel = "Skip";
+        public System.Collections.Generic.List<GameAction> onSkip = new System.Collections.Generic.List<GameAction>();
+        public System.Collections.Generic.List<GameAction> onWatch = new System.Collections.Generic.List<GameAction>();
+
+        public override void Run(ActionContext context) => context.World.Hud?.OfferChapterSkip(this, context);
+
+        public override void CollectChildren(System.Collections.Generic.List<GameAction> into)
+        {
+            if (onSkip != null)
+                into.AddRange(onSkip);
+            if (onWatch != null)
+                into.AddRange(onWatch);
+        }
+    }
+
+    [Serializable, JsonType("showChapterCard")]
+    [Doc("CHAPTER ONE complete card (Floor 997): time, deaths, rewinds, diamonds, hook VO. Continue then offers a Grudge and clears the floor.")]
+    public sealed class ShowChapterCardAction : GameAction
+    {
+        public string title = "CHAPTER ONE";
+        public string hookSound = "vo_ch1_hero_daylight";
+        public string hookText = "Daylight's still up there. Somewhere.";
+
+        public override void Run(ActionContext context) => context.World.Hud?.ShowChapterCard(this, context);
+    }
 }
 
 namespace SickOfIt.Gameplay.Content
