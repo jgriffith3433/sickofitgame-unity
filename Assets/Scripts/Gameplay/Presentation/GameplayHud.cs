@@ -1015,6 +1015,7 @@ namespace SickOfIt.Gameplay
             pickerLocked = locked;
             pickerIsShortcut = false;
             Sfx.Play(Sfx.Events.upgradeOffer);
+            SickOfIt.Core.Fx.HitFreeze.Cancel();
             timeScaleBeforePicker = Time.timeScale;
             Time.timeScale = 0f;
 

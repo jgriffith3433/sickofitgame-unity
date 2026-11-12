@@ -37,6 +37,8 @@ namespace SickOfIt.Playtest
             public IEnumerator FirstRewindRun()
             {
                 yield return FirstRewindOnce(false);
+                if (!Run.Done)
+                    yield return FirstRewindOnce(false, true);
                 if (Run.Done)
                     yield break;
                 Run.Progress(0.5f);
@@ -47,6 +49,8 @@ namespace SickOfIt.Playtest
                     yield return Run.Until(() => Screen.width == 390 && Screen.height == 844, 6f, "the window to resize to 390x844");
                 }
                 yield return FirstRewindOnce(true);
+                if (!Run.Done)
+                    yield return FirstRewindOnce(true, true);
                 GameplayHud.TouchUiForced = false;
                 if (CanResizeWindow)
                     Screen.SetResolution(w0, h0, false);
@@ -57,9 +61,9 @@ namespace SickOfIt.Playtest
                 End(firstRewindFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
             }
 
-            IEnumerator FirstRewindOnce(bool touch)
+            IEnumerator FirstRewindOnce(bool touch, bool noRewind = false)
             {
-                string tag = touch ? "touch 390x844" : "desktop";
+                string tag = (touch ? "touch 390x844" : "desktop") + (noRewind ? " no rewind" : "");
                 GameplayHud.TouchUiForced = touch;
                 GameplayHud.ResetTouchHints();
                 Run.Event("shortcut", $"level 1 loaded directly ({tag})");
@@ -77,11 +81,11 @@ namespace SickOfIt.Playtest
                     if (started)
                         return null;
                     started = true;
-                    return FirstRewindWatch(touch, tag, () => done = true);
+                    return FirstRewindWatch(touch, tag, () => done = true, noRewind);
                 }, touch ? 0.5f : 0f, touch ? 1f : 0.5f, 200f, until: () => done);
             }
 
-            IEnumerator FirstRewindWatch(bool touch, string tag, System.Action finished)
+            IEnumerator FirstRewindWatch(bool touch, string tag, System.Action finished, bool noRewind)
             {
                 var world = GameplayWorld.Instance;
                 var hud = world.Hud;
@@ -141,6 +145,20 @@ namespace SickOfIt.Playtest
                             FirstRewindCheck($"{tag}: the pulsing button is 64+ px", px >= 64f, $"{px:0} px");
                         Run.Metric($"firstRewind.{(touch ? "touch" : "desktop")}.buttonPx", px);
                         stageChecked = true;
+                        if (noRewind)
+                        {
+                            // The player does nothing: time must come back by itself within 2 s of real time (never stuck in slow motion).
+                            float hitReal = Time.realtimeSinceStartup - 0.5f;
+                            yield return Run.Until(() => Time.timeScale > 0.99f, 2f, "time to return to full speed");
+                            float back = Time.realtimeSinceStartup - hitReal;
+                            FirstRewindCheck($"{tag}: time scale back to 1 within 2 s", Time.timeScale > 0.99f && back <= 2.2f, $"{back:0.00} s, time scale {Time.timeScale:0.00}, freeze active {SickOfIt.Core.Fx.HitFreeze.Active}");
+                            FirstRewindCheck($"{tag}: the button still pulses after", FirstRewindStage.Pulsing, $"stage {FirstRewindStage.Current}");
+                            Run.Metric($"firstRewind.noRewind.{(touch ? "touch" : "desktop")}.secondsToFullSpeed", back);
+                            yield return WaitReal(5f);
+                            FirstRewindCheck($"{tag}: still full speed later", Time.timeScale > 0.99f, $"time scale {Time.timeScale:0.00}");
+                            stageChecked = true;
+                            break;
+                        }
                         yield return WaitReal(0.6f);
                         int touchId = -1;
                         var at = rect.center;
