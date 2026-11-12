@@ -17,6 +17,7 @@ namespace SickOfIt.Core.UI.Menus
         /// <summary>A "NEW!" burst on the top-right corner of a button's slot (inside it, so a list's mask never clips it).</summary>
         public static RectTransform AddNewSticker(MenuCanvas menu, MenuButton button, string text = "NEW!")
         {
+            SickOfIt.Core.Audio.UiSounds.Unlock();
             var slot = (RectTransform)button.transform.parent;
             var sticker = MenuGraphics.NewRect(StickerName, slot);
             sticker.anchorMin = sticker.anchorMax = new Vector2(1f, 1f);

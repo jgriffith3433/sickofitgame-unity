@@ -103,6 +103,7 @@ namespace SickOfIt.Core.Progression
             built = true;
             var gd = GameDefinition.Instance;
             config = gd != null ? gd.upgradeShopConfig : new UpgradeShopConfig();
+            SickOfIt.Core.Audio.UiSounds.ShopOpen();
             menu = MenuCanvas.Create("UpgradeShopUI", gd != null ? gd.menuTheme : null, config.layout, overlay ? null : gameObject);
             if (overlay)
             {
@@ -672,12 +673,13 @@ namespace SickOfIt.Core.Progression
             {
                 if (def.id == recommendedId)
                     ClearRecommendation();
-                SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.upgradePick);
+                SickOfIt.Core.Audio.UiSounds.Purchase();
                 bool weaponGood = def.Effect == ShopEffect.KeepWeapons || def.Effect == ShopEffect.MeleeDamage || def.Effect == ShopEffect.MeleeReach;
                 YoobaSay(weaponGood ? YoobaMoment.ShopBuyWeapon : YoobaMoment.ShopBuy, true, weaponGood ? null : def.id);
             }
             else
             {
+                SickOfIt.Core.Audio.UiSounds.CantAfford();
                 YoobaSay(YoobaMoment.ShopBroke, true);
             }
             RefreshUI();

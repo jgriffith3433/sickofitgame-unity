@@ -251,8 +251,9 @@ namespace SickOfIt.Core.Progression
 
         IEnumerator StartMenuBedAfterButtons()
         {
-            // Bed and theme start after the buttons are up so the phone's 20 s load isn't blocked by music decode.
-            yield return new WaitForSecondsRealtime(LateCoreDelaySeconds);
+            // Theme within ~0.5 s of the menu so acceptance "within 1 s" holds; late-core still loads the clip and
+            // PlayLoop / the intro coroutine start when it arrives (GameAssets Request).
+            yield return new WaitForSecondsRealtime(0.45f);
             if (isTransitioning || this == null)
                 yield break;
             if (menuBed == null)
@@ -262,12 +263,52 @@ namespace SickOfIt.Core.Progression
                 menuBed.loop = true;
                 menuBed.spatialBlend = 0f;
             }
-            // Dedicated main theme (k_aea2f5751795) when landed as audio.json "menu_theme"; else the Landing's lava
-            // bed so the diorama is never silent. Only call PlayLoop for an id that exists (avoids a [Sfx] warning).
-            if (Sfx.ClipOf("menu_theme") != null || SoundExists("menu_theme"))
-                Sfx.PlayLoop(menuBed, "menu_theme", 0.55f);
-            else
+            // Dedicated main theme (k_aea2f5751795): only when a clip is actually loaded. SoundExists alone is not
+            // enough — a null clip would mute the ledge. Landing lava bed until Gen lands the theme.
+            StartCoroutine(PlayMenuThemeOrLavaBed());
+        }
+
+        IEnumerator PlayMenuThemeOrLavaBed()
+        {
+            // Brief wait for core.late to fill menu_theme; never leave the ledge silent past ~1 s.
+            float asked = Time.realtimeSinceStartup;
+            while (Sfx.ClipOf("menu_theme") == null && Time.realtimeSinceStartup - asked < 0.55f)
+            {
+                if (isTransitioning || this == null)
+                    yield break;
+                yield return null;
+            }
+            if (isTransitioning || this == null || menuBed == null)
+                yield break;
+
+            var intro = Sfx.ClipOf("menu_theme");
+            if (intro == null)
+            {
                 Sfx.PlayLoop(menuBed, "ambience_floor1000", 0.45f);
+                yield break;
+            }
+
+            var loopClip = Sfx.ClipOf("menu_theme_loop");
+            if (loopClip != null)
+            {
+                menuBed.clip = intro;
+                menuBed.loop = false;
+                menuBed.pitch = 1f;
+                menuBed.volume = Mathf.Clamp01(0.55f * GameSettings.MusicVolume * AudioBuses.Gain(Bus.Music));
+                menuBed.Play();
+                // Cross into the seamless loop a hair before the intro ends so there is no gap.
+                while (menuBed != null && menuBed.isPlaying && menuBed.time < Mathf.Max(0.05f, intro.length - 0.08f))
+                {
+                    if (isTransitioning)
+                        yield break;
+                    yield return null;
+                }
+                if (isTransitioning || this == null || menuBed == null)
+                    yield break;
+                Sfx.PlayLoop(menuBed, "menu_theme_loop", 0.55f);
+            }
+            else
+                Sfx.PlayLoop(menuBed, "menu_theme", 0.55f);
         }
 
         static bool SoundExists(string id)

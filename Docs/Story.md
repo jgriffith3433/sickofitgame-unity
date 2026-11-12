@@ -2776,6 +2776,20 @@ after the buttons are up so a phone still reaches the menu inside 20 s. In the g
 climb + hum + dropped ember, seam spark, camera breathe), `MenuInkPlates` (button plates), `MainMenuManager` (logo slam, face+mutter, voiced sigh,
 bed after the buttons, click harden). Playtest `living-menu`.
 
+## The main theme and the UI kit (k_aea2f5751795)
+
+Hell greets you with its own song: a **sardonic surf-metal** main theme in E minor at 120 BPM, distorted surf guitars under a
+**whistled lead motif** that floor cues can quote later. The menu plays an intro then a seamless loop (`menu_theme` →
+`menu_theme_loop` via Hawkes Gen `audio.music` + `audio.music-loop` intro-loop); until those clips land the ledge keeps
+the Landing's lava bed so it is never silent. Theme starts within a second of the menu appearing (after the page's tap).
+
+Every button, purchase, unlock and clear answers with a crafted one-shot on the **UI bus** through one helper
+(`UiSounds`, never a per-button AudioSource): hover, press, back, toggle, panel open, Yooba's shop open (door bell +
+slime squelch), purchase (cash register + slurp), can't afford (deflating buzz), unlock fanfare (NEW! sticker),
+level-clear fanfare (2–5 s while the summary appears), rank stamp, new-best jingle and death sting. Pause leaves the UI
+bus up so menus still click. Playtest `ui-sounds` (also at 390x844: press ≤100 ms after touch-up). Clips are Gen-made
+when org credits allow; ids sit in `Tools/Audio/pending_clips.json` until then.
+
 ## Rewind that feels amazing (RewindFx)
 
 Rewind is the hook, so holding R turns the picture into a tape being wound back: scanlines crawl up the screen, the edges split into cyan and magenta, a tracking bar sweeps up and speed streaks trail off to the right, over the old teal wash. A reversed tape whirr loops (the `rewind_start` clip played backwards) and its pitch climbs the longer the rewind runs; on release it fades out and the stop click lands. Reduced Flash halves it and stops the wobble. `Gameplay/Presentation/RewindFx.cs`, presentation only (nothing saved or rewound); playtest `rewind-fx`.

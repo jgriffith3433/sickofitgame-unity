@@ -99,12 +99,13 @@ palace, daylight leaking in). Shared rule: each Circle opens with a *vista* beat
   drifting orange/cyan embers, occasional lava burst (`lava_burst`); the hero idles bored with a voiced sigh (`vo_hero_menu_sigh`);
   a pale damned soul sits further along the ledge; the Overlord's silhouette climbs the far cliff every 15–20 s with a low hum
   (`menu_overlord_hum`), sheds one ember mid-pass, and the hero faces him and mutters (`vo_hero_menu_mutter`); camera breathes
-  ±3% over 20 s; title slams in 0.5 s then pulses. Bed: `menu_theme` when landed, else `ambience_floor1000`. Buttons on
-  illustrated basalt-ember plates (hover/press).
+  ±3% over 20 s; title slams in 0.5 s then pulses. Bed: sardonic surf-metal `menu_theme` intro → `menu_theme_loop` when
+  Gen-landed, else `ambience_floor1000`. UI kit on the UI bus via `UiSounds` (hover/press/back/toggle/panel/shop/purchase/
+  can't-afford/unlock/clear/rank/new-best/death). Buttons on illustrated basalt-ember plates (hover/press).
 - **Size:** as long as the player stays. **In/out:** boot / quit-to-menu; out by Play / Continue / New Run / the staged buttons.
 - **Landmark:** the Overlord climbing past above the ledge.
 - **Life:** embers, lava shimmer + bursts, damned soul (looks up / faces hero), Overlord pass + hum + dropped ember, hero sigh/mutter, seam spark under his feet, other climbers as pale ghosts (`climbingNow` chip).
-- **Interactions:** press a plated button, walk the hero on the ledge (soul turns), stand on the cyan seam (it sparks), watch the Overlord (hero mutters; soul looks up; an ember falls), open Settings / shop / Codex when earned.
+- **Interactions:** press a plated button (UI click), walk the hero on the ledge (soul turns), stand on the cyan seam (it sparks), watch the Overlord (hero mutters; soul looks up; an ember falls), open Settings / shop / Codex when earned (panel/shop sounds).
 
 ### Menus and the climb's ghosts
 The main menu ledge (above) hosts the hero and **other climbers as pale ghosts** around him (Hawkes Net; `climbingNow` chip).
@@ -314,7 +315,8 @@ Waystone only if the run ends. The run feels like the loop, not a penalty.
 Each beat is lived, not read. Format: **where / when -> what happens (events, sound, voice) -> text, if any.**
 
 0. **Waiting on the ledge (main menu).** The hero idles on basalt over lava; embers drift; the Overlord climbs past
-   above; the title slams and breathes; a plated button waits. *Sound:* lava bed / theme. *Text:* the title only.
+   above; the title slams and breathes; a plated button waits. *Sound:* sardonic surf-metal theme (whistled motif)
+   when landed, else lava bed; every button answers on the UI bus (`UiSounds`). *Text:* the title only.
 1. **The nice afternoon (Meadow, 0:00-0:25).** The hero idles on the hill: a hen crosses, a neighbour waves, the mill
    turns. *Voice:* a quiet sigh (`vo_hero_*`). *Text:* none.
 2. **Then the sky opened (Meadow, 0:25).** A shadow slides over the field; the Overlord's silhouette rises; a low
