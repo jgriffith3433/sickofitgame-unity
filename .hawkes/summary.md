@@ -1,41 +1,28 @@
-# Chapter One payoff at the end of Floor 997
+# Rook on the Shaft + Wick’s lamp walk (Floor 999)
 
 ## What was wrong
-Floor 997’s Imp Run finale ended on a banner + Grudge with no first face-off. The Overlord stayed a far-ledge cameo; chapter one never closed.
+Players never met Hell’s locals the way the brief asks: Rook had floor scenes but no Shaft chalk wall of the real rewind count, and Wick’s Floor 999 beat was talk-only — he didn’t walk ahead lighting lamps while input stayed live.
 
-## What changed (this task)
-- **Story / bible:** `Docs/Story.md` “Chapter One closes on Floor 997”; `docs/world-bible.md` beat + Overlord moment; `Docs/LevelDesign.md` Floor 997 note; `docs/metrics.json` (feel floors).
-- **Playable face-off:** `Tools/Levels/chapter_one.py` patches Floor 997 — landing → `chapterOne` (BeatDirector find, three escalating `laserSweep` phrases @ 0.5 s telegraph, five `say` lines, death-rewind Flee), `chapterOneEscape` (laugh + up), `chapterOneCard`.
-- **Entities:** `overlordChapter` / `P2` / `P3` (taunt art + lens).
-- **UI:** `showChapterCard` + `offerChapterSkip` (`chapter1.seen`); CHAPTER ONE card (time / deaths / rewinds / diamonds, hook VO, Continue ≥48 px design) **before** the Grudge; normal results skipped after.
-- **Audio prompts** in `audio.json` (clips pending); listed in `pending_clips.json`.
-- **Playtest:** `chapter-one` (`.hawkes/scenario.txt`).
+## What changed
+- **Story / bible:** Shaft Rook tally + Floor 999 lamp walk documented (`Docs/Story.md`, `docs/world-bible.md`). Kept canon Rook/Wick voice ids (bright/boastful + soft wheeze); did **not** redesign voices to “gravelly”.
+- **Rook on every Shaft stop:** `ui/rook.json`, `RookConfig`, `RookShaft` (tally wall = `Achievements.Get("rewinds")`, bundles of five, live scratch when the count rises, 16 lines by band 0 / 1–5 / 6–20 / 20+, never the same twice). Wired into `ShaftScreen`, `GameDefinition`, `GameConfigLayout`, `PlayerDataManifest` (`rook.` → `core.late`).
+- **Wick on Floor 999:** `companions.py` `build_wick999` — three `wickLamp` → `wickLampLit` with flash, `teachGlow`, pop “lit”, `sfx_wick_lamp`, `say` bubbles (input live). Entities `wickLamp` / `wickLampLit`.
+- **Playtest:** `climber-locals` (`SickOfItPlaytest.ClimberLocals.cs`); `.hawkes/scenario.txt`.
+- **Audio:** 16 Rook Shaft lines + chalk/lamp SFX entries in `audio.json`; Floor 999 lamp lines via companions. **Clips not generated** — Gen org credits: `audio.voice` needs 8, 1 left (see `.hawkes/stuck.md`). Ids in `pending_clips.json`.
+- **Art:** placeholders + existing Idle/Walk sheet.json; GPU sheets listed in `.hawkes/pending-gpu.txt` (budget $0.88 unused after voice wall).
 
-## Merge with origin/beta (this pass)
+## Fun-reviewer
+Verdict: **thin**. Fixed what we could without credits (bigger lamp placeholders, teachGlow + pop on light). Left: land voice/SFX clips; optional wall-figure Rook; real lamp/LightLamp art.
 
-Beta moved first with **VFX kit** (#402 / `63c6848`). Merged `origin/beta` and resolved:
+## Checks
+- `python3 Tools/Levels/companions.py` (Floor 999 + voices table)
+- Unity compile **not run here** (no editor in this worktree)
+- Voice Gen: one ElevenLabs test → credits wall → stopped
 
-| File | Result |
-|---|---|
-| `Assets/Scripts/Playtest/SickOfItPlaytest.cs` | **Auto-merged.** Kept both: `VfxKitId` registration/dispatch and `ChapterOneId` registration/dispatch. |
-| `Docs/Story.md` | **Auto-merged.** Kept “The feel of a hit” flipbook section (beta) and “Chapter One closes on Floor 997” (ours). |
-| `docs/world-bible.md` | **Auto-merged.** Kept Feel VFX bullet (beta) and Chapter One beat / Overlord arc+moment (ours). |
-| `docs/metrics.json` | **Conflict (add/add).** Combined: our measured jump/feel numbers + notes from player.json; beta’s corridor aliases (`narrow`/`standard`/`wide`) and `screenShakeMs` / `diamondFlyMs` (600 for the VFX diamond arc). `hitStopMs` kept at 80 (matches `feel.freeze.heroHurtSeconds 0.08`). |
+## Conflicts
+None with `c_e7b101d18752` (living floors / CircleAmbience); no shared files touched.
 
-`.hawkes/*` from beta (`vfx-kit` scenario, Feel VFX pending-gpu/summary) were restored to this task’s chapter-one scenario, pending voice/sting GPU list, and this summary. Beta’s Feel VFX convention line kept in `learned.md`.
-
-## Fun reviewer
-**thin** — Full 3, Breathing 3, Interactions 2, Story-as-experience 3, Soul 4.
-Gaps (biggest first): (1) wire `vo_ch1_*` + sting clips (blocked on Gen credits); (2) more Imp Run life on the landing during the duel; (3) stage a real ascent escape + a second verb beyond dodge.
-
-## Stuck
-Gen org credits: 1 left; `audio.voice` needs 8, `audio.dialogue-open` needs 16. See `.hawkes/stuck.md`. GPU $ budget ($0.47) would cover music + open dialogue once credits exist.
-
-## Reviewer (merge pass)
-**merge** — both intents kept; playtest registrations coexist; metrics combined without dropping `diamondFlyMs` or measured feel notes; scenario restored to `chapter-one`. No binary/scene conflicts.
-
-## Checks (after merge)
-- `python3 Tools/Levels/chapter_one.py --check` — up to date
-- JSON parse of Floor997 / audio / entities / theme / metrics — ok
-- No conflict markers left in the four named files
-- Unity compile not run here (no batch editor on this agent host)
+## What’s left
+1. Gen credits → make clips → import → clear `pending_clips` / delete `stuck.md` when unblocked  
+2. GPU art in `pending-gpu.txt` within the $0.88 budget once a server is free  
+3. Beta playtest `climber-locals` (and phone 390x844 for ≥64 px / captions)
