@@ -7,8 +7,10 @@
   "pixels": 300,
   "keepTint": false,
   "poses": {
-    "stand": "standing in profile facing right, relaxed, weight on one leg",
-    "walk": "mid-stride walking to the right"
+    "stand": "standing in profile facing right, relaxed, weight on one leg, medal on his chest, red scarf tips glowing",
+    "walk": "mid-stride walking to the right",
+    "scratch": "standing in profile facing right, right arm raised scratching a chalk tally mark on a wall in front of him, chalk stub in hand, smug grin",
+    "talk": "standing in profile facing right, mouth open mid-boast, one hand on his medal, scarf tips flickering"
   },
   "clips": {
     "idle": {
@@ -29,6 +31,20 @@
       "loop": false,
       "action": "flinches back, startled, then settles and nods",
       "seconds": 1.5
+    },
+    "scratch": {
+      "from": "scratch",
+      "state": "Scratch",
+      "loop": true,
+      "action": "scratches chalk tally marks on the wall in short strokes, arm moving, chalk dust falling, feet planted",
+      "seconds": 1.5
+    },
+    "talk": {
+      "from": "talk",
+      "state": "Talk",
+      "loop": true,
+      "action": "talks boastfully, jaw moving, medal bouncing, scarf tips flickering, feet planted",
+      "seconds": 1.5
     }
   },
   "animator": {
@@ -39,6 +55,14 @@
       },
       {
         "name": "Walking",
+        "type": "Bool"
+      },
+      {
+        "name": "Scratching",
+        "type": "Bool"
+      },
+      {
+        "name": "Talking",
         "type": "Bool"
       }
     ],
@@ -67,6 +91,34 @@
         "to": "Idle",
         "when": [
           "!Walking"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Scratch",
+        "when": [
+          "Scratching"
+        ]
+      },
+      {
+        "from": "Scratch",
+        "to": "Idle",
+        "when": [
+          "!Scratching"
+        ]
+      },
+      {
+        "from": "Idle",
+        "to": "Talk",
+        "when": [
+          "Talking"
+        ]
+      },
+      {
+        "from": "Talk",
+        "to": "Idle",
+        "when": [
+          "!Talking"
         ]
       }
     ]

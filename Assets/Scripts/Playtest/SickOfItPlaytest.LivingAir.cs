@@ -75,6 +75,14 @@ namespace SickOfIt.Playtest
                 CircleAmbience.Enabled = true;
                 bool phone = TouchDevice.IsPrimary || Application.isMobilePlatform;
 
+                int painted = AmbienceSprites.PaintedBitCount;
+                Run.Event("living-air", painted >= 6
+                    ? $"Gen particle sprites loaded ({painted}/6)"
+                    : $"procedural stand-ins ({painted}/6 Gen particles; see .hawkes/pending-gpu.txt)");
+                Run.Metric("livingAir.paintedBits", painted);
+                if (painted < 6)
+                    Run.Problem(PlaytestSeverity.Warning, $"living-air Gen particles pending: {painted}/6 under Resources/Ambience");
+
                 // Shaft preview: wind / debris / ash + foreground chains + a debris event within 15 s.
                 Run.Event("shortcut", "Shaft preview at Floor 1000");
                 ShaftScreen.Preview(1000, 1000);
