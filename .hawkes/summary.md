@@ -31,6 +31,9 @@ Gaps (biggest first): (1) wire `vo_ch1_*` + sting clips (blocked on Gen credits)
 ## Stuck
 Gen org credits: 1 left; `audio.voice` needs 8, `audio.dialogue-open` needs 16. See `.hawkes/stuck.md`. GPU $ budget ($0.47) would cover music + open dialogue once credits exist.
 
+## Reviewer (merge pass)
+**merge** — both intents kept; playtest registrations coexist; metrics combined without dropping `diamondFlyMs` or measured feel notes; scenario restored to `chapter-one`. No binary/scene conflicts.
+
 ## Checks (after merge)
 - `python3 Tools/Levels/chapter_one.py --check` — up to date
 - JSON parse of Floor997 / audio / entities / theme / metrics — ok
