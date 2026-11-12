@@ -83,7 +83,8 @@ namespace SickOfIt.Core.Progression
             ApplyMenuConfig();
             BuildMenu();
             // Exactly one EventSystem: additive scenes and the Camera prefab each carry one; two alive makes clicks miss
-            // Play / Continue (backlog f_9ee4fb228e7d). Ensure after the menu canvas builds.
+            // Play / Continue (backlog f_9ee4fb228e7d). Ensure after the menu canvas builds, and prefer the scene's
+            // already-wired Input System module (EventSystemGuard adopts it) so pointer/touch keep working.
             EventSystemGuard.Ensure();
             menuOpenedAt = Time.unscaledTime;
             // Title slam is theme.titleEntrance (0.5 s Pop); mark done when that duration elapses.
@@ -586,6 +587,8 @@ namespace SickOfIt.Core.Progression
             climbingShown = -1;
             stickers.Clear();
             BuildMenu();
+            // A rebuild can leave a second EventSystem from an overlay; clicks must still hit Play / Continue.
+            EventSystemGuard.Ensure();
         }
 
         /// <summary>Analytics: which main menu button was pressed.</summary>
