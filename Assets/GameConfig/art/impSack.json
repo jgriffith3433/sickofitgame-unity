@@ -55,8 +55,78 @@
   "background": "Plain flat pure green background (#00ff00), no floor, no shadow, no scenery, even studio lighting.",
   "negative": "photorealistic, 3d render, soft airbrush, gradient shading, watercolor wash, pure black outline, text, watermark, busy background, extra limbs, blurry, low contrast silhouette, camera movement, zoom, pan",
   "animator": {
-    "parameters": [],
-    "transitions": [],
+    "parameters": [
+      {
+        "name": "IsAttacking",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hurt",
+        "type": "Trigger"
+      },
+      {
+        "name": "IsWinding",
+        "type": "Bool"
+      }
+    ],
+    "transitions": [
+      {
+        "from": "Idle",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Attack",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      },
+      {
+        "from": "Hurt",
+        "to": "Idle",
+        "when": [],
+        "exit": true,
+        "exitTime": 1
+      },
+      {
+        "from": "Idle",
+        "to": "Windup",
+        "when": [
+          "IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Idle",
+        "when": [
+          "!IsWinding"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Attack",
+        "when": [
+          "IsAttacking"
+        ]
+      },
+      {
+        "from": "Windup",
+        "to": "Hurt",
+        "when": [
+          "Hurt"
+        ]
+      }
+    ],
     "attackBool": "IsWinding"
   },
   "reference": "Art/EnemyInk/impSack_concept.png"

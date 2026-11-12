@@ -70,14 +70,14 @@
         },
         {
           "stateName": "Windup",
-          "spriteSheet": "Art/Enemies/CinderBrute/CinderBrute_move.png",
-          "fps": 8,
+          "spriteSheet": "Art/Enemies/CinderBrute/CinderBrute_windup.png",
+          "fps": 12,
           "loop": true,
           "events": []
         },
         {
           "stateName": "Attack",
-          "spriteSheet": "Art/Enemies/CinderBrute/CinderBrute_move.png",
+          "spriteSheet": "Art/Enemies/CinderBrute/CinderBrute_attack.png",
           "fps": 12,
           "loop": false,
           "events": [

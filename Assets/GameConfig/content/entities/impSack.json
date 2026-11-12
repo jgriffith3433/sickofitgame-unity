@@ -70,14 +70,14 @@
         },
         {
           "stateName": "Windup",
-          "spriteSheet": "Art/Enemies/ImpSack/ImpSack_move.png",
-          "fps": 8,
+          "spriteSheet": "Art/Enemies/ImpSack/ImpSack_windup.png",
+          "fps": 12,
           "loop": true,
           "events": []
         },
         {
           "stateName": "Attack",
-          "spriteSheet": "Art/Enemies/ImpSack/ImpSack_move.png",
+          "spriteSheet": "Art/Enemies/ImpSack/ImpSack_attack.png",
           "fps": 12,
           "loop": false,
           "events": [

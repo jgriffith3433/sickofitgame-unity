@@ -55,3 +55,32 @@ Clips (`video.i2v`) for imp + cinder queued after `image.frame` (640 green) of t
 
 ### Imp + cinder i2v → sheets
 All 10 clips PASS (usable; wind-up glow present on mid frames). Baked with `art.mjs --build --no-unity` into `Assets/Art/Enemies/Imp|Cinder` including new `*_windup.png`. Animator graphs restored with `IsWinding` → Windup. Previews: `preview_imp.png`, `preview_cinder.png`.
+
+## Resume 2026-11-12b (spark bake + variant held wind-ups)
+
+### Thatch lunge redo `a_e2c151d1172b7b08`
+| File | Verdict | Notes |
+|---|---|---|
+| `poses/cinderThatch_lunge.png` | PASS | Limbless straw ball; no biped arms/legs. Framed locally to `framed/cinderThatch_lunge.png`. |
+
+### Framed stands / wind-ups
+| File | Verdict | Notes |
+|---|---|---|
+| `framed/cinderThatch_stand.png` | PASS | Limbless ball |
+| Gen `framed/cinderThatch_windup` (first) | FAIL | Grew thin legs — re-framed from PASS pose instead |
+| `framed/cinderBrute_stand/windup` | PASS | Hulking fireball + stubby limbs |
+| `framed/impSack_stand/windup` | PASS | Oversized diamond sack + glow |
+
+### Spark i2v clips
+| Clip | Asset | Verdict | Notes |
+|---|---|---|---|
+| idle | `a_1142c09bdf3624a9` | PASS | Tiny flame, face, green plate |
+| windup | `a_5ad376e1d0bc9966` | FAIL | Mid frames had ~0 cyan; held still from framed windup pose used instead (Cuphead telegraph) |
+| attack | `a_730dd29b0adb05ef` | PASS | Cyan into lunge |
+| hurt | `a_2bb1d36bee4d310f` | PASS | Shock stretch |
+| die | `a_f1698194fa166b89` | PASS | Pop / fizzle |
+
+Baked `Assets/Art/Enemies/CinderSpark/*` Idle/Move/Windup/Attack/Hurt/Die. Preview: `preview_cinderSpark.png`.
+
+### Variant held sheets (budget)
+Thatch / brute / sack got Idle/Move/Windup/Attack from framed stands + wind-up poses (no GPU). Hurt/Die still prior sheets until i2v budget. Entities point Windup/Attack at the new sheets; `windup` ≥ 0.35.

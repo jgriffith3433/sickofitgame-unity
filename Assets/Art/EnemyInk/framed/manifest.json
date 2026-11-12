@@ -13,7 +13,14 @@
     "cinderSpark_stand": "a_ac863d08cac5f5a6",
     "cinderSpark_windup": "a_f4242a0d31a26d06",
     "cinderSpark_struck": "a_057f154e9fc89a1d",
-    "cinderSpark_dead": "a_ab05b318b47b801e"
+    "cinderSpark_dead": "a_ab05b318b47b801e",
+    "cinderThatch_stand": "a_bb81b3c6ba63b46a",
+    "cinderThatch_windup": "local-reframe",
+    "cinderThatch_lunge": "a_e2c151d1172b7b08",
+    "cinderBrute_stand": "a_855a05ac0a0ee4aa",
+    "cinderBrute_windup": "local-reframe",
+    "impSack_stand": "a_d2e670aed500ea5b",
+    "impSack_windup": "a_ebc9aafc0e014f98"
   },
   "jobs": [
     {
@@ -210,5 +217,6 @@
       "id": "j_8659abf48f75",
       "note": "spark die i2v"
     }
-  ]
+  ],
+  "resume": "2026-11-12 spark baked; variant held windups from framed poses"
 }

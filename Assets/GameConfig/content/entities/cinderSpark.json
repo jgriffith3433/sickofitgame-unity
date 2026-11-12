@@ -64,14 +64,14 @@
         },
         {
           "stateName": "Windup",
-          "spriteSheet": "Art/Enemies/CinderSpark/CinderSpark_move.png",
-          "fps": 8,
+          "spriteSheet": "Art/Enemies/CinderSpark/CinderSpark_windup.png",
+          "fps": 12,
           "loop": true,
           "events": []
         },
         {
           "stateName": "Attack",
-          "spriteSheet": "Art/Enemies/CinderSpark/CinderSpark_move.png",
+          "spriteSheet": "Art/Enemies/CinderSpark/CinderSpark_attack.png",
           "fps": 12,
           "loop": false,
           "events": [

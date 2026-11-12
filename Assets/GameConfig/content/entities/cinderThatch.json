@@ -68,14 +68,14 @@
         },
         {
           "stateName": "Windup",
-          "spriteSheet": "Art/Enemies/CinderThatch/CinderThatch_move.png",
-          "fps": 8,
+          "spriteSheet": "Art/Enemies/CinderThatch/CinderThatch_windup.png",
+          "fps": 12,
           "loop": true,
           "events": []
         },
         {
           "stateName": "Attack",
-          "spriteSheet": "Art/Enemies/CinderThatch/CinderThatch_move.png",
+          "spriteSheet": "Art/Enemies/CinderThatch/CinderThatch_attack.png",
           "fps": 12,
           "loop": false,
           "events": [
