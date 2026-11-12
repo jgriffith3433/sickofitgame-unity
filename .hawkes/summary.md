@@ -1,25 +1,26 @@
-# Place ambience: Meadow, Shaft, Floors 1000–997
+# Place ambience Gen replace — still blocked on credits
 
-## What was wrong
-Only Level 1 and Floor 1000 had ambient beds (synth stand-ins). Floors 999–997 and the Shaft were silent. No positional prop one-shots. Eyes closed, you could not tell which floor you were on.
+## What this pass tried
+Resume of #398 (`c_3e1d6d914cbd`): replace synth stand-in beds/oneshots with Hawkes Gen `audio.sfx`. Wiring, playtest `floor-ambience`, world-bible place beds and emitters are already on beta.
 
-## What changed
-- **7 Ambience-bus beds:** meadow calm/burning, shaft, floors 1000–997 (`Tools/Audio/floor_ambience.py` + `synth_core_sfx.py`).
-- **12 positional one-shots** on props via new `AmbientEmitters` + `LevelConfig.ambientEmitters` (4–12 s gaps, stereo pan by screen x, distance falloff; phone cap = half of 8).
-- Shaft plays `ambience_shaft` while open (`ShaftConfig.ambientSound`).
-- Playtest **`floor-ambience`** (also in `.hawkes/scenario.txt`).
-- World bible + SoundAudit updated.
+## Blocker (unchanged Gen wall)
+- Tried one `audio.sfx` (ElevenLabs, loop 30s, project `org_eb0d5c82e8da8c2d.sickofit`): **refused — org credits 1, need 8**.
+- `hawkesgen_fleet`: `servers: []`, `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` missing in `hawkesgen/.env`.
+- Per preference (m_f60905657340 / m_82768131e9d7): **did not requeue**, no fake job ids, kept `.hawkes/pending-gpu.txt`.
 
-## Gen / GPU
-Budget $0.28 approved, but **org credits are 1** (audio.sfx-open needs 8/job) and the AWS fleet has no keys. Queues refused. **Synth stand-ins ship**; `.hawkes/pending-gpu.txt` lists the Gen replacements. GPU spent: **$0**.
+## Estimate when credits refill (within $0.28 GPU budget)
+- ElevenLabs path: **$0 GPU, ~$0.14 API** for 7 beds + 12 oneshots (preferred while fleet keys are missing).
+- Open `audio.sfx` variants (2 batches): **~$0.19 GPU**.
+- Then: `studio_gen_import` each `a_…` → `Assets/Audio/Generated/Core/<id>.ogg` (keep existing `.meta` GUIDs), `audio.analyze` loop:true on each bed, mark `generatedFrom` in audio.json / leave pending_clips empty.
 
-## Checks
+## Checks this pass
 - `python3 -I Tools/Audio/floor_ambience.py --check` — pass
-- Unity compile not run here (no editor in this sandbox)
+- Unity compile not run here (no editor)
 - Conflicts: none
+- No browser / build / playtest started (Studio owns those)
 
 ## Fun reviewer (self-pass)
-**Verdict: thin → living on the sound axis for these places.** Beds + breathing prop one-shots give each floor a distinct air. Gaps: Gen clips still stand-ins; Meadow visual village life (hen/mill art) still missing (out of scope); later floors beyond 997 still bare.
+**Verdict: thin** on the sound axis until Gen clips land. Wired beds + breathing prop emitters give each place a distinct air in data, but synth stand-ins are not the Hollow Knight bar the criteria ask for. Gaps: (1) Gen beds, (2) Gen oneshots + loop analyze, (3) Meadow visual village life (out of scope).
 
 ## Reviewer (self-pass)
-**Verdict: merge** with pending-gpu note. Criteria 1–2 and 4 are wired; criterion 3 (audio.analyze loop) waits on Gen takes.
+**Verdict: hold / revise when credits return** — acceptance criteria 1–2 and phone fps are wired; criterion 3 (`audio.analyze` loop) and “real Gen art” cannot pass until credits ≥8. Do not merge as “done.”
