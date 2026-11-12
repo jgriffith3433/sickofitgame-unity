@@ -159,6 +159,68 @@ dragging a chain across a distant ledge, sparks falling like rain. They cross th
 
 ---
 
+## Characters
+
+The named characters, each with a want, an arc, a moment the player lives, and the voice and clips that play it.
+
+### The Hero
+- Want: To get out of Hell and back to the meadow, one floor at a time.
+- Arc: Sick of it, then stubborn, then something like at peace on the last floor.
+- Moment: A graze streak: he flinches, mutters a one-liner, and the HUD vessels crack or glow with what happens.
+- Personality: tired, dry, stubborn
+- Voice: `player` (lines `vo_hero_*`)
+- Animations: Idle, Walk, Talk (Idle held while a voiced `vo_hero_*` line and its subtitle play), Jump, Fall, Fire, Dash, Hurt, Victory (art/hero.json)
+
+### Yooba
+- Want: To keep the climber alive and sell him goods, and to find his Lost Things.
+- Arc: A shop-slime in the gaps who starts out bargaining, remembers every death, and ends as a friend.
+- Moment: He rides the Shaft and the shop, hacks up a diamond and counts floors aloud as the hero buys.
+- Personality: wobbly, warm, nosy
+- Voice: `yooba`
+- Animations: Idle, Walk, Talk, Laugh, Cough (ui/yooba.json portrait)
+
+### The Announcer
+- Want: To make Hell a show and every floor a headline.
+- Arc: Delighted at first, mournful on deaths, impressed by the end.
+- Moment: He calls each new floor as the elevator dial ticks down, louder on a graze streak.
+- Personality: loud, theatrical, gleeful
+- Voice: `announcer`
+- Animations: Idle, Walk, Talk (banner and voice only)
+
+### The Overlord
+- Want: Up and out, to the surface, ahead of the hero.
+- Arc: Seen far off and never answering, until Floor 1 where he rewinds too.
+- Moment: A glimpse on the far ledge: a taunt, a dropped ember, a laser sweep, then he is gone upward.
+- Personality: bored, enormous, stuck
+- Voice: `overlord`
+- Animations: Idle, Walk, Talk (art/overlordFar.json)
+
+### Rook
+- Want: To reach the top first and be seen doing it.
+- Arc: Rival who shows off, then cuts in, then leaves a mess the hero can use.
+- Moment: He sprints past on Floor 996 and kicks loose a ledge the hero has to cross.
+- Personality: brash, vain, sly
+- Voice: `rook` (subtitles; recipe in Tools/Audio/companion_voices.json)
+- Animations: Idle, Walk, Talk, Hiccup (art/rook.json)
+
+### Wick
+- Want: To keep Circle X's lamps lit, because someone must.
+- Arc: Repeats himself, then helps, then lights the last lamp for the hero.
+- Moment: He lights a lamp on Floor 999 as the hero passes and the dark ledge shows its path.
+- Personality: patient, repetitive, kind
+- Voice: `wick` (recipe in Tools/Audio/companion_voices.json)
+- Animations: Idle, Walk, Talk, Hiccup (art/wick.json)
+
+### Pointer
+- Want: To show the way, even when it is the wrong one.
+- Arc: Points wrong kindly, then points right once the hero has earned it.
+- Moment: He points up a stairwell on Floor 900; the real way is the crack beside it.
+- Personality: earnest, mistaken, gentle
+- Voice: `pointer` (recipe in Tools/Audio/companion_voices.json)
+- Animations: Idle, Walk, Talk, Hiccup (art/pointer.json)
+
+---
+
 ## What happens
 
 Per area: interactions (at least three kinds), events on their own, ambient sound, what changes.
@@ -198,6 +260,19 @@ Per area: interactions (at least three kinds), events on their own, ambient soun
 - **Interactions:** the same, plus ladders as the road's main climb, bounce shots, chains, risen demons.
 - **On their own:** the road splits in time with the hum; spires grow a notch each floor; wind howls through cracks.
 - **Ambient:** a stone hum; cracks; Pointer's creak when he points. **Changes:** the Great Spire gets taller each floor.
+
+### Hell's cabinet HUD (inked widgets, built Nov 12)
+The announcer's frame on every floor: **ember vessels** for hearts (crack on a hit, glow on a heal), a **tape reel** for
+rewind juice (spins while held, drains as juice spends), a **gem** that pulses when a diamond lands, a **brass elevator dial**
+that ticks the floor down. Two corners only (health+reel top-left, gem+dial top-right); on a phone the rewind button is the
+big bottom-right reel (≥72 px). Same game state as before; art from `HudInkAtlas` (Gen sheet under Resources/UI). Playtest `hud-ink`.
+
+### The Overlord's taunts (Floors 1000-997, built Nov 12)
+He is on screen on every one of the first four floors, small and far on the upper edge, and answers what the hero just did: the floor entered, a death
+(imp, shot, hazard, fall), a rewind, a rewind that undoes a death, 30 s untouched, the finale. 30 lines (voice `overlord`: *bored, velvety, enormous*),
+one every 20 s at most, none twice in a session; an undone death is answered at once and his silhouette climbs out of the top (the chase, below).
+Want: to be done with Hell and take the surface; arc: his lines are about the loop, and the hero's rewinds remind him of his own. Idle, laugh, point and flee
+clips (`art/overlordTaunt.json`, sheets in `Assets/Art/Enemies/OverlordTaunt/`: he faces the camera, about 1.8 units tall; only Flee shows his back). `OverlordTaunts`, playtest `overlord-taunts` (run on 390x844 touch).
 
 ### The chase (the Overlord escaping upward, built Nov 11)
 The Overlord is always one floor ahead, and the hero only ever sees it when time goes backward. **When a rewind starts inside a
@@ -257,16 +332,6 @@ Every beat above is an event first. A beat that is only a `showText` is a defect
 
 ---
 
-## Bullets and hazard tells (Meadow + Floors 1000-997, Nov 12)
-
-Hostile shots read like Returnal orbs: white-hot core, dark ink outline, cyan/magenta halo (never the sulphur/furnace
-orange of the Wastes; Floor 997 prefers magenta), short fading trail. The hero's rockets stay warm amber and elongated.
-Aimed shots flash the muzzle and draw a thin aim line ~0.4 s before firing; spreads flash the emitter; lava / geyser /
-surge / sink tells glow a warning colour ≥ 0.5 s before they hurt. Playtests: `readability`, `bullet-look`. Hitboxes
-unchanged; phone draws bullets at least 8 px across.
-
----
-
 ## Where the game falls short today (and what to build first)
 
 1. **The Meadow's life.** Neighbours, a dog, a hen, a hay bale, a mill and a cart that the raid wrecks: 8 dressings and 3
@@ -322,3 +387,7 @@ pointer at the one ware the hero can buy. *Landmark:* the glowing card. Details 
 ### Floor 999 dressing and the death screen's record (Nov 11)
 - **Floor 999 (Only 999 To Go)** now reads differently from 1000's bare bank: a red glow from the climbing sea, tally marks scratched on the rock (the counted wall, for the soul that counts the same stone), rising ash. Props in `levels/Floor999.json` `world.props`.
 - **Death screen:** always shows `BEST: FLOOR n` (kept for good, `BestFloorRecord`, "(NEW!)" on a new best) over the next unlock (cheapest good, next Waystone or the top).
+
+### Floor arrival cards and the ember iris (Nov 12)
+- Every screen change closes and opens as an **ember iris** (`ScreenTransition`: the picture shrinks to a ring of burning edge in 0.35 s, opens from it in 0.55 s; a pulse of ember light sits in the middle while a load holds it shut, so it is never plain black).
+- Arriving on Floors 1000-997 slams a **stamped card** ("FLOOR 1000" over "THE LANDING", tilted, dark plate, ember rim) with the stamp thump and one announcer quip (`vo_card_1000` "Welcome to the bottom!", `vo_card_999` "Only nine ninety-nine to go!", `vo_card_998` "Mind the spill!", `vo_card_997` "Imp run!"); gone by 1.5 s while play is live. `Gameplay/Presentation/FloorCard.cs`; playtest `floor-card`.

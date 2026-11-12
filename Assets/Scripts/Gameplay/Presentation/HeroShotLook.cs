@@ -13,6 +13,7 @@ namespace SickOfIt.Gameplay
 
         SpriteRenderer body;
         SpriteRenderer rim;
+        bool scaled;
 
         public static void Attach(GameObject shot)
         {
@@ -29,7 +30,20 @@ namespace SickOfIt.Gameplay
                 body = GetComponentInChildren<SpriteRenderer>();
             if (body == null)
                 return;
-            body.color = new Color(Warm.r, Warm.g, Warm.b, body.color.a);
+            var art = EffectAtlas.Rocket;
+            if (art != null && body.sprite != art)
+            {
+                // Gen's amber rocket: its own colours, scaled to the old body's length so the hitbox look matches.
+                if (!scaled)
+                {
+                    scaled = true;
+                    float old = body.sprite != null ? body.sprite.bounds.size.x : 0f;
+                    if (old > 0.01f)
+                        body.transform.localScale *= old / art.bounds.size.x;
+                }
+                body.sprite = art;
+            }
+            body.color = art != null ? new Color(1f, 1f, 1f, body.color.a) : new Color(Warm.r, Warm.g, Warm.b, body.color.a);
             if (rim == null)
             {
                 var go = new GameObject("HeroShotRim");

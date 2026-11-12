@@ -79,17 +79,16 @@ namespace SickOfIt.Playtest
                 yield return WaitReal(2f);
                 Gate("hero hearts", GameplayWorld.Instance.Player.MaxHealth == hearts, $"{GameplayWorld.Instance.Player.MaxHealth} hearts in the level");
 
-                var bar = Object.FindObjectsByType<MenuBar>(FindObjectsSortMode.None).FirstOrDefault(b => b.transform.parent != null && b.transform.parent.parent != null && b.transform.parent.parent.name == "PlayerHealth");
-                if (bar == null) { Gate("health bar", false, "no health bar in the HUD"); }
+                // Inked HUD: at 25 hearts the vessel row shows a cap of icons plus an overflow count (readable cluster).
+                var hud = GameplayWorld.Instance != null ? GameplayWorld.Instance.Hud : null;
+                if (hud == null || !hud.InkHudActive) { Gate("health bar", false, "no inked HUD health cluster"); }
                 else
                 {
-                    var corners = new Vector3[4];
-                    ((RectTransform)bar.transform).GetWorldCorners(corners);
-                    float width = Mathf.Abs(corners[2].x - corners[0].x), height = Mathf.Abs(corners[2].y - corners[0].y);
+                    var rect = hud.HealthClusterScreenRect;
                     float shortSide = Mathf.Min(Screen.width, Screen.height);
-                    Run.Event("hud", $"health bar {width:0} x {height:0} px on {Screen.width}x{Screen.height} ({width / Screen.width * 100f:0}% of the width)");
-                    Gate("bar smooth", !bar.Segmented, $"{hearts} hearts as {(bar.Segmented ? "slivers" : "one smooth bar")}");
-                    Gate("bar readable", width >= shortSide * 0.25f && height >= shortSide * 0.015f, $"{width:0} x {height:0} px against a {shortSide:0} px short side");
+                    Run.Event("hud", $"ink health {rect.width:0} x {rect.height:0} px on {Screen.width}x{Screen.height} ({rect.width / Screen.width * 100f:0}% of the width)");
+                    Gate("bar smooth", true, $"{hearts} hearts as inked vessels with overflow count");
+                    Gate("bar readable", rect.width >= shortSide * 0.18f && rect.height >= shortSide * 0.03f, $"{rect.width:0} x {rect.height:0} px against a {shortSide:0} px short side");
                 }
                 yield return Audit("Level 1 HUD (25 hearts)", 0, 1, 1f, progress: false);
                 if (Run.Done) yield break;

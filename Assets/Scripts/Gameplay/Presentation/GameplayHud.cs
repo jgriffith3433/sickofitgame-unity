@@ -124,9 +124,11 @@ namespace SickOfIt.Gameplay
             fade.raycastTarget = false;
             fade.transform.SetAsFirstSibling();
 
+            BuildInkClusters();
             BuildHealth();
             BuildDiamonds();
             BuildRewind();
+            DressRewindButtonWithReel();
             BuildWeapon();
             BuildDash();
             BuildTouchPad();
@@ -179,8 +181,8 @@ namespace SickOfIt.Gameplay
         static readonly MenuHudLayout DefaultLandscape = MenuHudLayout.Landscape();
         static readonly MenuHudLayout DefaultPortrait = MenuHudLayout.Portrait();
 
-        /// <summary>On a phone held sideways the rewind button sits low in the right thumb's reach, not in the top corner.</summary>
-        static readonly MenuPlacement TouchLandscapeRewind = MenuPlacement.At(1f, 0f, -150f, 220f, 180f, 180f);
+        /// <summary>On a phone held sideways the rewind button is the big bottom-right control (reel art, ≥72 px).</summary>
+        static readonly MenuPlacement TouchLandscapeRewind = MenuPlacement.At(1f, 0f, -120f, 150f, 180f, 180f);
 
         /// <summary>The landscape placements, each falling back to the built-in one when the theme leaves it off.</summary>
         MenuHudLayout Landscape => landscapeLayout ??= Merge(style.landscape, DefaultLandscape);
@@ -245,70 +247,9 @@ namespace SickOfIt.Gameplay
 
         void BuildHealth()
         {
-            healthRoot = MenuGraphics.NewRect("PlayerHealth", menu.Root);
-            healthRoot.anchorMin = healthRoot.anchorMax = healthRoot.pivot = style.healthAnchor;
-            healthRoot.anchoredPosition = style.healthOffset;
-            const float heartSize = HeartSize;
-            const float panelHeight = 66f;
-            healthRoot.sizeDelta = HealthSize(style.healthWidth);
-
-            // Panel behind the bar, tucked under the heart.
-            var panel = MenuGraphics.NewRect("Panel", healthRoot);
-            panel.anchorMin = new Vector2(0f, 0.5f);
-            panel.anchorMax = new Vector2(1f, 0.5f);
-            panel.offsetMin = new Vector2(heartSize * 0.6f, -panelHeight * 0.5f);
-            panel.offsetMax = new Vector2(0f, panelHeight * 0.5f);
-            MenuGraphics.Surface(panel, theme.chip);
-
-            healthBar = MenuBar.Create(panel, "Bar");
-            var barRect = (RectTransform)healthBar.transform;
-            MenuGraphics.Fill(barRect);
-            barRect.offsetMin = new Vector2(heartSize * 0.45f, 14f);
-            barRect.offsetMax = new Vector2(-104f, -14f);
-            healthBar.Fill = style.healthFill;
-            healthBar.LowFill = style.lowHealthFill;
-            healthBar.Lost = style.healthLost;
-            healthBar.Track = style.barTrack;
-            healthBar.LowFraction = style.lowHealthFraction;
-            healthBar.MaxSegments = style.maxSegments;
-
-            var countSlot = MenuGraphics.NewRect("Count", panel);
-            countSlot.anchorMin = new Vector2(1f, 0f);
-            countSlot.anchorMax = new Vector2(1f, 1f);
-            countSlot.pivot = new Vector2(1f, 0.5f);
-            countSlot.sizeDelta = new Vector2(100f, 0f);
-            countSlot.anchoredPosition = new Vector2(-8f, 0f);
-            healthCount = MenuGraphics.Text(countSlot, "Text", "", theme.chipText, menu.Font);
-
-            heart = MenuGraphics.NewRect("Heart", healthRoot);
-            heart.anchorMin = heart.anchorMax = new Vector2(0f, 0.5f);
-            heart.pivot = new Vector2(0f, 0.5f);
-            heart.sizeDelta = new Vector2(heartSize, heartSize);
-            MenuGraphics.Surface(heart, new MenuSurfaceStyle
-            {
-                shape = MenuShape.Circle,
-                fill = style.healthFill,
-                borderColor = theme.chip.borderColor.a > 0f ? theme.chip.borderColor : Color.white,
-                borderWidth = 6f,
-                shadowColor = new Color(0f, 0f, 0f, 0.45f),
-                shadowOffset = new Vector2(0f, -6f),
-            });
-            var symbol = MenuGraphics.Text(heart, "Symbol", "♥", theme.heading, menu.Font, heartSize * 0.62f);
-            symbol.enableVertexGradient = false;
-            symbol.color = theme.title.outlineColor.a > 0f ? new Color(1f, 0.96f, 0.84f, 1f) : Color.white;
-            symbol.rectTransform.offsetMin = new Vector2(0f, 4f);
-
-            // The motion driver owns the slot's position, so hits shake the panel inside it.
-            menu.AddMotion(healthRoot.gameObject, null, theme.entrance, 0f);
-
-            // Landscape: hud.healthAnchor/healthOffset/healthWidth, unless hud.landscape.health is set.
-            var landscape = style.landscape != null && style.landscape.health != null && style.landscape.health.use
-                ? style.landscape.health
-                : MenuPlacement.At(style.healthAnchor.x, style.healthAnchor.y, style.healthOffset.x, style.healthOffset.y, style.healthWidth);
-            var portrait = style.portrait != null ? style.portrait.health : DefaultPortrait.health;
-            MenuResponsive.Track(healthRoot, Clone(landscape, HealthSize(landscape.size.x > 0f ? landscape.size.x : style.healthWidth)),
-                portrait != null && portrait.use ? Clone(portrait, HealthSize(portrait.size.x > 0f ? portrait.size.x : style.healthWidth)) : null,
-                MenuElementKind.Panel, menu.Responsive, pivotAtAnchor: true);
+            // Inked ember vessels + rewind reel in the top-left cluster (Hollow Knight-style).
+            BuildInkHealth();
+            BuildInkReel();
         }
 
         // ─── Rewind: a labeled hold button (top-right), a rewinding overlay, and a hint on the first hit ───
@@ -338,6 +279,8 @@ namespace SickOfIt.Gameplay
             RewindFx.Create(transform, style.rewind, rewindTint.transform.GetSiblingIndex() + 1);
             // The Overlord's silhouette climbing out of the top when a rewind undoes a death (the chase, seen in play).
             OverlordEscape.Create(transform, rewindTint.transform.GetSiblingIndex() + 1);
+            // His taunts on Floors 1000-997 (animated, voiced; Docs/Story.md "The Overlord watches the climb").
+            OverlordTaunts.Create(transform, world);
             var place = Landscape.rewinding;
             rewindingText = menu.AddText(menu.Root, "Rewinding", "\u25C4\u25C4  Rewinding", theme.title, place.anchor,
                 place.offset, place.size, out _, Mathf.Min(theme.title.fontSize, 84f), menu.TitleFont, null,
@@ -492,63 +435,15 @@ namespace SickOfIt.Gameplay
 
         void BuildDiamonds()
         {
-            diamondsRoot = MenuGraphics.NewRect("Diamonds", menu.Root);
-            var place = Landscape.diamonds;
-            diamondsRoot.anchorMin = diamondsRoot.anchorMax = diamondsRoot.pivot = place.anchor;
-            diamondsRoot.anchoredPosition = place.offset; // right of it: the pause button
-            var row = diamondsRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
-            var padding = theme.chip.padding;
-            row.padding = new RectOffset((int)padding.x, (int)padding.x, (int)padding.y, (int)padding.y);
-            row.childControlWidth = row.childControlHeight = true;
-            row.childForceExpandWidth = row.childForceExpandHeight = false;
-            var fitter = diamondsRoot.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            MenuGraphics.Surface(diamondsRoot, theme.chip);
-            diamonds = MenuGraphics.Text(diamondsRoot, "Value", "", theme.chipText, menu.Font, 0f, autoSize: false);
-            diamonds.textWrappingMode = TextWrappingModes.NoWrap;
-            diamonds.enableVertexGradient = false;
-            diamonds.color = theme.accent;
-            diamondsTicker = NumberTicker.On(diamonds, v => string.Format(theme.pointsFormat, v));
-            menu.AddMotion(diamondsRoot.gameObject, null, theme.entrance, 0f);
-            Lay(diamondsRoot, l => l.diamonds, MenuElementKind.Panel, pivotAtAnchor: true, controlsSize: false);
+            // Inked gem + count in the top-right cluster.
+            BuildInkDiamonds();
         }
 
         void UpdateHealthAndDiamonds()
         {
-            var player = world != null ? world.Player : null;
-            if (player != null && healthBar != null)
-            {
-                int max = player.MaxHealth;
-                int health = Mathf.Clamp(player.Health, 0, Mathf.Max(0, max));
-                healthBar.Set(health, max);
-                MenuGraphics.SetText(healthCount, $"{health}/{max}");
-
-                float now = Time.unscaledTime;
-                // Shake the panel when hit; throb the heart at low health.
-                float hit = healthBar.SinceHit;
-                Vector2 shake = hit < 0.3f
-                    ? new Vector2(Mathf.Sin(now * 90f), Mathf.Cos(now * 77f)) * (14f * (1f - hit / 0.3f))
-                    : Vector2.zero;
-                foreach (Transform child in healthRoot)
-                {
-                    if (child.name == "Panel")
-                        ((RectTransform)child).anchoredPosition = shake;
-                }
-                bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
-                if (shownHealth >= 0 && health > shownHealth && !rewinding)
-                {
-                    healPopAt = now;
-                    floaters?.Spawn(heart, $"+{health - shownHealth}", style.healthFill, 52f);
-                }
-                shownHealth = health;
-                float beat = healthBar.IsLow ? 1f + 0.12f * Mathf.Max(0f, Mathf.Sin(now * 9f)) : 1f;
-                if (hit < 0.25f)
-                    beat = 1.25f - hit;
-                float healAge = now - healPopAt;
-                if (healAge < 0.45f)
-                    beat *= 1f + 0.35f * Mathf.Sin(healAge / 0.45f * Mathf.PI);
-                heart.localScale = new Vector3(beat, beat, 1f);
-            }
+            UpdateInkHealth();
+            UpdateInkReel();
+            UpdateInkGem();
 
             var roguelite = RogueliteManager.Instance;
             if (roguelite != null && diamonds != null)
@@ -557,11 +452,13 @@ namespace SickOfIt.Gameplay
                 if (points != shownPoints)
                 {
                     bool rewinding = GameClock.Instance != null && GameClock.Instance.IsRewinding;
-                    if (shownPoints >= 0 && points > shownPoints)
+                    bool gained = shownPoints >= 0 && points > shownPoints;
+                    if (gained)
                     {
                         diamondsPopAt = Time.unscaledTime;
                         PlayDiamondChime();
                         floaters?.Spawn(diamondsRoot, $"+{points - shownPoints}", theme.accent);
+                        UpdateInkGemPulse(true);
                     }
                     else if (shownPoints >= 0 && points < shownPoints && !rewinding)
                     {
@@ -759,11 +656,13 @@ namespace SickOfIt.Gameplay
             c.a = left > 0f ? flashColor.a * (left / flashDuration) : 0f;
             flash.color = c;
             UpdateFade();
+            UpdateFloorCard();
             UpdateBeat();
             UpdateHealthAndDiamonds();
             UpdateProgressBar();
             UpdateBossIntro();
             UpdateRewind();
+            EnsureRewindButtonMinSize();
             UpdateWeapon();
             UpdateDash();
             UpdateTouchPad();
@@ -803,29 +702,26 @@ namespace SickOfIt.Gameplay
 
         void BuildFloor()
         {
-            if (world.Stage == null || !world.Stage.HasFloors)
+            // Brass elevator dial in the top-right cluster (with diamonds).
+            BuildInkDial();
+        }
+
+        bool floorCardTried;
+
+        /// <summary>The stamped title card on a floor's arrival (once per level load; scenes and rewinds never show one).</summary>
+        void UpdateFloorCard()
+        {
+            if (floorCardTried || world == null)
                 return;
-            floorRoot = MenuGraphics.NewRect("Floor", menu.Root);
-            var place = Landscape.floor;
-            floorRoot.anchorMin = floorRoot.anchorMax = floorRoot.pivot = place.anchor;
-            floorRoot.anchoredPosition = place.offset;
-            var row = floorRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
-            var padding = theme.chip.padding;
-            row.padding = new RectOffset((int)padding.x + 12, (int)padding.x + 12, (int)padding.y, (int)padding.y);
-            row.childControlWidth = row.childControlHeight = true;
-            row.childForceExpandWidth = row.childForceExpandHeight = false;
-            var fitter = floorRoot.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            MenuGraphics.Surface(floorRoot, theme.chip);
-            floorText = MenuGraphics.Text(floorRoot, "Value", "", theme.chipText, menu.TitleFont, 0f, autoSize: false);
-            floorText.textWrappingMode = TextWrappingModes.NoWrap;
-            floorText.enableVertexGradient = false;
-            floorText.color = theme.accent;
-            menu.AddMotion(floorRoot.gameObject, null, theme.entrance, 0f);
-            Lay(floorRoot, l => l.floor, MenuElementKind.Panel, pivotAtAnchor: true, controlsSize: false);
-            // The boss bar normally sits top-center too; move it under the readout.
-            if (bossRoot != null)
-                Lay(bossRoot, l => l.bossBarWithFloor, MenuElementKind.Panel);
+            floorCardTried = true;
+            if (!string.IsNullOrEmpty(world.SceneId))
+                return;
+            var config = GameDefinition.Instance != null ? GameDefinition.Instance.GetLevel(world.LevelNumber) : null;
+            if (config == null)
+                return;
+            var m = System.Text.RegularExpressions.Regex.Match(config.displayName ?? "", @"Floor\s+(\d+)\s*:");
+            string quip = m.Success && Sfx.Has("vo_card_" + m.Groups[1].Value) ? "vo_card_" + m.Groups[1].Value : null;
+            FloorCard.TryShow(config.displayName, menu.TitleFont, quip);
         }
 
         void UpdateFloor()
@@ -843,12 +739,8 @@ namespace SickOfIt.Gameplay
                         ScreenTransition.Sweep();
                 }
                 shownFloor = floor;
-                MenuGraphics.SetText(floorText, string.Format(Texts.floorFormat ?? "FLOOR {0}", floor));
             }
-            // A little punch when a floor ticks over (cosmetic, real time).
-            float t = Time.unscaledTime - floorPopAt;
-            float scale = t < 0.35f ? 1f + 0.22f * Mathf.Sin(t / 0.35f * Mathf.PI) : 1f;
-            floorText.rectTransform.localScale = new Vector3(scale, scale, 1f);
+            UpdateInkDial();
         }
 
         /// <summary>Where the progress bar's playhead is: floors climbed on a floor stage, otherwise level time.</summary>

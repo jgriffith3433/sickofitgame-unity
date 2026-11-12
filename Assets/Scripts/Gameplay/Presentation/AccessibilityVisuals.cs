@@ -134,11 +134,12 @@ namespace SickOfIt.Gameplay
 
             // Coloured halo behind the ink rim (cyan/magenta family).
             halo.enabled = true;
-            halo.sprite = Orb();
+            halo.sprite = EffectAtlas.Cyan != null ? (haloColor.r > 0.6f ? EffectAtlas.Magenta : EffectAtlas.Cyan) : Orb();
             halo.sortingLayerID = body.sortingLayerID;
             halo.sortingOrder = body.sortingOrder - 3;
             float pulse = 0.75f + 0.25f * Mathf.Sin((entity.Now + entity.Serial * 0.13f) * 9f);
-            halo.color = new Color(haloColor.r, haloColor.g, haloColor.b, haloColor.a * pulse);
+            // The Gen halo sprites carry their own hue; the procedural fallback is white and takes the tint.
+            halo.color = EffectAtlas.Cyan != null ? new Color(1f, 1f, 1f, haloColor.a * pulse) : new Color(haloColor.r, haloColor.g, haloColor.b, haloColor.a * pulse);
             float haloScale = BodyWorldDiameter() * 2.4f / OrbWorldSize();
             haloTransform.position = body.bounds.center;
             haloTransform.rotation = Quaternion.identity;
@@ -146,7 +147,7 @@ namespace SickOfIt.Gameplay
 
             // White-hot core on top of the body.
             core.enabled = true;
-            core.sprite = Orb();
+            core.sprite = EffectAtlas.WhiteCore != null ? EffectAtlas.WhiteCore : Orb();
             core.sortingLayerID = body.sortingLayerID;
             core.sortingOrder = body.sortingOrder + 1;
             core.color = CoreWhite;
@@ -181,7 +182,7 @@ namespace SickOfIt.Gameplay
             outer.color = new Color(InkRim.r, InkRim.g, InkRim.b, 0.8f);
             CopyPose(outerTransform, 1.55f);
             core.enabled = true;
-            core.sprite = Orb();
+            core.sprite = EffectAtlas.WhiteCore != null ? EffectAtlas.WhiteCore : Orb();
             core.sortingLayerID = body.sortingLayerID;
             core.sortingOrder = body.sortingOrder + 1;
             core.color = contrast ? HotColor : PlayerCore;

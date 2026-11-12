@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "overlordCameo",
+    "overlordTaunt"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#2A2030",
+    "placeholderSize": 1.8,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 3,
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Enemies/OverlordTaunt/OverlordTaunt_idle.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Laugh",
+          "spriteSheet": "Art/Enemies/OverlordTaunt/OverlordTaunt_laugh.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Point",
+          "spriteSheet": "Art/Enemies/OverlordTaunt/OverlordTaunt_point.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "Flee",
+          "spriteSheet": "Art/Enemies/OverlordTaunt/OverlordTaunt_flee.png",
+          "fps": 12,
+          "loop": false,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "screenAnchor",
+      "offset": [
+        0.7,
+        1.7
+      ],
+      "drift": [
+        0.0,
+        0.0
+      ],
+      "driftAfter": 0.0
+    },
+    {
+      "type": "lifetime",
+      "seconds": 4.0
+    }
+  ]
+}
