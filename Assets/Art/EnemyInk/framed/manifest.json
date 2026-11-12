@@ -1,0 +1,184 @@
+{
+  "framed": {
+    "imp_stand": "a_d31095a61b71c985",
+    "imp_windup": "a_164a30a98d5f0222",
+    "imp_throw": "a_6caab748ad52568d",
+    "imp_struck": "a_36ad9508bd4e6831",
+    "imp_dead": "a_916939619e4837e6",
+    "cinder_stand": "a_b21e8a473da66724",
+    "cinder_windup": "a_051b7e5fcc352060",
+    "cinder_lunge": "a_0b64fd15f813e985",
+    "cinder_struck": "a_d80137b0bcbc3e45",
+    "cinder_popped": "a_7ce2038bac1d09ab"
+  },
+  "jobs": [
+    {
+      "id": "j_6b03ead7fee6",
+      "tool": "image.edit",
+      "labels": {
+        "entity": "cinderSpark",
+        "pose": "windup",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 5
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_5238917fca8c",
+      "tool": "image.edit",
+      "labels": {
+        "entity": "cinderSpark",
+        "pose": "struck",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 5
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_68c5198e9fd2",
+      "tool": "image.edit",
+      "labels": {
+        "entity": "cinderSpark",
+        "pose": "dead",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 5
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_d24bbc02a1ae",
+      "tool": "image.edit",
+      "labels": {
+        "entity": "cinderThatch",
+        "pose": "lunge",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 5
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_7165d8026f18",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "imp",
+        "clip": "idle",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_cd0419b2e613",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "imp",
+        "clip": "windup",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_c1364bd157df",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "imp",
+        "clip": "attack",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_ead0628d6346",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "imp",
+        "clip": "hurt",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_ac3cf8f3cf18",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "imp",
+        "clip": "die",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_ebe44a2076b9",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "cinder",
+        "clip": "idle",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_45c86457f611",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "cinder",
+        "clip": "windup",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_ea1d1fe70779",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "cinder",
+        "clip": "attack",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_76dfa01cc893",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "cinder",
+        "clip": "hurt",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    },
+    {
+      "id": "j_33b95c67f54e",
+      "tool": "video.i2v",
+      "labels": {
+        "entity": "cinder",
+        "clip": "die",
+        "studioChange": "c_9c4e54748bbe",
+        "orgCredits": 40
+      },
+      "status": "queued",
+      "detail": "queued"
+    }
+  ]
+}
