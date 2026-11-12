@@ -306,7 +306,7 @@ def main():
     lines += [f"| {r[0]} | {r[1]} | {r[2]} |" for r in scene_rows]
     lines += ["", "## Drawn in code on purpose (not art to make)", "",
               "- The aim crosshair (AimCursor) and the aim guide's laser line (AimGuide): UI drawn in theme.json colours.",
-              "- Accessibility outlines and the hitbox dot (AccessibilityVisuals): readability aids, off by default.",
+              "- Accessibility outlines (AccessibilityVisuals): readability aids, off by default. No hitbox dot or ring is drawn on the hero.",
               "- Hit sparks, dust, flashes and glows (Core/Fx, Glow) and weather bits (AmbienceSprites weather): soft particles tinted per Circle.",
               "- Menu panels, buttons and chips (MenuGraphics): theme.json shapes around painted icons and pictures.",
               "- Ladders without art, anchors' rings (FloorKit) and a weapon swing without swingArt: fallbacks only; every ladder and melee weapon in the game names its art.",

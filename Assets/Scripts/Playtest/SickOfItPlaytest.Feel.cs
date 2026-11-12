@@ -13,11 +13,27 @@ namespace SickOfIt.Playtest
 {
     public static partial class SickOfItPlaytest
     {
+        /// <summary>True when something on the hero is drawn as a crosshair, reticle, target ring or hitbox dot (there is none since J removed them).</summary>
+        static bool HeroHasMarker(Component hero) => hero != null && HeroHasMarker(hero.gameObject);
+
+        static bool HeroHasMarker(GameObject hero)
+        {
+            if (hero == null)
+                return false;
+            foreach (var t in hero.GetComponentsInChildren<Transform>(true))
+            {
+                string n = t.name.ToLowerInvariant();
+                if (n.Contains("hitboxdot") || n.Contains("reticle") || n.Contains("crosshair") || n.Contains("targetring"))
+                    return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// The feel scenario (Docs/Story.md "How sick of it are you?", the quick hero): Level 1 loaded directly (setup shortcut), real input.
         /// Reports the time to cross the screen holding D (2.5-3.2 s), input-to-motion in ms (&lt; 100), the safe time after a hit on
         /// Normal (1.0-1.5 s, then he can be hit again), the dash from the first second (Shift, and a right-half swipe on a touchscreen
-        /// that leaves the stick alone) passing through an ember unharmed, and the hitbox dot on the hero. Metrics feel.*.
+        /// that leaves the stick alone) passing through an ember unharmed, and no marker drawn on the hero. Metrics feel.*.
         /// </summary>
         public const string FeelId = "feel";
         const int FeelLevel = 1;
@@ -64,10 +80,9 @@ namespace SickOfIt.Playtest
                 PlayerController.Dashed += FeelOnDashed;
                 try
                 {
-                    // 1. The hitbox dot is on in Level 1 without touching Settings.
-                    var dot = hero.GetComponentInChildren<HitboxDot>();
+                    // 1. No crosshair, ring or dot is drawn on the hero in Level 1 (J removed the hitbox dot).
                     yield return null;
-                    FeelCheck("hitbox dot shows in Level 1", dot != null && dot.Shown, dot != null ? "dot " + (dot.Shown ? "on" : "off") : "no HitboxDot on the hero");
+                    FeelCheck("no ring or dot on the hero in Level 1", !HeroHasMarker(hero), "no HitboxDot/Reticle/Crosshair child on the hero");
 
                     // 2. Input to motion: D pressed on a frame, the first frame the hero's place has moved.
                     float x0 = hero.transform.position.x;

@@ -252,7 +252,6 @@ namespace SickOfIt.Gameplay
             {
                 playerController.VolleyScale = Perks.RollVolleyScale;
                 playerController.AimAssist = AssistAim;
-                HitboxDot.Attach(playerController);
             }
             Upgrades = new UpgradeSystem(this, playerController, playerController != null ? playerController.GetComponentInChildren<PlayerHealth>() : null);
             Style = new StyleSystem(this);
