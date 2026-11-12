@@ -376,8 +376,8 @@
     "distance": 400.0
   },
   "titleEntrance": {
-    "type": "Drop",
-    "duration": 0.9,
+    "type": "Pop",
+    "duration": 0.5,
     "delay": 0.0,
     "stagger": 0.0,
     "distance": 320.0

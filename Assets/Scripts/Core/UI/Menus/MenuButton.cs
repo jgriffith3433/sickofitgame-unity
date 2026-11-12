@@ -28,9 +28,12 @@ namespace SickOfIt.Core.UI.Menus
         MenuButtonStyle style;
         Image fill;
         Color normalFill, hoverFill, pressedFill;
+        Sprite normalSprite, hoverSprite, pressedSprite;
         Color labelColor;
         bool labelGradient;
+        bool illustratedPlate;
         MenuSounds sounds;
+        SelectionState lastPlateState = SelectionState.Normal;
 
         float scale = 1f, rotation, targetScale = 1f, targetRotation;
         Color currentFill, targetFill;
@@ -63,6 +66,11 @@ namespace SickOfIt.Core.UI.Menus
             normalFill = fill.color;
             hoverFill = style.hoverFill.a > 0f ? style.hoverFill : Color.Lerp(normalFill, Color.white, 0.25f);
             pressedFill = style.pressedFill.a > 0f ? style.pressedFill : Color.Lerp(normalFill, Color.black, 0.25f);
+            normalSprite = fill.sprite;
+            hoverSprite = style.hoverSprite != null ? style.hoverSprite : normalSprite;
+            pressedSprite = style.pressedSprite != null ? style.pressedSprite : normalSprite;
+            illustratedPlate = style.hoverSprite != null || style.pressedSprite != null
+                || (style.surface != null && style.surface.shape == MenuShape.Sprite && style.surface.sprite != null);
             currentFill = targetFill = normalFill;
 
             Content = MenuGraphics.NewRect("Content", transform);
@@ -157,12 +165,50 @@ namespace SickOfIt.Core.UI.Menus
                 Motion.ExtraRotation = rotation;
             }
             if (fill != null && fill.name != "HitArea")
+            {
+                if (illustratedPlate)
+                    ApplyPlate(currentSelectionState);
                 fill.color = currentFill;
+            }
             if (Label != null && !labelGradient)
                 Label.color = currentLabel;
             else if (Label != null)
                 Label.alpha = currentLabel.a;
         }
+
+        void ApplyPlate(SelectionState state)
+        {
+            if (fill == null) return;
+            // Only rewrite the sprite when the state changes (no per-frame churn).
+            if (state == lastPlateState && fill.sprite != null)
+                return;
+            lastPlateState = state;
+            Sprite next = normalSprite;
+            switch (state)
+            {
+                case SelectionState.Highlighted:
+                case SelectionState.Selected:
+                    next = hoverSprite;
+                    break;
+                case SelectionState.Pressed:
+                    next = pressedSprite;
+                    break;
+            }
+            if (next == null)
+                next = normalSprite;
+            if (fill.sprite != next && next != null)
+            {
+                fill.sprite = next;
+                if (next.border.sqrMagnitude > 0f)
+                    fill.type = Image.Type.Sliced;
+            }
+        }
+
+        /// <summary>True when this button shows a distinct hover or press plate (playtest).</summary>
+        public bool HasIllustratedPlate => illustratedPlate && (hoverSprite != null || pressedSprite != null);
+
+        /// <summary>The plate sprite currently drawn on the fill (playtest).</summary>
+        public Sprite CurrentPlate => fill != null ? fill.sprite : null;
 
         public void OnPointerClick(PointerEventData eventData)
         {
