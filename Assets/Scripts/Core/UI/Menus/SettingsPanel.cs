@@ -66,9 +66,10 @@ namespace SickOfIt.Core.UI.Menus
 
             ToggleRow(menu, rows, texts.sound, texts, toggle, () => GameSettings.SoundOn, v => GameSettings.SoundOn = v);
             VolumeRow(menu, rows, texts.masterVolume, step, () => GameSettings.MasterVolume, v => GameSettings.MasterVolume = v);
-            VolumeRow(menu, rows, texts.musicVolume, step, () => GameSettings.MusicVolume, v => GameSettings.MusicVolume = v);
-            VolumeRow(menu, rows, texts.effectsVolume, step, () => GameSettings.SfxVolume, v => { GameSettings.SfxVolume = v; Sfx.Play(Sfx.Events.uiClick); });
-            VolumeRow(menu, rows, texts.voiceVolume, step, () => GameSettings.VoiceVolume, v => GameSettings.VoiceVolume = v);
+            // Music / Effects / Voice are drag sliders (≥48 px on touch) so a thumb can set them; they persist in PlayerPrefs.
+            SliderRow(menu, rows, texts.musicVolume, () => GameSettings.MusicVolume, v => GameSettings.MusicVolume = v);
+            SliderRow(menu, rows, texts.effectsVolume, () => GameSettings.SfxVolume, v => { GameSettings.SfxVolume = v; });
+            SliderRow(menu, rows, texts.voiceVolume, () => GameSettings.VoiceVolume, v => GameSettings.VoiceVolume = v);
             ToggleRow(menu, rows, texts.screenShake, texts, toggle, () => GameSettings.ScreenShake, v => GameSettings.ScreenShake = v);
             ToggleRow(menu, rows, texts.hints, texts, toggle, () => GameSettings.Hints, v => GameSettings.Hints = v);
 
@@ -290,6 +291,88 @@ namespace SickOfIt.Core.UI.Menus
             value = Cell(menu, row, "Value", "", menu.Theme.heading, 150f, TextAlignmentOptions.Center);
             menu.AddButton(row, "+", step, () => { set(Mathf.Round((get() + Step) * 10f) / 10f); Refresh(); });
             Refresh();
+        }
+
+        /// <summary>A labelled drag slider (≥48 px tall on touch) for Music / Effects / Voice. The playtest finds it by row name.</summary>
+        static void SliderRow(MenuCanvas menu, RectTransform rows, string label, Func<float> get, Action<float> set)
+        {
+            var row = Row(menu, rows, label);
+            var element = row.GetComponent<LayoutElement>();
+            // Tall enough for a thumb before responsive grow; MenuResponsive still lifts to minTouchSize on phone.
+            if (element != null)
+                element.preferredHeight = element.minHeight = 56f;
+            MenuResponsive.TrackInGroup(row, element, new Vector2(0f, 56f), MenuElementKind.Container, menu.Responsive, touch: true);
+
+            TextMeshProUGUI value = null;
+            void Refresh()
+            {
+                if (value != null)
+                    MenuGraphics.SetText(value, Mathf.RoundToInt(get() * 100f) + "%");
+            }
+
+            var track = MenuGraphics.NewRect("Slider", row);
+            var trackElement = track.gameObject.AddComponent<LayoutElement>();
+            trackElement.preferredWidth = trackElement.minWidth = 420f;
+            trackElement.flexibleWidth = 1f;
+            trackElement.preferredHeight = trackElement.minHeight = 48f;
+            MenuResponsive.TrackInGroup(track, trackElement, new Vector2(420f, 48f), MenuElementKind.Container, menu.Responsive, touch: true);
+
+            var bg = track.gameObject.AddComponent<Image>();
+            bg.color = new Color(0.12f, 0.08f, 0.14f, 0.95f);
+            bg.raycastTarget = true;
+
+            var fillArea = MenuGraphics.NewRect("Fill Area", track);
+            MenuGraphics.Fill(fillArea);
+            fillArea.offsetMin = new Vector2(8f, 10f);
+            fillArea.offsetMax = new Vector2(-8f, -10f);
+            var fill = MenuGraphics.NewRect("Fill", fillArea);
+            MenuGraphics.Fill(fill);
+            var fillImage = fill.gameObject.AddComponent<Image>();
+            fillImage.color = menu.Theme.button.surface.fill;
+            fillImage.raycastTarget = false;
+
+            var handleSlide = MenuGraphics.NewRect("Handle Slide Area", track);
+            MenuGraphics.Fill(handleSlide);
+            handleSlide.offsetMin = new Vector2(8f, 0f);
+            handleSlide.offsetMax = new Vector2(-8f, 0f);
+            var handle = MenuGraphics.NewRect("Handle", handleSlide);
+            handle.anchorMin = handle.anchorMax = new Vector2(0f, 0.5f);
+            handle.pivot = new Vector2(0.5f, 0.5f);
+            handle.sizeDelta = new Vector2(36f, 48f);
+            var handleImage = handle.gameObject.AddComponent<Image>();
+            handleImage.color = new Color(0.95f, 0.88f, 0.75f, 1f);
+            handleImage.raycastTarget = true;
+
+            var slider = track.gameObject.AddComponent<Slider>();
+            slider.targetGraphic = handleImage;
+            slider.fillRect = fill;
+            slider.handleRect = handle;
+            slider.direction = Slider.Direction.LeftToRight;
+            slider.minValue = 0f;
+            slider.maxValue = 1f;
+            slider.wholeNumbers = false;
+            slider.SetValueWithoutNotify(get());
+            slider.onValueChanged.AddListener(v =>
+            {
+                set(v);
+                Refresh();
+            });
+            // Tag for the audio-mix playtest: row label + "Slider".
+            track.gameObject.name = label + "Slider";
+
+            value = Cell(menu, row, "Value", "", menu.Theme.heading, 110f, TextAlignmentOptions.Center);
+            Refresh();
+            GameSettings.Changed += Refresh;
+            // Drop the listener when the overlay goes: the row's OnDestroy is enough via a tiny helper.
+            track.gameObject.AddComponent<SettingsSliderHook>().Bind(() => GameSettings.Changed -= Refresh);
+        }
+
+        /// <summary>Unhooks a settings slider's refresh when its row is destroyed.</summary>
+        sealed class SettingsSliderHook : MonoBehaviour
+        {
+            Action onDestroy;
+            public void Bind(Action cleanup) => onDestroy = cleanup;
+            void OnDestroy() => onDestroy?.Invoke();
         }
 
         static void ToggleRow(MenuCanvas menu, RectTransform rows, string label, MenuTexts texts, MenuButtonStyle style, Func<bool> get, Action<bool> set)

@@ -11,13 +11,14 @@ namespace SickOfIt.Data.Config
         [Tooltip("A spoken line (ElevenLabs text-to-speech).")] Voice,
     }
 
-    /// <summary>The four mixer groups (Core/Audio/AudioBuses.cs): every sound plays on one.</summary>
+    /// <summary>The five content mixer groups (Core/Audio/AudioBuses.cs); Master is AudioListener via GameSettings.MasterVolume.</summary>
     public enum Bus
     {
         Music,
         Voice,
         Sfx,
         Ambience,
+        Ui,
     }
 
     /// <summary>The mixer group a sound is set to play on (Core/Audio/AudioBuses.cs). Auto = Voice for spoken lines, SFX for effects.</summary>
@@ -28,6 +29,7 @@ namespace SickOfIt.Data.Config
         Voice,
         Ambience,
         Music,
+        Ui,
     }
 
     /// <summary>
@@ -69,6 +71,8 @@ namespace SickOfIt.Data.Config
         public float pitchVariation = 0.06f;
         [Tooltip("At most this many copies playing at once.")]
         public int maxVoices = 3;
+        [Tooltip("Higher wins when the copy cap or the pool is full: a new play can steal a quieter / lower-priority one.")]
+        public int priority;
         [Tooltip("Ignore repeats closer together than this (seconds).")]
         public float cooldown = 0.04f;
 
@@ -141,6 +145,8 @@ namespace SickOfIt.Data.Config
         public string uiHover = "ui_hover";
         public string uiClick = "ui_click";
         public string uiBack = "ui_back";
+        [Tooltip("Loop under the hero at one heart (AudioBuses LowHealth + HeartbeatMix).")]
+        public string lowHealthHeartbeat = "player_heartbeat";
         [UnityEngine.Tooltip("A hero shot lands on an enemy: a short layered pop on top of the enemy's own hurt sound.")] public string enemyHit = "hit_pop";
         [UnityEngine.Tooltip("An enemy dies: a layered pop on top of the enemy's own death sound.")] public string killPop = "kill_pop";
         [UnityEngine.Tooltip("A shot hits a wall or floor.")] public string bulletImpact = "bullet_impact";
@@ -200,6 +206,7 @@ namespace SickOfIt.Data.Config
                 case SoundBus.Voice: return Bus.Voice;
                 case SoundBus.Ambience: return Bus.Ambience;
                 case SoundBus.Music: return Bus.Music;
+                case SoundBus.Ui: return Bus.Ui;
                 default: return sound.kind == SoundKind.Voice ? Bus.Voice : Bus.Sfx;
             }
         }

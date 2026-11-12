@@ -196,13 +196,14 @@ verb. What the code does (all presentation, nothing in the simulation, nothing r
   whenever a shot lands), `kill_pop` (event `killPop`, plays with the enemy's own death sound: the hit and the kill land as layered pops in
   the same moment), `player_hurt`, `graze_tick`, `pickup_diamond`, `player_jump`, `player_land`, `player_dash`, `rewind_start`,
   `rewind_stop`. 33 takes.
-- **Mixer groups** (`Core/Audio/AudioBuses.cs`): Music, Voice, SFX, Ambience, each with a trim in dB (`AudioBuses.SetTrimDb`) that
-  `Sfx` (effects, voices), `AmbienceBed` and `MusicVolume` (every music source) multiply in; a sound's `bus` field picks its group (Auto:
-  Voice for spoken lines, SFX for effects). It is software on purpose: Unity's AudioMixer effects (ducking, limiter) are not supported in
-  WebGL, where the game ships, and a software bus is the same on every device and testable.
-- **Duck under voice.** When the voice queue starts a line (`AudioBuses.VoiceStarted`) Music drops **-8 dB** over **0.1 s**; when the
-  line ends (one timer set at that start, `WaitForSecondsRealtime`: no polling anywhere) it comes back over **0.4 s**. The ramp runs only
-  while the duck moves. Back-to-back lines hold the duck.
+- **Mixer groups** (`Core/Audio/AudioBuses.cs`): Master (AudioListener), Music, Voice, SFX, Ambience, UI — each content group with a trim
+  in dB (`AudioBuses.SetTrimDb`) that `Sfx` (effects, voices, UI), `AmbienceBed` and `MusicVolume` multiply in; a sound's `bus` field picks
+  its group (Auto: Voice for spoken lines, SFX for effects; menu clicks are UI). It is software on purpose: Unity's AudioMixer effects
+  (ducking, limiter) are not supported in WebGL, where the game ships, and a software bus is the same on every device and testable.
+  Snapshots: Pause (Music −10 dB, SFX muted), Low health (Music −4 dB + `player_heartbeat`), Rewind (SFX −6 dB). See docs/audio-mix.md.
+- **Duck under voice.** When the voice queue starts a line (`AudioBuses.VoiceStarted`) Music drops **-8 dB** and Ambience **-4 dB** over
+  **0.08 s**; when the line ends (one timer set at that start, `WaitForSecondsRealtime`: no polling anywhere) both come back over **0.4 s**.
+  The ramp runs only while the duck moves. Back-to-back lines hold the duck.
 - **Master limiter**: the page's, in `Tools/Web/hawkes-sound.js`: every AudioContext Unity makes gets a DynamicsCompressorNode
   (threshold -6 dB, knee 0, ratio 20, attack 3 ms, release 120 ms) in place of its `destination` (followed by a -3 dB trim that cancels the compressor's automatic make-up gain), so a pile of shots and
   voices peaks near -3 dBFS. Not yet verified in a WebGL build: whether Unity's "Compressed In Memory" `<audio>` clips (music, the beds) go

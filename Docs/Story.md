@@ -1965,9 +1965,11 @@ scanlines and glitch stay on the letterbox / frame, off the playfield.
 Every verb sounds like something: a shot, a hit, a kill, a graze, a diamond, a jump, a landing, a dash, a rewind going and stopping. Each
 has three takes that never play the same one twice in a row and a pitch that moves about 6% (voices never move), a shot and a kill land as
 layered pops in the same moment (a short `hit_pop` / `kill_pop` over the enemy's own hurt and death sounds) and at most four copies of
-one effect sound at once. Voices always sit over the music: Music ducks 8 dB for as long as a line is spoken. Every place has a bed of
-its own: the Meadow's wind, a far rooster and a mill that turn to fire and a village alarm bell when the sky opens (it is the same field,
-burning), Floor 1000's lava and creaking stone. The design and the numbers are in Docs/SoundAudit.md "Takes, buses and beds".
+one effect sound at once. Voices always sit over the music: Music ducks 8 dB (Ambience 4 dB) in 80 ms for as long as a line is spoken.
+Pause muffles Music −10 dB and mutes SFX; at one heart a heartbeat loop plays under Music −4 dB; rewind ducks SFX −6 dB so the whoosh
+leads. Every place has a bed of its own: the Meadow's wind, a far rooster and a mill that turn to fire and a village alarm bell when the
+sky opens (it is the same field, burning), Floor 1000's lava and creaking stone. The design and the numbers are in Docs/SoundAudit.md
+"Takes, buses and beds" and docs/audio-mix.md.
 
 ## Readability is fairness (art direction and bullets)
 

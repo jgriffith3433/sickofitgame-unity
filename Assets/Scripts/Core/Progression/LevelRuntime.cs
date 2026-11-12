@@ -200,6 +200,7 @@ namespace SickOfIt.Core.Progression
                 playerHealth.InitializeForLevel(levelNumber);
                 playerHealth.onDeath.AddListener(OnPlayerDied);
                 playerHealth.DeathStood += OnDeathStood;
+                SickOfIt.Core.Audio.HeartbeatMix.Bind(playerHealth);
             }
 
             gameplayWorld = GameplayWorld.Create(new WorldSetup
@@ -257,6 +258,7 @@ namespace SickOfIt.Core.Progression
                 Current = null;
                 // The level's ambient bed ends with it (a new level's own start cross-fades if one is already up).
                 SickOfIt.Core.Audio.AmbienceBed.Stop();
+                SickOfIt.Core.Audio.HeartbeatMix.Unbind();
             }
             GameContent.Changed -= OnContentChanged;
             GameplayTelemetry.Recorded -= OnPhaseRecorded;

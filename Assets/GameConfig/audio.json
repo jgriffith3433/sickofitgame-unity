@@ -196,6 +196,7 @@
     "uiHover": "ui_hover",
     "uiClick": "ui_click",
     "uiBack": "ui_back",
+    "lowHealthHeartbeat": "player_heartbeat",
     "playerDash": "player_dash",
     "playerDashReady": "player_dash_ready",
     "playerWallCling": "player_wall_cling",
@@ -621,6 +622,8 @@
       "volume": 0.7,
       "pitchVariation": 0.04,
       "maxVoices": 3,
+      "bus": "Ui",
+      "priority": 10,
       "cooldown": 0.04
     },
     {
@@ -637,8 +640,29 @@
       "volume": 0.6,
       "pitchVariation": 0,
       "maxVoices": 3,
+      "bus": "Ui",
+      "priority": 10,
       "cooldown": 0.04
     },
+    {
+      "id": "player_heartbeat",
+      "kind": "Effect",
+      "prompt": "Close muffled heartbeat loop under stress, low thump thump of a human heart in the chest, dry and intimate, no music, seamless loop for a game when the player is at one heart of health",
+      "durationSeconds": 2,
+      "promptInfluence": 0.7,
+      "loop": true,
+      "voice": "",
+      "voiceId": "",
+      "clip": null,
+      "bus": "Sfx",
+      "generatedFrom": "",
+      "volume": 0.55,
+      "pitchVariation": 0,
+      "maxVoices": 1,
+      "priority": 20,
+      "cooldown": 0
+    },
+
     {
       "id": "vo_final_wave",
       "kind": "Voice",

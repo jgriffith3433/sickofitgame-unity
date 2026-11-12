@@ -463,7 +463,7 @@ namespace SickOfIt.Playtest
                 {
                     var (s, e) = intervals[k];
                     if (e - s < 0.6f)
-                        continue; // too short to judge a duck that takes 0.1 s to arrive
+                        continue; // too short to judge a duck that takes 0.08 s to arrive
                     judged++;
                     float minDuck = 1f, minSource = float.MaxValue;
                     float before = k < voiceBefores.Count ? voiceBefores[k] : -1f;

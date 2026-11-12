@@ -1,5 +1,4 @@
-- lesson: Gen fleet pause — when J says pause until fleet works, keep pending-gpu, clear failed ids from waiting-jobs, do not requeue; Studio resumes the same change once keys/servers exist (reconfirmed c_8ec024977cdc: fleet still AWS-empty).
-- lesson: Gen wait_for_server with missing AWS keys — jobs flip queued→failed "No GPU" in seconds ($0); never park those failed ids as live waits.
-- lesson: org credits gate video.i2v at 40 — below that, queue fails before GPU even if a server exists.
-- convention: EnemyInk resume — queue dead `image.edit` first with `wait_for_server`; put follow-up frame→i2v→bake steps in `.hawkes/waiting-jobs.txt` (seeds in pending-gpu).
-- canon: Early-floor enemy ink — Meadow and Floors 1000-997 hostiles (incl. launcher thief) share hand-inked Cuphead wind-ups ≥0.3 s (`docs/art-bible.md` §9).
+- lesson: Hawkes Gen audio.sfx needs 8 Studio org credits — with 1 left the call fails immediately; use HeartbeatMix procedural fallback and pending-gpu, do not invent a fake Gen job id.
+- convention: WebGL mix is software buses in AudioBuses (not a Unity AudioMixer asset); Master = AudioListener; Pause must leave the Ui bus up so the pause menu still clicks.
+- convention: audio.json edits stay surgical (insert before a closing brace); full json.dumps rewrites unicode and the whole file.
+- canon: Low health mix — at one heart Music sits −4 dB under a looping heartbeat; Pause Music −10 dB with SFX muted; Rewind SFX −6 dB so the whoosh leads (docs/audio-mix.md).
