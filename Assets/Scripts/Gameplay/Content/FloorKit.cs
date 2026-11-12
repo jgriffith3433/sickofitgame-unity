@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using SickOfIt.Data;
 using SickOfIt.Json;
+using SickOfIt.Gameplay;
 
 namespace SickOfIt.Gameplay.Content
 {
@@ -129,6 +130,19 @@ namespace SickOfIt.Gameplay.Content
             float t = Mathf.Repeat(now - loopPhase * period, period);
             float tell = Mathf.Max(1f, loopTell);
             return t < tell ? 1 : t < tell + Mathf.Max(0.2f, loopDown) ? 2 : 0;
+        }
+
+        /// <summary>True while the stone is shaking before it sinks (loop tell, or the dip the moment he lands).</summary>
+        public bool IsTelling
+        {
+            get
+            {
+                if (Owner == null) return false;
+                int stage = LoopStage(Owner.Now);
+                if (stage == 1) return true;
+                // The land-dip is short; treat stood-on with no sunk yet as the dip telegraph.
+                return stoodOn && sunk <= dip + 0.001f && dip > 0f;
+            }
         }
 
         public override void Tick(float now, float dt)
@@ -1101,10 +1115,17 @@ namespace SickOfIt.Gameplay.Content
                 world.Effects.Shake(0.06f, Mathf.Max(1f, telegraph));
                 SickOfIt.Core.Audio.Sfx.Play(rumbleSound);
                 FloorKit.Record(Owner, "lavaWarn", Mathf.RoundToInt(speed * 100f));
+                HazardWarnFx.NoteLavaTell(Owner, riseFrom);
+                // Lead is logged when the rise actually starts (bubbling ends), so the measured time is the real wait.
                 Owner.RecordNow();
             }
             lastSpeed = speed;
             bool bubbling = riseFrom >= 0f && now < riseFrom;
+            if (riseFrom >= 0f && now >= riseFrom)
+            {
+                TelegraphLog.Record("lava", Owner.DefId, Mathf.Max(0.5f, telegraph), world);
+                riseFrom = -1f;
+            }
             if (speed > 0f && !bubbling && risen < max)
                 risen = Mathf.Min(max, risen + speed * dt);
 
@@ -1115,6 +1136,10 @@ namespace SickOfIt.Gameplay.Content
 
         /// <summary>How far it has risen (the playtest reads it).</summary>
         public float Risen => risen;
+        /// <summary>A rise is bubbling (the telegraph) before it can hurt higher.</summary>
+        public bool IsWarning => riseFrom >= 0f && Owner != null && Owner.Now < riseFrom;
+        /// <summary>Configured lead of the current rise telegraph, seconds.</summary>
+        public float WarningLead => Mathf.Max(1f, telegraph);
 
         void DrawSurface(float now, bool bubbling)
         {
@@ -1198,6 +1223,9 @@ namespace SickOfIt.Gameplay.Content
         float sinking;
         bool started;
 
+        /// <summary>True during the rumble before the wall moves.</summary>
+        public bool IsWarning => !started && Owner != null && (Owner.Now - Owner.SpawnTime) < Mathf.Max(0f, telegraph);
+
         public override void OnSpawn()
         {
             x = Owner.Position.x;
@@ -1218,11 +1246,16 @@ namespace SickOfIt.Gameplay.Content
             var section = world.Effects.CurrentSection;
             if (stopWhenPathTurns && started && section != null && (section.Axis.x * dir < 0.1f || HasLanding(section)))
                 stopped = true;
+            // The rumble window before it moves is the telegraph (logged once when the surge begins moving).
+            if (!started && age < Mathf.Max(0f, telegraph) && !stopped && age < 0.05f)
+                HazardWarnFx.NoteLavaTell(Owner, Owner.SpawnTime + Mathf.Max(0.5f, telegraph));
             if (age >= Mathf.Max(0f, telegraph) && !stopped)
             {
                 if (!started)
                 {
                     started = true;
+                    float lead = Mathf.Max(0.5f, telegraph);
+                    TelegraphLog.Record("surge", Owner.DefId, lead, world);
                     FloorKit.Record(Owner, "surge");
                     Owner.RecordNow();
                 }
@@ -1377,6 +1410,8 @@ namespace SickOfIt.Gameplay.Content
 
         /// <summary>0 resting, 1 telling, 2 blowing (the playtest reads it).</summary>
         public int Phase => Mathf.Max(0, lastPhase);
+        /// <summary>Configured tell lead in seconds (at least 1).</summary>
+        public float TellLead => Mathf.Max(1f, tell);
 
         public override void Tick(float now, float dt)
         {
@@ -1397,6 +1432,7 @@ namespace SickOfIt.Gameplay.Content
                     {
                         SickOfIt.Core.Audio.Sfx.Play(blowSound);
                         FloorKit.Record(Owner, "geyser");
+                        TelegraphLog.Record("geyser", Owner.DefId, Mathf.Max(0.5f, tell), Owner.World);
                         if (shake > 0f && Owner.World.View.Contains(Owner.Position))
                             Owner.World.Effects.Shake(shake, 0.4f);
                     }
