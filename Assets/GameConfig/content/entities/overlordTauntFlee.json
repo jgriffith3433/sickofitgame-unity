@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "overlordCameo",
+    "overlordTaunt"
+  ],
+  "body": {
+    "radius": 0.3,
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#2A2030",
+    "placeholderSize": 1.3,
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 3,
+    "hurtFlash": false,
+    "deathPop": false,
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [
+    {
+      "type": "screenAnchor",
+      "offset": [
+        0.7,
+        1.7
+      ],
+      "drift": [
+        0.0,
+        1.6
+      ],
+      "driftAfter": 0.2
+    },
+    {
+      "type": "lifetime",
+      "seconds": 2.6
+    }
+  ]
+}

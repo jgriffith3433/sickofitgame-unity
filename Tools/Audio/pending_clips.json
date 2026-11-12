@@ -1,4 +1,35 @@
 {
   "comment": "Voice lines whose prompts are in audio.json but whose clips are not made yet (no voice budget). sound_audit.py and SoundClipTests skip them; once a clip exists the id is dropped here by `stop_floors.py --wire`.",
-  "ids": []
+  "ids": [
+    "vo_ovl_t_bottom",
+    "vo_ovl_t_bullet1",
+    "vo_ovl_t_bullet2",
+    "vo_ovl_t_bullet3",
+    "vo_ovl_t_fall1",
+    "vo_ovl_t_fall2",
+    "vo_ovl_t_fall3",
+    "vo_ovl_t_fin1",
+    "vo_ovl_t_fin2",
+    "vo_ovl_t_fin3",
+    "vo_ovl_t_hazard1",
+    "vo_ovl_t_hazard2",
+    "vo_ovl_t_hazard3",
+    "vo_ovl_t_higher",
+    "vo_ovl_t_imp1",
+    "vo_ovl_t_imp2",
+    "vo_ovl_t_imp3",
+    "vo_ovl_t_rew1",
+    "vo_ovl_t_rew2",
+    "vo_ovl_t_rew3",
+    "vo_ovl_t_rew4",
+    "vo_ovl_t_rising",
+    "vo_ovl_t_streak1",
+    "vo_ovl_t_streak2",
+    "vo_ovl_t_streak3",
+    "vo_ovl_t_undo1",
+    "vo_ovl_t_undo2",
+    "vo_ovl_t_undo3",
+    "vo_ovl_t_undo4",
+    "vo_ovl_t_village"
+  ]
 }

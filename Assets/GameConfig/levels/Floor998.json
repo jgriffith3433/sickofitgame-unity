@@ -1366,6 +1366,39 @@
             ]
           }
         ]
+      },
+      {
+        "name": "overlord: watches, Floor 998",
+        "when": {
+          "type": "counter",
+          "name": "ovlTauntNever",
+          "atLeast": 999.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawn",
+            "entity": "overlordTaunt",
+            "id": "ovlTaunt",
+            "anchor": "Camera",
+            "at": [
+              0.7,
+              1.7
+            ],
+            "facePlayer": false
+          },
+          {
+            "type": "spawn",
+            "entity": "overlordTauntFlee",
+            "id": "ovlTauntFlee",
+            "anchor": "Camera",
+            "at": [
+              0.7,
+              1.7
+            ],
+            "facePlayer": false
+          }
+        ]
       }
     ],
     "phases": [

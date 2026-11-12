@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "entity": "overlordTaunt",
+  "name": "The Overlord, watching",
+  "description": "the Overlord of Hell: a giant figure of black obsidian with a crown of long black horns, burning red eyes, broad shoulders under a heavy cloak of black stone, tired and velvety, lit by lava glow from below",
+  "height": 1.3,
+  "pixels": 300,
+  "poses": {
+    "stand": "standing in profile facing left, cloak hanging, one hand on a horn of his crown, looking down",
+    "laugh": "head thrown back laughing, shoulders raised, one hand on his chest",
+    "point": "one long arm stretched out pointing down-left, the other hand open"
+  },
+  "clips": {
+    "idle": {
+      "from": "stand",
+      "action": "hovers, shoulders rising and falling slowly, red eyes glowing, the cloak stirring",
+      "seconds": 2.5
+    },
+    "laugh": {
+      "from": "laugh",
+      "loop": true,
+      "action": "laughs silently, shoulders shaking",
+      "seconds": 2.5
+    },
+    "point": {
+      "from": "point",
+      "loop": true,
+      "action": "points down at the hero and flicks his hand to throw",
+      "seconds": 2.5
+    },
+    "flee": {
+      "from": "stand",
+      "action": "turns his back and rises upward out of the top of the picture, cloak trailing",
+      "seconds": 2.5
+    }
+  },
+  "animator": {
+    "parameters": [],
+    "transitions": []
+  },
+  "prefix": "OverlordTaunt",
+  "takes": {
+    "stand": 3,
+    "pose": 2,
+    "clip": 1
+  }
+}
