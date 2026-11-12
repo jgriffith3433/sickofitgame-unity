@@ -894,6 +894,7 @@ namespace SickOfIt.Playtest
                 "(a +7 floats up from the counter and the counter ticks up to its total), the pause menu opens and closes animated and its layout is audited; Level 31's boss bar is introduced (the name lands, the bar " +
                 "fills from empty, inside the screen and safe area, no overlaps); Floor 1000 sweeps the screen when its floor counter ticks over; Level 1 is played to its results, whose numbers count up, and " +
                 "Continue closes the screen on a black transition that the next scene opens. Run it on a 1920x1080 and a 1080x1920 device. Each beat is a check event; ui-polish and boss-intro events log the timeline", UiPolishSeconds, "level"));
+            list.Add(new PlaytestScenario(HudInkId, "Inked HUD widgets (Docs/Story.md \"The HUD and menus\"): Floor 1000 loaded directly with touch UI on; hearts are ember vessels, rewind juice a spinning reel, diamonds a pulsing gem, floor a brass dial, grouped in two safe-area corners; a hit cracks a vessel ≥0.3 s, holding R spins the reel, a diamond pickup pulses the gem within 0.2 s; at 390x844 the HUD covers ≤12% of the playfield and the rewind button is ≥72 px. check events hud-ink <beat>; hudInk.* metrics. Run on device \"phone\"", HudInkSeconds, "level"));
             list.Add(new PlaytestScenario(BossFightsId, "The six bosses' rework (Docs/Story.md \"The bosses' second look\"): the Imp Foreman (Floor 991), the Pile Keeper (951), the Magma King (901), the Road Breaker (891), " +
                 "the Carver (851) and the Spire Fiend (801), each loaded directly (setup shortcut) and fought by the bot through real input (one more try after a death). Each gets the stage and arena checks and " +
                 "`bossFight.*` checks: 3+ phases opened (the fight's phase signals, in order), 4-8 minions of mixed types alive at the peak (and each phase's peak, `boss-phase` events), the fight 120-240 s from its " +
@@ -1513,6 +1514,8 @@ namespace SickOfIt.Playtest
                 yield return session.AchievementsRun();
             else if (id == UiPolishId)
                 yield return session.UiPolishRun();
+            else if (id == HudInkId)
+                yield return session.HudInkRun();
             else if (id == "restart")
                 yield return session.RestartRun();
             else if (id == RewindPerfId)
