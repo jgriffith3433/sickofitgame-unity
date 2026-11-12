@@ -131,17 +131,18 @@ namespace SickOfIt.Tests.Editor
                 Assert.AreEqual(0f, s["pitchVariation"] != null ? (float)s["pitchVariation"] : 0f, (string)s["id"] + " is a voice: no pitch change");
                 Assert.IsNull(s["takes"] != null && ((JArray)s["takes"]).Count > 0 ? s["takes"] : null, (string)s["id"] + " is a voice: one take");
             }
-            var beds = ((JArray)audio["sounds"]).Where(s => (string)s["bus"] == "Ambience").ToList();
-            Assert.AreEqual(3, beds.Count, "the Meadow's two beds and Floor 1000's");
+            var beds = ((JArray)audio["sounds"]).Where(s => (string)s["bus"] == "Ambience" && s["loop"] != null && (bool)s["loop"]).ToList();
+            Assert.GreaterOrEqual(beds.Count, 7, "Meadow calm/burning, Shaft, Floors 1000-997");
             foreach (var bed in beds)
                 Assert.IsTrue((bool)bed["loop"], (string)bed["id"] + " loops");
-            foreach (string level in new[] { "Level1", "Floor1000" })
+            foreach (string level in new[] { "Level1", "Floor1000", "Floor999", "Floor998", "Floor997" })
             {
                 var json = JObject.Parse(File.ReadAllText(Path.Combine(Application.dataPath, "GameConfig", "levels", level + ".json")));
                 string path = (string)json["ambientSound"];
                 Assert.IsFalse(string.IsNullOrEmpty(path), level + " has an ambientSound");
                 Assert.IsTrue(File.Exists(Path.Combine(Application.dataPath, path)), path);
                 Assert.IsTrue(beds.Any(b => (string)b["clip"] == path), level + "'s bed is an Ambience sound of audio.json");
+                Assert.IsTrue(json["ambientEmitters"] is JArray && ((JArray)json["ambientEmitters"]).Count >= 3, level + " has ≥3 emitters");
             }
         }
     }

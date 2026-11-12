@@ -25,7 +25,8 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 - **Light (Nov 11):** warm dusk grade (`meadow`) that turns raid-red when the burning bed starts; soft dusk pool and a hero
   rim so he reads on the bright sky (Docs/lighting.md).
 - **Look and sound:** green hills, the village's thatch, a single path; Video1's footage as the sky layer. Bed: wind, a far
-  rooster, a mill creaking. Then the Overlord's hum, lasers, burning thatch.
+  rooster, a mill creaking, quiet villagers (`ambience_meadow_calm`); when the sky opens, fire and an out-of-time alarm bell
+  (`ambience_meadow_burning`). Positional one-shots on props: rooster crow, mill creak, torch crackle (4–12 s gaps, pan by screen x).
 - **Music (Nov 11):** its own track, not the film's audio: "A nice day", a plucked D-major figure over a soft drone with a soft flute (`meadow_calm`, 84 BPM), which turns to its raid (`meadow_raid`: the same tune in D minor, 128 BPM, double kicks and alarms) the moment the sky opens (`playMusic`, 6 s in). Rewinding bends whatever is playing (slowed, low-passed) and it snaps back on release.
 - **Adaptive score (Nov 12):** explore / fight / finale loops at 112 BPM, D minor (pastoral folk turned frantic), crossfading on the beat or bar with the raid; see Docs/Story.md "The adaptive score". Falls back to `meadow_calm`/`meadow_raid` until the clips are made.
 - **Sound (Nov 11 / mix Nov 12):** every verb has three takes that never repeat in a row (`player_shoot`, `hit_pop` + `kill_pop` layered on the enemy's own sounds, `graze_tick`, `pickup_diamond`, jump, land, dash, rewind start and stop), Music ducks 8 dB (and Ambience 4 dB) under each voice line in 80 ms, Pause muffles Music −10 dB and mutes SFX, one heart plays a heartbeat under Music −4 dB, Rewind ducks SFX −6 dB so the whoosh leads; Settings Music/Effects/Voice are drag sliders (docs/audio-mix.md, Docs/SoundAudit.md "Takes, buses and beds").
@@ -39,8 +40,8 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
 ### The Shaft (Hell's map, built)
 - **Mood:** vertical awe; a very tall hole and a tiny dot.
 - **Look and sound:** a cross-section of ten Circles in their biome colours, Waystones on the wall, cracks that hint
-  shortcuts. Bed: a deep wind-in-a-pipe drone, with each Circle's own voice rising as the marker passes it (lava hiss,
-  stone hum, wind over bridges...). Yooba's portrait chatters at the side.
+  shortcuts. Bed: `ambience_shaft` — rushing wind in a stone pipe, distant chains, a band echoing far above (Ambience bus,
+  starts with the Shaft screen). Yooba's portrait chatters at the side.
 - **Size:** 10-25 s per visit (a first plunge ≤8 s, skippable from frame one).
 - **In/out:** after Level 1 on a first run (plunge), after every floor stage and from the menu; out by Continue, Visit Yooba
   (his shop opens over it) or Back.
@@ -57,11 +58,14 @@ A Circle is four stretches, each its own area. All share lava, cinders, imps and
 1. **The Landing and the Slag Falls (Floors 1000-996).** *Mood:* bewildered arrival, then dread with jokes. *Look:* a
    lava river bank, sinking stones, rafts, the carved landing with the floor number, lava falls and geysers. *Light (Nov 11):*
    Floor 1000 sulphur orange, Floor 999 furnace red; lava pools flicker light onto platforms within 2 units
-   (Docs/lighting.md). *Sound:* lava bubbling bed, stone creak, geyser one-shots; Floor 1000's bed is its `ambientSound`
-   `ambience_floor1000` (a low lava rumble, bubbling and popping, long creaks of stone) on the Ambience bus. *Size:* 5 floors, ~8 min. *In:* Video2 drops him; *out:* the Shaft.
+   (Docs/lighting.md). *Sound:* Floor 1000's bed `ambience_floor1000` (bubbling lava, far screams, a ticket-desk bell, stone
+   creaks) plus positional lava pop / steam / ticket bell; Floor 999's bed `ambience_floor999` (furnace roar, hammering) plus
+   hammer and steam one-shots. *Size:* 5 floors, ~8 min. *In:* Video2 drops him; *out:* the Shaft.
 2. **The Spill and the Imp Run (998-997).** *Mood:* looted, wrecked. *Look:* the village's wreckage dragged through Hell,
    the baker's cart, sack imps on hauling chains. *Light (Nov 11):* Floor 998 bone grey-violet, Floor 997 obsidian with
-   magenta highlights and magenta bullet lights. *Sound:* chain clank, imp chatter, a wailing cart wheel.
+   magenta highlights and magenta bullet lights. *Sound:* Floor 998 `ambience_floor998` (drips, bone wind chimes, choir hum)
+   with drip/bone/torch one-shots; Floor 997 `ambience_floor997` (deep organ drone, the Overlord's distant laugh) with chain
+   rattle and imp chatter on the hauling props.
 3. **The Foreman's Pile (996-991).** *Mood:* industrious, nasty. Ledges, chain lifts, crumbling stones, a collapsing
    bridge; ends in the Imp Foreman's climbing arena. *Out:* the Sack Lift (a 20-diamond fare) or the long way.
 4. **The Depot stretch (960-951).** *Mood:* a looted village rebuilt wrong. *Look:* The Depot's stacks, the Rest of the

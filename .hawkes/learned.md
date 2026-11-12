@@ -1,4 +1,4 @@
-- lesson: Hawkes Gen audio.sfx needs 8 Studio org credits — with 1 left the call fails immediately; use HeartbeatMix procedural fallback and pending-gpu, do not invent a fake Gen job id.
-- convention: WebGL mix is software buses in AudioBuses (not a Unity AudioMixer asset); Master = AudioListener; Pause must leave the Ui bus up so the pause menu still clicks.
-- convention: audio.json edits stay surgical (insert before a closing brace); full json.dumps rewrites unicode and the whole file.
-- canon: Low health mix — at one heart Music sits −4 dB under a looping heartbeat; Pause Music −10 dB with SFX muted; Rewind SFX −6 dB so the whoosh leads (docs/audio-mix.md).
+- canon: Place beds — Meadow calm/burning, Shaft wind+chains, Floor 1000 lava+screams+ticket bell, 999 furnace+hammer, 998 drips+bone chimes+choir, 997 organ+Overlord laugh; each has positional prop one-shots on the Ambience bus.
+- convention: floor ambience — tables in `Tools/Audio/floor_ambience.py` (beds, oneshots, emitters); clips via `synth_core_sfx.py` stand-ins until Gen; runtime `AmbienceBed` + `AmbientEmitters`.
+- lesson: Gen project id — always `org_eb0d5c82e8da8c2d.sickofit`; audio.sfx-open still needs ≥8 org credits per job even with a GPU$ budget.
+- lesson: sparse Audio/ — LFS oggs are not in the worktree; synth new beds/oneshots locally with stable uuid5 .meta GUIDs.

@@ -8,6 +8,58 @@
   "backgroundLayers": [],
   "music": "Audio/Music/wastes_loop.ogg",
   "musicVolume": 0.85,
+  "ambientSound": "Audio/Generated/Core/ambience_floor999.ogg",
+  "ambientVolume": 0.8,
+  "ambientEmitters": [
+    {
+      "sound": "amb_lava_pop",
+      "prop": "lava-sea",
+      "at": [
+        0.0,
+        -5.2
+      ],
+      "minInterval": 4,
+      "maxInterval": 9,
+      "range": 14,
+      "volume": 0.65
+    },
+    {
+      "sound": "amb_hammer_strike",
+      "prop": "counted-wall",
+      "at": [
+        -2.8,
+        0.5
+      ],
+      "minInterval": 5,
+      "maxInterval": 10,
+      "range": 11,
+      "volume": 0.7
+    },
+    {
+      "sound": "amb_steam_hiss",
+      "prop": "furnace-vent",
+      "at": [
+        1.5,
+        1.0
+      ],
+      "minInterval": 5,
+      "maxInterval": 11,
+      "range": 10,
+      "volume": 0.55
+    },
+    {
+      "sound": "amb_torch_crackle",
+      "prop": "tally-glow",
+      "at": [
+        -1.2,
+        -1.0
+      ],
+      "minInterval": 6,
+      "maxInterval": 12,
+      "range": 9,
+      "volume": 0.5
+    }
+  ],
   "platforms": [],
   "placedSprites": [],
   "enemies": [],

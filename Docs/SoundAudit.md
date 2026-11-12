@@ -210,13 +210,12 @@ verb. What the code does (all presentation, nothing in the simulation, nothing r
   through the context's destination and so the limiter. `hawkesSound.state()` carries `limiter` (how many) and `hawkesSound.limiter()` the gain reduction. The Editor and a
   standalone player have none (no WebGL, no problem).
 - **Ambience beds** (`Core/Audio/AmbienceBed.cs`): `LevelConfig.ambientSound` + `ambientVolume` start with the level (`LevelRuntime`) on the
-  Ambience bus, follow the Effects volume, and end with it. The Meadow's is `ambience_meadow_calm` (wind, a far rooster, a mill); the level
-  script's new action `setAmbience` cross-fades to `ambience_meadow_burning` (fire, a village alarm bell) with the raid's music at 5.5 s;
-  Floor 1000's is `ambience_floor1000` (lava rumble, bubbling, stone creaks). A bed is an audio.json Effect with `loop: true`, `bus:
-  Ambience`; its file is mono Vorbis, "Compressed In Memory" (`loadType` 1), and it rides the level's own scope (`level/<name>`), so
-  the menu's boot and late-core downloads do not grow (the extra `takes` of every event sound go to the late core, behind the menu:
-  `PlayerDataManifest.ScopeOf`). The old `meadow_bed` loop (a borrowed `thatch_burst` clip on the `meadowBed` entity) is retired; the entity
-  stays as a marker. Not rewound: a rewind past the swap keeps the burning bed.
+  Ambience bus, follow the Effects volume, and end with it. Seven place beds: Meadow calm/burning, Shaft (`ui/shaft.json`
+  `ambientSound` → `AmbienceBed.PlaySound` while the Shaft is open), Floors 1000–997. Positional one-shots are
+  `LevelConfig.ambientEmitters` → `AmbientEmitters` (random 4–12 s gaps, stereo pan by screen x, falloff by hero distance;
+  phone cap = half of 8). Tables: `Tools/Audio/floor_ambience.py` (+ `synth_core_sfx.py` stand-ins). A bed is an audio.json
+  Effect with `loop: true`, `bus: Ambience`; mono Vorbis, "Compressed In Memory", rides the level's scope. Not rewound: a
+  rewind past the Meadow's `setAmbience` swap keeps the burning bed. Playtest `floor-ambience`.
 - **Every start is reported** through `Sfx.Played` (id, take n of m, pitch, volume, bus), the audio scenario's log.
 
 ### The clips are stand-ins made by a synthesiser

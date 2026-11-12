@@ -43,6 +43,8 @@ namespace SickOfIt.Data.Config
         public AudioClip ambientSound;
         [Range(0f, 1f)]
         public float ambientVolume = 0.5f;
+        [Tooltip("Positional one-shots on props (lava pop, chain rattle, ...): random gaps, pan by screen x.")]
+        public List<AmbientEmitterConfig> ambientEmitters = new List<AmbientEmitterConfig>();
         [Tooltip("Sound played when the level is completed")]
         public AudioClip levelCompleteSound;
 

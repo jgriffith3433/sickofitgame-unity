@@ -421,10 +421,173 @@ def floor1000():
     for at in (2.5, 7.8, 12.1, 16.9):
         place(buf, scale(creak(sr, r, 120 + 40 * r.random(), 0.9), 0.2), at, sr)
     place(buf, scale(crackle(L + fade, r, sr, 18, 0.7), 1.0), 0.0, sr)
+    # far screams and a ticket-desk bell (the Landing's desk)
+    for at in (5.0, 14.5):
+        scream = decay(mix(sweep(380, 520, 0.35, sr), sweep(520, 300, 0.4, sr)), 0.35, 0.02, sr)
+        place(buf, scale(lowpass(scream, 1200, sr), 0.1), at, sr)
+    place(buf, scale(bell(sr, 990, 1.6), 0.12), 8.5, sr)
     return normalise(loopable(buf, fade, sr), 0.6), sr
 
 
-BEDS = {'ambience_meadow_calm': meadow_calm, 'ambience_meadow_burning': meadow_burning, 'ambience_floor1000': floor1000}
+def shaft_bed():
+    sr, L, fade = AMB_SR, 22.0, 1.5
+    r = random.Random('ambience_shaft')
+    buf = wind(L + fade, r, sr, 1.8, 0.55, 220)
+    pipe = lowpass(noise(L + fade, r, sr), 90, sr)
+    pipe = [s * (0.7 + 0.3 * math.sin(2 * math.pi * 0.07 * i / sr)) for i, s in enumerate(pipe)]
+    buf = mix(buf, scale(pipe, 2.2))
+    for at in (1.4, 4.8, 9.2, 13.6, 18.1):
+        ratt = decay(highpass(noise(0.35, r, sr), 800, sr), 0.12, 0.002, sr)
+        place(buf, scale(ratt, 0.18), at, sr)
+    # far band echo: soft filtered pulse
+    for at in (3.0, 11.5, 19.0):
+        echo = decay(tone(110, 1.4, sr), 0.7, 0.05, sr)
+        place(buf, scale(lowpass(echo, 400, sr), 0.12), at, sr)
+    return normalise(loopable(buf, fade, sr), 0.58), sr
+
+
+def floor999():
+    sr, L, fade = AMB_SR, 22.0, 1.5
+    r = random.Random('ambience_floor999')
+    roar = lowpass(noise(L + fade, r, sr), 160, sr)
+    roar = [s * (0.7 + 0.3 * math.sin(2 * math.pi * 0.11 * i / sr)) for i, s in enumerate(roar)]
+    buf = scale(roar, 3.2)
+    buf = mix(buf, scale(wind(L + fade, r, sr, 0.8, 0.3, 500), 0.5))
+    for at in (1.0, 3.5, 6.2, 9.0, 12.4, 15.8, 19.2):
+        hit = decay(mix(tone(90, 0.08, sr), highpass(noise(0.05, r, sr), 2000, sr)), 0.05, 0.001, sr)
+        place(buf, scale(hit, 0.35), at, sr)
+    return normalise(loopable(buf, fade, sr), 0.6), sr
+
+
+def floor998():
+    sr, L, fade = AMB_SR, 22.0, 1.5
+    r = random.Random('ambience_floor998')
+    buf = wind(L + fade, r, sr, 0.7, 0.2, 900)
+    drip = [0.0] * n_of(L + fade, sr)
+    for _ in range(40):
+        at = r.random() * (L - 0.2)
+        drop = decay(tone(1400 + 600 * r.random(), 0.04, sr), 0.03, 0.001, sr)
+        place(drip, scale(drop, 0.2), at, sr)
+    # bone wind chimes: thin metallic
+    for at in (2.0, 7.5, 14.0):
+        for k, f in enumerate((880, 990, 1170, 1320)):
+            place(buf, scale(decay(tone(f, 0.9, sr), 0.45, 0.002, sr), 0.08), at + 0.12 * k, sr)
+    choir = [0.35 * math.sin(2 * math.pi * 220 * i / sr) * math.sin(2 * math.pi * 0.05 * i / sr)
+             for i in range(n_of(L + fade, sr))]
+    buf = mix(buf, drip, scale(lowpass(choir, 600, sr), 0.25))
+    return normalise(loopable(buf, fade, sr), 0.55), sr
+
+
+def floor997():
+    sr, L, fade = AMB_SR, 22.0, 1.5
+    r = random.Random('ambience_floor997')
+    n = n_of(L + fade, sr)
+    drone = [0.0] * n
+    for partial, amp in ((55, 0.55), (82.5, 0.35), (110, 0.25), (165, 0.12)):
+        for i in range(n):
+            drone[i] += amp * math.sin(2 * math.pi * partial * i / sr)
+    drone = [s * (0.85 + 0.15 * math.sin(2 * math.pi * 0.04 * i / sr)) for i, s in enumerate(drone)]
+    buf = mix(drone, scale(wind(L + fade, r, sr, 0.5, 0.15, 300), 0.4))
+    # distant Overlord laugh: low filtered burble twice per loop
+    for at in (5.5, 16.0):
+        laugh = decay(mix(tone(140, 0.5, sr), tone(180, 0.4, sr), lowpass(noise(0.5, r, sr), 400, sr)), 0.35, 0.04, sr)
+        place(buf, scale(laugh, 0.14), at, sr)
+    return normalise(loopable(buf, fade, sr), 0.58), sr
+
+
+def oneshot_lava_pop(take=0):
+    r = random.Random(f'amb_lava_pop{take}')
+    f0 = 90 + 40 * take
+    return normalise(decay(mix(sweep(f0, f0 * 2.4, 0.12, SR), highpass(noise(0.06, r), 1200, SR)), 0.08, 0.002), 0.7)
+
+
+def oneshot_chain(take=0):
+    r = random.Random(f'amb_chain_rattle{take}')
+    parts = []
+    for i in range(4 + take % 2):
+        parts.append(delay(decay(highpass(noise(0.04, r), 1500, SR), 0.03, 0.001), 0.05 * i))
+    return normalise(mix(*parts), 0.65)
+
+
+def oneshot_torch(take=0):
+    r = random.Random(f'amb_torch_crackle{take}')
+    return normalise(crackle(0.45, r, SR, 80, 1.0), 0.55)
+
+
+def oneshot_imp(take=0):
+    r = random.Random(f'amb_imp_chatter{take}')
+    parts = [scale(highpass(noise(0.35, r), 2000, SR), 0.1)]
+    for k in range(3):
+        f = 420 + 80 * k + 30 * take
+        parts.append(delay(decay(tone(f, 0.12, SR, squareish), 0.08, 0.004), 0.1 * k))
+    return normalise(mix(*parts), 0.5)
+
+
+def oneshot_bone(take=0):
+    r = random.Random(f'amb_bone_clatter{take}')
+    hits = []
+    for i in range(3):
+        hits.append(delay(decay(mix(tone(600 + 100 * i, 0.05, SR), highpass(noise(0.03, r), 2500, SR)), 0.04, 0.001), 0.07 * i))
+    return normalise(mix(*hits), 0.6)
+
+
+def oneshot_steam(take=0):
+    r = random.Random(f'amb_steam_hiss{take}')
+    return normalise(decay(highpass(noise(0.55, r), 1800, SR), 0.25, 0.02), 0.5)
+
+
+def oneshot_bell(take=0):
+    return normalise(scale(bell(SR, 880 + 40 * take, 1.2), 0.8), 0.55)
+
+
+def oneshot_hammer(take=0):
+    r = random.Random(f'amb_hammer_strike{take}')
+    return normalise(decay(mix(tone(70, 0.06, SR), highpass(noise(0.05, r), 900, SR)), 0.07, 0.001), 0.7)
+
+
+def oneshot_drip(take=0):
+    return normalise(decay(tone(1600 + 200 * take, 0.06, SR), 0.05, 0.001), 0.45)
+
+
+def oneshot_chime(take=0):
+    f = 990 + 110 * take
+    return normalise(decay(mix(tone(f, 0.8, SR), tone(f * 1.5, 0.6, SR)), 0.4, 0.002), 0.45)
+
+
+def oneshot_rooster(take=0):
+    r = random.Random(f'amb_rooster_crow{take}')
+    return normalise(scale(rooster(SR, r), 0.9), 0.55)
+
+
+def oneshot_mill(take=0):
+    r = random.Random(f'amb_mill_creak{take}')
+    return normalise(scale(creak(SR, r, 180 + 20 * take, 0.75), 0.9), 0.5)
+
+
+BEDS = {
+    'ambience_meadow_calm': meadow_calm,
+    'ambience_meadow_burning': meadow_burning,
+    'ambience_floor1000': floor1000,
+    'ambience_shaft': shaft_bed,
+    'ambience_floor999': floor999,
+    'ambience_floor998': floor998,
+    'ambience_floor997': floor997,
+}
+
+ONESHOTS = {
+    'amb_lava_pop': oneshot_lava_pop,
+    'amb_chain_rattle': oneshot_chain,
+    'amb_torch_crackle': oneshot_torch,
+    'amb_imp_chatter': oneshot_imp,
+    'amb_bone_clatter': oneshot_bone,
+    'amb_steam_hiss': oneshot_steam,
+    'amb_ticket_bell': oneshot_bell,
+    'amb_hammer_strike': oneshot_hammer,
+    'amb_drip': oneshot_drip,
+    'amb_bone_chime': oneshot_chime,
+    'amb_rooster_crow': oneshot_rooster,
+    'amb_mill_creak': oneshot_mill,
+}
 
 
 # ─── output ───────────────────────────────────────────────────────
@@ -495,6 +658,8 @@ def main():
             print(k, n)
         for k in BEDS:
             print(k, 'loop')
+        for k in ONESHOTS:
+            print(k, 'oneshot')
         return
     for name, (fn, takes) in SOUNDS.items():
         if only and name not in only:
@@ -506,6 +671,10 @@ def main():
             continue
         samples, sr = fn()
         write(name, samples, sr, True)
+    for name, fn in ONESHOTS.items():
+        if only and name not in only:
+            continue
+        write(name, fn(0), SR, False)
 
 
 if __name__ == '__main__':

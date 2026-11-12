@@ -258,6 +258,7 @@ namespace SickOfIt.Core.Progression
                 Current = null;
                 // The level's ambient bed ends with it (a new level's own start cross-fades if one is already up).
                 SickOfIt.Core.Audio.AmbienceBed.Stop();
+                SickOfIt.Core.Audio.AmbientEmitters.Stop();
                 SickOfIt.Core.Audio.HeartbeatMix.Unbind();
             }
             GameContent.Changed -= OnContentChanged;
@@ -508,6 +509,11 @@ namespace SickOfIt.Core.Progression
                 SickOfIt.Core.Audio.AmbienceBed.Play(config.ambientSound, config.ambientVolume);
             else
                 SickOfIt.Core.Audio.AmbienceBed.Stop(); // a level with no bed of its own must not inherit the last one
+            // Positional one-shots on props (lava pop, chain rattle, ...).
+            if (config != null && config.ambientEmitters != null && config.ambientEmitters.Count > 0)
+                SickOfIt.Core.Audio.AmbientEmitters.Start(config.ambientEmitters);
+            else
+                SickOfIt.Core.Audio.AmbientEmitters.Stop();
 
             if (musicSource == null || musicSource.clip == null)
                 return;

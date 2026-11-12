@@ -321,11 +321,16 @@ namespace SickOfIt.Core.Progression
             HideTheRest();
             ResolveBands();
             Build();
+            // The Shaft's own air (rushing wind, chains, the band far above) on the Ambience bus.
+            if (!string.IsNullOrEmpty(config.ambientSound))
+                AmbienceBed.PlaySound(config.ambientSound, 1.2f);
             cameraFloor = markerFloor = from;
             SetCounter(from);
             UpdateInfo(from);
             Report("open", $"{mode.ToString().ToLowerInvariant()} from {from} to {to}" + (shortcutTo > 0 ? $", then a shortcut from {shortcutFrom} to {shortcutTo}" : "")
                            + (preview ? " (preview)" : "") + (Skippable ? ", skippable" : ""));
+            if (!string.IsNullOrEmpty(config.ambientSound))
+                Report("ambience", config.ambientSound);
             StartCoroutine(mode == Mode.Plunge ? PlungeRoutine() : mode == Mode.Meet ? MeetRoutine() : mode == Mode.Drop ? DropRoutine() : ClimbRoutine());
         }
 
@@ -1539,6 +1544,11 @@ namespace SickOfIt.Core.Progression
             if (shopOpen && UpgradeShopManager.OverShaft != null)
                 UpgradeShopManager.OverShaft.CloseOverlay(false);
             shopOpen = false;
+            // Let the next level's bed take over; if we go to a menu, silence the Shaft bed.
+            if (!string.IsNullOrEmpty(config != null ? config.ambientSound : null)
+                && AmbienceBed.Current != null
+                && AmbienceBed.Current.IndexOf("shaft", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                AmbienceBed.Stop();
             if (preview)
             {
                 foreach (var behaviour in hidden)
