@@ -1,8 +1,1 @@
-# PAUSED — no live Gen jobs. See .hawkes/pending-gpu.txt.
-# Rechecked 2026-11-12 (c_8ec024977cdc): fleet still no AWS keys / servers [].
-# When Gen fleet works (AWS keys in hawkesgen/.env, servers ready, org credits ≥ 40):
-# 1. image.edit launcherThief dead from framed stand a_ceb84e1b929c3e44 (REJECT chest-cannon like FAIL a_0396dffd2fa61f26)
-# 2. frame PASS dead 640/00ff00/fill 0.78 → framed/launcherThief_dead.png
-# 3. video.i2v batch (wait_for_server): thief idle/windup/attack/hurt + thatch windup/attack (seed assets in pending-gpu)
-# 4. die i2v struck a_6aaca8f81a5afad0 → framed-dead; bake thief+thatch via art.mjs --build --no-unity
-# 5. keep Windup/Attack entity paths; screenshot thief beside hero; delete pending-gpu when clear
+# No Gen jobs queued this pass (audio.sfx refused: Studio org credits 1, needs 8). See .hawkes/pending-gpu.txt.
