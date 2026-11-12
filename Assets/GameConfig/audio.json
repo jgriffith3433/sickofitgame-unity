@@ -19285,8 +19285,8 @@
       "pitchVariation": 0,
       "maxVoices": 1,
       "cooldown": 0.5,
-      "prompt": "[long, bored exhale] Hhh. ... I was nearly rid of you.",
-      "generatedFrom": "voice|A5KBJzxznyU8QeeRqyiY|eleven_v3|0.5|0.85|[long, bored exhale] Hhh. ... I was nearly rid of you."
+      "prompt": "[long, bored exhale] Mm. [long pause] I was nearly rid of you.",
+      "generatedFrom": "voice|A5KBJzxznyU8QeeRqyiY|eleven_v3|0.5|0.85|[long, bored exhale] Mm. [long pause] I was nearly rid of you."
     },
     {
       "id": "vo_ovl_t_streak1",

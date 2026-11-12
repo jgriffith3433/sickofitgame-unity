@@ -28,7 +28,7 @@ LINES = {
     "deathHazard": [("hazard1", "Mm. ... The floor is lava. Still.", "[bored]"), ("hazard2", "Mm. ... Hot, isn't it?", "[bored, amused]"), ("hazard3", "Mm. ... Hell does the work for me.", "[bored, velvety]")],
     "deathFall": [("fall1", "Mm. ... Down is that way.", "[bored]"), ("fall2", "Mm. ... Gravity sends its regards.", "[bored, amused]"), ("fall3", "Mm. ... The long way down, then.", "[bored]")],
     "rewind": [("rew1", "Mm. ... Again with the clock.", "[bored]"), ("rew2", "Mm. ... I remember that trick.", "[bored, quietly]"), ("rew3", "Mm. ... Backward. Of course.", "[bored]"), ("rew4", "Mm. ... Careful. It costs you.", "[bored, velvety]")],
-    "undo": [("undo1", "Mm. ... Dead, then not. Tiresome.", "[bored, sighing]"), ("undo2", "Mm. ... You cannot undo me.", "[bored, velvety]"), ("undo3", "Mm. ... Fine. Die again.", "[bored]"), ("undo4", "Hhh. ... I was nearly rid of you.", "[long, bored exhale]")],
+    "undo": [("undo1", "Mm. ... Dead, then not. Tiresome.", "[bored, sighing]"), ("undo2", "Mm. ... You cannot undo me.", "[bored, velvety]"), ("undo3", "Mm. ... Fine. Die again.", "[bored]"), ("undo4", "Mm. ... I was nearly rid of you.", "[long, bored exhale]")],
     "streak": [("streak1", "Mm. ... Thirty seconds. Careful.", "[bored, amused]"), ("streak2", "Mm. ... Untouched. It won't last.", "[bored, velvety]"), ("streak3", "Mm. ... Pride comes before lava.", "[bored, theatrical]")],
     "finale": [("fin1", "Mm. ... Now it gets loud.", "[bored, amused]"), ("fin2", "Mm. ... Last stretch. Don't trip.", "[bored]"), ("fin3", "Mm. ... Let me help.", "[bored, velvety]")],
 }
