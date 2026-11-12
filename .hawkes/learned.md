@@ -1,5 +1,3 @@
-- lesson: Gen wall still up — audio.sfx needs 8 org credits with 1 left; hawkesgen_fleet reports AWS keys missing; do not requeue (m_f60905657340), keep pending-gpu.
-- lesson: ElevenLabs audio.sfx is $0 GPU (~$0.14 for 7 beds + 12 oneshots) and fits the $0.28 budget once credits exist; open variants batch estimates ~$0.19 GPU.
-- convention: Gen project id — always `org_eb0d5c82e8da8c2d.sickofit` for hawkesgen_*.
-- convention: floor ambience — tables in `Tools/Audio/floor_ambience.py`; runtime `AmbienceBed` + `AmbientEmitters`; playtest `floor-ambience`.
-- canon: Place beds — Meadow calm/burning, Shaft wind+chains, Floor 1000 lava+screams+ticket bell, 999 furnace+hammer, 998 drips+bone chimes+choir, 997 organ+Overlord laugh; positional prop one-shots on the Ambience bus.
+- convention: Feel VFX kit — `FeelVfx` + pooled `VfxPool` / `DiamondFlyer`; atlas `Resources/Effects/FeelVfxAtlas` (12×10 @ 128 px); Gen job `Tools/Art/fx/feel-vfx.json`; playtest `vfx-kit`.
+- lesson: Gen org credits — `image.generate` needs 5 credits; with 1 left the whole keyframe batch is refused (fleet AWS keys also missing); ship procedural stand-ins and list work in `.hawkes/pending-gpu.txt`.
+- canon: Feel flipbooks — every shot/hit/kill/graze/dash/diamond/rewind plays an inked burst; diamonds arc to the HUD gem in ≤0.6 s (Docs/Story.md "The feel of a hit").

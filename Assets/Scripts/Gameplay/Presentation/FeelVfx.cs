@@ -567,11 +567,11 @@ namespace SickOfIt.Gameplay
     public sealed class DiamondFlyer : MonoBehaviour
     {
         static DiamondFlyer runner;
-        static readonly List<Fly> live = new List<Fly>(16);
+        static readonly List<FlySlot> live = new List<FlySlot>(16);
         static Sprite gemSprite;
         static Canvas canvas;
 
-        struct Fly
+        struct FlySlot
         {
             public RectTransform Rect;
             public Image Image;
@@ -685,7 +685,7 @@ namespace SickOfIt.Gameplay
                 img.raycastTarget = false;
                 img.sprite = gemSprite;
                 child.SetActive(false);
-                live.Add(new Fly { Rect = rt, Image = img, Active = false });
+                live.Add(new FlySlot { Rect = rt, Image = img, Active = false });
             }
         }
 
