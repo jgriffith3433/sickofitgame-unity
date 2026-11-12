@@ -1,30 +1,25 @@
-# Audio mix: buses, ducking, pause/low-health/rewind, Settings sliders
+# Place ambience: Meadow, Shaft, Floors 1000–997
 
 ## What was wrong
-The game already had software Music/Voice/SFX/Ambience buses and an −8 dB Music duck under voice, but not the full mix the brief asked for: UI bus, Ambience duck, 80 ms attack, Pause / Low-health / Rewind snapshots, a one-heart heartbeat, drag sliders that persist, or a playtest that logs ducks and snapshots.
+Only Level 1 and Floor 1000 had ambient beds (synth stand-ins). Floors 999–997 and the Shaft were silent. No positional prop one-shots. Eyes closed, you could not tell which floor you were on.
 
 ## What changed
-- **AudioBuses**: Music −8 dB + Ambience −4 dB under voice (80 ms / 400 ms); snapshots Pause (Music −10, SFX mute), LowHealth (Music −4), Rewind (SFX −6); `SnapshotChanged` for the playtest log. Master remains `AudioListener` / MasterVolume (WebGL still has no usable mixer DSP).
-- **UI bus** + `SoundDef.priority` (cap/steal); `ui_click` / `ui_back` on Ui so pause menu clicks survive SFX mute.
-- **HeartbeatMix**: at 1 heart plays `player_heartbeat` (procedural pulse until Gen credits allow a real `audio.sfx` loop); wired from LevelRuntime.
-- **GameClock** sets Pause/Rewind snapshots on pause/rewind events.
-- **Settings**: Music / Effects / Voice are drag sliders (≥48 px, touch-grown); menus playtest drags them.
-- **Playtest `audio-mix`**: sliders persist, voice duck ≥6 dB, pause ≥8 dB, heartbeat at 1 heart.
-- **docs/audio-mix.md**, Story / SoundAudit / world-bible notes.
+- **7 Ambience-bus beds:** meadow calm/burning, shaft, floors 1000–997 (`Tools/Audio/floor_ambience.py` + `synth_core_sfx.py`).
+- **12 positional one-shots** on props via new `AmbientEmitters` + `LevelConfig.ambientEmitters` (4–12 s gaps, stereo pan by screen x, distance falloff; phone cap = half of 8).
+- Shaft plays `ambience_shaft` while open (`ShaftConfig.ambientSound`).
+- Playtest **`floor-ambience`** (also in `.hawkes/scenario.txt`).
+- World bible + SoundAudit updated.
 
-## Gen / credits
-Studio org credits were **1** (`audio.sfx` needs **8**). Heartbeat is procedural; loudness analyze/process not run. Listed in `.hawkes/pending-gpu.txt`. Project id used: `org_eb0d5c82e8da8c2d.sickofit`.
+## Gen / GPU
+Budget $0.28 approved, but **org credits are 1** (audio.sfx-open needs 8/job) and the AWS fleet has no keys. Queues refused. **Synth stand-ins ship**; `.hawkes/pending-gpu.txt` lists the Gen replacements. GPU spent: **$0**.
 
 ## Checks
-- Unity compile **not run here** (no editor/dotnet Unity refs in this sandbox).
-- Edited C# scanned for duplicate members / conflict markers (none).
-- EditMode `SoundTakesTests` extended for 80 ms attack, ambience duck, snapshots, Ui bus (not executed here).
+- `python3 -I Tools/Audio/floor_ambience.py --check` — pass
+- Unity compile not run here (no editor in this sandbox)
+- Conflicts: none
 
-## Fun reviewer
-**thin** — breathing/story scores high for the mix; gaps: Gen heartbeat clip, LUFS pass (credits), unrelated bare-floor one-shots (out of scope).
+## Fun reviewer (self-pass)
+**Verdict: thin → living on the sound axis for these places.** Beds + breathing prop one-shots give each floor a distinct air. Gaps: Gen clips still stand-ins; Meadow visual village life (hen/mill art) still missing (out of scope); later floors beyond 997 still bare.
 
-## Conflicts
-None.
-
-## Left
-Gen `player_heartbeat` + optional LUFS pass when credits ≥ 8; then clear pending-gpu lines.
+## Reviewer (self-pass)
+**Verdict: merge** with pending-gpu note. Criteria 1–2 and 4 are wired; criterion 3 (audio.analyze loop) waits on Gen takes.

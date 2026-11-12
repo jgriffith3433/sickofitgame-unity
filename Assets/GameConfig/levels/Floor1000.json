@@ -722,5 +722,55 @@
     "volume": 0.9,
     "finaleSignal": "floors:1000:finale",
     "fightHoldSeconds": 1.0
-  }
+  },
+  "ambientEmitters": [
+    {
+      "sound": "amb_lava_pop",
+      "prop": "lava-sea",
+      "at": [
+        0.0,
+        -5.0
+      ],
+      "minInterval": 4,
+      "maxInterval": 9,
+      "range": 14,
+      "volume": 0.7
+    },
+    {
+      "sound": "amb_steam_hiss",
+      "prop": "bank-vent",
+      "at": [
+        2.5,
+        -1.5
+      ],
+      "minInterval": 5,
+      "maxInterval": 11,
+      "range": 10,
+      "volume": 0.55
+    },
+    {
+      "sound": "amb_ticket_bell",
+      "prop": "landing-desk",
+      "at": [
+        -3.2,
+        -2.0
+      ],
+      "minInterval": 7,
+      "maxInterval": 12,
+      "range": 11,
+      "volume": 0.6
+    },
+    {
+      "sound": "amb_bone_clatter",
+      "prop": "sinking-stone",
+      "at": [
+        1.6,
+        -0.3
+      ],
+      "minInterval": 6,
+      "maxInterval": 12,
+      "range": 9,
+      "volume": 0.45
+    }
+  ]
 }

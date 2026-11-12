@@ -102,6 +102,10 @@ namespace SickOfIt.Data.Config
         public float shortcutSeconds = 1.6f;
 
         [Header("Sounds (ids in audio.json)")]
+        [Tooltip("Looping ambient bed on the Ambience bus while the Shaft is open (rushing wind, chains, the band far above).")]
+        public string ambientSound = "ambience_shaft";
+        [Range(0f, 1f)]
+        public float ambientVolume = 0.75f;
         public string fallSound = "shaft_fall";
         public string slamSound = "shaft_slam";
         public string tickSound = "shaft_tick";
