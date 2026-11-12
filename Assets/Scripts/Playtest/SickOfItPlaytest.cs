@@ -978,6 +978,7 @@ namespace SickOfIt.Playtest
             list.Add(new PlaytestScenario(TapJumpId, $"Touch jump on the finger going down: level {TapJumpLevel} loaded directly (setup shortcut), no bot. A virtual touchscreen taps the middle of the screen " +
                 $"{TapJumpTaps} times (30-120 ms down; every tenth tap is down and up inside one frame; every twentieth has the frame stall 150 ms with the finger down): each tap must make exactly one jump. " +
                 "Then a tap while R rewinds must not be latched and must not jump when the rewind ends. Check events, tapJump.* metrics", TapJumpSeconds, "level"));
+            list.Add(new PlaytestScenario(BackdropLayersId, "Painted backdrops: levels 1-5 (Meadow, Floors 1000-997) loaded directly with touch UI (run on device \"phone\", 390x844): 4+ parallax layers with distinct factors, no baked video background, no layer stretched, 30+ fps, the Meadow sky swapped at the raid. Check events backdrop-layers <beat>", BackdropLayersSeconds, "level"));
             list.Add(new PlaytestScenario(TouchControlsId, "Touch controls: a desktop run shows no touch UI; with the touch UI on (setup shortcut) level 2 shows a move stick (portrait: control strip below the playfield with a faint ~30% idle outline; landscape: floats under the thumb and fades while untouched), first-run hints, a 48+ px rewind button; a virtual finger drags the stick and the hero walks, a second finger holds rewind while the first still drags, a flick up jumps, and the hints go once used and are remembered. In the editor/standalone also resized to phone portrait and landscape. Check events touch-controls <beat>, touch.* metrics", TouchControlsSeconds, "level"));
             list.Add(new PlaytestScenario(MenuTouchLayoutId, "Main-menu stickers and phone touch controls together: the main menu's NOW WITH REWIND / NOW WITH GHOSTS stickers audited clear of each other and the buttons at 1920x1080, 1280x720, 1024x768, phone portrait and landscape (window resize in the editor/standalone; WebGL keeps the runner's device size), then the touch-controls scenario (stick fade/float, move, rewind, jump). check events for main menu sticker / touch-controls", MenuTouchLayoutSeconds, "menus", "level"));
             list.Add(new PlaytestScenario(AgainPhoneId, "Death to play without a load (run on device \"phone\", 390x844, touch): the bot plays level 3 to lose ten times; each Again! is a finger tap. Median of the first three taps to play under 1 s, no loading cover, no frame over 250 ms, the next-floor warm owner never held after an arrival. check events again-phone <beat>; metrics againPhone.*", AgainPhoneSeconds, "level"));
@@ -1467,6 +1468,8 @@ namespace SickOfIt.Playtest
                 yield return session.ChapterOneRun();
             else if (id == TapJumpId)
                 yield return session.TapJumpRun();
+            else if (id == BackdropLayersId)
+                yield return session.BackdropLayersRun();
             else if (id == TouchControlsId)
                 yield return session.TouchControlsRun();
             else if (id == MenuTouchLayoutId)
@@ -5550,7 +5553,12 @@ namespace SickOfIt.Playtest
                     spot = new Vector2(b.min.x + BgFireU * b.size.x, b.max.y - BgFireV * b.size.y);
                     return true;
                 }
-                return false;
+                // The painted Meadow backdrop has no footage to measure: the fire hole is where the level's portal and beam glow are anchored on the camera.
+                var cam = Camera.main;
+                if (cam == null)
+                    return false;
+                spot = new Vector2(cam.transform.position.x - 0.16f, cam.transform.position.y - 2.52f);
+                return true;
             }
 
             /// <summary>

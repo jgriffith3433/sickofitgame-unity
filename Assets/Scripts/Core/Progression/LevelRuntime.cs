@@ -243,6 +243,12 @@ namespace SickOfIt.Core.Progression
         {
             if (e.Kind != "phase" || gameplayWorld == null || log == null || log.World != gameplayWorld || script == null || !string.IsNullOrEmpty(SceneId))
                 return;
+            if (e.Value == 1 && raidDrifts.Count > 0 && GameClock.Instance != null)
+            {
+                foreach (var d in raidDrifts)
+                    if (d != null)
+                        d.BeginRaid(GameClock.Instance.Time);
+            }
             int count = script.phases != null ? script.phases.Count : 0;
             if (count == 0 || e.Value * 2 < count - 1)
                 return;
@@ -554,6 +560,8 @@ namespace SickOfIt.Core.Progression
             go.AddComponent<AudioListener>();
         }
 
+        private readonly List<BackdropDrift> raidDrifts = new List<BackdropDrift>();
+
         private void SetupBackgrounds()
         {
             var layers = ResolveBackgroundLayers();
@@ -661,6 +669,13 @@ namespace SickOfIt.Core.Progression
                     layerGo.transform.localScale = new Vector3(layer.scale.x, layer.scale.y, 1f);
                     contentSize = Vector2.Scale(layer.staticSprite.bounds.size, layer.scale);
                     TileBackground(pivot.transform, layer, sr, contentSize, cam);
+                    if (!Mathf.Approximately(layer.driftSpeed, 0f) || layer.raidSprite != null || layer.raidTint.a > 0f)
+                    {
+                        var drift = pivot.AddComponent<BackdropDrift>();
+                        drift.Setup(layer.driftSpeed, layer.tileHorizontally ? contentSize.x : 0f, layer.raidSprite, layer.raidTint);
+                        if (layer.raidSprite != null || layer.raidTint.a > 0f)
+                            raidDrifts.Add(drift);
+                    }
                 }
                 else if (layer.solidColor.a > 0)
                 {

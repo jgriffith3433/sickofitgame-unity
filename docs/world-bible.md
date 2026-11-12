@@ -451,3 +451,11 @@ Five speakers get a painted portrait: the hero, the Overlord, Yooba, Rook and Wi
 `mood` field that picks the expression. The portrait slides in over 0.15 s in a bottom corner away from the hero and the
 touch stick. The mouth flaps with the voice clip's amplitude and closes within 0.2 s of the line ending.
 Portraits load in the core-late scope. Shown in the BeatDirector `say` bubble, Yooba's shop and the death screen.
+
+## Backdrops (painted parallax layers)
+The Meadow (Level 1) and Floors 1000-997 (levels 2-5) no longer play baked video footage behind the action. Each has four
+painted, horizontally seamless 512x512 layers (sky, far, mid, near) following the camera at 0.1, 0.25, 0.5 and 0.8, with a
+slow drift on the far layers so the air is never still. The Meadow's sky is swapped for a raid sky (and tinted) when the
+`imps` phase begins; the swap reads the game clock, so a rewind brings the calm sky back. Files are
+`Assets/Art/Backdrops/<Meadow|Floor####>_<n>_<sky|far|mid|near>.png`. Today they are procedural stand-ins; painted art
+replaces them by file name (same size, same name) with no config change.

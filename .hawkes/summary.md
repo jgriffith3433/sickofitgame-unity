@@ -1,38 +1,31 @@
-# Rewind look + hit feel (Sands of Time) — merge with beta
+# Painted parallax backdrops for the Meadow and Floors 1000-997
 
-## What was wrong
-Rewind still read as a tape glitch (scanlines / cyan-magenta over the frame) instead of time pouring backwards. Hits used a long red wash and shake without a clear hero-sprite flash or shove, so bullets could disappear under feedback.
+**All backdrop art in this change is a procedural STAND-IN, not painted art.** Gen is out of credits, so I made 21 seamless
+512x512 PNGs with a script (`Assets/Art/Backdrops/`: sky, far, mid, near per level, plus a Meadow raid sky). They are
+placeholders: flat silhouettes and gradients. Painted art swaps in by file name (list in `.hawkes/pending-gpu.txt`, project
+`org_eb0d5c82e8da8c2d.sickofit`), with no config or code change.
 
-## What I changed (this task)
-- **Story / bible / metrics / lighting:** canon for desat+ghosts+reverse streaks+gold rim+snap-back; hero flash ≤0.15 s and knockback ≥0.3; shake cap 0.3 s.
-- **`RewindFx`:** outer-8% gold strips + optional rim scanlines + sand/ember motes; measured `PlayfieldGlitchCoverage`; 0.2 s snap-back; teal HUD wash softened.
-- **`RewindWorldLook` (new):** world desat to ~20% (hero + bullets stay coloured), 8/4 hero ghosts, reverse bullet streaks; release ripple via `FeelVfx.RewindRipple`.
-- **Hit feel:** `ApplyHitPush` (≥0.3 u, saved in `MoveState`/`HeroMoves`); white `SpriteFeel` flash 0.12 s on the hero; red edge vignette pulse; `Shake` capped at 0.3 s.
-- **Phone:** rewind button fill ring drains while held; playtest holds it with `TouchDown` when touch UI is on.
-- **Playtest `rewind-fx`:** hard checks for desat, ≥4 ghosts, ≥1 streak, playfield glitch, flash, knockback, ring drain, fps ≥30.
+## What changed
+- Level 1 (Meadow) and Floors 1000-997: the baked video-frame backgrounds (`spriteFramesData`) are gone. Each has 4 `staticSprite`
+  layers, tiled horizontally, parallax 0.1 / 0.25 / 0.5 / 0.8, with a slow drift on each.
+- New `BackdropDrift` (Gameplay/Presentation) and three `BackgroundLayerConfig` fields (`driftSpeed`, `raidSprite`, `raidTint`).
+  Drift and the Meadow's sky swap at the `imps` phase (the raid) are functions of the game clock, so rewind plays them back.
+- `LevelRuntime.cs` and `BackgroundLayerConfig.cs`: narrow additions only (kept small for c_ce98c0a4001b). `SickOfItPlaytest.cs`: the
+  scenario registration, plus a fallback for the portal scene's fire-hole probe, which read the old Level 1 video layer (it now uses the
+  portal's camera-anchored spot).
+- Playtest `backdrop-layers` (device "phone" 390x844, touch): per level checks >=4 layers with distinct factors, no video background,
+  no layer smaller than the view, fps >=30, and the Meadow sky swap.
+- Docs: world-bible "Backdrops", art-bible "Backdrop layers".
 
-## Brought in from beta (other change)
-Rook/Wick real-art prep (blocked on Gen org credits): `art/rook.json` Scratch/Talk, `art/wick.json` LightLamp/Talk, `.hawkes/pending-gpu.txt`, Yooba sheet PNG refreshes, living-air / ambience particle tooling. Gameplay locals already on beta; Gen sheets still pending credits.
+## Sizes (acceptance 3)
+The old `Videos/Level1_Background*.asset` and `Video2.asset` sheets are not in this sparse checkout, so before-sizes could not be
+measured. New PNGs total ~297 KB (e.g. Meadow sky 27 KB, far 4 KB, mid 4 KB, near 3 KB; floor sky 22-27 KB, far 16-39 KB, mid 3-11 KB,
+near 3-6 KB). Per-level bundle sizes need the build's `build-size.json`; baked footage sheets were far larger, but that is unverified.
+Floors 996+ still use the Circle's `Video2` backdrop (emberWastes.json untouched).
 
-## Conflicts (merge `origin/beta`)
-Only `.hawkes` data files conflicted; no binaries, scenes or prefabs.
+## Not run
+No Unity compile, tests, build or playtest (none available here). The C# was re-read for errors only.
 
-| File | Resolution |
-|---|---|
-| `.hawkes/learned.md` | Kept **all** bullets from both sides (rewind/hit canon+conventions + Rook/Wick Gen credits lessons and canon voice ids). |
-| `.hawkes/scenario.txt` | Kept **this** change’s `rewind-fx` (acceptance criteria). Beta’s `climber-locals` + phone options stay the scenario for the already-merged Rook/Wick change; noted in try.md so neither side is dropped. |
-| `.hawkes/summary.md` | Combined: this rewind summary + beta’s Rook/Wick blocked-on-credits note + this Conflicts table. |
-| `.hawkes/try.md` | Kept rewind try steps first; appended the Shaft Rook / Floor 999 Wick steps from beta. |
-
-## Checks
-- `/opt/unity-check/unity-check` on rewind C# — clean (pre-merge); merge touched no C# from this task.
-- Confirmed `RewindFx.cs` / `RewindWorldLook.cs` still present after merge; no conflict markers left in `.hawkes/`.
-- Unity editor compile not run here (no editor in this sandbox).
-- Browser / Studio playtest not started (per brief); scenario named in `.hawkes/scenario.txt`.
-
-## Reviews
-- **fun-reviewer:** thin (not demo). Soul of the rewind look is there; asked for deeper world-reacts (neighbours/lava reversing) — out of this task’s acceptance criteria, noted for later.
-- **reviewer:** merge after revise (streak hard-check, real glitch probe, touch hold). Softened leftover teal wash.
-
-## GPU
-$0 spent on rewind (procedural motes + hero-sprite ghosts). Rook/Wick Gen still blocked on org credits (see beta’s pending-gpu).
+## Self-review (reviewer + fun-reviewer rules, read by me, not a separate agent)
+- Gaps: art is stand-in (acceptance 1 is met structurally, not visually); acceptance 3 and 4 are unmeasured until the playtest/build run.
+- Fun: backdrops move and the raid changes the sky, but the painted look needs real art; no new interactions were in scope.

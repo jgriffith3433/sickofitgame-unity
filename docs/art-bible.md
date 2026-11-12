@@ -163,3 +163,8 @@ includes `launcherThief`).
 - Shipped on beta (#385 / c_409228146ca5): concept `a_babf8d7bca383dae`, magenta key poses, eight `video.i2v` clips baked into `Assets/Art/Sprites/Player/` (Idle, Walk, Jump, Land, Dash, DeathBurn, Rewind, Victory) with existing `.meta` guids and pivots kept. Walk `fps` 32 matches `moveSpeed` 3.8. Compare stills in `Assets/Art/HeroInk/compare/`. Judge log: `Assets/Art/HeroInk/JUDGE.md`.
 - Fall and Hurt: PASS magenta poses held as 6-frame interim sheets (no i2v — budget spent). **J (2026-11-12): keep those stand-in holds; count the task done.** Do not re-queue Fall/Hurt clips unless a new budget is approved.
 - Playtest `hero-ink` covers the acceptance checks (8 states, foot-slide ≤ 2 px, phone ≥ 48 px).
+
+## Backdrop layers
+Four layers per floor (sky, far, mid, near), 512x512, seamless left to right, 32 px per unit (16x16 world units), ridge
+line authored for the ground at y = -3. Replace a stand-in by saving a painted PNG over the same file name. See
+docs/world-bible.md "Backdrops".
