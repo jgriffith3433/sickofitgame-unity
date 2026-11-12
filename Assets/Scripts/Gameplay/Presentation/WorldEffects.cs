@@ -50,12 +50,14 @@ namespace SickOfIt.Gameplay
         bool sectionReleased;
         int spawnedThrough = -1;
 
+        CameraRig rig;
         float shakeIntensity;
         float shakeEndsAt;
         float slowMotionEndsAt = -1f;
         bool movesCamera;
 
         public Vector2 CameraBase => cameraBase;
+        public CameraRig Rig => rig;
         public CameraMode Mode => worldDef != null ? worldDef.camera : CameraMode.Static;
         public StageTrack Track => track;
         public FloorBackdrop Backdrop => backdrop;
@@ -107,6 +109,8 @@ namespace SickOfIt.Gameplay
             }
             if (world.Camera != null)
             {
+                rig = gameObject.AddComponent<CameraRig>();
+                rig.Init(owner);
                 cameraTransform = world.Camera.transform;
                 cameraBase = cameraTransform.position;
                 cameraZ = cameraTransform.position.z;
@@ -570,12 +574,13 @@ namespace SickOfIt.Gameplay
             if (cameraTransform == null)
                 return;
             bool shaking = Time.unscaledTime < shakeEndsAt;
-            if (!shaking && !movesCamera)
+            Vector2 look = rig != null && Mode != CameraMode.Travel ? rig.Step(Time.unscaledDeltaTime) : Vector2.zero;
+            if (!shaking && !movesCamera && look.sqrMagnitude < 1e-6f)
                 return;
             Vector2 offset = shaking ? Random.insideUnitCircle * shakeIntensity : Vector2.zero;
-            Vector2 p = cameraBase + offset;
+            Vector2 p = ClampToBounds(cameraBase + look) + offset;
             cameraTransform.position = new Vector3(p.x, p.y, cameraZ);
-            if (!shaking && Mode == CameraMode.Static)
+            if (!shaking && Mode == CameraMode.Static && look.sqrMagnitude < 1e-6f)
                 movesCamera = false;
         }
 
