@@ -38,7 +38,7 @@ namespace SickOfIt.Core.Audio
         public static event System.Action<PlayedSound> Played;
 
         /// <summary>For the other players of sound in this assembly (the ambience bed): report a start the same way.</summary>
-        internal static void Report(PlayedSound sound) => Played?.Invoke(sound);
+        public static void Report(PlayedSound sound) => Played?.Invoke(sound);
 
         static readonly Dictionary<string, AudioClip> lastTake = new Dictionary<string, AudioClip>();
         static readonly List<AudioClip> candidates = new List<AudioClip>(8);
