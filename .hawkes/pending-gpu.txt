@@ -1,5 +1,6 @@
-Rook ScratchMark clip (idle/talk exist as sheet.json only in this worktree): image.generate concept + image.edit pose + video.i2v on flat 00ff00 + sprite.sheet keyed 00ff00 → Assets/Art/Enemies/Rook/; wire art/rook.json clip scratch + RookShaft portrait sheets
-Rook Talk clip for Shaft portrait: same pipeline → Rook_talk sheet; ui/rook.json clips.talk.sheet
-Wick LightLamp clip: same pipeline → Assets/Art/Enemies/Wick/Wick_light.png; art/wick.json
-Wick Talk clip: same pipeline if Talk sheet missing
-wickLamp / wickLampLit prop art (pole + pale green flame): image.generate in inked lava style, cutout, place under Assets/Art/Props/WickLamp/
+Rook ScratchMark clip: image.generate concept (or reuse Rook concept) + image.edit pose scratch + image.frame 00ff00 + video.i2v + sprite.sheet key 00ff00 → Assets/Art/Enemies/Rook/Rook_scratch.png; wire art/rook.json scratch + ui/rook.json clips.scratch.sheet. Blocked: org Gen credits (needs 5, had 1). Est ~$0.10 GPU once credits clear.
+Rook Talk clip (Shaft portrait): same pipeline → Rook_talk.png (+ optional Rook_idle_portrait 4x2); wire ui/rook.json clips.talk/idle.sheet. Blocked: org credits. Est ~$0.10 GPU.
+Wick LightLamp clip: image.generate concept (or reuse Wick) + image.edit light pose + image.frame 00ff00 + video.i2v + sprite.sheet → Assets/Art/Enemies/Wick/Wick_light.png; wire art/wick.json lightLamp into entity animator; then companions.py light_lamp prepends playEntityAnimation state LightLamp. Blocked: org credits. Est ~$0.10 GPU.
+Wick Talk clip: same pipeline → Wick_talk.png; wire art/wick.json talk. Blocked: org credits. Est ~$0.10 GPU.
+wickLamp / wickLampLit prop art: image.generate inked lava style on 00ff00 (pole; lit with pale green flame), image.cutout, place Assets/Art/Props/WickLamp/, wire entity visual.sprite, hand-write .meta. Blocked: org credits (5 each). Est ~$0.05 GPU.
+Batch estimate (4 concepts + 4 edits + 4 i2v + free frame/sheet): ~$0.38 GPU / ~13 min on 1 server (within $0.88). Org pool must be ≥5 before any image.generate.
