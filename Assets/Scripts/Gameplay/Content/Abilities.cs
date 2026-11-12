@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SickOfIt.Json;
+using SickOfIt.Gameplay;
 
 namespace SickOfIt.Gameplay.Content
 {
@@ -450,7 +451,8 @@ namespace SickOfIt.Gameplay.Content
     }
 
     [Serializable, JsonType("shoot")]
-    [Doc("Fires projectile entities in a pattern. With 'interval' it attacks on a timer; with 'fireOnEvent' the shot happens on that animation frame (the timer then just starts the animation).")]
+    [Doc("Fires projectile entities in a pattern. With 'interval' it attacks on a timer; with 'fireOnEvent' the shot happens on that animation frame (the timer then just starts the animation). " +
+         "Aimed enemy shots telegraph with a muzzle flash and a thin aim line for 'telegraph' seconds (0.4 by default when aim is Player/Predictive; -1 = auto, 0 = off). Spread patterns flash the emitter.")]
     public sealed class ShootAbility : Ability
     {
         [Required, EntityRef, Doc("Entity id of the projectile.")] public string projectile = "";
@@ -467,11 +469,18 @@ namespace SickOfIt.Gameplay.Content
         [Doc("Animation event that releases the shot.")] public string fireOnEvent = "";
         [Doc("Animator parameter pulsed when an attack starts (a trigger, or a bool set for one tick).")] public string animTrigger = "";
         [Doc("Damage per shot; 0 = the projectile's own.")] public int damage;
+        [Doc("Seconds of muzzle flash + aim line (or emitter flash for a spread) before the volley. -1 = auto (0.4 for aimed enemy shots, 0.35 for spreads, 0 otherwise). 0 = off.")]
+        public float telegraph = -1f;
 
         float nextAttackAt;
         int burstLeft;
         float nextVolleyAt;
         int volleyIndex;
+        float telegraphUntil;
+        float telegraphStarted;
+        Vector2 lockedAim;
+        bool telegraphing;
+        bool pendingFireOnEvent;
 
         public override void OnSpawn()
         {
@@ -479,24 +488,58 @@ namespace SickOfIt.Gameplay.Content
             burstLeft = 0;
             nextVolleyAt = 0f;
             volleyIndex = 0;
+            telegraphUntil = 0f;
+            telegraphStarted = -1f;
+            lockedAim = Vector2.right;
+            telegraphing = false;
+            pendingFireOnEvent = false;
         }
 
         /// <summary>The first attack comes initialDelay after spawning, or after entering the state that has this ability.</summary>
         public override void OnActivate() => nextAttackAt = Owner.Now + initialDelay;
 
+        float EffectiveTelegraph()
+        {
+            if (telegraph >= 0f)
+                return telegraph;
+            if (Owner == null || Owner.Team != Team.Enemy)
+                return 0f;
+            if (pattern is SpreadPattern || pattern is RadialPattern)
+                return 0.35f;
+            if (aim == Aim.Player || aim == Aim.Predictive)
+                return 0.4f;
+            return 0f;
+        }
+
+        bool IsSpreadPattern => pattern is SpreadPattern || pattern is RadialPattern;
+
         public override void Tick(float now, float dt)
         {
-            if (interval > 0f && now >= nextAttackAt)
+            if (telegraphing && now >= telegraphUntil && (string.IsNullOrEmpty(fireOnEvent) || fireOnEventHold))
+            {
+                telegraphing = false;
+                fireOnEventHold = false;
+                StartBurst(now);
+            }
+            if (interval > 0f && now >= nextAttackAt && !telegraphing && burstLeft <= 0)
             {
                 bool inRange = range <= 0f || DistanceToPlayer() <= range;
                 if (inRange)
                 {
                     float density = Owner.Team == Team.Enemy ? SickOfIt.Data.Difficulty.Density : 1f;
                     nextAttackAt = now + interval / Mathf.Max(0.01f, Owner.Stat(Stat.AttackSpeed, 1f) * density);
+                    BeginTelegraph(now);
                     if (!string.IsNullOrEmpty(animTrigger))
                         Owner.Animation.Pulse(animTrigger);
                     if (string.IsNullOrEmpty(fireOnEvent))
-                        StartBurst(now);
+                    {
+                        float lead = EffectiveTelegraph();
+                        if (lead <= 0.001f)
+                            StartBurst(now);
+                        // else StartBurst runs when telegraphUntil elapses
+                    }
+                    else
+                        pendingFireOnEvent = true;
                     Owner.RecordNow();
                 }
             }
@@ -511,11 +554,55 @@ namespace SickOfIt.Gameplay.Content
         public override void OnAnimationEvent(string eventName)
         {
             if (!string.IsNullOrEmpty(fireOnEvent) && eventName == fireOnEvent)
-                StartBurst(Owner.Now);
+            {
+                float now = Owner.Now;
+                float minLead = EffectiveTelegraph();
+                // Animation-driven shots already wind up; hold the fire until the min telegraph if the clip is shorter.
+                if (pendingFireOnEvent && telegraphing && minLead > 0f && now - telegraphStarted < minLead)
+                {
+                    telegraphUntil = telegraphStarted + minLead;
+                    // Fire when the hold ends (Tick handles empty fireOnEvent; here we clear pending and let a deferred burst run).
+                    pendingFireOnEvent = false;
+                    fireOnEventHold = true;
+                    if (Owner.TryGetComponent<ShotTelegraphFx>(out var holdFx))
+                        holdFx.ExtendUntil(telegraphUntil);
+                    return;
+                }
+                pendingFireOnEvent = false;
+                fireOnEventHold = false;
+                StartBurst(now);
+            }
+        }
+
+        bool fireOnEventHold;
+
+        void BeginTelegraph(float now)
+        {
+            float lead = EffectiveTelegraph();
+            Vector2 origin = Owner.Position + new Vector2(muzzle.x * Owner.Facing, muzzle.y);
+            lockedAim = Emission.AimDirection(Owner.World, Owner, aim, direction, origin, Owner.Random, speed);
+            telegraphStarted = now;
+            telegraphUntil = now + Mathf.Max(0f, lead);
+            telegraphing = lead > 0.001f;
+            fireOnEventHold = false;
+            var fx = ShotTelegraphFx.Attach(Owner);
+            if (fx == null)
+                return;
+            if (IsSpreadPattern)
+                fx.BeginSpread(telegraphUntil, Owner.DefId);
+            else if (lead > 0.001f && (aim == Aim.Player || aim == Aim.Predictive || aim == Aim.Facing || aim == Aim.Direction))
+                fx.BeginAim(muzzle, lockedAim, telegraphUntil, Owner.DefId);
+            else if (lead > 0.001f)
+                fx.BeginSpread(telegraphUntil, Owner.DefId);
         }
 
         void StartBurst(float now)
         {
+            if (Owner.TryGetComponent<ShotTelegraphFx>(out var fx))
+                fx.EndAndLog(IsSpreadPattern ? "spread" : "shot");
+            telegraphing = false;
+            pendingFireOnEvent = false;
+            fireOnEventHold = false;
             Owner.PlayAttackSound();
             burstLeft = Mathf.Max(1, burst);
             nextVolleyAt = now;
@@ -528,7 +615,15 @@ namespace SickOfIt.Gameplay.Content
         void FireVolley()
         {
             Vector2 origin = Owner.Position + new Vector2(muzzle.x * Owner.Facing, muzzle.y);
-            Emission.Fire(Owner.World, Owner, projectile, pattern, aim, direction, origin, speed, damage, volleyIndex++, Owner.Random);
+            // Use the locked aim from the telegraph so the line matches the shot.
+            Aim fireAim = aim;
+            Vector2 fireDir = direction;
+            if (telegraphStarted >= 0f && lockedAim.sqrMagnitude > 0.0001f && (aim == Aim.Player || aim == Aim.Predictive))
+            {
+                fireAim = Aim.Direction;
+                fireDir = lockedAim;
+            }
+            Emission.Fire(Owner.World, Owner, projectile, pattern, fireAim, fireDir, origin, speed, damage, volleyIndex++, Owner.Random);
         }
 
         public override void SaveState(StateWriter writer)
@@ -537,6 +632,13 @@ namespace SickOfIt.Gameplay.Content
             writer.Int(burstLeft);
             writer.Float(nextVolleyAt);
             writer.Int(volleyIndex);
+            writer.Float(telegraphUntil);
+            writer.Float(telegraphStarted);
+            writer.Float(lockedAim.x);
+            writer.Float(lockedAim.y);
+            writer.Float(telegraphing ? 1f : 0f);
+            writer.Float(pendingFireOnEvent ? 1f : 0f);
+            writer.Float(fireOnEventHold ? 1f : 0f);
         }
 
         public override void LoadState(StateReader reader)
@@ -545,6 +647,12 @@ namespace SickOfIt.Gameplay.Content
             burstLeft = reader.Int();
             nextVolleyAt = reader.Float();
             volleyIndex = reader.Int();
+            telegraphUntil = reader.Float();
+            telegraphStarted = reader.Float();
+            lockedAim = new Vector2(reader.Float(), reader.Float());
+            telegraphing = reader.Float() > 0.5f;
+            pendingFireOnEvent = reader.Float() > 0.5f;
+            fireOnEventHold = reader.Float() > 0.5f;
         }
     }
 

@@ -1957,13 +1957,20 @@ burning), Floor 1000's lava and creaking stone. The design and the numbers are i
 
 ## Readability is fairness (art direction and bullets)
 
-In a dodger every death must be the player's. So a hostile shot is never lost in the picture: each wears two thin rims, a pale one
-beside it (the level's or Circle's `shotRim`; the Ember Wastes' is a hot cream) and an ink one outside it, so it reads on a bright
-meadow and on black slag alike. Settings > Accessibility still adds the heavier outlines and the one-colour high-contrast shots on top.
-Every level has at least two layers of depth: the Circle's `ambience` (silhouettes and weather at their own parallax) or, on a level
-without a Circle like the Meadow, the script's own `ambience`. Palette rule: backdrops stay dark and low in saturation, hazards and shots
-are the only hot orange/yellow on screen. Playtest `readability` (levels 1-5). Still to do: per-bullet-family silhouettes (a ring, a
-shard, a spiral) and a second pass on the Cracked Road and Rune Bridges once their art is regenerated (GPU).
+In a dodger every death must be the player's. So a hostile shot is never lost in the picture. Every enemy bullet wears a **white-hot
+core**, a **dark ink outline**, a **coloured halo** in the cyan/magenta family (a hue no Meadow grass or Ember Wastes sulphur/furnace
+backdrop uses; Floor 997's obsidian light takes magenta) and a **short fading trail**, in the Housemarque / Returnal vein. The level's
+or Circle's `shotRim` still sits as the pale rim under the ink so older contrast checks hold. The hero's own shots are a **warm amber
+elongated** look with a dark rim and no cyan halo, so they never read as danger. Settings > Accessibility still adds the heavier outlines
+and the one-colour high-contrast shots on top. Hitboxes are unchanged; on a phone the drawn sprite is grown so a bullet stays at least
+8 CSS px across beside the touch stick.
+
+**Telegraphs.** Aimed enemy shots flash at the muzzle and draw a thin magenta aim line for about 0.4 s before they fire (the attack
+clip's wind-up is the same window; a shorter clip is held to 0.3 s). Spread patterns flash the emitter. Floor hazards (lava rise, geyser
+tell, surge rumble, sinking-stone shake) glow a cyan or magenta warning for at least 0.5 s before they can hurt. A playtest-only overlay
+logs each lead (`TelegraphLog`). Playtests `readability` (contrast + parallax) and `bullet-look` (core/outline/trail, leads, phone size)
+on levels 1-5. Still to do: per-bullet-family silhouettes (a ring, a shard, a spiral) baked from Hawkes Gen into one atlas, and a second
+pass on the Cracked Road and Rune Bridges once their art is regenerated (GPU).
 
 ## Hell's air (weather and the life far away)
 

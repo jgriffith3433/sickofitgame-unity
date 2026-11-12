@@ -256,6 +256,16 @@ Every beat above is an event first. A beat that is only a `showText` is a defect
 
 ---
 
+## Bullets and hazard tells (Meadow + Floors 1000-997, Nov 12)
+
+Hostile shots read like Returnal orbs: white-hot core, dark ink outline, cyan/magenta halo (never the sulphur/furnace
+orange of the Wastes; Floor 997 prefers magenta), short fading trail. The hero's rockets stay warm amber and elongated.
+Aimed shots flash the muzzle and draw a thin aim line ~0.4 s before firing; spreads flash the emitter; lava / geyser /
+surge / sink tells glow a warning colour ≥ 0.5 s before they hurt. Playtests: `readability`, `bullet-look`. Hitboxes
+unchanged; phone draws bullets at least 8 px across.
+
+---
+
 ## Where the game falls short today (and what to build first)
 
 1. **The Meadow's life.** Neighbours, a dog, a hen, a hay bale, a mill and a cart that the raid wrecks: 8 dressings and 3
