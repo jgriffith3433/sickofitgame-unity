@@ -3,7 +3,7 @@
   "entity": "overlordTaunt",
   "name": "The Overlord, watching",
   "description": "the Overlord of Hell: a giant figure of black obsidian with a crown of long black horns, burning red eyes, broad shoulders under a heavy cloak of black stone, tired and velvety, lit by lava glow from below",
-  "height": 1.3,
+  "height": 1.8,
   "pixels": 300,
   "poses": {
     "stand": "standing in profile facing left, cloak hanging, one hand on a horn of his crown, looking down",

@@ -4,7 +4,7 @@ The Overlord's taunts on Floors 1000-997 (Docs/Story.md "The Overlord watches th
 
 Writes (idempotent): the 30 `vo_ovl_t_*` voice lines in audio.json (voice `overlord`, the existing canon voice; clips are made through Hawkes Gen, ids without a
 clip sit in Tools/Audio/pending_clips.json), Assets/Scripts/Gameplay/Presentation/OverlordTauntLines.cs (the table the director reads), the entities
-`overlordTaunt` (placeholder until Tools/Art/art.mjs overlordTaunt applies his animator) and `overlordTauntFlee` (a copy of its animator that drifts up and out),
+`overlordTaunt` (four clips baked by Tools/Art/overlord_taunt_bake.py) and `overlordTauntFlee` (a copy of its animator that drifts up and out),
 the art spec art/overlordTaunt.json and, on each of the four floors, one rule that names the entities so the level's bundle carries them.
 
     python3 Tools/Levels/overlord_taunts.py          # write
@@ -118,10 +118,11 @@ def entities():
     anchor = lambda drift, after: {"type": "screenAnchor", "offset": [0.7, 1.7], "drift": drift, "driftAfter": after}
     base = lambda: {"schemaVersion": 1, "team": "Neutral", "health": 0, "shootable": False, "tags": ["overlordCameo", "overlordTaunt"],
                     "body": {"radius": 0.3, "solid": False},
-                    "visual": {"scale": 1.0, "placeholderColor": "#2A2030", "placeholderSize": 1.3, "placeholderLabel": False, "layer": "Background2",
+                    "visual": {"scale": 1.0, "placeholderColor": "#2A2030", "placeholderSize": 1.8, "placeholderLabel": False, "layer": "Background2",
                                "sortingOrder": 3, "hurtFlash": False, "deathPop": False, "facesLeft": False},
                     "healthBar": {"show": False}}
-    # art.mjs overlordTaunt writes visual.animator here (Idle, Laugh, Point, Flee); keep what is there.
+    # visual.animator (Idle, Laugh, Point, Flee) is written once by hand from Tools/Art/overlord_taunt_bake.py's sheets; keep what is there.
+    # Flee: the 8-frame turn plays, then he rises out of the top at 4 units/s (a 390x844 view is ~16 units tall).
     cur = jload("Assets/GameConfig/content/entities/overlordTaunt.json")
     t = base()
     t["abilities"] = [anchor([0.0, 0.0], 0.0), {"type": "lifetime", "seconds": 4.0}]
@@ -129,7 +130,7 @@ def entities():
         t["visual"] = cur["visual"]
     jsave("Assets/GameConfig/content/entities/overlordTaunt.json", t)
     f = base()
-    f["abilities"] = [anchor([0.0, 1.6], 0.2), {"type": "lifetime", "seconds": 2.6}]
+    f["abilities"] = [anchor([0.0, 4.0], 0.6), {"type": "lifetime", "seconds": 2.6}]
     f["visual"] = json.loads(json.dumps(t["visual"]))
     anim = f["visual"].get("animator")
     if anim:
@@ -140,7 +141,7 @@ def entities():
 def art():
     spec = {"schemaVersion": 1, "entity": "overlordTaunt", "name": "The Overlord, watching",
             "description": "the Overlord of Hell: a giant figure of black obsidian with a crown of long black horns, burning red eyes, broad shoulders under a heavy cloak of black stone, tired and velvety, lit by lava glow from below",
-            "height": 1.3, "pixels": 300,
+            "height": 1.8, "pixels": 300,
             "poses": {"stand": "standing in profile facing left, cloak hanging, one hand on a horn of his crown, looking down",
                       "laugh": "head thrown back laughing, shoulders raised, one hand on his chest",
                       "point": "one long arm stretched out pointing down-left, the other hand open"},
