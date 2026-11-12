@@ -560,7 +560,7 @@ namespace SickOfIt.Gameplay
                     if (shownPoints >= 0 && points > shownPoints)
                     {
                         diamondsPopAt = Time.unscaledTime;
-                        Sfx.Play(Sfx.Events.pickupDiamond);
+                        PlayDiamondChime();
                         floaters?.Spawn(diamondsRoot, $"+{points - shownPoints}", theme.accent);
                     }
                     else if (shownPoints >= 0 && points < shownPoints && !rewinding)

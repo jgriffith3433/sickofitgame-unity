@@ -798,7 +798,10 @@ namespace SickOfIt.Gameplay.Content
             if (bouncesLeft > 0 && Owner.Body != null && TryBounce(collider))
                 return;
             if (dieOnSolid)
+            {
+                SickOfIt.Core.Audio.Sfx.Play(SickOfIt.Core.Audio.Sfx.Events.bulletImpact);
                 Owner.Die(DeathCause.Self);
+            }
         }
 
         /// <summary>Mirrors the velocity about the surface it touched. False if it was already moving away from it.</summary>
