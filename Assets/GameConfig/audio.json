@@ -880,7 +880,7 @@
       "loop": true,
       "voice": "",
       "voiceId": "",
-      "clip": null,
+      "clip": "Audio/Generated/Core/player_heartbeat.ogg",
       "bus": "Sfx",
       "generatedFrom": "",
       "volume": 0.55,
