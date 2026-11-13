@@ -192,7 +192,7 @@ namespace SickOfIt.Playtest
                     }
 
                     Run.Event("chapter1", "done");
-                    Run.Finish("done");
+                    End(PlaytestOutcome.Done);
                 }
                 finally
                 {

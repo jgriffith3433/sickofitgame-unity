@@ -181,15 +181,15 @@ namespace SickOfIt.Playtest
                 End(allOk ? PlaytestOutcome.Won : lastOutcome == "softlock" ? PlaytestOutcome.Stuck : PlaytestOutcome.Done);
             }
 
-            void EnemyInkDuring()
+            IEnumerator EnemyInkDuring(float now)
             {
-                if (enemyInk == null || enemyInk.Done) return;
+                if (enemyInk == null || enemyInk.Done) return null;
                 var world = GameplayWorld.Instance;
-                if (world == null) return;
+                if (world == null) return null;
                 var cam = Camera.main != null ? Camera.main : world.Camera;
-                if (cam == null) return;
+                if (cam == null) return null;
 
-                foreach (var e in world.Entities)
+                foreach (var e in world.Live)
                 {
                     if (e == null || !e.IsAlive) continue;
                     string id = e.DefId;
@@ -212,6 +212,7 @@ namespace SickOfIt.Playtest
                     else if (state == "Hurt") enemyInk.StatesHurt.Add(id);
                     else if (state == "Die") enemyInk.StatesDie.Add(id);
                 }
+                return null;
             }
 
             void EnemyInkTelemetry(GameplayTelemetry log, GameplayTelemetry.Event e)
