@@ -168,9 +168,37 @@
       "impSack_hurt": "a_2461b2943edd6eb9",
       "impSack_die": "a_a175ddfbe3ecee67",
       "cinderSpark_windup": "a_4c5fed0fbca0470d"
+    },
+    "thirdTry": {
+      "passed": {
+        "launcherThief": [
+          "idle",
+          "move",
+          "windup",
+          "attack",
+          "hurt"
+        ],
+        "cinderThatch": [
+          "windup",
+          "attack"
+        ]
+      },
+      "assets": {
+        "launcherThief_idle": "a_ca99cb6dce5cab3c",
+        "launcherThief_windup": "a_640299ed15721d1e",
+        "launcherThief_attack": "a_5606c0452265ea30",
+        "launcherThief_hurt": "a_a97005bb9959eb8b",
+        "cinderThatch_windup": "a_3e0b374f889307ec",
+        "cinderThatch_attack": "a_78cd7ef7e6c0af53",
+        "launcherThief_dead": "a_fe5e083629cff4ba",
+        "launcherThief_dead_framed": "a_83e43c82bd4a6028"
+      },
+      "queued": {
+        "j_b00c3a95acae": "launcherThief die i2v struck a_6aaca8f81a5afad0 -> dead a_83e43c82bd4a6028"
+      }
     }
   },
-  "resume": "2026-11-12e: judged thief poses (dead FAIL); framed PASS; held Windup/Attack wired; i2v+dead redo queued.",
+  "resume": "2026-11-13: thief idle/move/windup/attack/hurt and thatch windup/attack baked; thief die i2v j_b00c3a95acae queued.",
   "queued_c_666db16040a6": {
     "estimateUsd": 0.44,
     "budgetUsd": 0.86,

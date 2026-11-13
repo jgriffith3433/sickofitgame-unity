@@ -160,3 +160,19 @@ Pose GPU **~$0.21** of **$0.86**. Framed free.
 ### Interim sheets + queue
 Held thief Windup/Attack (and thatch Windup) baked from framed stills; entity Windup/Attack off Move.
 Queued i2v: thief idle/windup/attack/hurt + thatch windup/attack + dead redo — see `.hawkes/waiting-jobs.txt` / `framed/manifest.json` `queued_c_666db16040a6_i2v`.
+
+## Resume 2026-11-13 (third try, c_22d9a934f933: RunPod/Modal, within $0.86)
+
+Spent about **$0.20** on these seven jobs (`hawkesgen_jobs`: 0.0461 + 0.0151 + 0.0738 + 0.015 + 0.0152 + 0.0158 + 0.0122) plus `image.frame` (free) and the die clip below. Judged on mid frames at 16 fps, keyed and previewed on a dark plate.
+
+| Clip | Asset | Verdict | Notes |
+|---|---|---|---|
+| launcherThief idle (and move) | `a_ca99cb6dce5cab3c` | PASS | Wings, horns, launcher sack and spade tail hold; no extra limbs; replaces the old painterly flying idle/move. 25 frames at 12 fps |
+| launcherThief windup | `a_640299ed15721d1e` | PASS | Crouch held, cyan exhaust glow on every frame (loop 19 frames) |
+| launcherThief attack | `a_5606c0452265ea30` | PASS | Glow, then the lunge with the launcher up and an ember in the hand; baked from source frame 4 (16 frames); `FireProjectile` on frame 5 |
+| launcherThief hurt | `a_a97005bb9959eb8b` | PASS (weak) | First 6 frames are the plain run, so baked from frame 6 (14 frames); the struck pose is a little off-model (no wings) but reads as a hit |
+| cinderThatch windup | `a_3e0b374f889307ec` | PASS | Limbless straw ball, cyan flame core all the way; replaces the held still (19 frames, loop) |
+| cinderThatch attack | `a_78cd7ef7e6c0af53` | PASS (weak) | Limbless; later frames sit on a paler green box (keyed out by greenness, clean) and the ball hops with an angry face. Baked from frame 8 (13 frames) |
+| launcherThief dead pose | `a_fe5e083629cff4ba`, framed `a_83e43c82bd4a6028` | PASS (weak) | Soot-and-ember burst on the sack, shocked imp; not a chest cannon |
+
+Baked with `Tools/Art/bake_clips.mjs` (ffmpeg + node: the worktree has no Pillow/numpy/DoD checkout, so `art.mjs --build` can't run). Scale 0.65, anchor = the keyed bbox centre of each entity's first frame so clips share one pivot, `ppu` 79.9 (thief) / 85.0 (thatch) so a figure keeps the on-screen size of the held sheets it replaces (0.77 and 0.75 of the 640 frame at the old ppus).

@@ -1,4 +1,5 @@
-1. Open the beta page on a phone (or a 390x844 window) and play Floor 1000 (Level 3 is the quickest to clear) to the end.
-2. Watch the Level Clear screen: Time, Clean Kills, Grazes, Rewinds and Diamonds tick up one by one, each with a tick.
-3. A rank letter (S/A/B/C) slams onto an inked stamp with a shake and embers; Yooba's portrait speaks a verdict. A NEW BEST banner shows on a record, and the earned diamonds fly into the total.
-4. Tap anywhere early: everything jumps to the end at once and Continue appears. Clear the same floor again: Yooba says the other line for that rank.
+1. Play Floor 998 (level `level-4`) or the Meadow: the launcher thief now runs as one inked imp (wings, spade tail, launcher on its sack) instead of the old painterly flier.
+2. Watch it before it shoots: it crouches with a cyan glow out of the launcher, then lunges and the shot leaves on the lunge frame.
+3. Shoot it: hurt recoil; killing it still shows the older die sheet until the new one lands.
+4. Thatch cinders (Floors 1000-998): when one is about to hurt you its flame core goes cyan, then it hops angry.
+5. Beta playtest `enemy-ink` (phone) shows all seven enemies.

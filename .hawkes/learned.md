@@ -1,4 +1,3 @@
-- lesson: sparse checkout hides generated clips — `git add` of imported mp3s needs `--sparse`, and `studio_gen_import` writes no `.meta`: copy a neighbour's (`vo_yooba_hello.mp3.meta`) with a fresh guid.
-- lesson: ElevenLabs works through `hawkesgen_run` (`audio.voice`, `provider: elevenlabs`, the voice id in audio.json `voices`, `eleven_v3`) with the full project id `org_eb0d5c82e8da8c2d.sickofit`; a line costs about $0.02.
-- convention: Gameplay cannot name Core.Progression — HUD code reaches Yooba's portrait through `NextGoalBridge` delegates registered by a `RuntimeInitializeOnLoadMethod` in Progression.
-- convention: results-screen layout lives in theme.json `screens.results*` (portrait) plus code (landscape); the phone scale is 390/1080, so 150 design units = 54 px.
+- Tool: `Tools/Art/bake_clips.mjs` bakes i2v clips to sheets with only ffmpeg and node when `art.mjs --build` can't run (no Pillow/numpy/DoD); job files live in `Tools/Art/bake_jobs/`.
+- The agent worktree is sparse: PNGs are not checked out (`git cat-file blob HEAD:path | git lfs smudge` reads one); writing a new PNG and `git add` still goes through LFS.
+- Hawkes Gen's `get_task` shows a cold RunPod start takes several minutes; i2v clips otherwise finish in 30-150 s and cost $0.015-0.074.
