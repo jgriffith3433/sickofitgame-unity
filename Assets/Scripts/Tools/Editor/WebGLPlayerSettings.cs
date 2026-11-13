@@ -24,6 +24,7 @@ namespace SickOfIt.Tools.Editor
             readonly bool fallback, strip, dataCaching, nameAsHashes, development;
             readonly UnityEditor.WebGL.WasmCodeOptimization codeOptimization;
             readonly Il2CppCodeGeneration codeGeneration;
+            readonly WebGLExceptionSupport exceptions;
             bool done;
 
             internal Restore()
@@ -36,6 +37,7 @@ namespace SickOfIt.Tools.Editor
                 development = EditorUserBuildSettings.development;
                 codeOptimization = UnityEditor.WebGL.UserBuildSettings.codeOptimization;
                 codeGeneration = PlayerSettings.GetIl2CppCodeGeneration(NamedBuildTarget.WebGL);
+                exceptions = PlayerSettings.WebGL.exceptionSupport;
             }
 
             public void Dispose()
@@ -51,6 +53,7 @@ namespace SickOfIt.Tools.Editor
                 EditorUserBuildSettings.development = development;
                 UnityEditor.WebGL.UserBuildSettings.codeOptimization = codeOptimization;
                 PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, codeGeneration);
+                PlayerSettings.WebGL.exceptionSupport = exceptions;
             }
         }
 
@@ -77,10 +80,13 @@ namespace SickOfIt.Tools.Editor
                 UnityEditor.WebGL.WasmCodeOptimization.DiskSizeLTO, v => UnityEditor.WebGL.UserBuildSettings.codeOptimization = v);
             Set(log, "IL2CPP code generation", PlayerSettings.GetIl2CppCodeGeneration(NamedBuildTarget.WebGL),
                 Il2CppCodeGeneration.OptimizeSize, v => PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, v));
+            // Exception support: explicit `throw`s stay catchable (the JSON importer and loaders use them); only the implicit
+            // null/bounds checks lose their try/catch landing pads, which is a few percent of the wasm.
+            Set(log, "exception support", PlayerSettings.WebGL.exceptionSupport,
+                WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly, v => PlayerSettings.WebGL.exceptionSupport = v);
             // Not changed on purpose: managed stripping (the JSON content types are found by reflection, so a higher level
-            // needs Assets/link.xml checked in a WebGL build first) and exceptions.
-            log($"    managed stripping {PlayerSettings.GetManagedStrippingLevel(NamedBuildTarget.WebGL)}, " +
-                $"exceptions {PlayerSettings.WebGL.exceptionSupport} (unchanged)");
+            // needs Assets/link.xml checked in a WebGL build first).
+            log($"    managed stripping {PlayerSettings.GetManagedStrippingLevel(NamedBuildTarget.WebGL)} (unchanged)");
             return restore;
         }
 
