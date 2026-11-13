@@ -2577,10 +2577,8 @@
                   },
                   {
                     "type": "playEntityAnimation",
-                    "target": {
-                      "id": "ovlChapter"
-                    },
-                    "animation": "Point"
+                    "target": "ovlChapter",
+                    "state": "Point"
                   },
                   {
                     "type": "say",
@@ -2656,10 +2654,8 @@
             "do": [
               {
                 "type": "playEntityAnimation",
-                "target": {
-                  "id": "ovlChapter"
-                },
-                "animation": "Flee"
+                "target": "ovlChapter",
+                "state": "Flee"
               },
               {
                 "type": "emit",
@@ -2681,10 +2677,8 @@
               },
               {
                 "type": "playEntityAnimation",
-                "target": {
-                  "id": "ovlChapter"
-                },
-                "animation": "Laugh"
+                "target": "ovlChapter",
+                "state": "Laugh"
               },
               {
                 "type": "playSound",
@@ -2702,10 +2696,8 @@
               },
               {
                 "type": "playEntityAnimation",
-                "target": {
-                  "id": "ovlChapter"
-                },
-                "animation": "Flee"
+                "target": "ovlChapter",
+                "state": "Flee"
               },
               {
                 "type": "wait",

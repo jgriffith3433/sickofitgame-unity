@@ -142,7 +142,11 @@ namespace SickOfIt.Tools.Editor.GameConfig
 
             var report = ImportNow(reason);
             if (!report.Success)
-                throw new BuildFailedException($"Game config import FAILED ({reason}): the game config has errors. See {GameConfigReport.LogPath}.");
+            {
+                // Name every error in the exception, so the build output (not only Logs/GameConfig.log) says what failed.
+                var errorLines = report.Issues.Where(i => i.Severity == JsonIssueSeverity.Error).Select(i => i.ToString()).ToList();
+                throw new BuildFailedException($"Game config import FAILED ({reason}): the game config has {errorLines.Count} error(s). See {GameConfigReport.LogPath}.\n{string.Join("\n", errorLines)}");
+            }
 
             var check = GameConfigImporter.Load(new DiskConfigFiles(), new EditorAssetIdResolver());
             try
