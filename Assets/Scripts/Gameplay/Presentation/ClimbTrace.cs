@@ -48,15 +48,13 @@ namespace SickOfIt.Gameplay
             {
                 hooked = true;
                 PlayerHealth.HeroDied += OnHeroDied;
+                SickOfIt.Data.ClimbTraceStore.Cleared += () => DeathMarks = RewindMarks = 0;
             }
         }
 
         public static void Reset()
         {
-            foreach (var f in KnownFloors())
-                PlayerPrefs.DeleteKey(Prefix + f);
-            PlayerPrefs.DeleteKey(Prefix + "List");
-            DeathMarks = RewindMarks = 0;
+            SickOfIt.Data.ClimbTraceStore.Reset();
         }
 
         void Start()
