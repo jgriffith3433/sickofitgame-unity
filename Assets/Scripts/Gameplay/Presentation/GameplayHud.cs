@@ -329,10 +329,11 @@ namespace SickOfIt.Gameplay
             rewindRoot = (RectTransform)rewindButton.transform.parent;
 
             var keySlot = MenuGraphics.NewRect("Key", rewindRoot);
-            keySlot.anchorMin = keySlot.anchorMax = new Vector2(1f, 0f);
-            keySlot.pivot = new Vector2(1f, 1f);
-            keySlot.sizeDelta = new Vector2(248f, 40f);
-            keySlot.anchoredPosition = new Vector2(16f, -10f);
+            // Centred under the button and no wider than it, so it never runs into the hint or the screen edge.
+            keySlot.anchorMin = keySlot.anchorMax = new Vector2(0.5f, 0f);
+            keySlot.pivot = new Vector2(0.5f, 1f);
+            keySlot.sizeDelta = new Vector2(176f, 44f);
+            keySlot.anchoredPosition = new Vector2(0f, -14f);
             MenuGraphics.Surface(keySlot, new MenuSurfaceStyle
             {
                 shape = MenuShape.Pill,
