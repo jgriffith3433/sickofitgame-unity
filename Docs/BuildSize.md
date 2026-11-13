@@ -249,3 +249,10 @@ Not measured here (no Unity or build in this sandbox): beta's next `first-five@l
 Checks: `phone-load` (`hero on the menu`: a sprite drawn inside the camera's view within 20 s of the buttons; `playable hero on the menu`: the real controller is
 there by the end of the warm-up; metrics `load.menuHeroSeconds`, `load.menuHeroPlayableSeconds`) and `first-five` (`heroOnMenu`), so taking him out can never
 remove him unseen. If the build log says the scene still depends on hero sheets, the strip failed: read the line before it.
+
+## The wasm builds for disk size (phone twin: 84.3 s to gameplay, limit 60)
+
+Beta v142 first-five@phone: wasm 10.6 MB + data 5.2 MB + framework 0.1 MB, ~16 MB at slow-4g's ~0.2 MB/s = the 84 s. The bytes are the time, so
+`WebGLPlayerSettings.Apply` now also sets `UserBuildSettings.codeOptimization = DiskSizeLTO` and IL2CPP code generation `OptimizeSize` (both put back by
+`Restore`). Not measured here (no Unity/build): the next `first-five@local:phone` reports `phone.mbBeforeGameplay`/`phone.secondsToGameplay` and `phone.fpsP5`
+(shared generics can cost frame time: if fpsP5 drops under 30, revert `OptimizeSize` first). Next levers: Brotli (see above), managed stripping with a link.xml.
