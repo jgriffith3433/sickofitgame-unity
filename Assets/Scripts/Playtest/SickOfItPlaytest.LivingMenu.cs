@@ -229,10 +229,8 @@ namespace SickOfIt.Playtest
                 Gate("Play/Continue click", leftMenu, leftMenu ? $"clicked \"{go}\"" : $"\"{go}\" did not respond");
                 Run.Progress(1f);
 
-                if (failed == 0)
-                    Run.Finish("living-menu ok");
-                else
-                    Run.Finish($"living-menu: {failed} failed check(s)");
+                Run.Event("living-menu", failed == 0 ? "living-menu ok" : $"living-menu: {failed} failed check(s)");
+                End(failed == 0 ? PlaytestOutcome.Won : PlaytestOutcome.Done);
             }
 
             static float ButtonHeightPx(MenuButton button)
@@ -245,7 +243,7 @@ namespace SickOfIt.Playtest
                 return Mathf.Abs(corners[1].y - corners[0].y);
             }
 
-            static void EventSystemGuardNote()
+            void EventSystemGuardNote()
             {
                 // Soft note for the review footage: the guard is what keeps clicks honest.
                 Run.Event("living-menu", "EventSystemGuard.Ensure ran on menu open");

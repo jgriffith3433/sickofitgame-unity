@@ -7,6 +7,7 @@ using SickOfIt.Core;
 using SickOfIt.Core.Audio;
 using SickOfIt.Core.Device;
 using SickOfIt.Core.Progression;
+using SickOfIt.Data.Config;
 using SickOfIt.Gameplay;
 
 namespace SickOfIt.Playtest
