@@ -81,7 +81,8 @@ namespace SickOfIt.Gameplay.Content
                 return false;
             var hero = w.PlayerController;
             var hp = hero != null ? hero.GetComponent<PlayerHealth>() : null;
-            if (hp == null)
+            // Safe by rule: never stage a hit that could be his last heart (the replay's jumpable ember runs instead).
+            if (hp == null || hp.CurrentHealth <= 1)
                 return false;
             stagedIn = w;
             if (instance == null)
@@ -127,6 +128,8 @@ namespace SickOfIt.Gameplay.Content
                         Current = Stage.Slow;
                         Hits++;
                         slowAt = Time.unscaledTime;
+                        // The rest of the ring cannot finish him while time is slow: invincible through the beat.
+                        health.SetInvincibilityTimer(SlowSeconds + 0.5f);
                         HitFreeze.Freeze(SlowSeconds, action.slowScale, 0f, "firstRewind");
                         world.Hud?.ShowText(action.lineText, TextStyle.Subtitle, new Color(1f, 0.96f, 0.84f), world.Now + SlowSeconds + 0.5f);
                         SickOfIt.Core.Audio.Sfx.Play(action.line);
