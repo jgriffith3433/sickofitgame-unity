@@ -21,15 +21,27 @@ PUSH = 'Audio/Music/wastes_push.ogg'
 
 FLOORS = {
     1000: dict(thing='sinking stones', start='slope', wait=1.5, glow=[1.4, 1.0], cue='lava_bubble', finale='bank',
-               tint='#FF8A3D40', sting='sting_rank_b'),
+               tint='#FF8A3D40', sting='sting_rank_b', reward='diamonds', amount=6, rflash='#FFD27A60', rtext='+6 DIAMONDS'),
     999: dict(thing='rising lava', start=None, wait=1.2, glow=[0.0, 1.2], cue='magma_rumble', finale='chase',
-              tint='#FF3A2440', sting='sting_rank_a'),
+              tint='#FF3A2440', sting='sting_rank_a', reward='rewind', amount=4, rflash='#5FE8FF50', rtext='+4s REWIND'),
     998: dict(thing='the cinder', start='river', wait=3.0, glow=[-1.4, 1.2], cue='slag_drip', finale='spire',
-              tint='#FF6A1E40', sting='sting_rank_a'),
+              tint='#FF6A1E40', sting='sting_rank_a', reward='heart', amount=1, rflash='#FF6A8A50', rtext='+1 HEART'),
     997: dict(thing="the sack imps' chains", start='ledges', wait=2.0, glow=[1.0, 1.4], cue='chain_cut', finale='liftStop',
-              tint='#FFD27A3C', sting='sting_rank_s'),
+              tint='#FFD27A3C', sting='sting_rank_s', reward='diamonds', amount=14, rflash='#FFFFFF70', rtext='+14 DIAMONDS: THE HAUL'),
 }
 PULSES = 6
+
+
+def reward_steps(n, c):
+    """A payoff of its own per floor (what the finale earned), paid by the landing rule: 1000 a diamond burst, 999 rewind juice, 998 a heart, 997 the haul."""
+    kind = {'diamonds': {"type": "addDiamonds", "amount": c['amount']},
+            'rewind': {"type": "addRewind", "seconds": c['amount'], "text": ""},
+            'heart': {"type": "heal", "target": {"player": True}, "amount": c['amount']}}[c['reward']]
+    return [{"type": "flash", "color": c['rflash'], "duration": 0.9},
+            {"type": "cameraShake", "intensity": 0.1, "duration": 0.4},
+            kind,
+            {"type": "popText", "text": c['rtext'], "color": [1.0, 0.85, 0.4, 1.0], "anchor": "Camera", "at": [0.0, 1.0], "size": 1.4},
+            {"type": "emit", "signal": f"floors:{n}:reward:{c['reward']}"}]
 
 
 def path(n):
@@ -55,6 +67,7 @@ def finale_steps(n, c):
         if i == 0:
             s.append({"type": "emit", "signal": f"floors:{n}:tint"})
         s.append({"type": "wait", "seconds": 2.5})
+    s += [{"type": "setCounter", "name": "finaleOver", "value": 1.0}, {"type": "emit", "signal": f"floors:{n}:finaleOver"}]
     return s
 
 
@@ -85,12 +98,23 @@ def patch(n):
                       "areaCenter": [0.0, 2.2], "areaSize": [14.0, 1.5], "tags": ["wave"]}, {"type": "wait", "seconds": 4.2}] for _ in range(4)), [])})
     rules.append({"name": f"first4: finale {c['thing']}", "when": {"type": "sectionReached", "section": c['finale']}, "maxTimes": 1, "do": do})
     s['rules'] = rules
-    # PAYOFF: before the Grudge pick
+    # The landing waits for the finale's ~15 s to play out (the lava holds its breath meanwhile), then pays the floor's own reward
+    if not any(k['name'] == 'finaleOver' for k in s['counters']):
+        s['counters'].append({"name": "finaleOver", "value": 0.0})
+    onland = {"type": "playerOn", "target": {"id": "landing"}}
+    rules.append({"name": "first4: the top holds until the finale is over", "when": {"type": "allOf", "triggers": [onland, {"type": "counter", "name": "finaleOver", "atLeast": 0.0, "below": 1.0}]},
+                  "maxTimes": 1, "do": [{"type": "setCounter", "name": "lavaSpeed", "value": 0.0}, {"type": "playSound", "sound": c['cue'], "volume": 1.0}, {"type": "cameraShake", "intensity": 0.08, "duration": 0.5}]})
     for r in rules:
-        if r['name'] == 'the landing' and f'floors:{n}:payoff' not in json.dumps(r):
-            steps = r['do'][0]['steps']
-            i = next(k for k, x in enumerate(steps) if x.get('type') == 'showText')
-            steps[i + 1:i + 1] = [{"type": "playSound", "sound": c['sting'], "volume": 1.0}, {"type": "emit", "signal": f"floors:{n}:payoff"}]
+        if r['name'] == 'the landing':
+            r['when'] = {"type": "allOf", "triggers": [onland, {"type": "counter", "name": "finaleOver", "atLeast": 1.0}]}
+            steps = r['do'][0]['steps'] if 'steps' in r['do'][0] else r['do']
+            if f'floors:{n}:reward' not in json.dumps(r):
+                steps[0:0] = reward_steps(n, c)
+            if f'floors:{n}:payoff' not in json.dumps(r) and n != 997:
+                i = next(k for k, x in enumerate(steps) if x.get('type') == 'showText')
+                steps[i + 1:i + 1] = [{"type": "playSound", "sound": c['sting'], "volume": 1.0}, {"type": "emit", "signal": f"floors:{n}:payoff"}]
+            if n == 997 and not any(x.get('type') == 'playSound' and x.get('sound') == c['sting'] for x in steps):
+                steps.insert(len(reward_steps(n, c)), {"type": "playSound", "sound": c['sting'], "volume": 1.0})
     # 1000's finale is the stones at full intensity: the bank's plain ledges become stones (the last ledge stays solid)
     if n == 1000:
         for p in s['world']['path']:
@@ -110,7 +134,7 @@ def check():
     bad = 0
     for n, c in FLOORS.items():
         t = json.dumps(json.load(open(path(n))))
-        for key in ('glow', 'cue', 'finale', 'tint', 'payoff'):
+        for key in ('glow', 'cue', 'finale', 'tint', 'finaleOver', 'payoff', 'reward'):
             if f'floors:{n}:{key}' not in t:
                 print(f'Floor {n}: missing floors:{n}:{key}'); bad += 1
     print('ok' if not bad else f'{bad} problem(s)')
