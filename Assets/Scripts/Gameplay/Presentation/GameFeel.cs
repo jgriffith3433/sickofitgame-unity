@@ -45,6 +45,7 @@ namespace SickOfIt.Gameplay
         {
             var feel = owner.gameObject.AddComponent<GameFeel>();
             feel.world = owner;
+            ClimbTrace.Attach(owner);
             FeelVfx.Ensure();
             FeelVfx.BindRewindClock(GameClock.Instance);
             return feel;

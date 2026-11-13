@@ -318,6 +318,15 @@ lens in three escalating phrases (0.5 s telegraph each), five voiced lines (he n
 he flees up the Shaft laughing. A CHAPTER ONE card (time, deaths, rewinds, diamonds) closes on the hero's daylight hook
 (Floor 500 foreshadow). Flag `chapter1.seen` offers Skip on replay. Entity `overlordChapter`; playtest `chapter-one`.
 
+### The climb leaves a trace (built Nov 13)
+Hell is repetition, but the hero is not the same each lap, and the floor remembers. **Every death scorches the stone** where he fell (a ragged
+black burn, a little off-centre so repeats do not stack) and **every rewind scratches a cyan seam** where time was cut. Both are saved per floor
+(`ClimbTrace`, PlayerPrefs `Trace_F<floor>`, up to 14 a floor, cleared only by New Game) and drawn again whenever he returns, so Floor 1000
+after five deaths is a floor with five burns on it, and the Shaft's marker has a visible reason to be proud. A death undone by a rewind still
+leaves its scorch: it happened. Presentation only, nothing rewound. *Landmark:* the burn field under the hero's feet at the ledge he keeps dying on.
+*Next (not built):* the Overlord's deaths-aware line on re-entry ("Mm. ... Third time on this stone."), a Shaft wall mark per floor, Yooba
+pointing at a scorch. Hook: `GameFeel.Create` -> `ClimbTrace.Attach`; reset in `RogueliteManager.ResetAllRogueliteData`.
+
 ### Death and the Waystone loop
 On death: the hero blinks, the announcer gloats, a quip, and **Again!** at once; the Shaft drops the marker to the last
 Waystone only if the run ends. The run feels like the loop, not a penalty.
