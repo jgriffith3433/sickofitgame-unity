@@ -1,1 +1,3 @@
-- lesson: Session partials share one namespace — a field name in one SickOfItPlaytest.*.cs partial can collide with another's; grep the name across Assets/Scripts/Playtest before adding.
+- build: GameConfigImporter.ValidateAudio errors (not warns) on an Effect sound whose durationSeconds is outside 0.5-30 (0 is fine); Tools/Audio/core_sfx.py's GEN table feeds those numbers for the core verbs, so fix both.
+- build: this agent checkout is partial (sparse, no LFS), so check asset paths with `git ls-tree -r --name-only HEAD`, not the disk; sound_audit.py / core_sfx.py --check report "missing" files that exist in git.
+- build: running Tools/Levels/*.py --check rewrites the tracked Tools/Levels/__pycache__/*.pyc; restore them before committing.
