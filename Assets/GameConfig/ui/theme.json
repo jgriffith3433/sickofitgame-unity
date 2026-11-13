@@ -43,6 +43,7 @@
       "resultsValueX": 0.74,
       "resultsStatsTop": 0.745,
       "resultsStatsStep": 0.045,
+      "resultsStamp": "Art/Icons/ResultsStamp.png",
       "resultsGrade": {
         "use": true,
         "hide": false,

@@ -276,7 +276,8 @@ namespace SickOfIt.Gameplay
             });
             var letter = MenuGraphics.Text(stamp, "Letter", "I", theme.title, menu.TitleFont, 170f);
             letter.enableVertexGradient = false;
-            letter.color = new Color(1f, 0.97f, 0.88f, 1f);
+            // On the inked seal's pale centre the letter is the rank's colour, darkened, inside the title's outline.
+            letter.color = stampArt != null ? Color.Lerp(stampColor, Color.black, 0.35f) : new Color(1f, 0.97f, 0.88f, 1f);
             var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
                 new MenuEntrance { type = MenuEntranceType.Pop, duration = 0.45f, delay = 0f }, 12f);
             MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
@@ -441,7 +442,7 @@ namespace SickOfIt.Gameplay
             var stampArt = screens.resultsStamp;
             if (stampArt != null)
             {
-                var art = MenuGraphics.NewImage(stamp, "Art", Color.Lerp(Color.white, stampColor, 0.55f));
+                var art = MenuGraphics.NewImage(stamp, "Art", Color.Lerp(Color.white, stampColor, 0.4f));
                 art.sprite = stampArt;
                 art.preserveAspect = true;
             }
@@ -457,7 +458,8 @@ namespace SickOfIt.Gameplay
                 });
             var letter = MenuGraphics.Text(stamp, "Letter", chapterOne ? "I" : grade.grade, theme.title, menu.TitleFont, 170f);
             letter.enableVertexGradient = false;
-            letter.color = new Color(1f, 0.97f, 0.88f, 1f);
+            // On the inked seal's pale centre the letter is the rank's colour, darkened, inside the title's outline.
+            letter.color = stampArt != null ? Color.Lerp(stampColor, Color.black, 0.35f) : new Color(1f, 0.97f, 0.88f, 1f);
             var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
                 new MenuEntrance { type = MenuEntranceType.Pop, duration = 0.45f, delay = 0f }, 12f);
             MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
