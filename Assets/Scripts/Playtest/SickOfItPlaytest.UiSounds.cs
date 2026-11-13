@@ -25,18 +25,18 @@ namespace SickOfIt.Playtest
         sealed partial class Session
         {
             readonly List<Sfx.PlayedSound> uiSoundLog = new List<Sfx.PlayedSound>();
-            int uiPassed, uiFailed;
+            int uiSoundsPassed, uiSoundsFailed;
 
-            void UiCheck(string beat, bool ok, string detail)
+            void UiSoundsCheck(string beat, bool ok, string detail)
             {
                 if (ok)
                 {
-                    uiPassed++;
+                    uiSoundsPassed++;
                     Run.Event("check", $"ui-sounds {beat}: ok ({detail})");
                 }
                 else
                 {
-                    uiFailed++;
+                    uiSoundsFailed++;
                     Run.Event("check", $"ui-sounds {beat}: FAILED ({detail})");
                     Run.Problem(PlaytestSeverity.Bug, $"ui-sounds {beat}: {detail}");
                 }
@@ -74,7 +74,7 @@ namespace SickOfIt.Playtest
 
             public IEnumerator UiSoundsRun()
             {
-                uiPassed = uiFailed = 0;
+                uiSoundsPassed = uiSoundsFailed = 0;
                 uiSoundLog.Clear();
                 Sfx.Played += UiOnPlayed;
                 try
@@ -84,7 +84,7 @@ namespace SickOfIt.Playtest
                     yield return ToMainMenu();
                     if (Run.Done) yield break;
                     var menu = Object.FindAnyObjectByType<MainMenuManager>();
-                    UiCheck("menu up", menu != null, menu != null ? "MainMenuManager" : "missing");
+                    UiSoundsCheck("menu up", menu != null, menu != null ? "MainMenuManager" : "missing");
                     if (menu == null) yield break;
 
                     // Criterion 1: theme (or lava bed until Gen lands menu_theme) within 1 s of appearing.
@@ -103,14 +103,14 @@ namespace SickOfIt.Playtest
                     float wallMs = (Time.realtimeSinceStartup - pageOpen) * 1000f;
                     bool themeOk = UiHeard(pageUnscaled, "menu_theme", "menu_theme_loop", "ambience_floor1000");
                     Run.Metric("uiSounds.themeStartMs", themeMs >= 0f ? themeMs : wallMs);
-                    UiCheck("theme within 1 s", themeOk && wallMs <= 2000f,
+                    UiSoundsCheck("theme within 1 s", themeOk && wallMs <= 2000f,
                         themeOk ? $"heard after {wallMs:0} ms wall / {themeMs:0} ms unscaled" : "no menu_theme / ambience_floor1000");
                     Run.Progress(0.15f);
 
                     // Criterion 2 + phone: Settings press sound within 100 ms of touch-up.
                     var texts = GameDefinition.Instance.menuTheme.texts;
                     var settings = FindButton(texts.settings);
-                    UiCheck("settings button", settings != null, settings != null ? texts.settings : "missing");
+                    UiSoundsCheck("settings button", settings != null, settings != null ? texts.settings : "missing");
                     if (settings != null)
                     {
                         float t0 = Time.unscaledTime;
@@ -120,7 +120,7 @@ namespace SickOfIt.Playtest
                         yield return null;
                         float ms = UiLatencyMs(t0, "ui_click");
                         Run.Metric("uiSounds.pressMs.settings", ms);
-                        UiCheck("menu button press sound", ms >= 0f && ms <= 100f,
+                        UiSoundsCheck("menu button press sound", ms >= 0f && ms <= 100f,
                             ms >= 0f ? $"ui_click in {ms:0} ms" : "silent");
                     }
                     yield return Run.Until(() => FindButton(texts.done) != null, 8f, "settings open");
@@ -143,11 +143,11 @@ namespace SickOfIt.Playtest
                     {
                         yield return ClickButton(toggle, "settings toggle");
                         yield return null;
-                        UiCheck("settings toggle sound", UiHeard(tog0, "ui_toggle") || UiHeard(tog0, "ui_click"),
+                        UiSoundsCheck("settings toggle sound", UiHeard(tog0, "ui_toggle") || UiHeard(tog0, "ui_click"),
                             UiHeard(tog0, "ui_toggle") ? "ui_toggle" : "ui_click");
                     }
                     else
-                        UiCheck("settings toggle present", false, "no ON/OFF toggle");
+                        UiSoundsCheck("settings toggle present", false, "no ON/OFF toggle");
                     yield return CloseSettings();
                     if (Run.Done) yield break;
                     Run.Progress(0.45f);
@@ -161,11 +161,11 @@ namespace SickOfIt.Playtest
                     yield return ClickUntil(labels.shop, () => Object.FindAnyObjectByType<UpgradeShopManager>() != null, 15f);
                     if (Run.Done) yield break;
                     yield return WaitReal(0.35f);
-                    UiCheck("shop open sound", UiHeard(shopAt, "ui_shop_open") || UiHeard(shopAt, "ui_panel_open") || UiHeard(shopAt, "ui_click"),
+                    UiSoundsCheck("shop open sound", UiHeard(shopAt, "ui_shop_open") || UiHeard(shopAt, "ui_panel_open") || UiHeard(shopAt, "ui_click"),
                         UiHeard(shopAt, "ui_shop_open") ? "ui_shop_open" : "open path answered");
 
                     var shop = Object.FindAnyObjectByType<UpgradeShopManager>();
-                    UiCheck("shop open", shop != null, shop != null ? "UpgradeShopManager" : "missing");
+                    UiSoundsCheck("shop open", shop != null, shop != null ? "UpgradeShopManager" : "missing");
                     if (shop != null)
                     {
                         // Prefer a known cheap good.
@@ -187,7 +187,7 @@ namespace SickOfIt.Playtest
                             float brokeAt = Time.unscaledTime;
                             yield return ClickButton(card, "ware at 0 diamonds");
                             yield return WaitReal(0.2f);
-                            UiCheck("can't afford buzz", UiHeard(brokeAt, "ui_cant_afford"),
+                            UiSoundsCheck("can't afford buzz", UiHeard(brokeAt, "ui_cant_afford"),
                                 UiHeard(brokeAt, "ui_cant_afford") ? "ui_cant_afford" : "missing (clip may be pending Gen)");
 
                             roguelite.SetPoints(9999);
@@ -196,11 +196,11 @@ namespace SickOfIt.Playtest
                             float buyAt = Time.unscaledTime;
                             yield return ClickButton(card, "ware with diamonds");
                             yield return WaitReal(0.2f);
-                            UiCheck("purchase sound", UiHeard(buyAt, "ui_purchase") || UiHeard(buyAt, "upgrade_pick"),
+                            UiSoundsCheck("purchase sound", UiHeard(buyAt, "ui_purchase") || UiHeard(buyAt, "upgrade_pick"),
                                 UiHeard(buyAt, "ui_purchase") ? "ui_purchase" : "upgrade_pick/pending");
                         }
                         else
-                            UiCheck("shop ware to click", false, "no ware button");
+                            UiSoundsCheck("shop ware to click", false, "no ware button");
 
                         if (shop.BackButton != null)
                             yield return ClickButton(shop.BackButton, "shop back");
@@ -223,16 +223,16 @@ namespace SickOfIt.Playtest
                     float len = Sfx.LengthOf("level_clear");
                     Run.Metric("uiSounds.levelClearLen", len);
                     // Pending Gen may still have the old short clip; require the event, and flag length when Gen lands.
-                    UiCheck("level-clear fanfare", fanfare,
+                    UiSoundsCheck("level-clear fanfare", fanfare,
                         fanfare ? $"level_clear heard len={len:0.00}s" : "silent");
                     if (fanfare && len > 0f && (len < 2f || len > 5.5f))
                         Run.Event("check", $"ui-sounds level-clear length note: {len:0.00}s (want 2-5 when Gen remakes)");
 
-                    Run.Metric("uiSounds.passed", uiPassed);
-                    Run.Metric("uiSounds.failed", uiFailed);
-                    Run.Event("summary", $"ui-sounds passed={uiPassed} failed={uiFailed} sounds={uiSoundLog.Count}");
+                    Run.Metric("uiSounds.passed", uiSoundsPassed);
+                    Run.Metric("uiSounds.failed", uiSoundsFailed);
+                    Run.Event("summary", $"ui-sounds passed={uiSoundsPassed} failed={uiSoundsFailed} sounds={uiSoundLog.Count}");
                     Run.Progress(1f);
-                    End(uiFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
+                    End(uiSoundsFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
                 }
                 finally
                 {
