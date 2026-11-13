@@ -2882,3 +2882,19 @@ alone and slow (the glow he has learned to read, a sound he will learn to dread)
 the whole floor leaning on it: the music turns, the screen heats up and the Show cheers him through. 1000 is the floor itself
 (sinking stones), 999 the lava that follows him, 998 the village's sparks, 997 the imps who carry what he lost. No new creatures:
 only what the bestiary already holds, taught in order. Table and design: Docs/LevelDesign.md "The first four floors: teach, then finale".
+
+## The level-clear screen is a celebration (k_859dbae5fd3c)
+
+Clearing a floor is the one moment Hell lets him win, so the screen lets the Show have it. Five rows tick up one after another, 0.3 s
+apiece, each with a tick (time, clean kills, grazes, rewinds, diamonds). Then the rank letter (S/A/B/C, `StyleRanks`' rules, unchanged)
+slams onto an inked stamp: the screen shakes for 0.2 s, embers burst off the seal and the stamp sound lands. A hot **NEW BEST** banner
+slams in beside it when the record falls. The diamonds he earned fly out of their row into the total and the total ticks up. Yooba's
+portrait sits beside the stamp and gives one voiced verdict for the rank, two lines each, 8 in all (`vo_yooba_rank_<s|a|b|c>_<1|2>`, voice
+`yooba`): the line not heard last time for that rank, so a replay of the same rank never repeats itself. Continue appears after 2 s, or the
+moment any tap or key skips the tally straight to its end (the verdict still plays). On a 390x844 phone it is one column inside the safe
+area and Continue is 54 px tall. Yooba's verdicts: S "Flawless! I'm telling everyone in the village. Twice." / "S rank! Do that again so I know
+it wasn't the lava talking."; A "Ooh, A! That's a good climb. I'd hug you, but, slime." / "Nearly perfect. I'll pretend I didn't see the one
+hit."; B "B. Solid. Like a stone that only sinks a little." / "Not bad! The floor's still standing, and so are you."; C "C. You lived! That's
+the best letter, really." / "Okay. Okay! We'll call that a warm-up." Code: `GameplayHud.Screens.cs` (the tally, `ShowResults`),
+`GameplayHud.Results.cs` (slam, embers, banner, diamond flight), `Core/Progression/ResultsYooba.cs` (his portrait, through
+`NextGoalBridge.BuildResultsYooba`). Playtest `level-clear`.
