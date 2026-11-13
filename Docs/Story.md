@@ -1942,8 +1942,8 @@ touches the simulation or the rewind, and all of it is tuned in `game.json` `fee
 - **Hand-made flipbook bursts** (2026-11-12, Dead Cells-style): every shot, impact, enemy hit, family death (imp soot, cinder ash,
   sack/Floor 997 threats), diamond pickup, hero hurt, hero death, dash smear, graze streak and rewind-start ripple plays a short
   inked flipbook from one atlas (`FeelVfx` / `Resources/Effects/FeelVfxAtlas`, pooled — never Instantiate in play). Diamonds arc to
-  the HUD gem within 0.6 s. Phones draw the same sheets smaller and cap the pool lower so 390x844 holds 30+ fps. Gen sheets replace
-  the procedural stand-ins; playtest `vfx-kit`.
+  the HUD gem within 0.6 s. Phones draw the same sheets smaller and cap the pool lower so 390x844 holds 30+ fps. The twelve sheets are Hawkes Gen art
+  (Docs: `docs/art-bible.md` section 8); the procedural stand-ins are only the fallback; playtest `vfx-kit`.
 
 ## Every floor has its own light (built 2026-11-11)
 

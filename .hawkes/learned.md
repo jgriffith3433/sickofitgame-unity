@@ -1,1 +1,3 @@
-- lesson: Gen access — the agent can be refused project sickofit; Tools/Audio/synth_core_sfx.py makes stand-in clips (ONESHOTS table) instead.
+- Gen's "green" keyframe backgrounds are never exactly 00ff00 (image.generate gave 27ce4c .. 68e284): sample the corner pixel and pass that as sprite.sheet `key`; keying on 00ff00 would leave the ground in.
+- sprite.sheet spreads its frames over the whole clip and costs nothing: when a Wan burst finishes early, re-run it with more frames (14-20) and use the first 10 cells.
+- Wan clips of a held subject (gem, arrow) end holding it: fade the tail in the packer.
