@@ -36,7 +36,7 @@ namespace SickOfIt.Core.Progression
 
         private GameClock gameClock;
         private ExperienceRunner experienceRunner;
-        private SpriteFramePlayer spritePlayer;
+        private DeathEmberBackdrop emberBackdrop;
         private readonly List<SpriteFramePlayer> playbackPlayers = new List<SpriteFramePlayer>();
         private MobileControllerFramework.Button skipButton;
         private MobileControllerFramework.Button rewindButton;
@@ -459,35 +459,9 @@ namespace SickOfIt.Core.Progression
             if (skipButton != null && !rewindAlsoSkips)
                 skipButton.TapEndEvent.AddListener(OnSkipButton);
 
-            // Setup SpriteFramePlayer if we have sprite frames data
-            if (config?.spriteFramesData != null)
-            {
-                var framesData = config.spriteFramesData as SpriteFramesData;
-                if (framesData != null)
-                {
-                    // Use serialized reference or create fallback
-                    if (deathAnimationObject == null)
-                    {
-                        deathAnimationObject = new GameObject("DeathAnimation");
-                        deathAnimationObject.transform.SetParent(transform);
-                        var sr = deathAnimationObject.AddComponent<SpriteRenderer>();
-                        SpriteLayers.Apply(sr, SpriteLayer.Background1);
-                    }
-
-                    spritePlayer = deathAnimationObject.GetComponent<SpriteFramePlayer>();
-                    if (spritePlayer == null)
-                        spritePlayer = deathAnimationObject.AddComponent<SpriteFramePlayer>();
-                    playbackPlayers.Add(spritePlayer);
-
-                    SickOfIt.Core.Device.PortraitBackdrop.Attach(deathAnimationObject.GetComponent<SpriteRenderer>(), Camera.main);
-                    spritePlayer.Initialize(framesData, () =>
-                    {
-                        spritePlayer.UseGameClock(true);
-                        spritePlayer.Play();
-                    });
-                    spritePlayer.UseGameClock(true);
-                }
-            }
+            // The backdrop is the game's own cracked-lava, ember look (no photographic film); its clock ends the scene.
+            if (deathAnimationObject != null) deathAnimationObject.SetActive(false);
+            emberBackdrop = DeathEmberBackdrop.Create(transform);
 
             // Content is hidden until the scene activates, so Play() right here is ignored.
             if (config?.audio != null)
@@ -624,7 +598,7 @@ namespace SickOfIt.Core.Progression
             if (gameClock != null && gameClock.IsRewinding) return;
 
             // Check if sprite playback is done
-            if (spritePlayer != null && spritePlayer.IsReady && spritePlayer.Progress >= 0.99f)
+            if (emberBackdrop != null && emberBackdrop.Progress >= 0.99f)
             {
                 OnDeathAnimationComplete();
             }
@@ -658,8 +632,6 @@ namespace SickOfIt.Core.Progression
                 skipHold = true;
                 return;
             }
-            if (spritePlayer != null)
-                spritePlayer.Release();
             OnDeathAnimationComplete();
         }
 

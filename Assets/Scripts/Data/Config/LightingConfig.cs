@@ -22,7 +22,7 @@ namespace SickOfIt.Data.Config
     [Serializable]
     public class LightingQualityTier
     {
-        public LightingQuality desktop = new LightingQuality { bloomHalfRes = false, grain = true, maxLights = 24 };
+        public LightingQuality desktop = new LightingQuality { bloomHalfRes = false, grain = false, maxLights = 24 };
         public LightingQuality phone = new LightingQuality { bloomHalfRes = true, grain = false, maxLights = 8 };
         [Tooltip("Short side at or under this many CSS/screen pixels counts as phone when touch is primary.")]
         public float phoneShortSide = 500f;
@@ -32,7 +32,7 @@ namespace SickOfIt.Data.Config
     public class LightingQuality
     {
         public bool bloomHalfRes = false;
-        public bool grain = true;
+        public bool grain = false;
         public int maxLights = 24;
     }
 
@@ -56,7 +56,7 @@ namespace SickOfIt.Data.Config
         public float bloomThreshold = 1f;
         public float bloomIntensity = 0.55f;
         public float vignette = 0.35f;
-        public float grain = 0.04f;
+        public float grain = 0f;
         public Color rim = new Color(1f, 0.82f, 0.55f, 0.7f);
         public Color lavaLight = new Color(1f, 0.45f, 0.15f, 1f);
         public Color torchLight = new Color(1f, 0.7f, 0.35f, 1f);
