@@ -39,7 +39,7 @@ audio files: a sparse checkout holds only Git LFS pointers (this pass), so the t
 | Voice | −16 LUFS | ≤ −1 dBTP |
 | Heartbeat (`player_heartbeat`) | −14 LUFS (loop) | ≤ −1 dBTP |
 
-`player_heartbeat` is queued on Gen (`audio.sfx`, 2 s loop); until its clip is wired in `audio.json`, `HeartbeatMix` plays a procedural pulse so Low Health is always audible. Page master limiter: `Tools/Web/hawkes-sound.js` (−6 dB threshold, 20:1).
+`player_heartbeat` is a Hawkes Gen clip (`audio.sfx`, Stable Audio 3, 2 s loop, job j_4c88fa89eada, `audio.process` to -18 LUFS / -2.2 dBTP, `Assets/Audio/Generated/Core/player_heartbeat.ogg`, wired in `audio.json`). `HeartbeatMix` keeps a procedural pulse only as a fallback for a checkout without the file. Gen's loop check notes a head/tail level difference: the clip is two thumps, so the tail is naturally quieter; the seam itself has no click. Page master limiter: `Tools/Web/hawkes-sound.js` (−6 dB threshold, 20:1).
 
 ## Playtest
 
