@@ -562,7 +562,7 @@ namespace SickOfIt.Data.Config
         [Tooltip("A Warden the hero hasn't met yet.")]
         public string shaftUnknownWarden = "???";
         [Tooltip("Subtitle for the announcer at the bottom (the line itself is audio.json vo_shaft_welcome).")]
-        public string shaftWelcome = "WELCOME TO THE BOTTOM. NINE HUNDRED NINETY-NINE TO GO.";
+        public string shaftWelcome = "WELCOME TO THE BOTTOM.";
         [Tooltip("Subtitle for the hero's answer (vo_shaft_great).")]
         public string shaftHero = "...Great.";
         [Tooltip("Small hint while the climb can be skipped.")]

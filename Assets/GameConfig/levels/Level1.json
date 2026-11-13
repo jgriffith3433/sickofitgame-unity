@@ -957,7 +957,7 @@
                 "steps": [
                   {
                     "type": "showText",
-                    "text": "THE MEADOW: TOAST",
+                    "text": "TOAST",
                     "duration": 1.6,
                     "sound": "vo_meadow_clear",
                     "color": "#FF9A5C"
