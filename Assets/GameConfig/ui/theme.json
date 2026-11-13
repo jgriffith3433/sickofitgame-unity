@@ -420,7 +420,7 @@
         "use": true,
         "hide": false,
         "anchor": [1.0, 1.0],
-        "offset": [-250.0, -48.0],
+        "offset": [-330.0, -48.0],
         "size": [88.0, 88.0]
       },
       "rewind": {
@@ -527,7 +527,7 @@
         "use": true,
         "hide": false,
         "anchor": [1.0, 1.0],
-        "offset": [-220.0, -40.0],
+        "offset": [-290.0, -40.0],
         "size": [100.0, 100.0]
       },
       "rewind": {

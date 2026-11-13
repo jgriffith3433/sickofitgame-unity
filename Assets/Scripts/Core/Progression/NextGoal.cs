@@ -211,7 +211,7 @@ namespace SickOfIt.Core.Progression
             var slot = MenuGraphics.NewRect("NextGoal", parent);
             MenuGraphics.Place(slot, landscape.anchor, landscape.offset, landscape.size);
             var back = slot.gameObject.AddComponent<Image>();
-            back.color = new Color(0.07f, 0.03f, 0.04f, 0.82f);
+            back.color = new Color(0.07f, 0.03f, 0.04f, 0.92f);
             back.raycastTarget = false;
             var card = slot.gameObject.AddComponent<NextGoalCard>();
             card.Goal = goal;
