@@ -1,19 +1,13 @@
-# Level-clear celebration (k_859dbae5fd3c)
+# Chapter One payoff, end of Floor 997
 
-**State found:** #412 had already put a tally, a rank stamp and Yooba's verdict text on the results screen, but none of its sounds had clips (the 8 `vo_yooba_rank_*`, `ui_rank_stamp`, `ui_new_best` were on `pending_clips.json`), the stamp was a drawn starburst, there was no NEW BEST banner, no diamond fly-in and no portrait. It also showed 7 rows, where the brief wants 5. The same rank could repeat its line, because the alternation was shared across ranks.
+Last step done: the Gen output is in and wired.
 
-**Changed**
-- Sounds (Hawkes Gen, ElevenLabs, Yooba's existing voice `EdDvd8GSdCyZwUcsPawi`, `eleven_v3`): the 8 verdicts (2 per rank), `ui_rank_stamp`, `ui_new_best`, and a new `ui_tally_tick`. They are wired in `audio.json` and removed from `pending_clips.json`.
-- Art: an inked stamp seal (image.generate + cutout) at `Assets/Art/Icons/ResultsStamp.png`, wired as theme `screens.resultsStamp`. The letter is drawn over its blank centre.
-- `GameplayHud.Screens.cs`: 5 rows (time, clean kills, grazes, rewinds, diamonds), 0.3 s apart, a tick each; the stamp slams at about 1.9 s; the verdict text is the quip; Continue is 150 units (54 px at 390x844); a tap skips to the end.
-- `GameplayHud.Results.cs` (new): 0.2 s shake, 36 UI embers, NEW BEST banner slam (only when `StyleRanks.Record` says a record fell), earned diamonds flying into a total chip that ticks up, `PickVerdict` (per-rank alternation: a replay of the same rank never repeats), phone helpers.
-- `Core/Progression/ResultsYooba.cs` (new) and `NextGoalBridge.BuildResultsYooba`: Yooba's portrait beside the stamp, speaking his verdict (placeholder slime until his painted loops land).
-- Portrait layout: stats top 0.745 step 0.045, stamp at 0.415 with Yooba left and the banner right, the next-goal card moved to y 0.17 (`NextGoal.cs`, one number).
-- Playtest `level-clear` (`SickOfItPlaytest.LevelClear.cs`, run on device phone): two clears by the bot, every tap a finger. Checks: the 8 clips exist, row order, 5 ticks 0.3 s apart, the stamp within 3 s with embers and its sound, the verdict heard and matching the rank, no repeat on a replay of the same rank, tap-to-end within 0.3 s, Continue 48+ px, every word inside the safe area.
-- Docs: Story.md, world-bible beat 18, AGENTS.md.
-
-**Not verified:** no Unity here, so "Unity compile not run here". I read the C# for CS0102/missing usings and found none. The playtest has not been run, and nothing was seen on screen, so the portrait layout numbers at 390x844 (Yooba left, banner right, total chip between rows and stamp) are calculated, not looked at. Please check them on beta. The fun-reviewer was not run. Verdict lines carry ElevenLabs tags in `audio.json`; the subtitle strips them.
-
-**Open:** NEW BEST covers the rank record only (there is no best-time record). Yooba's painted portrait loops (k_00e37bc679ba) use whatever `ui/yooba.json` has.
-
-**Gen spend:** about $0.17 of $0.39 (8 voice lines $0.14, 3 sfx $0.02, stamp art $0.007). No GPU work left, no pending-gpu. Conflicts: none.
+- Overlord lens exchange on Floor 997 and the CHAPTER ONE card (time, deaths, rewinds, diamonds, a voiced hook, Continue of at least 48 px) were committed earlier, with the seen-flag and Skip. Story text is in `Docs/Story.md` ("Chapter One closes on Floor 997").
+- **Voice (Gen job `j_ad4c415941d4`, audio.dialogue, one take, 18.9 s, $0.06):** the six lines were made as one exchange so the two voices react to each other, then split into stems. The segment timings are sensible: 2-4 s per line, hero lines shorter than the Overlord's. I imported each stem to `Assets/Audio/Generated/vo_ch1_*.mp3` and set `clip` and `generatedFrom` in `audio.json`.
+- **Sting (Gen job `j_e12c9c974e58`, audio.music, 10 s):** imported as `music_chapter_one_sting.mp3` and set in `audio.json`.
+- I removed all seven ids from `Tools/Audio/pending_clips.json`. `sound_audit.py --check` shows nothing for `ch1` or the sting. The remaining errors are older: missing ambience beds and `vo_stop853_pitch1`.
+- `.meta` files are new, with fresh GUIDs, copied from the existing voice import settings.
+- **Not listened to:** I have no way to play audio here, so the clips are judged from the job's timings and transcripts only. Listen for the Overlord's bored read and the sting's brass-to-major resolve on beta.
+- **Not run:** no Unity import or playtest (Studio runs those). Scenario for beta: `chapter-one`, run at 390x844 touch too.
+- GPU spend is about $0.06 for the dialogue plus the sting, within the $0.47 budget; the sting's cost isn't in the job output I read, so check `hawkesgen_jobs` for the exact total.
+- No merge conflicts.

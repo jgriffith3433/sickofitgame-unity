@@ -1,4 +1,1 @@
-- lesson: sparse checkout hides generated clips — `git add` of imported mp3s needs `--sparse`, and `studio_gen_import` writes no `.meta`: copy a neighbour's (`vo_yooba_hello.mp3.meta`) with a fresh guid.
-- lesson: ElevenLabs works through `hawkesgen_run` (`audio.voice`, `provider: elevenlabs`, the voice id in audio.json `voices`, `eleven_v3`) with the full project id `org_eb0d5c82e8da8c2d.sickofit`; a line costs about $0.02.
-- convention: Gameplay cannot name Core.Progression — HUD code reaches Yooba's portrait through `NextGoalBridge` delegates registered by a `RuntimeInitializeOnLoadMethod` in Progression.
-- convention: results-screen layout lives in theme.json `screens.results*` (portrait) plus code (landscape); the phone scale is 390/1080, so 150 design units = 54 px.
+- canon: Chapter One close — the hero's last line on the card is "Daylight's still up there. Somewhere." (a hook toward the Floor 500 door); the Overlord's lines are "Caught up.", "Watch.", "Not far enough." (bored, with a long pause).
