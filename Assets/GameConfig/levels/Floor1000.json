@@ -376,7 +376,7 @@
           },
           {
             "type": "showText",
-            "text": "Even the floor wants me gone.",
+            "text": "",
             "duration": 2.6,
             "style": "Subtitle",
             "sound": "vo_f1000_floor"
@@ -404,7 +404,7 @@
               },
               {
                 "type": "showText",
-                "text": "Hey. That's ours.",
+                "text": "",
                 "duration": 2.6,
                 "style": "Subtitle",
                 "sound": "vo_f1000_ours"
@@ -438,7 +438,7 @@
               },
               {
                 "type": "showText",
-                "text": "THE LANDING: SURVIVED",
+                "text": "SURVIVED",
                 "duration": 2.4,
                 "style": "Banner",
                 "sound": "vo_landing_clear",
@@ -702,7 +702,7 @@
                   },
                   {
                     "type": "showText",
-                    "text": "Floor one thousand. Of course it's a thousand.",
+                    "text": "",
                     "duration": 3.0,
                     "style": "Subtitle",
                     "sound": "vo_landing_intro"
