@@ -22,6 +22,8 @@ namespace SickOfIt.Tools.Editor
         {
             readonly WebGLCompressionFormat compression;
             readonly bool fallback, strip, dataCaching, nameAsHashes, development;
+            readonly UnityEditor.WebGL.WasmCodeOptimization codeOptimization;
+            readonly Il2CppCodeGeneration codeGeneration;
             bool done;
 
             internal Restore()
@@ -32,6 +34,8 @@ namespace SickOfIt.Tools.Editor
                 dataCaching = PlayerSettings.WebGL.dataCaching;
                 nameAsHashes = PlayerSettings.WebGL.nameFilesAsHashes;
                 development = EditorUserBuildSettings.development;
+                codeOptimization = UnityEditor.WebGL.UserBuildSettings.codeOptimization;
+                codeGeneration = PlayerSettings.GetIl2CppCodeGeneration(NamedBuildTarget.WebGL);
             }
 
             public void Dispose()
@@ -45,6 +49,8 @@ namespace SickOfIt.Tools.Editor
                 PlayerSettings.WebGL.dataCaching = dataCaching;
                 PlayerSettings.WebGL.nameFilesAsHashes = nameAsHashes;
                 EditorUserBuildSettings.development = development;
+                UnityEditor.WebGL.UserBuildSettings.codeOptimization = codeOptimization;
+                PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, codeGeneration);
             }
         }
 
@@ -64,12 +70,17 @@ namespace SickOfIt.Tools.Editor
             // A second visit reads SickOfIt.data from the browser's cache instead of downloading it again.
             Set(log, "data caching", PlayerSettings.WebGL.dataCaching, true, v => PlayerSettings.WebGL.dataCaching = v);
             Set(log, "development build", EditorUserBuildSettings.development, false, v => EditorUserBuildSettings.development = v);
-            // Not changed on purpose (logged so a build says what it shipped with): managed stripping (the JSON content
-            // types are found by reflection, so a higher level needs Assets/link.xml checked in a WebGL build first), IL2CPP
-            // code generation (the size option shares generic code, which can cost frame time on a phone) and exceptions.
+            // The wasm is the biggest thing a phone downloads before play (10.6 MB, ~50 s at Slow 4G): build it for disk size
+            // (clang -Oz with link-time optimisation) and let IL2CPP share generic code. Phone-load / first-five report
+            // the seconds, the phone twin's fpsP5 says whether the shared generics cost frame time.
+            Set(log, "wasm code optimization", UnityEditor.WebGL.UserBuildSettings.codeOptimization,
+                UnityEditor.WebGL.WasmCodeOptimization.DiskSizeLTO, v => UnityEditor.WebGL.UserBuildSettings.codeOptimization = v);
+            Set(log, "IL2CPP code generation", PlayerSettings.GetIl2CppCodeGeneration(NamedBuildTarget.WebGL),
+                Il2CppCodeGeneration.OptimizeSize, v => PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, v));
+            // Not changed on purpose: managed stripping (the JSON content types are found by reflection, so a higher level
+            // needs Assets/link.xml checked in a WebGL build first) and exceptions.
             log($"    managed stripping {PlayerSettings.GetManagedStrippingLevel(NamedBuildTarget.WebGL)}, " +
-                $"IL2CPP code generation {PlayerSettings.GetIl2CppCodeGeneration(NamedBuildTarget.WebGL)}, " +
-                $"exceptions {PlayerSettings.WebGL.exceptionSupport} (all unchanged)");
+                $"exceptions {PlayerSettings.WebGL.exceptionSupport} (unchanged)");
             return restore;
         }
 
