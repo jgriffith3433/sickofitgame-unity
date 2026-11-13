@@ -125,6 +125,37 @@ namespace SickOfIt.Playtest
                     }
                     DeathRestartCheck($"again offered {i + 1}", death != null && death.AgainOffered, "the Again! button is on the death screen");
                     {
+                        // Again! is the default action from frame one: fully bright (no fade on it or above it), the selected button, and a tap target of 44+ px.
+                        var again = death != null ? death.AgainButton : null;
+                        float alpha = 1f;
+                        float heightPx = 0f, widthPx = 0f;
+                        bool selected = false;
+                        if (again != null)
+                        {
+                            foreach (var g in again.GetComponentsInChildren<UnityEngine.UI.Graphic>(true))
+                                alpha = Mathf.Min(alpha, g.canvasRenderer.GetInheritedAlpha());
+                            foreach (var cg in again.GetComponentsInParent<CanvasGroup>(true))
+                                alpha = Mathf.Min(alpha, cg.alpha);
+                            var rt = (RectTransform)again.transform;
+                            var corners = new Vector3[4];
+                            rt.GetWorldCorners(corners);
+                            var canvas = again.GetComponentInParent<Canvas>();
+                            canvas = canvas != null ? canvas.rootCanvas : null;
+                            var cam = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+                            Vector2 lo = RectTransformUtility.WorldToScreenPoint(cam, corners[0]);
+                            Vector2 hi = RectTransformUtility.WorldToScreenPoint(cam, corners[2]);
+                            widthPx = Mathf.Abs(hi.x - lo.x);
+                            heightPx = Mathf.Abs(hi.y - lo.y);
+                            var es = UnityEngine.EventSystems.EventSystem.current;
+                            selected = es != null && es.currentSelectedGameObject == again.gameObject;
+                        }
+                        DeathRestartCheck($"again bright {i + 1}", again != null && alpha >= 0.99f && selected,
+                            $"Again! alpha {alpha:0.00}, selected {selected}");
+                        DeathRestartCheck($"again target {i + 1}", again != null && heightPx >= 44f && widthPx >= 44f,
+                            $"Again! is {widthPx:0}x{heightPx:0} px on screen ({Screen.width}x{Screen.height})");
+                        Run.Metric("deathRestart.againAlpha." + (i + 1), alpha);
+                    }
+                    {
                         var goalCard = SickOfIt.Core.Progression.NextGoalCard.Current;
                         yield return WaitReal(2.2f);
                         bool noEmptyBar = goalCard == null || (goalCard.Goal != null && goalCard.Goal.To > 0 && goalCard.Label != null && goalCard.Label.text.Length > 0);
