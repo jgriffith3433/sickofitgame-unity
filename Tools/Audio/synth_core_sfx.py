@@ -564,21 +564,7 @@ def oneshot_mill(take=0):
     return normalise(scale(creak(SR, r, 180 + 20 * take, 0.75), 0.9), 0.5)
 
 
-def oneshot_death_sting(take=0):
-    """Low brass hit and grit, cut short: a falling minor-second pair over a thud (Hawkes Gen's version replaces it)."""
-    r = random.Random('ui_death_sting')
-    parts = []
-    for f in (98.0, 103.8, 146.8):
-        n = n_of(0.9)
-        ph, buf = 0.0, []
-        for i in range(n):
-            t = i / n
-            ph += 2 * math.pi * f * (1 - 0.12 * t) / SR
-            buf.append(saw(ph))
-        parts.append(scale(decay(lowpass(buf, 1800), 0.3, 0.012), 0.5))
-    thud = decay(sweep(120, 42, 0.3), 0.1)
-    grit = decay(lowpass(noise(0.4, r), 2600), 0.08)
-    return normalise(fade_edges(mix(*parts, scale(thud, 1.0), scale(grit, 0.4)), 0.004, 0.06), 0.85)
+# ui_death_sting is a Hawkes Gen clip (asset a_61d8f0830a9ec820), never synthesised here.
 
 
 BEDS = {
@@ -592,7 +578,6 @@ BEDS = {
 }
 
 ONESHOTS = {
-    'ui_death_sting': oneshot_death_sting,
     'amb_lava_pop': oneshot_lava_pop,
     'amb_chain_rattle': oneshot_chain,
     'amb_torch_crackle': oneshot_torch,

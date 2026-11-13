@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Hawkes.Playtest;
 using UnityEngine;
 using SickOfIt.Core;
+using SickOfIt.Core.Audio;
 using SickOfIt.Core.Flow;
 using SickOfIt.Core.Progression;
 using SickOfIt.Data;
@@ -99,12 +100,21 @@ namespace SickOfIt.Playtest
                 int repeats = 0;
                 const int deaths = 4;
                 var hitch = new GameObject("[LastHitHitchProbe]").AddComponent<LastHitHitchProbe>();
+                float stingAt = -1f;
+                System.Action<Sfx.PlayedSound> onSting = ps => { if (ps.id == "ui_death_sting") stingAt = ps.time; };
+                Sfx.Played += onSting;
                 for (int i = 0; i < deaths; i++)
                 {
                     roguelite.SetPoints(0);
                     hitch.Begin();
+                    stingAt = -1f;
                     yield return DeathReturnDie(level, 0);
-                    if (Run.Done) yield break;
+                    if (Run.Done) { Sfx.Played -= onSting; yield break; }
+                    // The real Hawkes Gen death sting (Gen asset a_61d8f0830a9ec820) starts as the death screen opens, before the announcer.
+                    float sinceSting = stingAt >= 0f ? Time.unscaledTime - stingAt : -1f;
+                    DeathRestartCheck($"death sting {i + 1}", stingAt >= 0f,
+                        stingAt >= 0f ? $"ui_death_sting played, {sinceSting * 1000f:0} ms before the death screen was read" : "ui_death_sting never played on the death screen");
+                    Run.Event("sound", $"ui_death_sting {(stingAt >= 0f ? "played" : "MISSING")} on death {i + 1}");
                     // The 2 s after the hit that left him at 0 (his last life): no frame over 100 ms (criterion for the phone run at 390x844).
                     DeathRestartCheck($"last-life hit {i + 1}", hitch.Measured && hitch.WorstMs <= LastHitHitchProbe.BudgetMs,
                         hitch.Measured ? $"worst frame {hitch.WorstMs:0} ms in the 2 s after the hit (budget {LastHitHitchProbe.BudgetMs:0} ms), the death overlay and the death screen both came" : "the hit that left him at 0 was never seen");
@@ -182,6 +192,7 @@ namespace SickOfIt.Playtest
                 }
                 UnityEngine.Object.Destroy(hitch.gameObject);
                 var distinct = new HashSet<string>(quips);
+                Sfx.Played -= onSting;
                 DeathRestartCheck("varied", distinct.Count >= 2 && repeats == 0, $"{distinct.Count} different quips over {deaths} deaths: {string.Join(" / ", quips)}");
 
                 // The level clear: the bot plays level 3 properly; the results list the time and the clean kills.
