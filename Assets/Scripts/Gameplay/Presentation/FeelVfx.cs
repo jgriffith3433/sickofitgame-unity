@@ -330,7 +330,7 @@ namespace SickOfIt.Gameplay
             return Clear;
         }
 
-        static Color32 Puff(float r, float a, float t, Color32 soot, Color32 ember, bool soot)
+        static Color32 Puff(float r, float a, float t, Color32 sootColor, Color32 ember, bool soot)
         {
             float fade = 1f - t * 0.7f;
             float rad = 0.3f + 0.7f * t;
@@ -338,7 +338,7 @@ namespace SickOfIt.Gameplay
             if (r < rad + wobble)
             {
                 float k = r / Mathf.Max(0.01f, rad);
-                var c = k > 0.55f ? ember : soot;
+                var c = k > 0.55f ? ember : sootColor;
                 byte al = (byte)Mathf.Clamp(Mathf.RoundToInt(230 * fade * (1f - k * 0.7f)), 0, 255);
                 if (soot && k > 0.75f && Mathf.Abs(Mathf.Sin(a * 7f)) > 0.85f)
                     c = ember;
