@@ -2,6 +2,11 @@
   "schemaVersion": 1,
   "extends": "fireball",
   "tags": ["stagedEmber"],
+  "visual": {
+    "scale": 0.17,
+    "color": "#FF5A3A",
+    "sortingOrder": 6
+  },
   "abilities": [
     { "type": "projectile", "damage": 1 },
     { "type": "lifetime", "seconds": 2.2 }
