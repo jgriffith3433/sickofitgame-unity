@@ -463,6 +463,10 @@
       {
         "name": "lavaMax",
         "value": 0.0
+      },
+      {
+        "name": "finaleOver",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -581,16 +585,61 @@
       {
         "name": "the landing",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finaleOver",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
           {
             "type": "runSequence",
             "steps": [
+              {
+                "type": "flash",
+                "color": "#5FE8FF50",
+                "duration": 0.9
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.1,
+                "duration": 0.4
+              },
+              {
+                "type": "addRewind",
+                "seconds": 4,
+                "text": ""
+              },
+              {
+                "type": "popText",
+                "text": "+4s REWIND",
+                "color": [
+                  1.0,
+                  0.85,
+                  0.4,
+                  1.0
+                ],
+                "anchor": "Camera",
+                "at": [
+                  0.0,
+                  1.0
+                ],
+                "size": 1.4
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:reward:rewind"
+              },
               {
                 "type": "setFloor",
                 "floor": 998,
@@ -632,98 +681,6 @@
                 "value": 1
               }
             ]
-          }
-        ]
-      },
-      {
-        "name": "first4: finale rising lava",
-        "when": {
-          "type": "sectionReached",
-          "section": "chase"
-        },
-        "maxTimes": 1,
-        "do": [
-          {
-            "type": "runSequence",
-            "steps": [
-              {
-                "type": "emit",
-                "signal": "floors:999:finale"
-              },
-              {
-                "type": "playMusic",
-                "clip": "Audio/Music/wastes_push.ogg",
-                "volume": 0.9
-              },
-              {
-                "type": "cameraShake",
-                "intensity": 0.18,
-                "duration": 0.6
-              },
-              {
-                "type": "flash",
-                "color": "#FF3A2440",
-                "duration": 2.6
-              },
-              {
-                "type": "emit",
-                "signal": "floors:999:tint"
-              },
-              {
-                "type": "wait",
-                "seconds": 2.5
-              },
-              {
-                "type": "flash",
-                "color": "#FF3A2440",
-                "duration": 2.6
-              },
-              {
-                "type": "wait",
-                "seconds": 2.5
-              },
-              {
-                "type": "flash",
-                "color": "#FF3A2440",
-                "duration": 2.6
-              },
-              {
-                "type": "wait",
-                "seconds": 2.5
-              },
-              {
-                "type": "flash",
-                "color": "#FF3A2440",
-                "duration": 2.6
-              },
-              {
-                "type": "wait",
-                "seconds": 2.5
-              },
-              {
-                "type": "flash",
-                "color": "#FF3A2440",
-                "duration": 2.6
-              },
-              {
-                "type": "wait",
-                "seconds": 2.5
-              },
-              {
-                "type": "flash",
-                "color": "#FF3A2440",
-                "duration": 2.6
-              },
-              {
-                "type": "wait",
-                "seconds": 2.5
-              }
-            ]
-          },
-          {
-            "type": "setCounter",
-            "name": "lavaSpeed",
-            "value": 0.9
           }
         ]
       },
@@ -1256,6 +1213,145 @@
                 ]
               }
             ]
+          }
+        ]
+      },
+      {
+        "name": "first4: finale rising lava",
+        "when": {
+          "type": "sectionReached",
+          "section": "chase"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "emit",
+                "signal": "floors:999:finale"
+              },
+              {
+                "type": "playMusic",
+                "clip": "Audio/Music/wastes_push.ogg",
+                "volume": 0.9
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.18,
+                "duration": 0.6
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:tint"
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "flash",
+                "color": "#FF3A2440",
+                "duration": 2.6
+              },
+              {
+                "type": "wait",
+                "seconds": 2.5
+              },
+              {
+                "type": "setCounter",
+                "name": "finaleOver",
+                "value": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:finaleOver"
+              }
+            ]
+          },
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.9
+          }
+        ]
+      },
+      {
+        "name": "first4: the top holds until the finale is over",
+        "when": {
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finaleOver",
+              "atLeast": 0.0,
+              "below": 1.0
+            }
+          ]
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.0
+          },
+          {
+            "type": "playSound",
+            "sound": "magma_rumble",
+            "volume": 1.0
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.08,
+            "duration": 0.5
           }
         ]
       }

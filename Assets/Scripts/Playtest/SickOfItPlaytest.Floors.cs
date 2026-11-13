@@ -251,6 +251,13 @@ namespace SickOfIt.Playtest
                             Run.Metric($"floors.floor{floor}.finaleSeconds", span);
                             FloorsCheck($"{label} finale lasts 15-20 s (10-35 s allowed)", span >= 10f && span <= 35f, $"{span:0.0} s from the finale to the landing", PlaytestSeverity.Warning);
                         }
+                        // Each floor's own payoff: its reward signal (diamonds / rewind / heart) fires with the landing, after the finale is over.
+                        string rewardKey = null;
+                        foreach (var k in floorSignals.Keys)
+                            if (k.StartsWith(p + "reward:")) rewardKey = k;
+                        FloorsCheck($"{label} pays its own reward at the landing", rewardKey != null && FloorSeen(p + "finaleOver") && floorSignals[rewardKey] >= floorSignals[p + "finaleOver"],
+                            rewardKey != null ? $"{rewardKey.Substring(p.Length)} at {floorSignals[rewardKey]:0.0} s" : "no reward signal");
+                        if (rewardKey != null) Run.Event("floors", $"floor {floor} reward {rewardKey.Substring(p.Length)}");
                         FloorsCheck($"{label} has no stuck spot over 5 s", stillMax <= 5f, $"longest still {stillMax:0.0} s");
                         // The death scene, the level and one replay of either at most: more is a Level <-> Death reload loop (the page hung after a retry).
                         FloorsCheck($"{label} every try opens in 4 scene loads or fewer (no Level/Death reload loop)", mostLoadsToOpen <= 4, $"{sceneLoads} scene load(s) over the tries, the most for one try {mostLoadsToOpen}");
