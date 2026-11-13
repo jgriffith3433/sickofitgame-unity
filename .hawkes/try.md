@@ -1,1 +1,3 @@
-Nothing new to try: re-run beta build once credits are added; play rewind-fx.
+- Open Floor 1000 on beta (phone 390x844 touch ok).
+- At the start only hearts and the rewind prompt show.
+- Dash and the rocket launcher chips appear on later floors.
