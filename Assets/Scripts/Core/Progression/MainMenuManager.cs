@@ -125,7 +125,7 @@ namespace SickOfIt.Core.Progression
         public static bool ActiveHeroX(out float x)
         {
             x = 0f;
-            var menu = Object.FindAnyObjectByType<MainMenuManager>();
+            var menu = UnityEngine.Object.FindAnyObjectByType<MainMenuManager>();
             if (menu == null) return false;
             var hero = menu.MenuHero != null ? menu.MenuHero : FindCharacter();
             if (hero == null) return false;

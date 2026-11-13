@@ -11,7 +11,7 @@ namespace SickOfIt.Gameplay
     /// Gen-painted bits land in <c>Resources/Ambience/particle_*</c> (see Tools/Art/ambience_particles.py); when present they win over
     /// the procedural Soft() shapes. WeatherDef.sprite also wins via <see cref="BitOr"/>.
     /// </summary>
-    internal static class AmbienceSprites
+    public static class AmbienceSprites
     {
         static readonly Dictionary<string, Sprite> cache = new Dictionary<string, Sprite>();
         static readonly Dictionary<string, Sprite> painted = new Dictionary<string, Sprite>();
