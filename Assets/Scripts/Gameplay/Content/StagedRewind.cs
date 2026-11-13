@@ -156,6 +156,9 @@ namespace SickOfIt.Gameplay.Content
                     {
                         Current = Stage.Done;
                         Relieved++;
+                        // The win: a bright gold flash and a rising sparkle, so the first rewind lands as a success.
+                        world.Effects?.Flash(new Color(1f, 0.9f, 0.45f, 0.55f), 0.35f);
+                        SickOfIt.Core.Audio.Sfx.Play("pickup_rewind");
                         world.Hud?.ShowText(action.reliefText, TextStyle.Subtitle, new Color(1f, 0.96f, 0.84f), world.Now + 1.6f);
                         SickOfIt.Core.Audio.Sfx.Play(action.reliefLine);
                     }
