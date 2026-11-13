@@ -61,6 +61,15 @@ namespace SickOfIt.Playtest
                     ch1Lines.Add(e.Subject);
             }
 
+            /// <summary>Attaches the bot to the running world (real input, no sim shortcuts) at the playtest's speed.</summary>
+            void StartBot()
+            {
+                if (bot != null)
+                    Object.Destroy(bot);
+                bot = PlaytestBot.Attach(GameplayWorld.Instance, (uint)(1000 * options.seed + ChapterOneLevel), input);
+                Time.timeScale = Speed;
+            }
+
             void Ch1Check(string beat, bool ok, string detail)
             {
                 Run.Event("check", $"chapter-one {beat}: {(ok ? "ok" : "FAILED")} ({detail})");
