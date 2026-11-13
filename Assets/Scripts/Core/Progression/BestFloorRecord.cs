@@ -54,6 +54,13 @@ namespace SickOfIt.Core.Progression
             text.fontSizeMax = 40f;
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.alignment = TextAlignmentOptions.Center;
+            // Its own dark panel, so the line reads over the fire art behind the death screen.
+            var panel = text.transform.parent.gameObject;
+            if (!panel.TryGetComponent<UnityEngine.UI.Image>(out var back))
+                back = panel.AddComponent<UnityEngine.UI.Image>();
+            back.color = new Color(0.07f, 0.03f, 0.04f, 0.9f);
+            back.raycastTarget = false;
+            text.margin = new Vector4(24f, 6f, 24f, 6f);
             MenuResponsive.Track((RectTransform)text.transform.parent,
                 MenuPlacement.At(0.5f, 0.665f, 0f, 0f, 1500f, 110f), MenuPlacement.At(0.5f, 1f, 0f, -440f, 1000f, 110f),
                 MenuElementKind.Text, menu.Responsive);
