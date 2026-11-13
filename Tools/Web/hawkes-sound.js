@@ -236,7 +236,7 @@
     'transition:opacity .25s ease}' +
     '#hawkes-tap:after{content:"";position:absolute;left:0;right:0;bottom:12%;height:3px;background:#ffb347;' +
     'box-shadow:0 0 14px 2px #ff7318;pointer-events:none}' +
-    '#hawkes-tap.gone{opacity:0;pointer-events:none}' +
+    '#hawkes-tap.gone{opacity:0}' +
     '#hawkes-tap h1{font-size:clamp(34px,11vmin,110px);letter-spacing:.04em;line-height:1;color:#ff8a1f;' +
     'text-transform:uppercase;text-shadow:0 .06em 0 #07040a,0 .12em .3em rgba(0,0,0,.6);transform:rotate(-3deg)}' +
     '#hawkes-tap>*{margin:1.5vmin 0}' +
@@ -289,7 +289,9 @@
     overlay = null;
     window.removeEventListener('keydown', onKey, true);
     gone.className = 'gone';
-    setTimeout(function () { if (gone.parentNode) gone.parentNode.removeChild(gone); }, 300);
+    // The faded prompt keeps catching input for 450 ms: a double tap or a click that follows the first must not land on the menu's
+    // Settings or Play button underneath (a stray second tap opened Settings and trapped a cold run).
+    setTimeout(function () { if (gone.parentNode) gone.parentNode.removeChild(gone); }, 450);
     try { if (document.getElementById('unity-canvas')) document.getElementById('unity-canvas').focus(); } catch (err) { /* fine */ }
     log('prompt tapped (' + (trusted ? 'real gesture' : 'scripted') + '), audio ' + audioState());
   }
