@@ -25,13 +25,13 @@ namespace SickOfIt.Gameplay
         RenderTexture bloomA, bloomB;
         int bloomW, bloomH;
         bool halfRes;
-        bool grainOn = true;
+        bool grainOn = false;
         Color grade = Color.white;
         float gradeStrength = 0.35f;
         float vignette = 0.35f;
         float bloomThreshold = 1f;
         float bloomIntensity = 0.55f;
-        float grain = 0.04f;
+        float grain = 0f;
 
         public Color Grade => grade;
         public float GradeStrength => gradeStrength;
