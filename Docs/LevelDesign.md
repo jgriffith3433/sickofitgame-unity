@@ -408,6 +408,10 @@ Where the portal spits out everything that falls through: the lava sea, the vill
 imps hauling the stolen diamonds up out of it. The stretch teaches the toolkit one piece a floor and ends on the imp
 who runs the hauling.
 
+#### Finale pays, 2026-11-13
+
+The landing waits for the finale's ~15 s to play out (counter `finaleOver`; a hold rule stops the lava and shakes the camera if he arrives early), then each floor pays its own reward, so every landing is a different moment: **1000** a burst of 6 diamonds (gold flash), **999** +4 s of rewind juice (cyan flash, "the lava gives time back"), **998** a heart (rose flash), **997** the haul, 14 diamonds (white flash, the S sting). Signals `floors:<n>:finaleOver`, `floors:<n>:reward:<kind>`. Written by `Tools/Levels/first_floors.py`. The death screen's first goal card shows "0 / N diamonds: <cheapest good>" even when nothing was gathered (`NextGoalCard.BuildForDeath`), so the first death names a reason to come back.
+
 #### The first four floors: teach, then finale *(2026-11-11)*
 
 Floors 1000-997 are a four-beat lesson, floor by floor (Super Mario 3D Land's introduce, develop, twist, finale; Downwell's

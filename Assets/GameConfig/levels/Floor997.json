@@ -1182,6 +1182,10 @@
       {
         "name": "chapterOne",
         "value": 0.0
+      },
+      {
+        "name": "finaleOver",
+        "value": 0.0
       }
     ],
     "rules": [
@@ -1261,13 +1265,62 @@
       {
         "name": "the landing",
         "when": {
-          "type": "playerOn",
-          "target": {
-            "id": "landing"
-          }
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finaleOver",
+              "atLeast": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
+          {
+            "type": "flash",
+            "color": "#FFFFFF70",
+            "duration": 0.9
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.1,
+            "duration": 0.4
+          },
+          {
+            "type": "addDiamonds",
+            "amount": 14
+          },
+          {
+            "type": "popText",
+            "text": "+14 DIAMONDS: THE HAUL",
+            "color": [
+              1.0,
+              0.85,
+              0.4,
+              1.0
+            ],
+            "anchor": "Camera",
+            "at": [
+              0.0,
+              1.0
+            ],
+            "size": 1.4
+          },
+          {
+            "type": "emit",
+            "signal": "floors:997:reward:diamonds"
+          },
+          {
+            "type": "playSound",
+            "sound": "sting_rank_s",
+            "volume": 1.0
+          },
           {
             "type": "setFloor",
             "floor": 996,
@@ -1697,6 +1750,39 @@
         ]
       },
       {
+        "name": "overlord: watches, Floor 997",
+        "when": {
+          "type": "counter",
+          "name": "ovlTauntNever",
+          "atLeast": 999.0
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "spawn",
+            "entity": "overlordTaunt",
+            "id": "ovlTaunt",
+            "anchor": "Camera",
+            "at": [
+              0.7,
+              1.7
+            ],
+            "facePlayer": false
+          },
+          {
+            "type": "spawn",
+            "entity": "overlordTauntFlee",
+            "id": "ovlTauntFlee",
+            "anchor": "Camera",
+            "at": [
+              0.7,
+              1.7
+            ],
+            "facePlayer": false
+          }
+        ]
+      },
+      {
         "name": "first4: teach the sack imps' chains",
         "when": {
           "type": "sectionReached",
@@ -1825,41 +1911,55 @@
               {
                 "type": "wait",
                 "seconds": 2.5
+              },
+              {
+                "type": "setCounter",
+                "name": "finaleOver",
+                "value": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "floors:997:finaleOver"
               }
             ]
           }
         ]
       },
       {
-        "name": "overlord: watches, Floor 997",
+        "name": "first4: the top holds until the finale is over",
         "when": {
-          "type": "counter",
-          "name": "ovlTauntNever",
-          "atLeast": 999.0
+          "type": "allOf",
+          "triggers": [
+            {
+              "type": "playerOn",
+              "target": {
+                "id": "landing"
+              }
+            },
+            {
+              "type": "counter",
+              "name": "finaleOver",
+              "atLeast": 0.0,
+              "below": 1.0
+            }
+          ]
         },
         "maxTimes": 1,
         "do": [
           {
-            "type": "spawn",
-            "entity": "overlordTaunt",
-            "id": "ovlTaunt",
-            "anchor": "Camera",
-            "at": [
-              0.7,
-              1.7
-            ],
-            "facePlayer": false
+            "type": "setCounter",
+            "name": "lavaSpeed",
+            "value": 0.0
           },
           {
-            "type": "spawn",
-            "entity": "overlordTauntFlee",
-            "id": "ovlTauntFlee",
-            "anchor": "Camera",
-            "at": [
-              0.7,
-              1.7
-            ],
-            "facePlayer": false
+            "type": "playSound",
+            "sound": "chain_cut",
+            "volume": 1.0
+          },
+          {
+            "type": "cameraShake",
+            "intensity": 0.08,
+            "duration": 0.5
           }
         ]
       }

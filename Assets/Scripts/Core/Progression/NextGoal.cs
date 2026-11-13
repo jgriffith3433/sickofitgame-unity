@@ -272,8 +272,9 @@ namespace SickOfIt.Core.Progression
         public static NextGoalCard BuildForDeath(MenuCanvas menu, MonoBehaviour owner, int floor, int totalDeaths)
         {
             var goal = NextGoal.Pick(floor);
-            // An empty bar (nothing gathered this attempt) is clutter on the death screen: show the card only with real data in it.
-            if (goal != null && goal.To <= 0)
+            // An empty bar is clutter on the death screen, except the first diamond-buy goal: a player with nothing yet
+            // still sees what the first good costs ("0 / 8 diamonds: ..."), so the first death gives a reason to come back.
+            if (goal != null && goal.To <= 0 && goal.Kind != GoalKind.Ware)
                 goal = null;
             if (goal == null)
             {
