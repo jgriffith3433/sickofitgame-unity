@@ -643,17 +643,9 @@
         "name": "ledge",
         "onEnter": [
           {
-            "type": "runSequence",
-            "steps": [
-              {
-                "type": "showText",
-                "text": "FLOOR 1000: THE LANDING",
-                "duration": 2.6,
-                "style": "Banner",
-                "sound": "vo_landing_title",
-                "color": "#FFD27A"
-              }
-            ]
+            "type": "playSound",
+            "sound": "vo_landing_title",
+            "volume": 1.0
           },
           {
             "type": "storyBeat",
@@ -713,6 +705,31 @@
           }
         ],
         "rules": [
+          {
+            "name": "THE FIRST SALVO: warning, the lava reddens and hisses",
+            "when": {
+              "type": "after",
+              "seconds": 7.0
+            },
+            "maxTimes": 1,
+            "do": [
+              {
+                "type": "flash",
+                "color": "#FF2A1A66",
+                "duration": 0.9
+              },
+              {
+                "type": "playSound",
+                "sound": "lava_bubble",
+                "volume": 1.0
+              },
+              {
+                "type": "cameraShake",
+                "intensity": 0.06,
+                "duration": 0.8
+              }
+            ]
+          },
           {
             "name": "THE FIRST SALVO: Hell's welcome, undone with R",
             "when": {
