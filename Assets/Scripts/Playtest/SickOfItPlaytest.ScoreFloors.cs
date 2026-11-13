@@ -98,6 +98,9 @@ namespace SickOfIt.Playtest
                         yield return PlayLevel(level, 0f, until: () => GameClock.Instance != null && GameClock.Instance.Time >= 110f || stage.CurrentScoreState == StageMusic.ScoreState.Finale);
                         if (Run.Done) yield break;
                         ScoreCheck($"level {level} layer changes", scoreStates.Count >= 2, $"{scoreStates.Count} changes");
+                        // The finale swap must fire on every floor: its own `musicState finale` event, after the fight layer.
+                        ScoreCheck($"level {level} finale swap fires", scoreStates.Exists(s => s.state == "finale") || stage.CurrentScoreState == StageMusic.ScoreState.Finale,
+                            scoreStates.Exists(s => s.state == "finale") ? "musicState finale logged" : $"no finale cue by {GameClock.Instance.Time:0} s (state {stage.CurrentScoreState})");
                         int fight = scoreStates.FindIndex(s => s.state == "fight");
                         if (fight >= 0 && scoreEnemyAt.Count > 0)
                         {
