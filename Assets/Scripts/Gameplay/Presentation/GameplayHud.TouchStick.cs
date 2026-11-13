@@ -58,6 +58,9 @@ namespace SickOfIt.Gameplay
         /// <summary>The rewind button on screen, in pixels.</summary>
         public Rect RewindButtonScreenRect => rewindRoot != null ? ScreenRect(rewindRoot) : default;
 
+        /// <summary>The "Hold R to undo!" hint on screen, in pixels (empty while it is hidden); the floors playtest checks it clear of the rewind button.</summary>
+        public Rect RewindHintScreenRect => rewindHint != null && rewindHint.gameObject.activeInHierarchy ? ScreenRect(rewindHint.rectTransform) : default;
+
         /// <summary>The stick's current axis, -1..1.</summary>
         public float TouchStickAxis => stickAxis;
 
