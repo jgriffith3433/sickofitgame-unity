@@ -83,7 +83,9 @@ namespace SickOfIt.Playtest
                 if (w.Hud != null)
                 {
                     FloorsCheck("floor 1000 shows no dash or weapon chip", !w.Hud.DashButtonShown && !w.Hud.WeaponButtonShown, $"dash {w.Hud.DashButtonShown}, weapon {w.Hud.WeaponButtonShown}");
-                    FloorsCheck("floor 1000 hint and rewind button stay apart", true, "hint is left of the button (theme.json rewindHint)");
+                    var hint = w.Hud.RewindHintScreenRect;
+                    bool apart = hint.width <= 0f || !hint.Overlaps(rect);
+                    FloorsCheck("floor 1000 hint and rewind button stay apart", apart, $"hint {hint}, button {rect}");
                 }
                 yield return WaitReal(0.5f);
                 int id = -1;
