@@ -97,6 +97,8 @@ namespace SickOfIt.Core.UI.Menus
             menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(0f, 84f), texts.accessibility, access, () => ShowAccessibility(menu), panel);
             menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(360f, 84f), texts.done, done, Close, panel);
             menu.Back = Close;
+            // A tap on the dimmed area outside the panel closes it too (the same path as Done / Escape), so a stray tap never traps the player.
+            overlay.Root.AddComponent<OutsideTapCloser>().OnOutsideTap = Close;
             return overlay.Root;
         }
 
@@ -385,6 +387,18 @@ namespace SickOfIt.Core.UI.Menus
                 // Press already fired ui_click; the toggle tick is the distinct answer for ON/OFF rows.
                 UiSounds.Toggle();
             });
+        }
+    }
+
+    /// <summary>Calls <see cref="OnOutsideTap"/> when a click lands on this dimmed layer itself, not on a panel child that bubbles up.</summary>
+    public sealed class OutsideTapCloser : MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
+    {
+        public Action OnOutsideTap;
+
+        public void OnPointerClick(UnityEngine.EventSystems.PointerEventData eventData)
+        {
+            if (eventData.pointerCurrentRaycast.gameObject == gameObject)
+                OnOutsideTap?.Invoke();
         }
     }
 
