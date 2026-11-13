@@ -35,6 +35,9 @@ namespace SickOfIt.Combat.Health
         public UnityEvent onDamaged;
         public UnityEvent onDeath;
         /// <summary>The death stood: the undo window ran out without a rewind and the death scene comes next (analytics).</summary>
+        /// <summary>Raised when the hero dies (world position). Gameplay's FeelVfx plays the death burst.</summary>
+        public static event System.Action<Vector2> HeroDied;
+
         public event System.Action DeathStood;
 
         // Cached ref — set by generator or discovered in Awake
@@ -197,7 +200,7 @@ namespace SickOfIt.Combat.Health
             {
                 controller.PlayDeathSound();
                 controller.PlayHeroClip(HeroDeathClips.Next());
-                SickOfIt.Gameplay.FeelVfx.Play(SickOfIt.Gameplay.FeelVfx.Kind.HeroDeath, controller.transform.position, size: 1.8f);
+                HeroDied?.Invoke(controller.transform.position);
                 controller.enabled = false;
             }
 

@@ -62,6 +62,8 @@ namespace SickOfIt.Gameplay
             {
                 dashedHooked = true;
                 PlayerController.Dashed += OnDashed;
+                SickOfIt.Combat.PointsPickup.Collected += DiamondPickup;
+                SickOfIt.Combat.Health.PlayerHealth.HeroDied += OnHeroDied;
             }
             BindRewindClock(GameClock.Instance);
         }
@@ -76,6 +78,11 @@ namespace SickOfIt.Gameplay
             rewindClock = clock;
             if (rewindClock != null)
                 rewindClock.OnRewindStarted += OnRewindStarted;
+        }
+
+        static void OnHeroDied(Vector2 at)
+        {
+            Play(Kind.HeroDeath, at, size: 1.8f);
         }
 
         static void OnDashed(PlayerController who)

@@ -13,6 +13,9 @@ namespace SickOfIt.Combat
     [RequireComponent(typeof(Collider2D))]
     public class PointsPickup : MonoBehaviour, SickOfIt.Core.IPoolReturnable
     {
+        /// <summary>Raised when the hero collects a pickup (world position). Gameplay's FeelVfx draws the sparkle and the flight to the HUD.</summary>
+        public static event System.Action<Vector2> Collected;
+
         [Header("Pickup Settings")]
         [Tooltip("Points awarded when collected")]
         [SerializeField] private int pointsValue = 1;
@@ -157,7 +160,7 @@ namespace SickOfIt.Combat
             // Award points
             Vector2 at = transform.position;
             RogueliteManager.Instance.AddPoints(pointsValue);
-            SickOfIt.Gameplay.FeelVfx.DiamondPickup(at);
+            Collected?.Invoke(at);
 
             // Play collect SFX (PlayOneShot so it finishes even after return to pool)
             if (collectSound != null && audioSource != null)

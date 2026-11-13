@@ -246,6 +246,8 @@ namespace SickOfIt.Core.Progression
         private SickOfIt.Core.UI.Menus.MenuButton againButton;
         /// <summary>The Again! button is on screen.</summary>
         public bool AgainOffered => againButton != null;
+        /// <summary>The Again! button (for the playtest's brightness, selection and size checks), or null.</summary>
+        public SickOfIt.Core.UI.Menus.MenuButton AgainButton => againButton;
         /// <summary>He pressed Again!: the next attempt is loading (real time of the press, for the playtest).</summary>
         public float AgainPressedAt { get; private set; } = -1f;
         /// <summary>The quip under the title, as shown.</summary>
