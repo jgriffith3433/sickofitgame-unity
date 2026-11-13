@@ -276,8 +276,8 @@ namespace SickOfIt.Gameplay
             });
             var letter = MenuGraphics.Text(stamp, "Letter", "I", theme.title, menu.TitleFont, 170f);
             letter.enableVertexGradient = false;
-            // On the inked seal's pale centre the letter is the rank's colour, darkened, inside the title's outline.
-            letter.color = stampArt != null ? Color.Lerp(stampColor, Color.black, 0.35f) : new Color(1f, 0.97f, 0.88f, 1f);
+            // The chapter card keeps its plain drawn burst (no inked art), so the letter stays cream.
+            letter.color = new Color(1f, 0.97f, 0.88f, 1f);
             var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
                 new MenuEntrance { type = MenuEntranceType.Pop, duration = 0.45f, delay = 0f }, 12f);
             MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
