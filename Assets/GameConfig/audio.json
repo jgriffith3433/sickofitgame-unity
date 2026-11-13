@@ -18757,7 +18757,8 @@
     },
     {
       "id": "music_chapter_one_sting",
-      "kind": "Music",
+      "kind": "Effect",
+      "bus": "Music",
       "prompt": "Short cinematic sting: dark brass hit resolving into a quiet hopeful major chord, hellish then daylight, instrumental chapter-complete fanfare, 8-10 seconds.",
       "durationSeconds": 10,
       "promptInfluence": 0.55,
