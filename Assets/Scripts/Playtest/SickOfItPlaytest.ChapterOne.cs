@@ -8,6 +8,7 @@ using SickOfIt.Core.Rewind;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 using SickOfIt.Gameplay;
+using PlaytestBot = SickOfIt.Gameplay.PlaytestBot;
 
 namespace SickOfIt.Playtest
 {
