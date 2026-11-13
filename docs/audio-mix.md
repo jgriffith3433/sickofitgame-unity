@@ -27,7 +27,10 @@ Cap: at most 4 simultaneous copies of one effect (`Sfx.MaxCopies`). `SoundDef.pr
 
 ## Loudness targets
 
-Bring clips to these with Hawkes Gen `audio.process` / `audio.analyze` when org credits allow (blocked this pass: studio had 1 credit, `audio.sfx` needs 8).
+Bring clips to these with Hawkes Gen `audio.process` / `audio.analyze` (both free, CPU). `Tools/Audio/loudness_report.py`
+measures every clip in `audio.json` with ffmpeg (ebur128: integrated LUFS, true peak) and writes the per-bus table below
+(`--write`); `--fix-list` names the clips outside target +-2 LU or above -1 dBTP, to feed to `audio.process`. It needs the real
+audio files: a sparse checkout holds only Git LFS pointers (this pass), so the table is filled on a machine with LFS.
 
 | Kind | Integrated | True peak |
 |---|---|---|
@@ -36,7 +39,7 @@ Bring clips to these with Hawkes Gen `audio.process` / `audio.analyze` when org 
 | Voice | −16 LUFS | ≤ −1 dBTP |
 | Heartbeat (`player_heartbeat`) | −14 LUFS (loop) | ≤ −1 dBTP |
 
-Until Gen remakes it, `HeartbeatMix` plays a procedural pulse so Low Health is always audible. Page master limiter: `Tools/Web/hawkes-sound.js` (−6 dB threshold, 20:1).
+`player_heartbeat` is queued on Gen (`audio.sfx`, 2 s loop); until its clip is wired in `audio.json`, `HeartbeatMix` plays a procedural pulse so Low Health is always audible. Page master limiter: `Tools/Web/hawkes-sound.js` (−6 dB threshold, 20:1).
 
 ## Playtest
 
