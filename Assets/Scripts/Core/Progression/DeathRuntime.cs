@@ -182,8 +182,32 @@ namespace SickOfIt.Core.Progression
             string again = menu.Theme.texts != null && !string.IsNullOrEmpty(menu.Theme.texts.deathAgain) ? menu.Theme.texts.deathAgain : "Again!";
             var againStyle = menu.Theme.button.Clone();
             againStyle.size = new Vector2(440f, 92f);
+            // The default action, solid and bright from the first frame: the accent fill, dark label, a gold rim (copies: nested styles are shared).
+            var src = againStyle.surface;
+            againStyle.surface = new SickOfIt.Data.Config.MenuSurfaceStyle
+            {
+                shape = src.shape, sprite = src.sprite, cornerRadius = src.cornerRadius, fill = src.fill, borderColor = src.borderColor,
+                borderWidth = src.borderWidth, shadowColor = src.shadowColor, shadowOffset = src.shadowOffset, padding = src.padding,
+            };
+            againStyle.surface.fill = menu.Theme.accent;
+            againStyle.surface.borderColor = Color.white;
+            againStyle.surface.borderWidth = 6f;
+            againStyle.hoverFill = Color.Lerp(menu.Theme.accent, Color.white, 0.25f);
+            var lsrc = againStyle.label;
+            againStyle.label = new SickOfIt.Data.Config.MenuTextStyle
+            {
+                fontSize = lsrc.fontSize, color = lsrc.color, gradientTop = Color.clear, gradientBottom = Color.clear,
+                outlineColor = lsrc.outlineColor, outlineWidth = 0f, shadowColor = lsrc.shadowColor, shadowOffset = lsrc.shadowOffset,
+                bold = lsrc.bold, italic = lsrc.italic, uppercase = lsrc.uppercase, characterSpacing = lsrc.characterSpacing,
+                lineSpacing = lsrc.lineSpacing, align = lsrc.align,
+            };
+            againStyle.label.color = new Color(0.1f, 0.04f, 0.04f, 1f);
             var againPortrait = MenuPlacement.At(0.5f, 1f, 0f, againY, 520f, PortraitButtonHeight);
             againButton = menu.AddButtonAt(new Vector2(0.5f, 0f), new Vector2(-330f, 96f), again, againStyle, OnAgain, null, againPortrait);
+
+            // Again! is the selected button, so a gamepad or Enter lands on it too.
+            if (UnityEngine.EventSystems.EventSystem.current != null)
+                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(againButton.gameObject);
 
             // First five minutes: three deaths inside five real minutes → offer Assist once (Docs/Story.md).
             FtueProgress.NoteDeath();
