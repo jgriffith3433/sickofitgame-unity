@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using SickOfIt.Core.UI.Menus;
+using SickOfIt.Data.Config;
 
 namespace SickOfIt.Core
 {
@@ -23,5 +24,11 @@ namespace SickOfIt.Core
         /// (<c>RuntimeInitializeOnLoadMethod</c>); args are menu, parent, floor (0 = not on a floor stage).
         /// </summary>
         public static Action<MenuCanvas, Transform, int> BuildResultsCard;
+
+        /// <summary>
+        /// Builds Yooba's portrait on the results screen (menu, parent, landscape place, portrait place) and returns what makes him
+        /// speak a verdict: (sound id, subtitle) → his voice with his talking loop. Set by Progression's ResultsYooba.
+        /// </summary>
+        public static Func<MenuCanvas, Transform, MenuPlacement, MenuPlacement, Action<string, string>> BuildResultsYooba;
     }
 }

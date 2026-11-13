@@ -304,7 +304,7 @@ namespace SickOfIt.Core.Progression
             if (goal == null || menu == null || parent == null)
                 return null;
             return Build(menu, parent, goal, MenuPlacement.At(0.2f, 0.13f, 0f, 0f, 540f, 140f),
-                MenuPlacement.At(0.5f, 0.268f, 0f, 0f, 900f, 130f), null, null, 1.4f);
+                MenuPlacement.At(0.5f, 0.17f, 0f, 0f, 900f, 130f), null, null, 1.4f);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

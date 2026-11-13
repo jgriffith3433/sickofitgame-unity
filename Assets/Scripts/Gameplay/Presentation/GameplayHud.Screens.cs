@@ -276,6 +276,7 @@ namespace SickOfIt.Gameplay
             });
             var letter = MenuGraphics.Text(stamp, "Letter", "I", theme.title, menu.TitleFont, 170f);
             letter.enableVertexGradient = false;
+            // The chapter card keeps its plain drawn burst (no inked art), so the letter stays cream.
             letter.color = new Color(1f, 0.97f, 0.88f, 1f);
             var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
                 new MenuEntrance { type = MenuEntranceType.Pop, duration = 0.45f, delay = 0f }, 12f);
@@ -369,6 +370,7 @@ namespace SickOfIt.Gameplay
 
             tallyTickers.Clear();
             tallyTickTimes.Clear();
+            ResetResultsFx();
             resultsOpenedAt = Time.unscaledTime;
             stampFired = false;
             var overlay = Overlay.Create(menu, "Results", 0.78f);
@@ -392,12 +394,11 @@ namespace SickOfIt.Gameplay
             }
             else
             {
+                // Five rows, one after another: time, clean kills, grazes, rewinds, diamonds.
+                int grazes = rank.HasValue ? rank.Value.Grazes : (world.Style != null ? world.Style.Grazes : 0);
                 stats.Add((rank.HasValue ? string.Format(Texts.resultsTimePar, FormatTime(rank.Value.Par)) : Texts.resultsTime, FormatTime(summary.duration), Mathf.Max(0, Mathf.FloorToInt(summary.duration)), s => FormatTime(s)));
-                stats.Add((Texts.resultsKills, summary.kills.ToString(), summary.kills, s => s.ToString()));
                 stats.Add((Texts.resultsCleanKills, cleanKills.ToString(), cleanKills, s => s.ToString()));
-                stats.Add((Texts.resultsHits, summary.playerHits.ToString(), summary.playerHits, s => s.ToString()));
-                if (rank.HasValue)
-                    stats.Add((Texts.resultsGrazes, rank.Value.Grazes.ToString(), rank.Value.Grazes, s => s.ToString()));
+                stats.Add((Texts.resultsGrazes, grazes.ToString(), grazes, s => s.ToString()));
                 stats.Add((Texts.resultsRewinds, summary.rewinds.ToString(), summary.rewinds, s => s.ToString()));
                 stats.Add((Texts.resultsDiamonds, "♦ " + diamondsGained, diamondsGained, s => "♦ " + s));
             }
@@ -410,7 +411,7 @@ namespace SickOfIt.Gameplay
             for (int i = 0; i < stats.Count; i++)
             {
                 float y = 0.66f - i * 0.085f;
-                float tallY = screens.resultsStatsTop - i * (stats.Count > 5 ? Mathf.Min(screens.resultsStatsStep, 0.046f) : screens.resultsStatsStep);
+                float tallY = screens.resultsStatsTop - i * screens.resultsStatsStep;
                 var label = menu.AddText(inner, "Stat", stats[i].label, theme.heading, new Vector2(0.36f, y), Vector2.zero,
                     new Vector2(520f, 70f), out _, 44f, null, theme.entrance);
                 label.alignment = TextAlignmentOptions.MidlineLeft;
@@ -429,41 +430,64 @@ namespace SickOfIt.Gameplay
                 ticker.CountTo(stats[i].amount, 0.3f, 0.3f + i * 0.3f);
                 tallyTickers.Add((ticker, stats[i].amount));
                 tallyTickTimes.Add(Time.unscaledTime + 0.3f + i * 0.3f);
+                if (i == stats.Count - 1)
+                    diamondsRow = (RectTransform)value.transform.parent;
             }
             tallyEndAt = Time.unscaledTime + 0.3f + stats.Count * 0.3f + 0.1f;
 
-            // The grade (or Chapter One's "I" stamp): a stamped starburst that slams in after the stats.
+            // The grade (or Chapter One's "I" stamp): an inked seal (or a starburst until its art is in) that slams in after the stats.
             var stamp = MenuGraphics.NewRect("Grade", inner);
             MenuGraphics.Place(stamp, new Vector2(0.72f, 0.5f), Vector2.zero, new Vector2(330f, 330f));
             var stampColor = chapterOne ? new Color(0.72f, 0.45f, 0.95f, 1f) : grade.color;
-            MenuGraphics.Surface(stamp, new MenuSurfaceStyle
+            var stampArt = screens.resultsStamp;
+            if (stampArt != null)
             {
-                shape = MenuShape.Burst,
-                fill = stampColor,
-                borderColor = theme.title.outlineColor,
-                borderWidth = 9f,
-                shadowColor = theme.title.outlineColor,
-                shadowOffset = new Vector2(8f, -10f),
-            });
+                var art = MenuGraphics.NewImage(stamp, "Art", Color.Lerp(Color.white, stampColor, 0.4f));
+                art.sprite = stampArt;
+                art.preserveAspect = true;
+            }
+            else
+                MenuGraphics.Surface(stamp, new MenuSurfaceStyle
+                {
+                    shape = MenuShape.Burst,
+                    fill = stampColor,
+                    borderColor = theme.title.outlineColor,
+                    borderWidth = 9f,
+                    shadowColor = theme.title.outlineColor,
+                    shadowOffset = new Vector2(8f, -10f),
+                });
             var letter = MenuGraphics.Text(stamp, "Letter", chapterOne ? "I" : grade.grade, theme.title, menu.TitleFont, 170f);
             letter.enableVertexGradient = false;
-            letter.color = new Color(1f, 0.97f, 0.88f, 1f);
+            // On the inked seal's pale centre the letter is the rank's colour, darkened, inside the title's outline.
+            letter.color = stampArt != null ? Color.Lerp(stampColor, Color.black, 0.35f) : new Color(1f, 0.97f, 0.88f, 1f);
             var stampMotion = menu.AddMotion(stamp.gameObject, new MenuMotion { type = MenuMotionType.Pulse, amount = 0.03f, speed = 1f },
                 new MenuEntrance { type = MenuEntranceType.Pop, duration = 0.45f, delay = 0f }, 12f);
             MenuResponsive.Track(stamp, MenuPlacement.At(0.72f, 0.5f, 0f, 0f, 330f, 330f), screens.resultsGrade, MenuElementKind.Panel, menu.Responsive);
             stampMotion.EntranceDelay = tallyEndAt - Time.unscaledTime;
             resultsStamp = stampMotion;
+            stampRect = stamp;
             stampLetter = chapterOne ? "" : grade.grade;
             gradeSoundAt = tallyEndAt;
             gradeSting = chapterOne ? "" : grade.stingSound;
+
+            // Yooba's verdict for the rank: one of two voiced lines, never the same one twice running for a rank.
+            verdictId = "";
+            verdictSpeak = null;
+            if (!chapterOne)
+            {
+                verdictId = PickVerdict(grade.grade);
+                verdictSpeak = NextGoalBridge.BuildResultsYooba?.Invoke(menu, inner,
+                    MenuPlacement.At(0.91f, 0.52f, 0f, 0f, 260f, 260f), screens.resultsYooba);
+            }
+            string verdictText = verdictId.Length > 0 ? Sfx.SpokenText(verdictId) : "";
             string quipText = chapterOne
                 ? (string.IsNullOrEmpty(Texts.chapterOneHook) ? "Daylight's still up there. Somewhere." : Texts.chapterOneHook)
-                : grade.quip;
+                : (verdictText.Length > 0 ? verdictText : grade.quip);
             var quip = menu.AddText(inner, "Quip", quipText, theme.subtitle, new Vector2(0.72f, 0.27f), Vector2.zero, new Vector2(620f, 100f),
                 out var quipMotion, 36f, null, theme.entrance, null, 4f);
             MenuResponsive.Track((RectTransform)quip.transform.parent, MenuPlacement.At(0.72f, 0.27f, 0f, 0f, 620f, 100f), screens.resultsQuip,
                 MenuElementKind.Text, menu.Responsive);
-            quipMotion.EntranceDelay = 1.2f;
+            quipMotion.EntranceDelay = tallyEndAt - Time.unscaledTime + 0.25f;
 
             // A no-hit floor: Hell's cabinet and its crowd say so (subtitle on the screen, then the voices); the best rank sits under the quip.
             string callout = "";
@@ -475,16 +499,20 @@ namespace SickOfIt.Gameplay
                     callout = world.Style.SayOnResults("rankS");
             }
             string under = rank.HasValue && rank.Value.NoHit ? Texts.resultsNoHit + (callout.Length > 0 ? "\n" + callout : "") : callout;
-            if (bestLine.Length > 0)
+            // A new best has its own banner; otherwise the record to beat sits here.
+            if (bestLine.Length > 0 && !newBest)
                 under = under.Length > 0 ? under + "\n" + bestLine : bestLine;
             if (under.Length > 0)
             {
                 var extra = menu.AddText(inner, "Rank", under, theme.caption, new Vector2(0.72f, 0.185f), Vector2.zero, new Vector2(900f, 100f),
                     out var extraMotion, 30f, null, theme.entrance, null, 4f);
                 MenuResponsive.Track((RectTransform)extra.transform.parent, MenuPlacement.At(0.72f, 0.185f, 0f, 0f, 900f, 100f),
-                    MenuPlacement.At(0.5f, 0.155f, 0f, 0f, 1000f, 130f), MenuElementKind.Text, menu.Responsive);
-                extraMotion.EntranceDelay = 1.5f;
+                    MenuPlacement.At(0.5f, 0.235f, 0f, 0f, 1000f, 130f), MenuElementKind.Text, menu.Responsive);
+                extraMotion.EntranceDelay = tallyEndAt - Time.unscaledTime + 0.4f;
             }
+
+            if (!chapterOne)
+                BuildResultsExtras(inner, screens, newBest, diamondsGained, points);
 
             // The next goal: what the diamonds are for, the bar filled with the ones just earned.
             // Built through Core's bridge — Gameplay cannot name SickOfIt.Core.Progression (circular asmdef).
@@ -492,8 +520,8 @@ namespace SickOfIt.Gameplay
             NextGoalBridge.BuildResultsCard?.Invoke(menu, inner, goalFloor);
 
             var go = theme.button.Clone();
-            // Phone acceptance: Continue at least 48 px tall (100 design units keeps it well above on 390x844).
-            go.size = new Vector2(420f, Mathf.Max(100f, go.size.y));
+            // Phone acceptance: Continue at least 48 px tall (150 design units is 54 px on 390x844).
+            go.size = new Vector2(420f, Mathf.Max(150f, go.size.y));
             continueButton = menu.AddButtonAt(new Vector2(0.5f, 0.1f), Vector2.zero, Texts.continueText, go, () =>
             {
                 if (!continuing)
@@ -529,25 +557,6 @@ namespace SickOfIt.Gameplay
         string stampLetter = "";
         MenuMotionDriver resultsStamp;
         MenuButton continueButton;
-        static int lastVerdict = -1;
-
-        // Slam: shake, ember burst, stamp sound, then Yooba's voiced verdict for the rank.
-        void FireStamp()
-        {
-            if (stampFired)
-                return;
-            stampFired = true;
-            world.Effects.Shake(0.5f, 0.2f);
-            var at = world.Player != null ? (Vector2)world.Player.transform.position : Vector2.zero;
-            SickOfIt.Core.Fx.Fx.Burst(at, new Color(1f, 0.55f, 0.15f), 40, 6f, 0.14f, 0.7f);
-            if (stampLetter.Length > 0)
-            {
-                string key = stampLetter == "S" || stampLetter == "A" || stampLetter == "B" ? stampLetter.ToLowerInvariant() : "c";
-                lastVerdict = lastVerdict == 1 ? 2 : lastVerdict == 2 ? 1 : UnityEngine.Random.Range(1, 3);
-                Sfx.Play("vo_yooba_rank_" + key + "_" + lastVerdict);
-            }
-        }
-
         void UpdateResultsTally()
         {
             if (resultsRoot == null || continueButton == null)
@@ -557,7 +566,7 @@ namespace SickOfIt.Gameplay
                 if (tallyTickTimes[i] > 0f && now >= tallyTickTimes[i])
                 {
                     tallyTickTimes[i] = -1f;
-                    Sfx.Play("ui_click", 0.7f, 1f + i * 0.06f);
+                    Sfx.Play("ui_tally_tick", 0.9f, 1f + i * 0.08f);
                 }
             var pointer = UnityEngine.InputSystem.Pointer.current;
             var keys = UnityEngine.InputSystem.Keyboard.current;
@@ -572,7 +581,10 @@ namespace SickOfIt.Gameplay
                 resultsStamp?.Restart(0f);
                 tallyEndAt = now;
                 gradeSoundAt = now;
+                SkipResultsFx();
             }
+            else if (tapped && now >= tallyEndAt && flightsSpawned < int.MaxValue && flightsAt >= 0f)
+                SkipResultsFx();
             if (!continueButton.gameObject.activeSelf && (now - resultsOpenedAt >= 2f || tapped))
                 continueButton.gameObject.SetActive(true);
         }
@@ -752,6 +764,7 @@ namespace SickOfIt.Gameplay
             UpdateDeath();
             UpdatePauseKeys();
             UpdateResultsTally();
+            UpdateResultsFx();
             if (gradeSoundAt > 0f && Time.unscaledTime >= gradeSoundAt)
             {
                 gradeSoundAt = -1f;
@@ -762,7 +775,7 @@ namespace SickOfIt.Gameplay
                 if (resultsNewBestPending)
                 {
                     resultsNewBestPending = false;
-                    UiSounds.NewBest();
+                    StartCoroutine(NewBestAfterStamp());
                 }
             }
         }

@@ -41,28 +41,29 @@
       },
       "resultsLabelX": 0.3,
       "resultsValueX": 0.74,
-      "resultsStatsTop": 0.72,
-      "resultsStatsStep": 0.055,
+      "resultsStatsTop": 0.745,
+      "resultsStatsStep": 0.045,
+      "resultsStamp": "Art/Icons/ResultsStamp.png",
       "resultsGrade": {
         "use": true,
         "hide": false,
-        "anchor": [0.5, 0.37],
+        "anchor": [0.5, 0.415],
         "offset": [0.0, 0.0],
         "size": [330.0, 330.0]
       },
       "resultsQuip": {
         "use": true,
         "hide": false,
-        "anchor": [0.5, 0.22],
+        "anchor": [0.5, 0.3],
         "offset": [0.0, 0.0],
-        "size": [1000.0, 80.0]
+        "size": [1000.0, 110.0]
       },
       "resultsContinue": {
         "use": true,
         "hide": false,
-        "anchor": [0.5, 0.09],
+        "anchor": [0.5, 0.075],
         "offset": [0.0, 0.0],
-        "size": [520.0, 124.0]
+        "size": [520.0, 150.0]
       },
       "rageQuit": {
         "use": true,
