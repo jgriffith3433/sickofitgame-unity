@@ -381,11 +381,17 @@ namespace SickOfIt.Data.Config
         [Tooltip("Results: the stat rows (label at anchor x 'labelX', value at 'valueX', from 'statsTop' down by 'statsStep').")]
         public float resultsLabelX = 0.3f;
         public float resultsValueX = 0.74f;
-        public float resultsStatsTop = 0.72f;
-        public float resultsStatsStep = 0.055f;
-        public MenuPlacement resultsGrade = MenuPlacement.At(0.5f, 0.37f, 0f, 0f, 330f, 330f);
-        public MenuPlacement resultsQuip = MenuPlacement.At(0.5f, 0.22f, 0f, 0f, 1000f, 80f);
-        public MenuPlacement resultsContinue = MenuPlacement.At(0.5f, 0.09f, 0f, 0f, 520f, 124f);
+        public float resultsStatsTop = 0.745f;
+        public float resultsStatsStep = 0.045f;
+        public MenuPlacement resultsGrade = MenuPlacement.At(0.5f, 0.415f, 0f, 0f, 330f, 330f);
+        public MenuPlacement resultsQuip = MenuPlacement.At(0.5f, 0.3f, 0f, 0f, 1000f, 110f);
+        public MenuPlacement resultsContinue = MenuPlacement.At(0.5f, 0.075f, 0f, 0f, 520f, 150f);
+        [Tooltip("Results: Yooba's portrait (left of the stamp), the NEW BEST banner (right of it) and the diamond total the earned diamonds fly into.")]
+        public MenuPlacement resultsYooba = MenuPlacement.At(0.16f, 0.415f, 0f, 0f, 280f, 280f);
+        public MenuPlacement resultsBanner = MenuPlacement.At(0.83f, 0.415f, 0f, 0f, 280f, 120f);
+        public MenuPlacement resultsTotal = MenuPlacement.At(0.5f, 0.515f, 0f, 0f, 560f, 80f);
+        [Tooltip("The rank stamp's art (inked seal, blank centre; the letter is drawn over it). Empty = the drawn starburst.")]
+        public Sprite resultsStamp;
         [Tooltip("The death scene's Rage Quit (top center, clear of the rewind/skip row at the bottom).")]
         public MenuPlacement rageQuit = MenuPlacement.At(0.5f, 1f, 0f, -90f, 400f, 124f);
     }

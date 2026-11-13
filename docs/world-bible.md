@@ -377,6 +377,10 @@ Each beat is lived, not read. Format: **where / when -> what happens (events, so
 17. **Floor 1.** The Overlord rewinds too; the gate cracks onto the meadow; daylight pours in. The endings play through
     gameplay, then the knock from underground.
 
+18. **The clear (every floor).** The five tallies tick one after another, the rank stamp slams with a shake and an ember burst,
+    a NEW BEST banner follows a record, the earned diamonds fly into the total, and Yooba, on the corner of the screen, gives
+    his voiced verdict for the rank (two lines each for S, A, B and C). *Voice:* `yooba`. *Text:* his subtitle only.
+
 Every beat above is an event first. A beat that is only a `showText` is a defect.
 
 ---
