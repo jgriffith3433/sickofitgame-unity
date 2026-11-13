@@ -250,3 +250,7 @@ Eighteen events now have 3-4 takes made by Hawkes Gen (`audio.sfx-open`, Stable 
 `Tools/Audio/core_sfx.py` (table `GEN`) writes audio.json, with `generatedFrom` the Sound Generator's own key so the editor shows them Ready.
 Ask Gen for `duration >= 1` with `trim: false`: a short request came back as a near-silent file (-70 LUFS) for graze, jump, dash, diamond and the imps' hurts.
 `pickup_diamond` is exact-pitch and climbs a semitone per diamond inside 1 s (`GameplayHud.Diamond.cs`; playtest `audio`: 5 diamonds in 2 s, 5 rising pitches), maxVoices 4, cooldown 0.
+
+## Death sting (Nov 13)
+
+`ui_death_sting` (event `uiDeathSting`, played by `UiSounds.DeathSting` as the death screen opens, before the announcer) now has a clip: `Audio/Generated/Core/ui_death_sting.ogg`, a stand-in from `Tools/Audio/synth_core_sfx.py` (Hawkes Gen refused project `sickofit` to the agent that made it; remake it with `audio.sfx` from the prompt in audio.json and drop it over the name). The rewind whoosh (`rewind_start`/`rewind_stop`) and the hit thuds (`player_hurt`, `hit_pop`) already had takes. Playtest `score-floors` now also checks that the finale swap (`musicState finale`) fires on each of Levels 1-5.

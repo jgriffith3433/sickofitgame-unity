@@ -1,3 +1,3 @@
-- Open Floor 1000 on beta (phone 390x844 touch ok).
-- At the start only hearts and the rewind prompt show.
-- Dash and the rocket launcher chips appear on later floors.
+1. Open the beta page, tap to play, die on Floor 1000 or 999.
+2. Hear the low brass sting as YOU OBVIOUSLY DIED appears.
+3. Hold R: whoosh; get hit: thud.
