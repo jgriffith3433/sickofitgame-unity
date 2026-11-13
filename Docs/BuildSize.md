@@ -256,3 +256,8 @@ Beta v142 first-five@phone: wasm 10.6 MB + data 5.2 MB + framework 0.1 MB, ~16 M
 `WebGLPlayerSettings.Apply` now also sets `UserBuildSettings.codeOptimization = DiskSizeLTO` and IL2CPP code generation `OptimizeSize` (both put back by
 `Restore`). Not measured here (no Unity/build): the next `first-five@local:phone` reports `phone.mbBeforeGameplay`/`phone.secondsToGameplay` and `phone.fpsP5`
 (shared generics can cost frame time: if fpsP5 drops under 30, revert `OptimizeSize` first). Next levers: Brotli (see above), managed stripping with a link.xml.
+
+## Exception support (2026-11-13, phone load 84 s)
+
+v144's wasm was still 9.6 MB (~5.5 s per MB on Slow 4G). `WebGLPlayerSettings.Apply` now also sets exception support to
+`ExplicitlyThrownExceptionsOnly` (restored after the build). Not done: managed stripping (needs a checked link.xml) and Brotli.
