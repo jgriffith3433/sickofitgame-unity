@@ -810,7 +810,7 @@
       "voiceId": "",
       "clip": "Audio/Generated/Core/ui_death_sting.ogg",
       "bus": "Ui",
-      "generatedFrom": "synth|Tools/Audio/synth_core_sfx.py",
+      "generatedFrom": "gen|a_61d8f0830a9ec820",
       "volume": 0.8,
       "pitchVariation": 0,
       "maxVoices": 1,
