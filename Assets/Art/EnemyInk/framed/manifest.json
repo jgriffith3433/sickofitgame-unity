@@ -36,36 +36,119 @@
     "estimateUsd": 0.7,
     "budgetUsd": 0.86,
     "batch": [
-      {"id": "j_e9a86239e2e9", "entity": "cinderThatch", "clip": "idle"},
-      {"id": "j_23300285c0aa", "entity": "cinderThatch", "clip": "windup"},
-      {"id": "j_7875f2aeefe1", "entity": "cinderThatch", "clip": "attack"},
-      {"id": "j_e7a52dd0b25f", "entity": "cinderThatch", "clip": "hurt"},
-      {"id": "j_683a6bbbaa2e", "entity": "cinderThatch", "clip": "die"},
-      {"id": "j_9502d714e3f6", "entity": "cinderBrute", "clip": "idle"},
-      {"id": "j_cb826e300940", "entity": "cinderBrute", "clip": "windup"},
-      {"id": "j_94969b4f2cfa", "entity": "cinderBrute", "clip": "attack"},
-      {"id": "j_e0ba821a0623", "entity": "cinderBrute", "clip": "hurt"},
-      {"id": "j_6d4ab37bb540", "entity": "cinderBrute", "clip": "die"},
-      {"id": "j_5f2d1d2c9b19", "entity": "impSack", "clip": "idle"},
-      {"id": "j_507e89df5dfe", "entity": "impSack", "clip": "windup"},
-      {"id": "j_f388a77093dd", "entity": "impSack", "clip": "attack"},
-      {"id": "j_251e838f8595", "entity": "impSack", "clip": "hurt"},
-      {"id": "j_60b2c0035a1d", "entity": "impSack", "clip": "die"},
-      {"id": "j_bc927d9292ba", "entity": "cinderSpark", "clip": "windup", "note": "cyan redo; reuse=false"}
+      {
+        "id": "j_e9a86239e2e9",
+        "entity": "cinderThatch",
+        "clip": "idle"
+      },
+      {
+        "id": "j_23300285c0aa",
+        "entity": "cinderThatch",
+        "clip": "windup"
+      },
+      {
+        "id": "j_7875f2aeefe1",
+        "entity": "cinderThatch",
+        "clip": "attack"
+      },
+      {
+        "id": "j_e7a52dd0b25f",
+        "entity": "cinderThatch",
+        "clip": "hurt"
+      },
+      {
+        "id": "j_683a6bbbaa2e",
+        "entity": "cinderThatch",
+        "clip": "die"
+      },
+      {
+        "id": "j_9502d714e3f6",
+        "entity": "cinderBrute",
+        "clip": "idle"
+      },
+      {
+        "id": "j_cb826e300940",
+        "entity": "cinderBrute",
+        "clip": "windup"
+      },
+      {
+        "id": "j_94969b4f2cfa",
+        "entity": "cinderBrute",
+        "clip": "attack"
+      },
+      {
+        "id": "j_e0ba821a0623",
+        "entity": "cinderBrute",
+        "clip": "hurt"
+      },
+      {
+        "id": "j_6d4ab37bb540",
+        "entity": "cinderBrute",
+        "clip": "die"
+      },
+      {
+        "id": "j_5f2d1d2c9b19",
+        "entity": "impSack",
+        "clip": "idle"
+      },
+      {
+        "id": "j_507e89df5dfe",
+        "entity": "impSack",
+        "clip": "windup"
+      },
+      {
+        "id": "j_f388a77093dd",
+        "entity": "impSack",
+        "clip": "attack"
+      },
+      {
+        "id": "j_251e838f8595",
+        "entity": "impSack",
+        "clip": "hurt"
+      },
+      {
+        "id": "j_60b2c0035a1d",
+        "entity": "impSack",
+        "clip": "die"
+      },
+      {
+        "id": "j_bc927d9292ba",
+        "entity": "cinderSpark",
+        "clip": "windup",
+        "note": "cyan redo; reuse=false"
+      }
     ]
   },
   "i2vJudged": {
     "spentUsd": 0.55,
     "pass": {
-      "cinderThatch": ["idle", "hurt", "die"],
-      "cinderBrute": ["idle", "windup", "attack", "hurt", "die"],
-      "impSack": ["idle", "windup", "attack", "hurt", "die"],
-      "cinderSpark": ["windup"]
+      "cinderThatch": [
+        "idle",
+        "hurt",
+        "die"
+      ],
+      "cinderBrute": [
+        "idle",
+        "windup",
+        "attack",
+        "hurt",
+        "die"
+      ],
+      "impSack": [
+        "idle",
+        "windup",
+        "attack",
+        "hurt",
+        "die"
+      ],
+      "cinderSpark": [
+        "windup"
+      ]
     },
     "failHeld": {
       "cinderThatch": {
-        "windup": "a_0785c49a5e2b2fb7 bird legs — held a_773bbd2466a05ef6",
-        "attack": "a_ee20ba9c5256acd6 bird legs — held a_268b14b1ea7b805e"
+        "windup": "a_0785c49a5e2b2fb7 bird legs \u2014 held a_773bbd2466a05ef6",
+        "attack": "a_ee20ba9c5256acd6 bird legs \u2014 held a_268b14b1ea7b805e"
       }
     },
     "assets": {
@@ -93,13 +176,55 @@
     "budgetUsd": 0.86,
     "spentPosesUsd": 0.21,
     "batch": [
-      {"id": "j_643207ac4b56", "entity": "launcherThief", "pose": "stand", "asset": "a_35b1d63f3bd6a42f", "verdict": "PASS"},
-      {"id": "j_049536d717ee", "entity": "launcherThief", "pose": "windup", "asset": "a_63f46cfb1eb5804b", "verdict": "PASS"},
-      {"id": "j_765c66f24b31", "entity": "launcherThief", "pose": "attack", "asset": "a_ee2ba6e3ad30e7df", "verdict": "PASS"},
-      {"id": "j_e9990336a907", "entity": "launcherThief", "pose": "struck", "asset": "a_0de3446e74a7d32e", "verdict": "PASS"},
-      {"id": "j_8bc7677f243c", "entity": "launcherThief", "pose": "dead", "asset": "a_0396dffd2fa61f26", "verdict": "FAIL"},
-      {"id": "j_439924f978a2", "entity": "cinderThatch", "pose": "windup", "asset": "a_eb77a64dd91899f6", "verdict": "PASS"},
-      {"id": "j_08a2bfaa8127", "entity": "cinderThatch", "clip": "attack", "verdict": "FAILED_QUEUE", "note": "GPU timeout; requeued as j_155a3b54681f"}
+      {
+        "id": "j_643207ac4b56",
+        "entity": "launcherThief",
+        "pose": "stand",
+        "asset": "a_35b1d63f3bd6a42f",
+        "verdict": "PASS"
+      },
+      {
+        "id": "j_049536d717ee",
+        "entity": "launcherThief",
+        "pose": "windup",
+        "asset": "a_63f46cfb1eb5804b",
+        "verdict": "PASS"
+      },
+      {
+        "id": "j_765c66f24b31",
+        "entity": "launcherThief",
+        "pose": "attack",
+        "asset": "a_ee2ba6e3ad30e7df",
+        "verdict": "PASS"
+      },
+      {
+        "id": "j_e9990336a907",
+        "entity": "launcherThief",
+        "pose": "struck",
+        "asset": "a_0de3446e74a7d32e",
+        "verdict": "PASS"
+      },
+      {
+        "id": "j_8bc7677f243c",
+        "entity": "launcherThief",
+        "pose": "dead",
+        "asset": "a_0396dffd2fa61f26",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "j_439924f978a2",
+        "entity": "cinderThatch",
+        "pose": "windup",
+        "asset": "a_eb77a64dd91899f6",
+        "verdict": "PASS"
+      },
+      {
+        "id": "j_08a2bfaa8127",
+        "entity": "cinderThatch",
+        "clip": "attack",
+        "verdict": "FAILED_QUEUE",
+        "note": "GPU timeout; requeued as j_155a3b54681f"
+      }
     ],
     "next": "done this step: framed + held sheets + i2v queue"
   },
@@ -108,15 +233,92 @@
     "budgetUsd": 0.86,
     "spentSoFarUsd": 0.21,
     "batch": [
-      {"id": "j_ee32b195ebc0", "entity": "launcherThief", "pose": "dead", "note": "redo from framed stand; requeue after no-GPU fail"},
-      {"id": "j_33ea85c86bac", "entity": "launcherThief", "clip": "idle"},
-      {"id": "j_cae94d8624ff", "entity": "launcherThief", "clip": "windup"},
-      {"id": "j_02a98ed38efc", "entity": "launcherThief", "clip": "attack"},
-      {"id": "j_d4419fd26947", "entity": "launcherThief", "clip": "hurt"},
-      {"id": "j_b121fd39259b", "entity": "cinderThatch", "clip": "windup"},
-      {"id": "j_6f098c0a62b2", "entity": "cinderThatch", "clip": "attack"}
+      {
+        "id": "j_ee32b195ebc0",
+        "entity": "launcherThief",
+        "pose": "dead",
+        "note": "redo from framed stand; requeue after no-GPU fail"
+      },
+      {
+        "id": "j_33ea85c86bac",
+        "entity": "launcherThief",
+        "clip": "idle"
+      },
+      {
+        "id": "j_cae94d8624ff",
+        "entity": "launcherThief",
+        "clip": "windup"
+      },
+      {
+        "id": "j_02a98ed38efc",
+        "entity": "launcherThief",
+        "clip": "attack"
+      },
+      {
+        "id": "j_d4419fd26947",
+        "entity": "launcherThief",
+        "clip": "hurt"
+      },
+      {
+        "id": "j_b121fd39259b",
+        "entity": "cinderThatch",
+        "clip": "windup"
+      },
+      {
+        "id": "j_6f098c0a62b2",
+        "entity": "cinderThatch",
+        "clip": "attack"
+      }
     ],
-    "failedNoGpu": ["j_37cb7fd02f2d", "j_c88a4f0e7dd5", "j_3dafe2303a57", "j_474b64c7fb16", "j_e14f3d830821", "j_803e6858cca5", "j_155a3b54681f"],
-    "next": "judge → bake; die i2v after dead PASS; screenshot beside hero"
+    "failedNoGpu": [
+      "j_37cb7fd02f2d",
+      "j_c88a4f0e7dd5",
+      "j_3dafe2303a57",
+      "j_474b64c7fb16",
+      "j_e14f3d830821",
+      "j_803e6858cca5",
+      "j_155a3b54681f"
+    ],
+    "next": "judge \u2192 bake; die i2v after dead PASS; screenshot beside hero"
+  },
+  "queued_c_22d9a934f933": {
+    "note": "third try: queued on RunPod/Modal within $0.86 (J 2026-11-13); est $0.35 for these 7, ~$0.04 die clip later",
+    "batch": [
+      {
+        "id": "j_47a5c5d26cba",
+        "entity": "launcherThief",
+        "clip": "idle"
+      },
+      {
+        "id": "j_93200db19cf0",
+        "entity": "launcherThief",
+        "clip": "windup"
+      },
+      {
+        "id": "j_c925439f7d9a",
+        "entity": "launcherThief",
+        "clip": "attack"
+      },
+      {
+        "id": "j_e495331df8db",
+        "entity": "launcherThief",
+        "clip": "hurt"
+      },
+      {
+        "id": "j_8d0d05255107",
+        "entity": "cinderThatch",
+        "clip": "windup"
+      },
+      {
+        "id": "j_63dc817647d8",
+        "entity": "cinderThatch",
+        "clip": "attack"
+      },
+      {
+        "id": "j_09526a514433",
+        "entity": "launcherThief",
+        "pose": "dead"
+      }
+    ]
   }
 }
