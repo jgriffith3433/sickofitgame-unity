@@ -1,1 +1,1 @@
-- lesson: Session partials share one namespace — a field name in one SickOfItPlaytest.*.cs partial can collide with another's; grep the name across Assets/Scripts/Playtest before adding.
+- lesson: Gen access — the agent can be refused project sickofit; Tools/Audio/synth_core_sfx.py makes stand-in clips (ONESHOTS table) instead.
