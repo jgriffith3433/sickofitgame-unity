@@ -26,7 +26,10 @@ namespace SickOfIt.Gameplay
         const float DialSize = 88f;
         const float GemIconSize = 48f;
         /// <summary>Phone rewind button floor in screen pixels (acceptance criterion).</summary>
-        public const float MinRewindButtonPx = 72f;
+        public const float MinRewindButtonPx = 96f;
+        /// <summary>Phone caption under the rewind button: never under this many screen pixels (14 pt at 1x, drawn a little over).</summary>
+        public const float MinRewindCaptionPx = 16f;
+        TextMeshProUGUI rewindCaption;
 
         RectTransform leftCluster;
         RectTransform rightCluster;
@@ -293,6 +296,25 @@ namespace SickOfIt.Gameplay
             if (rewindButton.Label != null)
                 MenuGraphics.SetText(rewindButton.Label, "");
 
+            // A readable caption above the thumb button (the reel alone read as a tiny icon on a phone).
+            if (rewindRoot != null && rewindCaption == null)
+            {
+                var cap = MenuGraphics.NewRect("RewindCaption", rewindRoot);
+                cap.anchorMin = new Vector2(-0.5f, 1f);
+                cap.anchorMax = new Vector2(1.5f, 1f);
+                cap.pivot = new Vector2(0.5f, 0f);
+                cap.anchoredPosition = new Vector2(0f, 14f);
+                cap.sizeDelta = new Vector2(0f, 60f);
+                rewindCaption = cap.gameObject.AddComponent<TextMeshProUGUI>();
+                rewindCaption.text = "HOLD TO REWIND";
+                rewindCaption.alignment = TextAlignmentOptions.Bottom;
+                rewindCaption.fontStyle = FontStyles.Bold;
+                rewindCaption.textWrappingMode = TextWrappingModes.NoWrap;
+                rewindCaption.color = style.rewind;
+                rewindCaption.raycastTarget = false;
+                rewindCaption.fontSize = 28f;
+            }
+
             // Fill ring around the button: drains with juice while rewind is held (phone critic check).
             if (rewindRoot != null && rewindButtonRing == null)
             {
@@ -534,6 +556,14 @@ namespace SickOfIt.Gameplay
             float want = MinRewindButtonPx / (h / scale);
             if (want > scale + 0.01f)
                 rewindRoot.localScale = new Vector3(want, want, 1f);
+            if (rewindCaption != null)
+            {
+                // Font size in canvas units so it measures MinRewindCaptionPx on the screen, whatever the canvas scale.
+                float pxPerUnit = rewindRoot.rect.height > 0.01f ? ScreenRect(rewindRoot).height / rewindRoot.rect.height : 1f;
+                if (pxPerUnit > 0.001f)
+                    rewindCaption.fontSize = MinRewindCaptionPx / pxPerUnit;
+                rewindCaption.gameObject.SetActive(TouchUiOn);
+            }
         }
 
         /// <summary>Union of the ink HUD clusters as a fraction of the playfield (phone criterion ≤ 0.12).</summary>

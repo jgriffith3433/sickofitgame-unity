@@ -93,7 +93,7 @@ namespace SickOfIt.Playtest
 
                     float rewindPx = Mathf.Min(rewind.width, rewind.height);
                     Run.Metric("hudInk.rewindButtonPx", rewindPx);
-                    HudInkCheck("rewind button >=72 px", rewindPx + 0.5f >= GameplayHud.MinRewindButtonPx, $"{rewindPx:0} px at {rewind}");
+                    HudInkCheck("rewind button >=96 px", rewindPx + 0.5f >= GameplayHud.MinRewindButtonPx, $"{rewindPx:0} px at {rewind}");
 
                     // Crack: take a heart through real damage.
                     var hero = world.Player;
