@@ -2898,3 +2898,15 @@ hit."; B "B. Solid. Like a stone that only sinks a little." / "Not bad! The floo
 the best letter, really." / "Okay. Okay! We'll call that a warm-up." Code: `GameplayHud.Screens.cs` (the tally, `ShowResults`),
 `GameplayHud.Results.cs` (slam, embers, banner, diamond flight), `Core/Progression/ResultsYooba.cs` (his portrait, through
 `NextGoalBridge.BuildResultsYooba`). Playtest `level-clear`.
+
+## Hell's furniture: tilesets and story props (built 2026-11-14)
+
+Every floor of the first chapter is furnished with what Hell keeps in every room and nobody uses. The Meadow's sod, the Landing's
+orange basalt, the furnace's red slag, the choir's bone-grey stone and the Overlord's obsidian each have their own ledge in three drawn
+variants, picked by where it stands so a row of them never repeats; nine props a level stand behind the action, on the ground or a ledge,
+and tell the place without a word: a hen, a mill and a wrecked cart; a desk, a take-a-number dispenser and cages; furnace pipes and
+gauges; bone piles and a choir loft; banners and a portrait of the Overlord himself. Shoot one, or walk up to it, and it answers with a
+sound (a sign falls, a banner tears, a cage swings, a hay bale bursts). Hostile embers set them off too, so the raid in the Meadow breaks the
+fences. Nothing here changes a collider or gets in front of a bullet: props are behind the hero's band. Written by `Tools/Levels/story_props.py`
+(run it last, after every floor writer), sheets by `Tools/Art/story_art.py`; art in `Assets/Art/Tiles/<set>` and `Assets/Art/Props/<set>`.
+Playtest `story-props` (`SickOfItPlaytest.StoryProps.cs`).

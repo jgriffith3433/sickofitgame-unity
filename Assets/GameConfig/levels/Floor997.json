@@ -153,6 +153,22 @@
               ]
             },
             {
+              "entity": "propPedestal",
+              "at": [
+                -4.8,
+                -2.2
+              ],
+              "id": "sp_1"
+            },
+            {
+              "entity": "propHalberds",
+              "at": [
+                -2.6,
+                -2.2
+              ],
+              "id": "sp_2"
+            },
+            {
               "entity": "sinkingStone",
               "at": [
                 -0.6,
@@ -173,6 +189,14 @@
                 0.9,
                 1
               ]
+            },
+            {
+              "entity": "propBannerShort",
+              "at": [
+                1.8,
+                0.55
+              ],
+              "id": "sp_3"
             },
             {
               "entity": "sinkingStone",
@@ -196,30 +220,6 @@
                 1.0,
                 1
               ]
-            },
-            {
-              "entity": "propPedestal",
-              "at": [
-                -4.8,
-                -2.2
-              ],
-              "id": "sp_1"
-            },
-            {
-              "entity": "propHalberds",
-              "at": [
-                -2.6,
-                -2.2
-              ],
-              "id": "sp_2"
-            },
-            {
-              "entity": "propBannerShort",
-              "at": [
-                1.8,
-                0.55
-              ],
-              "id": "sp_3"
             },
             {
               "entity": "propBannerTall",
@@ -371,20 +371,20 @@
               ]
             },
             {
-              "entity": "lostRollingPin",
-              "at": [
-                20.0,
-                9.3
-              ],
-              "id": "lostThing"
-            },
-            {
               "entity": "propBrazier",
               "at": [
                 17.8,
                 10.15
               ],
               "id": "sp_7"
+            },
+            {
+              "entity": "lostRollingPin",
+              "at": [
+                20.0,
+                9.3
+              ],
+              "id": "lostThing"
             }
           ]
         },
@@ -424,6 +424,14 @@
               ]
             },
             {
+              "entity": "propBannerStand",
+              "at": [
+                10.8,
+                10.45
+              ],
+              "id": "sp_8"
+            },
+            {
               "entity": "diamondGlint",
               "at": [
                 10.6,
@@ -454,28 +462,20 @@
               ]
             },
             {
-              "entity": "diamondGlint",
-              "at": [
-                10.8,
-                11.2
-              ],
-              "id": "find_glint1"
-            },
-            {
-              "entity": "propBannerStand",
-              "at": [
-                10.8,
-                10.45
-              ],
-              "id": "sp_8"
-            },
-            {
               "entity": "propWallHook",
               "at": [
                 5.6,
                 10.85
               ],
               "id": "sp_9"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                10.8,
+                11.2
+              ],
+              "id": "find_glint1"
             }
           ]
         },

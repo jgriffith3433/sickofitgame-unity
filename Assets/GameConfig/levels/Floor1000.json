@@ -104,6 +104,22 @@
               ]
             },
             {
+              "entity": "propLuggage",
+              "at": [
+                -4.8,
+                -2.2
+              ],
+              "id": "sp_1"
+            },
+            {
+              "entity": "propFloorSign",
+              "at": [
+                -2.6,
+                -2.2
+              ],
+              "id": "sp_2"
+            },
+            {
               "entity": "sinkingStone",
               "at": [
                 -0.6,
@@ -151,6 +167,14 @@
               ]
             },
             {
+              "entity": "propHatShelf",
+              "at": [
+                1.2,
+                2.55
+              ],
+              "id": "sp_3"
+            },
+            {
               "entity": "sinkingStone",
               "at": [
                 -1.2,
@@ -185,30 +209,6 @@
                 1.4,
                 1
               ]
-            },
-            {
-              "entity": "propLuggage",
-              "at": [
-                -4.8,
-                -2.2
-              ],
-              "id": "sp_1"
-            },
-            {
-              "entity": "propFloorSign",
-              "at": [
-                -2.6,
-                -2.2
-              ],
-              "id": "sp_2"
-            },
-            {
-              "entity": "propHatShelf",
-              "at": [
-                1.2,
-                2.55
-              ],
-              "id": "sp_3"
             },
             {
               "entity": "propNumberDispenser",
@@ -374,6 +374,22 @@
               "id": "landing"
             },
             {
+              "entity": "propWelcomeDesk",
+              "at": [
+                21.8,
+                14.7
+              ],
+              "id": "sp_8"
+            },
+            {
+              "entity": "propGibbet",
+              "at": [
+                25.5,
+                14.7
+              ],
+              "id": "sp_9"
+            },
+            {
               "entity": "impFleeing",
               "at": [
                 25.6,
@@ -391,22 +407,6 @@
               ],
               "id": "glint",
               "onEnter": true
-            },
-            {
-              "entity": "propWelcomeDesk",
-              "at": [
-                21.8,
-                14.7
-              ],
-              "id": "sp_8"
-            },
-            {
-              "entity": "propGibbet",
-              "at": [
-                25.5,
-                14.7
-              ],
-              "id": "sp_9"
             }
           ]
         }

@@ -337,7 +337,11 @@ def build_floor(n):
             sp['anchor'] = host['anchor']
         if host.get('onEnter'):
             sp['onEnter'] = True
-        sec['spawns'].append(sp)
+        # Right after its ledge (and the props already there), so another writer that appends to the section (ambient_finds) never reorders it.
+        at = sec['spawns'].index(host) + 1
+        while at < len(sec['spawns']) and str(sec['spawns'][at].get('id', '')).startswith('sp_'):
+            at += 1
+        sec['spawns'].insert(at, sp)
     return path, d
 
 

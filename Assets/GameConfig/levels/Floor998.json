@@ -153,6 +153,22 @@
               ]
             },
             {
+              "entity": "propBrokenPew",
+              "at": [
+                -4.6,
+                -1.2
+              ],
+              "id": "sp_1"
+            },
+            {
+              "entity": "propCandleStubs",
+              "at": [
+                -2.35,
+                -1.2
+              ],
+              "id": "sp_2"
+            },
+            {
               "entity": "wreckSign",
               "at": [
                 -0.6,
@@ -198,22 +214,6 @@
                 1.0,
                 1
               ]
-            },
-            {
-              "entity": "propBrokenPew",
-              "at": [
-                -4.6,
-                -1.2
-              ],
-              "id": "sp_1"
-            },
-            {
-              "entity": "propCandleStubs",
-              "at": [
-                -2.35,
-                -1.2
-              ],
-              "id": "sp_2"
             }
           ],
           "autoSpeed": 0.95
@@ -414,6 +414,14 @@
               ]
             },
             {
+              "entity": "propStoneFont",
+              "at": [
+                50.7,
+                -0.95
+              ],
+              "id": "sp_4"
+            },
+            {
               "entity": "wreckCart",
               "at": [
                 53.7,
@@ -434,6 +442,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "propBoneHeap",
+              "at": [
+                56.7,
+                -0.95
+              ],
+              "id": "sp_5"
             },
             {
               "entity": "wreckCart",
@@ -464,22 +480,6 @@
                 -0.2
               ],
               "id": "find_glint1"
-            },
-            {
-              "entity": "propStoneFont",
-              "at": [
-                50.7,
-                -0.95
-              ],
-              "id": "sp_4"
-            },
-            {
-              "entity": "propBoneHeap",
-              "at": [
-                56.7,
-                -0.95
-              ],
-              "id": "sp_5"
             }
           ],
           "autoSpeed": 0.95
@@ -513,6 +513,14 @@
               ]
             },
             {
+              "entity": "propHymnBoard",
+              "at": [
+                68.7,
+                -0.95
+              ],
+              "id": "sp_6"
+            },
+            {
               "entity": "wreckCart",
               "at": [
                 71.7,
@@ -533,6 +541,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "propPulpit",
+              "at": [
+                74.7,
+                -0.95
+              ],
+              "id": "sp_7"
             },
             {
               "entity": "wreckCart",
@@ -567,22 +583,6 @@
                 1.2,
                 1
               ]
-            },
-            {
-              "entity": "propHymnBoard",
-              "at": [
-                68.7,
-                -0.95
-              ],
-              "id": "sp_6"
-            },
-            {
-              "entity": "propPulpit",
-              "at": [
-                74.7,
-                -0.95
-              ],
-              "id": "sp_7"
             }
           ],
           "autoSpeed": 0.95
@@ -639,14 +639,6 @@
                 1.3,
                 1
               ]
-            },
-            {
-              "entity": "damnedSoul",
-              "at": [
-                83.0,
-                7.9
-              ],
-              "id": "find_soul0"
             }
           ],
           "autoSpeed": 0.36
@@ -667,6 +659,14 @@
                 1.4,
                 1
               ]
+            },
+            {
+              "entity": "propBoneChime",
+              "at": [
+                87.0,
+                7.05
+              ],
+              "id": "sp_8"
             },
             {
               "entity": "ledgeFloor998",
@@ -710,28 +710,20 @@
               "id": "landing"
             },
             {
-              "entity": "diamondGlint",
-              "at": [
-                87.0,
-                7.8
-              ],
-              "id": "find_glint0"
-            },
-            {
-              "entity": "propBoneChime",
-              "at": [
-                87.0,
-                7.05
-              ],
-              "id": "sp_8"
-            },
-            {
               "entity": "propChoirLoft",
               "at": [
                 103.8,
                 7.9
               ],
               "id": "sp_9"
+            },
+            {
+              "entity": "diamondGlint",
+              "at": [
+                87.0,
+                7.8
+              ],
+              "id": "find_glint0"
             }
           ],
           "autoSpeed": 0.95

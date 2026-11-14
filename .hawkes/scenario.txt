@@ -1,2 +1,1 @@
-enemy-ink
-{"device":"phone"}
+story-props
