@@ -7,4 +7,11 @@
   <assembly fullname="SickOfIt.Json" preserve="all" />
   <assembly fullname="SickOfIt.Data" preserve="all" />
   <assembly fullname="SickOfIt.Gameplay" preserve="all" />
+  <assembly fullname="SickOfIt.Core" preserve="all" />
+  <assembly fullname="SickOfIt.Core.Progression" preserve="all" />
+  <assembly fullname="SickOfIt.Combat" preserve="all" />
+  <assembly fullname="SickOfIt.Playtest" preserve="all" />
+  <assembly fullname="SickOfIt.VideoFrameExtractor.Runtime" preserve="all" />
+  <assembly fullname="nappin.MobileControllerFramework" preserve="all" />
+  <assembly fullname="Assembly-CSharp" preserve="all" />
 </linker>
