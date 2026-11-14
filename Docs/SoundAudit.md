@@ -213,7 +213,7 @@ verb. What the code does (all presentation, nothing in the simulation, nothing r
   Ambience bus, follow the Effects volume, and end with it. Seven place beds: Meadow calm/burning, Shaft (`ui/shaft.json`
   `ambientSound` → `AmbienceBed.PlaySound` while the Shaft is open), Floors 1000–997. Positional one-shots are
   `LevelConfig.ambientEmitters` → `AmbientEmitters` (random 4–12 s gaps, stereo pan by screen x, falloff by hero distance;
-  phone cap = half of 8). Tables: `Tools/Audio/floor_ambience.py` (+ `synth_core_sfx.py` stand-ins). A bed is an audio.json
+  phone cap = half of 8). Tables: `Tools/Audio/floor_ambience.py` (+ `synth_core_sfx.py` stand-ins, now replaced by Gen takes: `bake_gen_ambience.py <folder of <id>.mp3>` bakes them, keeps each .meta GUID and marks `generatedFrom: sfx|<id>`). A bed is an audio.json
   Effect with `loop: true`, `bus: Ambience`; mono Vorbis, "Compressed In Memory", rides the level's scope. Not rewound: a
   rewind past the Meadow's `setAmbience` swap keeps the burning bed. Playtest `floor-ambience`.
 - **Every start is reported** through `Sfx.Played` (id, take n of m, pitch, volume, bus), the audio scenario's log.

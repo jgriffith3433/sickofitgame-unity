@@ -118,7 +118,7 @@ Dead Cells-style hand-inked bursts for every combat verb (`FeelVfx`, playtest `v
 | 10 | Graze | warm streak past the hero |
 | 11 | RewindRipple | teal expanding rings |
 
-Atlas: 10 frames × 12 rows, 128 px cells (`Assets/Resources/Effects/FeelVfxAtlas.png`), outline `#140B0D`, flat cel, green `#00ff00` key at Gen time. Pipeline: `image.generate` keyframe on `#00ff00` → short `video.i2v` → `sprite.sheet` (key `00ff00`, 8–10 frames, 256 px then packed to 128). Procedural stand-ins ship until Gen sheets land. Diamonds also fly to the HUD gem within 0.6 s (`DiamondFlyer`).
+Atlas: 10 frames × 12 rows, 128 px cells (`Assets/Resources/Effects/FeelVfxAtlas.png`), outline `#140B0D`, flat cel, green `#00ff00` key at Gen time. Pipeline: `image.generate` keyframe on a green ground → `video.i2v` (Wan, 640 px, 33 frames, "expands then fades") → `sprite.sheet` (256 px cells; keyed on the keyframe's *measured* background colour, since the model's green is never exactly `00ff00`; a burst that is over early is cut with 14–20 frames and the first 10 taken) → `Tools/Art/fx/feel_vfx_pack.py <strips>` (ffmpeg only; scales to 128, fades the diamond/dash/impact tails, lightens the rewind ripple for the tint). Gen made all twelve (2026-11-13); the procedural stand-ins remain only as the fallback when the atlas is missing. Diamonds also fly to the HUD gem within 0.6 s (`DiamondFlyer`).
 
 ## 9. Inked HUD atlas
 

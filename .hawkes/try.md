@@ -3,3 +3,5 @@
 3. Shoot it: hurt recoil; killing it now plays the new die: the launcher flashes, then a soot-and-ember cloud blows out of the sack.
 4. Thatch cinders (Floors 1000-998): when one is about to hurt you its flame core goes cyan, then it hops angry.
 5. Beta playtest `enemy-ink` (phone) shows all seven enemies.
+
+Also on beta from the other change (Chapter One payoff): Play Floor 997 to its end (or run the `chapter-one` playtest, also at 390x844 touch). After the finale the camera finds the Overlord on his ledge; you dodge his three phrases while he and the hero trade six voiced lines. He escapes up the Shaft laughing, the sting plays, and the CHAPTER ONE card shows time, deaths, rewinds and diamonds, ending on the hero's line about daylight. Continue goes on as before. A replay offers Skip.

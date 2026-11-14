@@ -86,8 +86,8 @@ def audit():
         bus = s.get('bus', 'Auto')
         if bus not in BUSES:
             problems.append(('bad-bus', sid, f'unknown bus {bus} (one of {", ".join(BUSES)})'))
-        if bus == 'Ambience' and not s.get('loop'):
-            problems.append(('bed-not-loop', sid, 'an Ambience-bus sound is a bed: loop must be true'))
+        if bus == 'Ambience' and not s.get('loop') and not sid.startswith('amb_'):   # amb_*: positional one-shots on props (floor_ambience.py)
+            problems.append(('bed-not-loop', sid, 'an Ambience-bus sound is a bed (loop must be true) unless it is an amb_* prop one-shot'))
         if s['kind'] == 'Voice' and (s.get('takes') or s.get('pitchVariation', 0)):
             problems.append(('voice-varied', sid, 'a voice line has one take and never changes pitch'))
         if s['kind'] == 'Voice' and bus not in ('Auto', 'Voice'):

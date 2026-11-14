@@ -170,10 +170,27 @@ namespace SickOfIt.Playtest
                     int beforeDash = CountKind("Dash");
                     if (hero.DashUnlocked)
                     {
-                        input.SetKey(Key.LeftShift, true);
-                        yield return null;
-                        yield return null;
-                        input.SetKey(Key.LeftShift, false);
+                        if (SickOfIt.Core.Device.TouchDevice.IsPrimary || GameplayHud.TouchUiForced)
+                        {
+                            // Phone: a right-half swipe through the real touch path (no keyboard).
+                            float shortSide = Mathf.Min(Screen.width, Screen.height);
+                            var from = new Vector2(Screen.width * 0.75f, Screen.height * 0.45f);
+                            int finger = input.TouchDown(from);
+                            yield return null;
+                            input.TouchMove(finger, from + new Vector2(shortSide * 0.04f, 0f));
+                            yield return null;
+                            input.TouchMove(finger, from + new Vector2(shortSide * 0.16f, 0f));
+                            yield return null;
+                            yield return null;
+                            input.TouchUp(finger, from + new Vector2(shortSide * 0.16f, 0f));
+                        }
+                        else
+                        {
+                            input.SetKey(Key.LeftShift, true);
+                            yield return null;
+                            yield return null;
+                            input.SetKey(Key.LeftShift, false);
+                        }
                         yield return WaitReal(0.25f);
                     }
                     else
