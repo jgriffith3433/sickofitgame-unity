@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "sod"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      0.1
+    ],
+    "solid": false
+  },
+  "states": [
+    {
+      "name": "A",
+      "animation": "A"
+    },
+    {
+      "name": "B",
+      "animation": "B"
+    },
+    {
+      "name": "C",
+      "animation": "C"
+    }
+  ],
+  "initialStates": [
+    "A",
+    "B",
+    "B",
+    "C",
+    "A"
+  ],
+  "initialStateByPlace": true,
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#3F5A2A",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "A",
+          "spriteSheet": "Art/Tiles/Meadow/SodStripA.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "B",
+          "spriteSheet": "Art/Tiles/Meadow/SodStripB.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "C",
+          "spriteSheet": "Art/Tiles/Meadow/SodStripC.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "A"
+    },
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": []
+}

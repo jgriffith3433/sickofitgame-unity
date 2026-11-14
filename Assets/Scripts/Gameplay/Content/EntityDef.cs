@@ -47,6 +47,10 @@ namespace SickOfIt.Gameplay.Content
         [EntityStateRef, Doc("Pick the starting state at random from these (deterministic per spawn).")]
         public List<string> initialStates = new List<string>();
 
+        [Doc("Pick the starting state from initialStates by where it spawns (a hash of its x and y) instead of at random: the same floor always " +
+             "draws the same variant in the same place, and neighbours differ (a tileset's ledge A, B or C). Costs no random number.")]
+        public bool initialStateByPlace;
+
         [Doc("Actions run when it spawns (self = this entity).")]
         public List<GameAction> onSpawn = new List<GameAction>();
 

@@ -92,7 +92,7 @@
               "id": "lavaSea"
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor1000",
               "at": [
                 -3.6,
                 -2.45
@@ -140,7 +140,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor1000",
               "at": [
                 1.2,
                 2.3
@@ -175,7 +175,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor1000",
               "at": [
                 3.4,
                 6.2
@@ -185,6 +185,46 @@
                 1.4,
                 1
               ]
+            },
+            {
+              "entity": "propLuggage",
+              "at": [
+                -4.8,
+                -2.2
+              ],
+              "id": "sp_1"
+            },
+            {
+              "entity": "propFloorSign",
+              "at": [
+                -2.6,
+                -2.2
+              ],
+              "id": "sp_2"
+            },
+            {
+              "entity": "propHatShelf",
+              "at": [
+                1.2,
+                2.55
+              ],
+              "id": "sp_3"
+            },
+            {
+              "entity": "propNumberDispenser",
+              "at": [
+                2.6,
+                6.45
+              ],
+              "id": "sp_4"
+            },
+            {
+              "entity": "propQueueRope",
+              "at": [
+                4.0,
+                6.45
+              ],
+              "id": "sp_5"
             }
           ]
         },
@@ -220,7 +260,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor1000",
               "at": [
                 21.4,
                 6.6
@@ -230,6 +270,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "propServiceBell",
+              "at": [
+                21.4,
+                6.85
+              ],
+              "id": "sp_6"
             }
           ],
           "autoSpeed": 0.45
@@ -290,7 +338,7 @@
               "id": "stone9"
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor1000",
               "at": [
                 18.9,
                 13.3
@@ -300,6 +348,14 @@
                 1.0,
                 1
               ]
+            },
+            {
+              "entity": "propCageStanding",
+              "at": [
+                18.9,
+                13.55
+              ],
+              "id": "sp_7"
             }
           ]
         },
@@ -335,6 +391,22 @@
               ],
               "id": "glint",
               "onEnter": true
+            },
+            {
+              "entity": "propWelcomeDesk",
+              "at": [
+                21.8,
+                14.7
+              ],
+              "id": "sp_8"
+            },
+            {
+              "entity": "propGibbet",
+              "at": [
+                25.5,
+                14.7
+              ],
+              "id": "sp_9"
             }
           ]
         }

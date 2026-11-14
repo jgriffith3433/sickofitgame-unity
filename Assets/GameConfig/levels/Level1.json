@@ -299,6 +299,182 @@
           },
           {
             "type": "spawn",
+            "entity": "sodEndL",
+            "anchor": "World",
+            "at": [
+              -6.0,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_1"
+          },
+          {
+            "type": "spawn",
+            "entity": "sodStrip",
+            "anchor": "World",
+            "at": [
+              -4.0,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_2"
+          },
+          {
+            "type": "spawn",
+            "entity": "sodStrip",
+            "anchor": "World",
+            "at": [
+              -2.0,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_3"
+          },
+          {
+            "type": "spawn",
+            "entity": "sodStrip",
+            "anchor": "World",
+            "at": [
+              0.0,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_4"
+          },
+          {
+            "type": "spawn",
+            "entity": "sodStrip",
+            "anchor": "World",
+            "at": [
+              2.0,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_5"
+          },
+          {
+            "type": "spawn",
+            "entity": "sodStrip",
+            "anchor": "World",
+            "at": [
+              4.0,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_6"
+          },
+          {
+            "type": "spawn",
+            "entity": "sodEndR",
+            "anchor": "World",
+            "at": [
+              6.0,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_7"
+          },
+          {
+            "type": "spawn",
+            "entity": "propFenceA",
+            "anchor": "World",
+            "at": [
+              -2.7,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_8"
+          },
+          {
+            "type": "spawn",
+            "entity": "propFenceA",
+            "anchor": "World",
+            "at": [
+              3.7,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_9"
+          },
+          {
+            "type": "spawn",
+            "entity": "propMill",
+            "anchor": "World",
+            "at": [
+              -4.3,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_10"
+          },
+          {
+            "type": "spawn",
+            "entity": "propWell",
+            "anchor": "World",
+            "at": [
+              -2.2,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_11"
+          },
+          {
+            "type": "spawn",
+            "entity": "propHen",
+            "anchor": "World",
+            "at": [
+              -0.9,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_12"
+          },
+          {
+            "type": "spawn",
+            "entity": "propCart",
+            "anchor": "World",
+            "at": [
+              0.7,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_13"
+          },
+          {
+            "type": "spawn",
+            "entity": "propHayBale",
+            "anchor": "World",
+            "at": [
+              2.7,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_14"
+          },
+          {
+            "type": "spawn",
+            "entity": "propScarecrow",
+            "anchor": "World",
+            "at": [
+              4.1,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_15"
+          },
+          {
+            "type": "spawn",
+            "entity": "propRoosterPerch",
+            "anchor": "World",
+            "at": [
+              5.1,
+              -2.5
+            ],
+            "facePlayer": false,
+            "id": "sp_16"
+          },
+          {
+            "type": "spawn",
             "entity": "meadowBed",
             "anchor": "Camera",
             "at": [

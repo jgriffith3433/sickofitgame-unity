@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "foothold"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      2.0,
+      0.5
+    ],
+    "solid": true,
+    "oneWay": true
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#3A1E17",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Player",
+    "sortingOrder": 0,
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "A",
+          "spriteSheet": "Art/Tiles/Floor999/LedgeA.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "B",
+          "spriteSheet": "Art/Tiles/Floor999/LedgeB.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        },
+        {
+          "stateName": "C",
+          "spriteSheet": "Art/Tiles/Floor999/LedgeC.png",
+          "fps": 12,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "A"
+    },
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": [],
+  "states": [
+    {
+      "name": "A",
+      "animation": "A"
+    },
+    {
+      "name": "B",
+      "animation": "B"
+    },
+    {
+      "name": "C",
+      "animation": "C"
+    }
+  ],
+  "initialStates": [
+    "A",
+    "B",
+    "A",
+    "C",
+    "A",
+    "C"
+  ],
+  "initialStateByPlace": true
+}

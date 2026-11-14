@@ -142,7 +142,7 @@
               "id": "lavaSea"
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor999",
               "at": [
                 -3.6,
                 -2.45
@@ -166,7 +166,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor999",
               "at": [
                 1.5,
                 0.1
@@ -186,6 +186,30 @@
                 0.9,
                 1
               ]
+            },
+            {
+              "entity": "propFurnaceDoor",
+              "at": [
+                -4.8,
+                -2.2
+              ],
+              "id": "sp_1"
+            },
+            {
+              "entity": "propCoalBucket",
+              "at": [
+                -2.7,
+                -2.2
+              ],
+              "id": "sp_2"
+            },
+            {
+              "entity": "propAnvil",
+              "at": [
+                1.5,
+                0.35
+              ],
+              "id": "sp_3"
             }
           ]
         },
@@ -196,7 +220,7 @@
           "turn": 2.0,
           "spawns": [
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor999",
               "at": [
                 5.6,
                 2.6
@@ -216,7 +240,7 @@
               "id": "counter"
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor999",
               "at": [
                 9.0,
                 2.6
@@ -234,6 +258,22 @@
                 3.6
               ],
               "id": "find_glint0"
+            },
+            {
+              "entity": "propValveWheel",
+              "at": [
+                5.6,
+                2.85
+              ],
+              "id": "sp_4"
+            },
+            {
+              "entity": "propGaugePipe",
+              "at": [
+                9.0,
+                2.85
+              ],
+              "id": "sp_5"
             }
           ]
         },
@@ -256,7 +296,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor999",
               "at": [
                 9.6,
                 5.2
@@ -279,7 +319,7 @@
               "id": "ladder999"
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor999",
               "at": [
                 9.4,
                 10.4
@@ -297,6 +337,22 @@
                 11.4
               ],
               "id": "find_glint1"
+            },
+            {
+              "entity": "propTallyWall",
+              "at": [
+                9.6,
+                5.45
+              ],
+              "id": "sp_6"
+            },
+            {
+              "entity": "propGaugePost",
+              "at": [
+                9.4,
+                10.65
+              ],
+              "id": "sp_7"
             }
           ]
         },
@@ -307,7 +363,7 @@
           "turn": 2.0,
           "spawns": [
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor999",
               "at": [
                 12.8,
                 11.2
@@ -329,7 +385,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor999",
               "at": [
                 18.6,
                 10.9
@@ -359,6 +415,22 @@
               "id": "wave",
               "onEnter": true,
               "facing": 1.0
+            },
+            {
+              "entity": "propSteamVent",
+              "at": [
+                12.8,
+                11.45
+              ],
+              "id": "sp_8"
+            },
+            {
+              "entity": "propFurnacePipes",
+              "at": [
+                18.6,
+                11.15
+              ],
+              "id": "sp_9"
             }
           ],
           "autoSpeed": 1.0

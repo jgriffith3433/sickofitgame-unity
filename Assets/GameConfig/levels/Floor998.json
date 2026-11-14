@@ -141,7 +141,7 @@
               "id": "lavaSea"
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 -3.6,
                 -1.45
@@ -198,6 +198,22 @@
                 1.0,
                 1
               ]
+            },
+            {
+              "entity": "propBrokenPew",
+              "at": [
+                -4.6,
+                -1.2
+              ],
+              "id": "sp_1"
+            },
+            {
+              "entity": "propCandleStubs",
+              "at": [
+                -2.35,
+                -1.2
+              ],
+              "id": "sp_2"
             }
           ],
           "autoSpeed": 0.95
@@ -262,7 +278,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 23.7,
                 -1.2
@@ -271,6 +287,14 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "propBonePile",
+              "at": [
+                23.7,
+                -0.95
+              ],
+              "id": "sp_3"
             }
           ],
           "autoSpeed": 0.95
@@ -379,7 +403,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 50.7,
                 -1.2
@@ -401,7 +425,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 56.7,
                 -1.2
@@ -440,6 +464,22 @@
                 -0.2
               ],
               "id": "find_glint1"
+            },
+            {
+              "entity": "propStoneFont",
+              "at": [
+                50.7,
+                -0.95
+              ],
+              "id": "sp_4"
+            },
+            {
+              "entity": "propBoneHeap",
+              "at": [
+                56.7,
+                -0.95
+              ],
+              "id": "sp_5"
             }
           ],
           "autoSpeed": 0.95
@@ -462,7 +502,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 68.7,
                 -1.2
@@ -484,7 +524,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 74.7,
                 -1.2
@@ -517,7 +557,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 82.4,
                 -1.2
@@ -527,6 +567,22 @@
                 1.2,
                 1
               ]
+            },
+            {
+              "entity": "propHymnBoard",
+              "at": [
+                68.7,
+                -0.95
+              ],
+              "id": "sp_6"
+            },
+            {
+              "entity": "propPulpit",
+              "at": [
+                74.7,
+                -0.95
+              ],
+              "id": "sp_7"
             }
           ],
           "autoSpeed": 0.95
@@ -550,7 +606,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 83.0,
                 1.6
@@ -573,7 +629,7 @@
               "id": "ladder998"
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 83.0,
                 6.8
@@ -602,7 +658,7 @@
           "turn": 2.0,
           "spawns": [
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 87.0,
                 6.8
@@ -613,7 +669,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 91.0,
                 7.4
@@ -624,7 +680,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 95.0,
                 6.8
@@ -635,7 +691,7 @@
               ]
             },
             {
-              "entity": "ledge",
+              "entity": "ledgeFloor998",
               "at": [
                 99.0,
                 7.4
@@ -660,6 +716,22 @@
                 7.8
               ],
               "id": "find_glint0"
+            },
+            {
+              "entity": "propBoneChime",
+              "at": [
+                87.0,
+                7.05
+              ],
+              "id": "sp_8"
+            },
+            {
+              "entity": "propChoirLoft",
+              "at": [
+                103.8,
+                7.9
+              ],
+              "id": "sp_9"
             }
           ],
           "autoSpeed": 0.95

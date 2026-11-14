@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "team": "Neutral",
+  "health": 0,
+  "shootable": false,
+  "tags": [
+    "storyProp"
+  ],
+  "body": {
+    "shape": "Box",
+    "size": [
+      0.4,
+      0.2
+    ],
+    "solid": false
+  },
+  "visual": {
+    "scale": 1.0,
+    "placeholderColor": "#6A5A4A",
+    "placeholderShape": "Box",
+    "placeholderLabel": false,
+    "layer": "Background2",
+    "sortingOrder": 90,
+    "hurtFlash": false,
+    "deathPop": false,
+    "animator": {
+      "parameters": [],
+      "states": [
+        {
+          "stateName": "Idle",
+          "spriteSheet": "Art/Props/Floor999/anvil_idle.png",
+          "fps": 8,
+          "loop": true,
+          "events": []
+        }
+      ],
+      "transitions": [],
+      "defaultStateName": "Idle"
+    },
+    "color": "#FFFFFF",
+    "facesLeft": false
+  },
+  "healthBar": {
+    "show": false
+  },
+  "abilities": []
+}
