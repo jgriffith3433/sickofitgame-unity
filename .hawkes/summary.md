@@ -9,6 +9,12 @@ The Meadow and Floors 1000-997 now have their own tiles and 9 story props each, 
 - **Playtest `story-props`** (`.hawkes/scenario.txt`): `SickOfItPlaytest.StoryProps.cs`, registered in `SickOfItPlaytest.cs`. Per level it checks from the data: 8+ props, 2+ reacting, each on its surface within 2 px, 3+ tile variants. Live, it checks that props are drawn behind the hero and every hostile shot (the phone criterion, run it at 390x844 too), that they rest on the collider below, and that two react with their sound. If the bot's play doesn't set two off, a named setup shortcut spawns an ember beside two props.
 - Docs: world-bible "Story props and per-level tilesets" (now built), Story.md "Hell's furniture", the AGENTS.md bullet.
 
+## Fun-reviewer's verdict: thin, not yet a living world
+It scored full 3, breathing 2, interactions 2, story 2, soul 3. I fixed one gap: six props (hen, rooster perch, gibbet cage, steam vent, brazier, bone chime) also act on their own clock, so rooms move without the hero (a `randomAfter` trigger; rest is 4 s). Because of that, the playtest's "reacted" count includes their own timer reactions. Still open:
+- No prop sound of its own: the hen plays the rooster's crow, the dispenser and bell share a ticket bell. Make about 19 sounds and a voiced hero line on the first reaction per level.
+- Every prop has the same verb (shoot or approach). Each level needs a prop he can use, for example a bell that opens a ledge or a valve that stops the lava for a second.
+- Floor 998's props thin out: 23.7 to 50.7 and 56.7 to 68.7 have none.
+
 ## Not done
 - **Meadow positions unverified.** I assumed the ground top is y -2.5 and a visible width of about +-5. Check the sod and props in the first screenshot.
 - **Tiles are one ledge piece, not a full set.** There is no separate underside or corner art: ledges stretch with `scale`, so corners stretch too. The Meadow has strip variants and two end pieces.

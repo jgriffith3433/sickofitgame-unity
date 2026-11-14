@@ -42,6 +42,7 @@ PX = 1.0 / 202.0      # one texture pixel of a ledge, in world units (the "2 px"
 # ----------------------------------------------------------------------------------------------------------------------
 # Reactions: prop -> (sound, volume, shot radius (0 = ignores shots), touch radius (0 = ignores him), 'done' = stays changed, shake)
 # Sounds are audio.json ids that already have a clip.
+# SELF: props that also act on their own clock (min, max seconds between), so a room is never still: the hen flaps, the cage creaks.
 # ----------------------------------------------------------------------------------------------------------------------
 REACT = {
     'hen': ('amb_rooster_crow', 0.9, 1.6, 1.0, False, 0.0),
@@ -64,6 +65,9 @@ REACT = {
     'ovlPortrait': ('sf_crumble', 0.5, 1.8, 0.0, True, 0.08),
     'brazier': ('amb_torch_crackle', 1.0, 1.4, 1.0, False, 0.0),
 }
+
+SELF = {'hen': (9, 16), 'roosterPerch': (14, 24), 'gibbet': (11, 19), 'steamVent': (8, 14), 'brazier': (10, 17), 'boneChime': (9, 15)}
+REST_SECONDS = 4.0
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Placements. Floors: (prop, section, ledge place [x, y] exactly as in the floor, dx from the ledge's middle).
@@ -221,6 +225,8 @@ def prop_entity(name, group):
             triggers.append({'type': 'witness', 'what': 'ShotPassed', 'within': shot})
         if touch:
             triggers.append({'type': 'distanceToPlayer', 'below': touch})
+        if name in SELF:
+            triggers.append({'type': 'randomAfter', 'min': SELF[name][0], 'max': SELF[name][1]})
         when = triggers[0] if len(triggers) == 1 else {'type': 'anyOf', 'triggers': triggers}
         on_enter = [{'type': 'playSound', 'sound': sound, 'volume': vol}]
         if shake:
@@ -232,7 +238,7 @@ def prop_entity(name, group):
         if after == 'done':
             states.append({'name': 'done', 'animation': 'Done'})
         else:
-            states.append({'name': 'rest', 'animation': 'Idle', 'transitions': [{'to': 'idle', 'when': {'type': 'after', 'seconds': 3.0}}]})
+            states.append({'name': 'rest', 'animation': 'Idle', 'transitions': [{'to': 'idle', 'when': {'type': 'after', 'seconds': REST_SECONDS}}]})
     d = {'schemaVersion': 1, 'team': 'Neutral', 'health': 0, 'shootable': False,
          'tags': ['storyProp'] + (['reacts'] if states else []),
          'body': {'shape': 'Box', 'size': [0.4, 0.2], 'solid': False},

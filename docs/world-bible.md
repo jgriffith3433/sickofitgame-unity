@@ -448,7 +448,7 @@ each standing on a platform top (base exactly on the collider's top, limit 2 px)
 level has its own tileset: three drawn variants per tile (a ledge, the Meadow's sod strip) chosen by where the tile stands (`Entity.PlaceHash`),
 the same body and collider as before. Nine props a level, written by `Tools/Levels/story_props.py`. A prop answers a shot passing within reach
 (the hero's, or any hostile ember: the `witness` trigger) and/or the hero standing close (`distanceToPlayer`): it plays a React clip with a
-sound, then stays changed (**done**) or rests 3 s and is ready again (**rest**). Canon: the props are the dead place's furniture, the same
+sound, then stays changed (**done**) or rests 4 s and is ready again (**rest**). Canon: the props are the dead place's furniture, the same
 few things Hell keeps in every room; nobody uses them.
 - **Meadow (9, 7 react):** the mill (sails creak, a sail tears loose: done), a well, the hen (flaps and squawks), the wrecked cart (a wheel rolls off, the sack spills: done), a hay bale (bursts when shot: done), a scarecrow, a rooster perch (crows), and the neighbours' two fences (a plank falls: done). The ground is sod: three strips and two ends.
 - **Floor 1000, The Landing (9, 4 react):** luggage nobody collects, the FLOOR 1000 sign (falls when shot: done), a shelf of lost hats, the take-a-number dispenser (a ticket slips out: done), a "please queue" rope, a service bell (rings), a standing cage, the welcome desk and a gibbet cage (swings, chains rattle).

@@ -98,7 +98,7 @@
           "to": "idle",
           "when": {
             "type": "after",
-            "seconds": 3.0
+            "seconds": 4.0
           }
         }
       ]
