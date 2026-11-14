@@ -37,6 +37,12 @@ namespace SickOfIt.Core.Audio
         /// <summary>Raised for every sound that really starts (effects when they begin, voice lines when the queue says them, the ambience bed).</summary>
         public static event System.Action<PlayedSound> Played;
 
+        /// <summary>A spoken line just started on the voice source (the one place every voiced line passes): the portraits listen.</summary>
+        public static event System.Action<SoundDef> VoiceStarted;
+
+        /// <summary>The voice source is playing a line right now.</summary>
+        public static bool VoicePlaying => VoiceQueue.IsPlaying;
+
         /// <summary>For the other players of sound in this assembly (the ambience bed): report a start the same way.</summary>
         public static void Report(PlayedSound sound) => Played?.Invoke(sound);
 
@@ -382,6 +388,8 @@ namespace SickOfIt.Core.Audio
             AudioSource source;
             float freeAt;
 
+            public static bool IsPlaying => instance != null && instance.source != null && instance.source.isPlaying;
+
             public static VoiceQueue Get()
             {
                 if (instance == null)
@@ -424,6 +432,7 @@ namespace SickOfIt.Core.Audio
                     if (GameSettings.SoundOn && GameSettings.VoiceVolume > 0.01f)
                         AudioBuses.VoiceStarted(sound.clip.length);
                     Played?.Invoke(new PlayedSound { id = sound.id, take = 0, takes = 1, pitch = 1f, volume = source.volume, bus = Bus.Voice, time = now });
+                    VoiceStarted?.Invoke(sound);
                     break;
                 }
             }

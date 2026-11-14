@@ -125,6 +125,8 @@ namespace SickOfIt.Data
         public YoobaConfig yooba = new YoobaConfig();
         [Tooltip("Rook on the Shaft: chalk tally wall of rewinds and one line per visit (ui/rook.json)")]
         public RookConfig rook = new RookConfig();
+        [Tooltip("Painted speaker portraits: five characters, four moods, a mouth-open frame each (ui/portraits.json)")]
+        public PortraitsConfig portraits = new PortraitsConfig();
         [Tooltip("The Codex: what the hero has seen, from the main and pause menus (ui/codex.json)")]
         public CodexConfig codex = new CodexConfig();
         [Tooltip("Shared look of all menus (ui/theme.json)")]
