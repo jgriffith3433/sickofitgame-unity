@@ -120,6 +120,12 @@ def sound_entry(old, **fields):
     return {k: out[k] for k in order}
 
 
+def kept_mark(old):
+    """A clip Hawkes Gen made (bake_gen_ambience.py writes `sfx|<id>`) keeps its mark; anything else is the synth stand-in."""
+    made = str((old or {}).get('generatedFrom') or '')
+    return made if made.startswith('sfx|') else MARK
+
+
 def build_audio(audio):
     index = {s['id']: i for i, s in enumerate(audio['sounds'])}
 
@@ -132,19 +138,14 @@ def build_audio(audio):
 
     for sid, (prompt, seconds, volume) in BEDS.items():
         old = audio['sounds'][index[sid]] if sid in index else None
-        made = (old or {}).get('generatedFrom') or MARK
-        # Keep a Gen mark if a prior pass already replaced the stand-in.
-        if not str(made).startswith('synth|') and 'gen' not in str(made).lower() and '|' in str(made):
-            pass
-        else:
-            made = MARK
+        made = kept_mark(old)
         put(sound_entry(old, id=sid, prompt=prompt, durationSeconds=seconds, promptInfluence=0.55, loop=True,
                         clip=f'{FOLDER}/{sid}.ogg', takes=[], bus='Ambience', generatedFrom=made, volume=volume,
                         pitchVariation=0, maxVoices=1, cooldown=0.1))
     for sid, (prompt, seconds, volume) in ONESHOTS.items():
         old = audio['sounds'][index[sid]] if sid in index else None
         put(sound_entry(old, id=sid, prompt=prompt, durationSeconds=seconds, promptInfluence=0.55, loop=False,
-                        clip=f'{FOLDER}/{sid}.ogg', takes=[], bus='Ambience', generatedFrom=MARK, volume=volume,
+                        clip=f'{FOLDER}/{sid}.ogg', takes=[], bus='Ambience', generatedFrom=kept_mark(old), volume=volume,
                         pitchVariation=0.04, maxVoices=3, cooldown=0.2))
     return audio
 
