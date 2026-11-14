@@ -193,6 +193,7 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Moment: A graze streak: he flinches, mutters a one-liner, and the HUD vessels crack or glow with what happens.
 - Personality: tired, dry, stubborn
 - Voice: `player` (lines `vo_hero_*`)
+- Barks: he comments aloud on what the player just did (first graze, graze streak of 5, kill streak of 5, down to one heart, healed, a death rewound, a dash through a bullet, 8 s idle, a new floor, the Overlord sighted, a buy at Yooba's): 45 lines `vo_hero_bark_*`, one per 15 s, none twice, in a one-line bubble above him (Story.md "The hero talks back")
 - Animations: Idle, Walk, Talk (Idle held while a voiced `vo_hero_*` line and its subtitle play), Jump, Fall, Fire, Dash, Hurt, Victory (art/hero.json)
 
 ### Yooba
@@ -296,6 +297,10 @@ The announcer's frame on every floor: **ember vessels** for hearts (crack on a h
 rewind juice (spins while held, drains as juice spends), a **gem** that pulses when a diamond lands, a **brass elevator dial**
 that ticks the floor down. Two corners only (health+reel top-left, gem+dial top-right); on a phone the rewind button is the
 big bottom-right reel (≥72 px). Same game state as before; art from `HudInkAtlas` (Gen sheet under Resources/UI). Playtest `hud-ink`.
+
+### The hero talks back (built Nov 14)
+On every played floor he mutters about what the player just pulled off or messed up: *Nope. Not today.* when a rewind takes his death back, *Five. I'm basically a professional.* on a graze streak,
+*Oh, he's watching. Fantastic.* when the Overlord shows. Voiced (`player`), 45 lines over 11 events, 15 s apart at most, never over another voice, captioned in a bubble above him for 1.5 s. `HeroBarks`, playtest `hero-barks`.
 
 ### The Overlord's taunts (Floors 1000-997, built Nov 12)
 He is on screen on every one of the first four floors, small and far on the upper edge, and answers what the hero just did: the floor entered, a death
