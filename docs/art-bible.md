@@ -164,6 +164,26 @@ includes `launcherThief`).
 - Fall and Hurt: PASS magenta poses held as 6-frame interim sheets (no i2v — budget spent). **J (2026-11-12): keep those stand-in holds; count the task done.** Do not re-queue Fall/Hurt clips unless a new budget is approved.
 - Playtest `hero-ink` covers the acceptance checks (8 states, foot-slide ≤ 2 px, phone ≥ 48 px).
 
+## 12. Speaker portraits
+
+Five busts (hero, Overlord, Yooba, Rook, Wick), each in four moods (neutral, smug/angry, laughing, shocked), each mood a closed-mouth
+and a mouth-open painting, so 40 pictures, shown by `SpeakerPortraits` (Docs/Story.md "Portraits"). Same inked style as the rest: one
+warm near-black outline `#140B0D`, flat two-tone cel, a thin rim light, no gradients, the character's own glow colour (the hero's eye
+slits `#FF8A1F`, the Overlord's red eyes, Yooba's pink eyeballs, Wick's flame).
+
+| Rule | Value |
+|---|---|
+| Framing | chest-up, facing the viewer, 768 px square, head about 55% of the height |
+| Consistency | every mood and every mouth-open frame is an `image.edit` of the character's approved master (open frames of that mood's closed frame, denoise ~0.7), so only the face changes and the flap does not jump |
+| Key | master on flat `#00ff00` (Yooba on `#ff00ff`, his body is green), cut with `image.cutout` / `remove_background`, no text, no speech bubble |
+| Files | `Assets/Art/Portraits/<character>_<mood>.png` and `<character>_<mood>_open.png`, imported as sprites, listed in `ui/portraits.json` (scope core.late) |
+| Screen size | 30% of the screen's short side, 96-240 px (72 px is the phone floor) |
+| Hero's mouth | a slatted grille at the chin of the closed helm; the open frame parts the slats with orange light |
+
+Masters (Gen assets, project `org_eb0d5c82e8da8c2d.sickofit`): hero `a_a617564507e2be88`, Overlord `a_4352d0bf18d8c7cc`, Yooba
+`a_21b62f5ba14ece92`, Rook `a_13c6197e3e0421d1`, Wick `a_fcc3c64e653bb334`. Until a character's frames are in, the overlay draws a
+stand-in bust from shapes (never a missing card).
+
 ## Backdrop layers
 Four layers per floor (sky, far, mid, near), 512x512, seamless left to right, 32 px per unit (16x16 world units), ridge
 line authored for the ground at y = -3. Replace a stand-in by saving a painted PNG over the same file name. See

@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using SickOfIt.Core.Audio;
 using SickOfIt.Core.UI.Menus;
+using SickOfIt.Core.UI.Portraits;
 using SickOfIt.Data;
 using SickOfIt.Data.Config;
 
@@ -236,8 +237,37 @@ namespace SickOfIt.Core.Progression
             }
         }
 
+        PortraitCharacter painted;
+        bool claimed;
+
+        void OnEnable()
+        {
+            // His painted portrait set (ui/portraits.json) replaces the sheet loops once it has paintings; the overlay then leaves his lines to this frame.
+            painted = PortraitLibrary.ById("yooba");
+            if (PortraitLibrary.PaintedMoods(painted) == 0)
+                painted = null;
+            if (painted != null && !claimed)
+            {
+                claimed = true;
+                SpeakerPortraits.Claim(painted.id);
+                SpeakerPortraits.Instance?.Dismiss();
+            }
+        }
+
+        void OnDisable()
+        {
+            if (claimed && painted != null)
+                SpeakerPortraits.Release(painted.id);
+            claimed = false;
+        }
+
         void Update()
         {
+            if (painted != null && art != null)
+            {
+                DrawPainted();
+                return;
+            }
             if (clipEnds > 0f && Time.unscaledTime >= clipEnds)
                 Play("idle");
             float t = Time.unscaledTime - clipStarted;
@@ -268,6 +298,25 @@ namespace SickOfIt.Core.Progression
             var m = mouth.rectTransform;
             m.anchorMin = new Vector2(0.3f, 0.33f - 0.12f * open);
             m.anchorMax = new Vector2(0.7f, 0.36f);
+        }
+
+        /// <summary>The painted portrait: his mood while a line of his plays, the mouth flapping with the clip, neutral and shut otherwise.</summary>
+        void DrawPainted()
+        {
+            IdleBehaviors(out float lift, out float tilt, out _, out _);
+            bool mine = Speaking && PortraitVoice.Voice == "yooba";
+            if (mine)
+            {
+                lift += Mathf.Abs(Mathf.Sin(Time.unscaledTime * 9f)) * 6f;
+                tilt += Mathf.Sin(Time.unscaledTime * 6f) * 2f;
+            }
+            body.anchoredPosition = new Vector2(0f, lift);
+            body.localRotation = Quaternion.Euler(0f, 0f, tilt);
+            body.localScale = Vector3.one;
+            if (blob != null)
+                blob.transform.parent.gameObject.SetActive(false);
+            art.enabled = true;
+            art.sprite = PortraitLibrary.Pick(painted, mine ? PortraitVoice.Mood : PortraitMood.Neutral, mine && PortraitVoice.MouthOpen);
         }
 
         void PlacePupils(float scale, float shift)

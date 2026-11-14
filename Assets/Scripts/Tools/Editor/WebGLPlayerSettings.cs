@@ -25,6 +25,7 @@ namespace SickOfIt.Tools.Editor
             readonly UnityEditor.WebGL.WasmCodeOptimization codeOptimization;
             readonly Il2CppCodeGeneration codeGeneration;
             readonly WebGLExceptionSupport exceptions;
+            readonly ManagedStrippingLevel stripping;
             bool done;
 
             internal Restore()
@@ -38,6 +39,7 @@ namespace SickOfIt.Tools.Editor
                 codeOptimization = UnityEditor.WebGL.UserBuildSettings.codeOptimization;
                 codeGeneration = PlayerSettings.GetIl2CppCodeGeneration(NamedBuildTarget.WebGL);
                 exceptions = PlayerSettings.WebGL.exceptionSupport;
+                stripping = PlayerSettings.GetManagedStrippingLevel(NamedBuildTarget.WebGL);
             }
 
             public void Dispose()
@@ -54,6 +56,7 @@ namespace SickOfIt.Tools.Editor
                 UnityEditor.WebGL.UserBuildSettings.codeOptimization = codeOptimization;
                 PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, codeGeneration);
                 PlayerSettings.WebGL.exceptionSupport = exceptions;
+                PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.WebGL, stripping);
             }
         }
 
@@ -84,9 +87,10 @@ namespace SickOfIt.Tools.Editor
             // null/bounds checks lose their try/catch landing pads, which is a few percent of the wasm.
             Set(log, "exception support", PlayerSettings.WebGL.exceptionSupport,
                 WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly, v => PlayerSettings.WebGL.exceptionSupport = v);
-            // Not changed on purpose: managed stripping (the JSON content types are found by reflection, so a higher level
-            // needs Assets/link.xml checked in a WebGL build first).
-            log($"    managed stripping {PlayerSettings.GetManagedStrippingLevel(NamedBuildTarget.WebGL)} (unchanged)");
+            // Managed stripping Low: unused code in the Unity/System/Mono assemblies goes. Assets/link.xml keeps every SickOfIt
+            // assembly whole, because the JSON layer finds the content types by reflection.
+            Set(log, "managed stripping", PlayerSettings.GetManagedStrippingLevel(NamedBuildTarget.WebGL), ManagedStrippingLevel.Low,
+                v => PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.WebGL, v));
             return restore;
         }
 

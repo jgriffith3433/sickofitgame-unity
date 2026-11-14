@@ -30,3 +30,14 @@ No Gen calls this session ($0). The art in the repo came from the earlier pass i
 - None with the other changes. I touched `SickOfItPlaytest.cs` (3 small edits), `AGENTS.md` (one bullet), `Docs/Story.md` and `docs/world-bible.md` (a section each), and `Tools/Levels/ambient_finds.py` (its `STATIC` list now includes the four new ledge ids).
 - `companions.py --check` and `overlord_cameos.py --check` report out of date, as they do on the base commit (I checked).
 - The PNGs are outside this repo's sparse checkout. I staged them with `git add --sparse` and they are LFS pointers in the commit.
+
+## Merge with beta (portraits, hero-talks-back, enemy ink and Chapter One changes)
+
+Conflicts and how each was resolved:
+- `.hawkes/scenario.txt`: one scenario per change; kept `story-props` (beta's `portraits` belongs to the change that already merged).
+- `.hawkes/learned.md`, `.hawkes/try.md`: kept both sides' entries (mine first, beta's after).
+- `.hawkes/summary.md`: kept this change's summary and added this section (beta's summary belonged to the other change).
+- `Docs/Story.md`: both sides appended a section at the same place ("Hell's furniture" here, "Portraits" on beta); kept both.
+- `AGENTS.md`, `Assets/Scripts/Playtest/SickOfItPlaytest.cs`, `docs/world-bible.md`: merged automatically with no markers; both sides' entries present.
+
+Checks after the merge: no conflict markers left; `audio.json` parses; `story_art.py --check` OK. `story_props.py --check` can't run in this sparse checkout (the prop PNGs are not checked out, so it stops at "no art for prop anvil"); the writer and its tables were not touched by the merge. Not run in Unity or a browser.

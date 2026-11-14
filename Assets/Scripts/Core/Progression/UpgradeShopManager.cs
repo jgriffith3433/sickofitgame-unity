@@ -676,6 +676,8 @@ namespace SickOfIt.Core.Progression
                 SickOfIt.Core.Audio.UiSounds.Purchase();
                 bool weaponGood = def.Effect == ShopEffect.KeepWeapons || def.Effect == ShopEffect.MeleeDamage || def.Effect == ShopEffect.MeleeReach;
                 YoobaSay(weaponGood ? YoobaMoment.ShopBuyWeapon : YoobaMoment.ShopBuy, true, weaponGood ? null : def.id);
+                if (heroBark != null) StopCoroutine(heroBark);
+                heroBark = StartCoroutine(HeroShopBark());
             }
             else
             {
@@ -683,6 +685,28 @@ namespace SickOfIt.Core.Progression
                 YoobaSay(YoobaMoment.ShopBroke, true);
             }
             RefreshUI();
+        }
+
+        private Coroutine heroBark;
+
+        // The hero answers a buy once Yooba has finished his own line (never over it): a bark with its caption where the subtitle is.
+        private System.Collections.IEnumerator HeroShopBark()
+        {
+            float waited = 0f;
+            while ((yoobaTalk != null || SickOfIt.Core.Audio.Sfx.VoiceBusy) && waited < 6f)
+            {
+                waited += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            string text = SickOfIt.Gameplay.HeroBarks.SpeakInShop();
+            if (!string.IsNullOrEmpty(text))
+            {
+                ShowYoobaSubtitle(text);
+                yield return new WaitForSecondsRealtime(SickOfIt.Gameplay.HeroBarks.CaptionSeconds);
+                if (yoobaTalk == null)
+                    ShowYoobaSubtitle(null);
+            }
+            heroBark = null;
         }
 
         private void OnBackClicked()
