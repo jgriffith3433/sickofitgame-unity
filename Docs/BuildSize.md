@@ -261,3 +261,11 @@ Beta v142 first-five@phone: wasm 10.6 MB + data 5.2 MB + framework 0.1 MB, ~16 M
 
 v144's wasm was still 9.6 MB (~5.5 s per MB on Slow 4G). `WebGLPlayerSettings.Apply` now also sets exception support to
 `ExplicitlyThrownExceptionsOnly` (restored after the build). Not done: managed stripping (needs a checked link.xml) and Brotli.
+
+## Managed stripping Low with a link.xml (2026-11-14, phone load 84 s)
+
+Wasm 9.6 MB + data 5.2 MB is still ~79-84 s at slow-4g, so the bytes remain the lever. `WebGLPlayerSettings.Apply` now sets managed stripping to Low
+(restored after the build) and `Assets/link.xml` (extended) preserves every SickOfIt assembly (and nappin) whole, so the reflection-built JSON content types survive.
+Low, not Medium/High: serialised Unity value types (Vector2, Color, Rect) are read by field reflection and haven't been checked in a WebGL build.
+Not measured here (no Unity/build): beta's next `first-five@local:phone` reports `phone.secondsToGameplay`. If a content type goes missing in a build
+("unknown type" from the importer), add its assembly to link.xml. Next levers: Medium after a checked build, Brotli (needs the hosted page).
