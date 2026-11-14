@@ -32,7 +32,7 @@ namespace SickOfIt.Playtest
 
         sealed partial class Session
         {
-            int storyPassed, storyFailed;
+            int propsPassed, propsFailed;
             readonly List<Sfx.PlayedSound> storySounds = new List<Sfx.PlayedSound>();
 
             sealed class PropWatch
@@ -48,12 +48,12 @@ namespace SickOfIt.Playtest
             {
                 if (ok)
                 {
-                    storyPassed++;
+                    propsPassed++;
                     Run.Event("check", $"story-props {beat}: ok ({detail})");
                 }
                 else
                 {
-                    storyFailed += warnOnly ? 0 : 1;
+                    propsFailed += warnOnly ? 0 : 1;
                     Run.Event("check", $"story-props {beat}: FAILED ({detail})");
                     Run.Problem(warnOnly ? PlaytestSeverity.Warning : PlaytestSeverity.Bug, $"story-props {beat}: {detail}");
                 }
@@ -181,9 +181,9 @@ namespace SickOfIt.Playtest
                 }
                 if (Run.Done)
                     yield break;
-                Run.Metric("storyProps.passed", storyPassed);
-                Run.Metric("storyProps.failed", storyFailed);
-                End(storyFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
+                Run.Metric("storyProps.passed", propsPassed);
+                Run.Metric("storyProps.failed", propsFailed);
+                End(propsFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
             }
 
             IEnumerator StoryPropsLevel(GameContent content, string levelName, int index)
