@@ -1,1 +1,4 @@
+- Tool: `Tools/Art/bake_clips.mjs` bakes i2v clips to sheets with only ffmpeg and node when `art.mjs --build` can't run (no Pillow/numpy/DoD); job files live in `Tools/Art/bake_jobs/`.
+- The agent worktree is sparse: PNGs are not checked out (`git cat-file blob HEAD:path | git lfs smudge` reads one); writing a new PNG and `git add` still goes through LFS.
+- Hawkes Gen's `get_task` shows a cold RunPod start takes several minutes; i2v clips otherwise finish in 30-150 s and cost $0.015-0.074.
 - canon: Chapter One close — the hero's last line on the card is "Daylight's still up there. Somewhere." (a hook toward the Floor 500 door); the Overlord's lines are "Caught up.", "Watch.", "Not far enough." (bored, with a long pause).
