@@ -233,6 +233,8 @@ namespace SickOfIt.Tools.Editor
 
         /// <summary>What every level and scene plays with besides its own content (the old enemy and projectile configs).</summary>
         const string Play = "play";
+        /// <summary>The old `enemyTypes` prefabs and sheets: only a level without a script spawns them (a script's levels ignore the legacy list).</summary>
+        const string PlayLegacy = "play.legacy";
 
         /// <summary>
         /// What only a screen after the main menu reads (level and video select cards, the Shaft, Yooba, the shop): loaded behind the
@@ -280,7 +282,9 @@ namespace SickOfIt.Tools.Editor
             if (path.StartsWith("player.animationConfig.states.Array.data[", StringComparison.Ordinal))
                 return "hero";
             // The old enemy and projectile configs (the levels without a script, the hero's rocket) only ever play in a level.
-            if (path.StartsWith("enemyTypes.", StringComparison.Ordinal) || path.StartsWith("projectileConfigs.", StringComparison.Ordinal))
+            if (path.StartsWith("enemyTypes.", StringComparison.Ordinal))
+                return PlayLegacy;
+            if (path.StartsWith("projectileConfigs.", StringComparison.Ordinal))
                 return Play;
             var match = Indexed.Match(path);
             if (!match.Success)
@@ -415,6 +419,8 @@ namespace SickOfIt.Tools.Editor
                 var include = includeOf("level/" + level.levelName);
                 include.Add("hero");
                 include.Add(Play);
+                if (!level.HasScript)
+                    include.Add(PlayLegacy);
                 var seeds = new List<string>();
                 int lowest = 0;
                 if (level.HasScript)
