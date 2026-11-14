@@ -554,34 +554,6 @@
             "type": "runSequence",
             "steps": [
               {
-                "type": "spawn",
-                "entity": "teachGlow",
-                "anchor": "Camera",
-                "at": [
-                  0.0,
-                  1.2
-                ],
-                "id": "teach999",
-                "facePlayer": false
-              },
-              {
-                "type": "playSound",
-                "sound": "magma_rumble",
-                "volume": 1.0
-              },
-              {
-                "type": "emit",
-                "signal": "floors:999:glow"
-              },
-              {
-                "type": "emit",
-                "signal": "floors:999:cue"
-              },
-              {
-                "type": "wait",
-                "seconds": 1.2
-              },
-              {
                 "type": "cameraShake",
                 "intensity": 0.12,
                 "duration": 0.4
@@ -1283,6 +1255,53 @@
                     ]
                   }
                 ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "first4: teach rising lava",
+        "when": {
+          "type": "sectionReached",
+          "section": "shelf"
+        },
+        "maxTimes": 1,
+        "do": [
+          {
+            "type": "runSequence",
+            "steps": [
+              {
+                "type": "wait",
+                "seconds": 0.3
+              },
+              {
+                "type": "spawn",
+                "entity": "teachGlow",
+                "anchor": "Camera",
+                "at": [
+                  0.0,
+                  1.2
+                ],
+                "id": "teach999",
+                "facePlayer": false
+              },
+              {
+                "type": "playSound",
+                "sound": "magma_rumble",
+                "volume": 1.0
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:glow"
+              },
+              {
+                "type": "emit",
+                "signal": "floors:999:cue"
+              },
+              {
+                "type": "wait",
+                "seconds": 1.2
               }
             ]
           }
