@@ -1,3 +1,8 @@
+- canon: Hero portrait — his helm has a slatted mouth grille that parts with orange light when he speaks; smug is a scowl with a raised fist, laughing is both fists up and a grin, shocked is round orange eyes.
+- canon: Overlord portrait — horned, blue-black skin, red eyes, dark cape with a ring clasp; he laughs rarely, and his smug is a thin cold smile.
+- canon: Yooba portrait — green slime with two stalk eyes; smug is a cheeky half-lidded look with a curled stalk, shocked has huge round eyes.
+- canon: Rook portrait — bald, brown long coat over a grey vest with a "2" medal, a red scarf and a rope over his shoulder, flames behind him.
+- canon: Wick portrait — a grey-hooded skull with a lit candle on his head and a wooden staff; the flame flares when he is shocked.
 - Tool: `Tools/Art/bake_clips.mjs` bakes i2v clips to sheets with only ffmpeg and node when `art.mjs --build` can't run (no Pillow/numpy/DoD); job files live in `Tools/Art/bake_jobs/`.
 - The agent worktree is sparse: PNGs are not checked out (`git cat-file blob HEAD:path | git lfs smudge` reads one); writing a new PNG and `git add` still goes through LFS.
 - Hawkes Gen's `get_task` shows a cold RunPod start takes several minutes; i2v clips otherwise finish in 30-150 s and cost $0.015-0.074.

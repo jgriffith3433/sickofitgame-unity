@@ -56,6 +56,8 @@ namespace SickOfIt.Data.Config
         public string voice = "";
         [Tooltip("Voice: a raw ElevenLabs voice id instead of a named voice. Empty = the named voice, else defaultVoiceId.")]
         public string voiceId = "";
+        [Tooltip("Voice: the speaker's expression while this line plays (portraits): neutral, smug (angry), laughing or shocked. Empty = read from the words and delivery tags (PortraitMood).")]
+        public string mood = "";
 
         [Tooltip("The audio file. Filled in by the generator. With 'takes' it is the first take.")]
         public AudioClip clip;

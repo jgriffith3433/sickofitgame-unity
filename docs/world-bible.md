@@ -195,6 +195,7 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Voice: `player` (lines `vo_hero_*`)
 - Barks: he comments aloud on what the player just did (first graze, graze streak of 5, kill streak of 5, down to one heart, healed, a death rewound, a dash through a bullet, 8 s idle, a new floor, the Overlord sighted, a buy at Yooba's): 45 lines `vo_hero_bark_*`, one per 15 s, none twice, in a one-line bubble above him (Story.md "The hero talks back")
 - Animations: Idle, Walk, Talk (Idle held while a voiced `vo_hero_*` line and its subtitle play), Jump, Fall, Fire, Dash, Hurt, Victory (art/hero.json)
+- Portrait: neutral/smug/laughing/shocked, closed and mouth-open (helm grille); shown on every `vo_hero_*` line (ui/portraits.json, Docs/Story.md "Portraits")
 
 ### Yooba
 - Want: To keep the climber alive and sell him goods, and to find his Lost Things.
@@ -203,6 +204,7 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Personality: wobbly, warm, nosy
 - Voice: `yooba`
 - Animations: Idle, Walk, Talk, Laugh, Cough (ui/yooba.json portrait)
+- Portrait: four moods x closed/open, in the shop frame and the overlay (ui/portraits.json)
 
 ### The Announcer
 - Want: To make Hell a show and every floor a headline.
@@ -219,6 +221,7 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Personality: bored, enormous, stuck
 - Voice: `overlord`
 - Animations: Idle, Walk, Talk, Laugh, Point, Flee (art/overlordFar.json, art/overlordTaunt.json)
+- Portrait: four moods x closed/open, shown on every `vo_ovl_*`/`vo_portal_overlord_*`/`vo_ch1_ovl_*` line; his grin is the rare frame
 
 ### Rook
 - Want: To reach the top first and be seen doing it — and to prove the hero's R is cheating by chalking every rewind.
@@ -227,6 +230,7 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Personality: brash, vain, sly
 - Voice: `rook` (Hawkes Gen voice id `tyqG7NyoJ3HhzdkhAsW7`; bright, boastful — Tools/Audio/companion_voices.json)
 - Animations: Idle, Walk, Talk / ScratchMark, Hiccup (art/rook.json; Shaft portrait uses Idle/Talk/Scratch)
+- Portrait: four moods x closed/open, on every `vo_rook*` line
 
 ### Wick
 - Want: To keep Circle X's lamps lit, because someone must.
@@ -235,6 +239,7 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Personality: patient, repetitive, kind
 - Voice: `wick` (Hawkes Gen voice id `nXyPsMINc4YNXaqnmYmR`; soft wheeze — Tools/Audio/companion_voices.json)
 - Animations: Idle, Walk, Talk / LightLamp, Hiccup (art/wick.json)
+- Portrait: four moods x closed/open (stern is his smug frame), on every `vo_wick*` line
 
 ### Pointer
 - Want: To show the way, even when it is the wrong one.

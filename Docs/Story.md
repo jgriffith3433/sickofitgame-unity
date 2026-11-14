@@ -2929,3 +2929,17 @@ hit."; B "B. Solid. Like a stone that only sinks a little." / "Not bad! The floo
 the best letter, really." / "Okay. Okay! We'll call that a warm-up." Code: `GameplayHud.Screens.cs` (the tally, `ShowResults`),
 `GameplayHud.Results.cs` (slam, embers, banner, diamond flight), `Core/Progression/ResultsYooba.cs` (his portrait, through
 `NextGoalBridge.BuildResultsYooba`). Playtest `level-clear`.
+
+## Portraits
+
+*When someone talks, you see who, and how they mean it.* Five characters have a painted portrait: the hero, the Overlord, Yooba,
+Rook and Wick. Whenever a voiced line of theirs plays (a beat, the Shaft, the shop, a death, a floor), their card slides in from
+the left edge in 0.12 s (from the right when the hero stands on the left), wears the line's mood, moves its mouth with the clip's
+loudness and, 0.6 s after the line ends, slides away. Four moods each: **neutral**, **smug** (the angry frame: Wick's is stern,
+Yooba's cheeky, the hero's a scowl), **laughing** and **shocked**; every mood has a closed-mouth and a mouth-open painting. The hero's
+helm has a slatted mouth grille that parts with orange light when he speaks; the Overlord grins only when he enjoys himself, which
+is the rare frame. Each line's mood is its `mood` field in `audio.json` (`Tools/Audio/portrait_moods.py` writes it from the delivery
+tags and the words; its table holds the lines a reader would play differently). Pictures: `Assets/Art/Portraits/`, set in
+`ui/portraits.json`, painted in the art bible's inked style (docs/art-bible.md section 12). Yooba's shop frame shows the same set
+in its own place (the overlay steps aside for him there).
+

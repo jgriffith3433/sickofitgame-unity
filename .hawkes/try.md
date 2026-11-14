@@ -1,3 +1,10 @@
+- Play the Meadow's portal scene, then Floors 1000-997: each time the hero, the Overlord, Yooba, Rook or Wick speaks, a painted card slides in from the left (right if the hero is standing there) and flaps its mouth with the voice.
+- Visit Yooba on the Shaft or the main menu: his shop frame shows the painted slime and his four moods.
+- Die on any floor: the hero's lines on the death screen show his card too.
+- On a phone (390x844): the card is about 117 px tall, in a corner clear of the hero and the touch stick.
+- Run the `portraits` playtest at 390x844 touch.
+
+Also on beta from the other change (the hero talks back):
 1. Open the beta game, press Play, and climb Floors 1000-998 (the Landing and up). About 3 s after each floor opens, he mutters a line and a small bubble with the same words appears above his head for about a second and a half.
 2. Weave close past shots without being hit: the first near miss gets a smug line, and a streak of 5 near misses gets another (not within 15 s of his last remark).
 3. Drop to one heart, pick up a heart, or kill five enemies without a hit: each gets its own line. Stand still for 8 s and he complains about it.

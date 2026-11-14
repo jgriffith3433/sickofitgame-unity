@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "slideSeconds": 0.12,
+  "holdSeconds": 0.6,
+  "slideOutSeconds": 0.15,
+  "heightFraction": 0.3,
+  "minHeight": 96.0,
+  "maxHeight": 240.0,
+  "heightLandscape": 0.62,
+  "heightPortrait": 0.7,
+  "characters": [
+    {
+      "id": "hero",
+      "voice": "player",
+      "displayName": "HERO",
+      "color": "#FF8A1F",
+      "frames": [
+        {
+          "mood": "neutral",
+          "closed": "Art/Portraits/hero_neutral.png",
+          "open": "Art/Portraits/hero_neutral_open.png"
+        },
+        {
+          "mood": "smug",
+          "closed": "Art/Portraits/hero_smug.png",
+          "open": "Art/Portraits/hero_smug_open.png"
+        },
+        {
+          "mood": "laughing",
+          "closed": "Art/Portraits/hero_laughing.png",
+          "open": "Art/Portraits/hero_laughing_open.png"
+        },
+        {
+          "mood": "shocked",
+          "closed": "Art/Portraits/hero_shocked.png",
+          "open": "Art/Portraits/hero_shocked_open.png"
+        }
+      ]
+    },
+    {
+      "id": "overlord",
+      "voice": "overlord",
+      "displayName": "OVERLORD",
+      "color": "#C060A8",
+      "frames": [
+        {
+          "mood": "neutral",
+          "closed": "Art/Portraits/overlord_neutral.png",
+          "open": "Art/Portraits/overlord_neutral_open.png"
+        },
+        {
+          "mood": "smug",
+          "closed": "Art/Portraits/overlord_smug.png",
+          "open": "Art/Portraits/overlord_smug_open.png"
+        },
+        {
+          "mood": "laughing",
+          "closed": "Art/Portraits/overlord_laughing.png",
+          "open": "Art/Portraits/overlord_laughing_open.png"
+        },
+        {
+          "mood": "shocked",
+          "closed": "Art/Portraits/overlord_shocked.png",
+          "open": "Art/Portraits/overlord_shocked_open.png"
+        }
+      ]
+    },
+    {
+      "id": "yooba",
+      "voice": "yooba",
+      "displayName": "YOOBA",
+      "color": "#2B9E33",
+      "frames": [
+        {
+          "mood": "neutral",
+          "closed": "Art/Portraits/yooba_neutral.png",
+          "open": "Art/Portraits/yooba_neutral_open.png"
+        },
+        {
+          "mood": "smug",
+          "closed": "Art/Portraits/yooba_smug.png",
+          "open": "Art/Portraits/yooba_smug_open.png"
+        },
+        {
+          "mood": "laughing",
+          "closed": "Art/Portraits/yooba_laughing.png",
+          "open": "Art/Portraits/yooba_laughing_open.png"
+        },
+        {
+          "mood": "shocked",
+          "closed": "Art/Portraits/yooba_shocked.png",
+          "open": "Art/Portraits/yooba_shocked_open.png"
+        }
+      ]
+    },
+    {
+      "id": "rook",
+      "voice": "rook",
+      "displayName": "ROOK",
+      "color": "#F2A93B",
+      "frames": [
+        {
+          "mood": "neutral",
+          "closed": "Art/Portraits/rook_neutral.png",
+          "open": "Art/Portraits/rook_neutral_open.png"
+        },
+        {
+          "mood": "smug",
+          "closed": "Art/Portraits/rook_smug.png",
+          "open": "Art/Portraits/rook_smug_open.png"
+        },
+        {
+          "mood": "laughing",
+          "closed": "Art/Portraits/rook_laughing.png",
+          "open": "Art/Portraits/rook_laughing_open.png"
+        },
+        {
+          "mood": "shocked",
+          "closed": "Art/Portraits/rook_shocked.png",
+          "open": "Art/Portraits/rook_shocked_open.png"
+        }
+      ]
+    },
+    {
+      "id": "wick",
+      "voice": "wick",
+      "displayName": "WICK",
+      "color": "#9BE8A0",
+      "frames": [
+        {
+          "mood": "neutral",
+          "closed": "Art/Portraits/wick_neutral.png",
+          "open": "Art/Portraits/wick_neutral_open.png"
+        },
+        {
+          "mood": "smug",
+          "closed": "Art/Portraits/wick_smug.png",
+          "open": "Art/Portraits/wick_smug_open.png"
+        },
+        {
+          "mood": "laughing",
+          "closed": "Art/Portraits/wick_laughing.png",
+          "open": "Art/Portraits/wick_laughing_open.png"
+        },
+        {
+          "mood": "shocked",
+          "closed": "Art/Portraits/wick_shocked.png",
+          "open": "Art/Portraits/wick_shocked_open.png"
+        }
+      ]
+    }
+  ]
+}
