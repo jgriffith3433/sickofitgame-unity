@@ -32,7 +32,7 @@ namespace SickOfIt.Playtest
 
         sealed partial class Session
         {
-            int storyPassed, storyFailed;
+            int propsPassed, propsFailed;
             readonly List<Sfx.PlayedSound> storySounds = new List<Sfx.PlayedSound>();
 
             sealed class PropWatch
@@ -44,16 +44,16 @@ namespace SickOfIt.Playtest
                 public string Sound;
             }
 
-            void StoryCheck(string beat, bool ok, string detail, bool warnOnly = false)
+            void PropsCheck(string beat, bool ok, string detail, bool warnOnly = false)
             {
                 if (ok)
                 {
-                    storyPassed++;
+                    propsPassed++;
                     Run.Event("check", $"story-props {beat}: ok ({detail})");
                 }
                 else
                 {
-                    storyFailed += warnOnly ? 0 : 1;
+                    propsFailed += warnOnly ? 0 : 1;
                     Run.Event("check", $"story-props {beat}: FAILED ({detail})");
                     Run.Problem(warnOnly ? PlaytestSeverity.Warning : PlaytestSeverity.Bug, $"story-props {beat}: {detail}");
                 }
@@ -181,9 +181,9 @@ namespace SickOfIt.Playtest
                 }
                 if (Run.Done)
                     yield break;
-                Run.Metric("storyProps.passed", storyPassed);
-                Run.Metric("storyProps.failed", storyFailed);
-                End(storyFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
+                Run.Metric("storyProps.passed", propsPassed);
+                Run.Metric("storyProps.failed", propsFailed);
+                End(propsFailed > 0 ? PlaytestOutcome.Error : PlaytestOutcome.Done);
             }
 
             IEnumerator StoryPropsLevel(GameContent content, string levelName, int index)
@@ -192,7 +192,7 @@ namespace SickOfIt.Playtest
                 string L = levelName;
                 if (n == 0)
                 {
-                    StoryCheck($"{L} exists", false, "no such level in game.json");
+                    PropsCheck($"{L} exists", false, "no such level in game.json");
                     yield break;
                 }
 
@@ -204,8 +204,8 @@ namespace SickOfIt.Playtest
                 foreach (var p in props)
                     if (content.Entities[p.Entity].tags.Contains("reacts"))
                         reacting++;
-                StoryCheck($"{L}: story props placed", props.Count >= 8, $"{props.Count} props (8 wanted)");
-                StoryCheck($"{L}: props that react", reacting >= 2, $"{reacting} of them answer a shot or the hero (2 wanted)");
+                PropsCheck($"{L}: story props placed", props.Count >= 8, $"{props.Count} props (8 wanted)");
+                PropsCheck($"{L}: props that react", reacting >= 2, $"{reacting} of them answer a shot or the hero (2 wanted)");
                 float worst = 0f;
                 string worstProp = "";
                 int floating = 0;
@@ -220,7 +220,7 @@ namespace SickOfIt.Playtest
                         worstProp = p.Entity;
                     }
                 }
-                StoryCheck($"{L}: every prop rests on its surface", floating == 0, $"{floating} of {props.Count} off its surface; worst gap {worst * 202f:0.0} px ({worstProp}, limit 2 px)");
+                PropsCheck($"{L}: every prop rests on its surface", floating == 0, $"{floating} of {props.Count} off its surface; worst gap {worst * 202f:0.0} px ({worstProp}, limit 2 px)");
                 Run.Metric($"storyProps.{L}.props", props.Count);
                 Run.Metric($"storyProps.{L}.reacting", reacting);
                 var variants = new HashSet<string>();
@@ -230,7 +230,7 @@ namespace SickOfIt.Playtest
                     if (def.initialStates.Count > 0)
                         variants.Add(def.initialStates[Entity.PlaceHash(tile.at, def.initialStates.Count)]);
                 }
-                StoryCheck($"{L}: tile variants by place", variants.Count >= 3, $"{variants.Count} of {tiles.Count} placed tiles' variants ({string.Join("", variants)}) by Entity.PlaceHash");
+                PropsCheck($"{L}: tile variants by place", variants.Count >= 3, $"{variants.Count} of {tiles.Count} placed tiles' variants ({string.Join("", variants)}) by Entity.PlaceHash");
                 Run.Metric($"storyProps.{L}.tileVariants", variants.Count);
 
                 // 2. Live: open the level and play it.
@@ -377,13 +377,13 @@ namespace SickOfIt.Playtest
                         withSound++;
                 }
                 Run.Event("storyprops", $"{levelName}: {watch.Count} props seen live, {reacted} reacted, {withSound} with their sound, {liveTiles.Count} live tile variants");
-                StoryCheck($"{L}: props are drawn behind the hero and every hostile shot", behindChecked > 0 && behindFails == 0,
+                PropsCheck($"{L}: props are drawn behind the hero and every hostile shot", behindChecked > 0 && behindFails == 0,
                     behindFails == 0 ? $"{behindChecked} props seen, all behind (band Background2, under the Player band)" : $"{behindFails} of {behindChecked}: {behindDetail}");
-                StoryCheck($"{L}: live props rest on the collider below", contactChecked == 0 || contactFails == 0,
+                PropsCheck($"{L}: live props rest on the collider below", contactChecked == 0 || contactFails == 0,
                     contactFails == 0 ? $"{contactChecked} props measured, worst gap {worstLive * 202f:0.0} px" : $"{contactFails} of {contactChecked}: {contactDetail}");
-                StoryCheck($"{L}: two props reacted, each with its sound", reacted >= 2 && withSound >= 2,
+                PropsCheck($"{L}: two props reacted, each with its sound", reacted >= 2 && withSound >= 2,
                     $"{reacted} reacted, {withSound} with their audio.json sound heard ({storySounds.Count - soundsBefore} sounds in all)");
-                StoryCheck($"{L}: tile variants on screen", liveTiles.Count >= 3, $"{liveTiles.Count} variants drawn while it played ({string.Join(", ", liveTiles)})", warnOnly: liveTiles.Count >= 2);
+                PropsCheck($"{L}: tile variants on screen", liveTiles.Count >= 3, $"{liveTiles.Count} variants drawn while it played ({string.Join(", ", liveTiles)})", warnOnly: liveTiles.Count >= 2);
                 Run.Metric($"storyProps.{L}.seenLive", watch.Count);
                 Run.Metric($"storyProps.{L}.reacted", reacted);
                 Run.Metric($"storyProps.{L}.liveTileVariants", liveTiles.Count);
