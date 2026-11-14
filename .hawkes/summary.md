@@ -1,30 +1,43 @@
-# Speaker portraits: the paintings are in and wired
+# Summary
 
-**What a player gets.** Whenever the hero, the Overlord, Yooba, Rook or Wick speaks a voiced line, their painted portrait slides in (0.12 s), wears the line's mood, flaps its mouth with the clip's loudness, shuts within 0.2 s of the line ending and slides away. The code was committed earlier (`SpeakerPortraits`, `PortraitVoice`, 604 `mood` fields in `audio.json`, Yooba's shop frame, playtest `portraits`). This pass adds the art.
+The Meadow and Floors 1000-997 now have their own tiles and 9 story props each, wired into the levels. **Nothing has been run in Unity or a browser** (none here): no screenshots, the C# is uncompiled, and the playtest has never been played. The PR needs the build server and beta's `story-props` run before the criteria count as met.
 
-**This pass**
-- Judged all 20 mouth-open frames (Gen jobs `j_ab44c910e9fb` ... `j_21aced7a7652`). Every one keeps the face, pose and outfit of its closed frame, the mouth is clearly open, and there is no stray text or bubble. No redo was needed.
-- Cut out all 40 frames (20 closed, 20 open) with `image.remove-background`, then trimmed each closed/open pair to one shared box so the flap doesn't shift the bust. Each is 512x512 and the bust sits on the card's bottom edge. They are `Assets/Art/Portraits/<char>_<mood>[_open].png` with `.meta` files (single sprite, no mipmaps, fresh GUIDs).
-- `Assets/GameConfig/ui/portraits.json`: every character now has its four frames (neutral, smug, laughing, shocked), each with closed and open sprites. The stand-in bust stays only as a fallback in code.
-- AGENTS.md "Speaker portraits" notes where the paintings live.
+## What changed
+- **Tilesets.** Floors 1000-997 each have a ledge entity of their own (`ledgeFloor1000`..`997`) with three drawn variants (`Assets/Art/Tiles/<set>/LedgeA|B|C`). The variant is picked by where the ledge stands: new `EntityDef.initialStateByPlace` and `Entity.PlaceHash`. The body is `ledge`'s, so colliders are unchanged. The Meadow's ground gets three sod strips and two ends (`sodStrip`, `sodEndL`, `sodEndR`), also picked by place.
+- **Story props.** There are 9 per level (45 in all), in `Assets/Art/Props/<set>`, each an entity `prop<Name>` drawn behind the Player band (Background2, order 90). They stand exactly on their ledge top or the ground (0 px gap in the data; limit 2 px). 7 of 9 react in the Meadow, 4 on 1000, 3 each on 999, 998 and 997. A prop reacts to a shot or hostile ember passing, and/or to the hero close by. It plays its React clip with an existing sound, then stays changed (a sign that fell stays down) or rests for 3 s.
+- **Writers, no hand edits.** `Tools/Art/story_art.py` writes the `.sheet.json` beside each PNG. `Tools/Levels/story_props.py` writes the entities and edits the five levels. Both have `--check` and both pass. `story_props.py` runs last, after the other floor writers; AGENTS.md says so.
+- **Playtest `story-props`** (`.hawkes/scenario.txt`): `SickOfItPlaytest.StoryProps.cs`, registered in `SickOfItPlaytest.cs`. Per level it checks from the data: 8+ props, 2+ reacting, each on its surface within 2 px, 3+ tile variants. Live, it checks that props are drawn behind the hero and every hostile shot (the phone criterion, run it at 390x844 too), that they rest on the collider below, and that two react with their sound. If the bot's play doesn't set two off, a named setup shortcut spawns an ember beside two props.
+- Docs: world-bible "Story props and per-level tilesets" (now built), Story.md "Hell's furniture", the AGENTS.md bullet.
 
-**GPU spend (estimate, from the jobs' own costs): about $0.58 of $0.75.** The masters and closed edits cost about $0.27. The 20 open edits cost about $0.23, most of it two model loads at about $0.07 each. The 40 cutouts cost about $0.08 (the first $0.008, then $0.0018 each).
+## Fun-reviewer's verdict: thin, not yet a living world
+It scored full 3, breathing 2, interactions 2, story 2, soul 3. I fixed one gap: six props (hen, rooster perch, gibbet cage, steam vent, brazier, bone chime) also act on their own clock, so rooms move without the hero (a `randomAfter` trigger; rest is 4 s). Because of that, the playtest's "reacted" count includes their own timer reactions. Still open:
+- No prop sound of its own: the hen plays the rooster's crow, the dispenser and bell share a ticket bell. Make about 19 sounds and a voiced hero line on the first reaction per level.
+- Every prop has the same verb (shoot or approach). Each level needs a prop he can use, for example a bell that opens a ledge or a valve that stops the lava for a second.
+- Floor 998's props thin out: 23.7 to 50.7 and 56.7 to 68.7 have none.
 
-**Not run here (no Unity or browser in this session)**
-- The C# and the JSON import have not been compiled or imported: Studio's build does the config import. Check `Logs/GameConfig.log` for the 40 sprite paths if the build complains.
-- The `portraits` playtest is in `.hawkes/scenario.txt`. Run it at 390x844 touch. It checks size >= 72 px (117 px at that size), slide <= 0.15 s, clear of the hero and touch stick, mouth flaps, shut within 0.2 s and 4 expressions per character.
-- I judged the art by eye on contact sheets only. Check the cards in the game: the Overlord's and Rook's laughing frames fill the whole width of the card, and Wick is a small figure (he is trimmed tight, but he is drawn small).
+## Not done
+- **Meadow positions unverified.** I assumed the ground top is y -2.5 and a visible width of about +-5. Check the sod and props in the first screenshot.
+- **Tiles are one ledge piece, not a full set.** There is no separate underside or corner art: ledges stretch with `scale`, so corners stretch too. The Meadow has strip variants and two end pieces.
+- **Reaction sounds are existing clips** (`amb_*`, `thatch_burst`, `sack_spill`, `door_knock`, `sf_crumble`, `whip_crack`). Each prop's own sound is still to make.
+- **Phone input.** The phone check sees props only through the bot, which plays through its virtual pad. I didn't drive aim and fire by touch.
+- The Meadow's second phase may redraw its ground; I didn't check it.
+- `Docs/GameplayReference.md` regenerates on the next import and will list `initialStateByPlace`.
 
-**Caveats**
-- Hero and Overlord masters are `image.edit`s of Gen concept assets (the repo has no in-game sheet PNGs: LFS isn't checked out). Rook, Wick and Yooba were generated from the art-spec descriptions.
-- `.hawkes/pending-gpu.txt` now holds only another change's backdrop list ("Gen out of credits..."). It isn't mine and I left it. The portrait line is removed because nothing is left to paint here.
-- Merge conflicts: none. Other files touched: only `AGENTS.md` (one line).
+## GPU
+No Gen calls this session ($0). The art in the repo came from the earlier pass in this task (Gen project `org_eb0d5c82e8da8c2d.sickofit`), and I couldn't attribute that spend per job.
 
-## Merge with beta (the hero-talks-back and Chapter One changes)
+## Conflicts
+- None with the other changes. I touched `SickOfItPlaytest.cs` (3 small edits), `AGENTS.md` (one bullet), `Docs/Story.md` and `docs/world-bible.md` (a section each), and `Tools/Levels/ambient_finds.py` (its `STATIC` list now includes the four new ledge ids).
+- `companions.py --check` and `overlord_cameos.py --check` report out of date, as they do on the base commit (I checked).
+- The PNGs are outside this repo's sparse checkout. I staged them with `git add --sparse` and they are LFS pointers in the commit.
+
+## Merge with beta (portraits, hero-talks-back, enemy ink and Chapter One changes)
 
 Conflicts and how each was resolved:
-- `Assets/Scripts/Core/Audio/Sfx.cs`: both sides added a public member next to `Played` and one to `VoiceQueue`. Kept both: my `VoiceStarted` event + `VoicePlaying`/`IsPlaying`, and beta's `VoiceBusy`/`IsBusy`.
-- `.hawkes/scenario.txt`: one scenario per change; kept `portraits` with `{"device":"phone"}` (beta's `hero-barks` belongs to the change that already merged).
-- `.hawkes/learned.md`, `.hawkes/try.md`: kept both sides' entries.
+- `.hawkes/scenario.txt`: one scenario per change; kept `story-props` (beta's `portraits` belongs to the change that already merged).
+- `.hawkes/learned.md`, `.hawkes/try.md`: kept both sides' entries (mine first, beta's after).
 - `.hawkes/summary.md`: kept this change's summary and added this section (beta's summary belonged to the other change).
-- `AGENTS.md`, `Assets/GameConfig/audio.json`, `Assets/Scripts/Playtest/SickOfItPlaytest.cs`, `Docs/Story.md`, `docs/world-bible.md`: git merged them automatically without markers; checked that both sides' entries are present and audio.json still parses.
+- `Docs/Story.md`: both sides appended a section at the same place ("Hell's furniture" here, "Portraits" on beta); kept both.
+- `AGENTS.md`, `Assets/Scripts/Playtest/SickOfItPlaytest.cs`, `docs/world-bible.md`: merged automatically with no markers; both sides' entries present.
+
+Checks after the merge: no conflict markers left; `audio.json` parses; `story_art.py --check` OK. `story_props.py --check` can't run in this sparse checkout (the prop PNGs are not checked out, so it stops at "no art for prop anvil"); the writer and its tables were not touched by the merge. Not run in Unity or a browser.

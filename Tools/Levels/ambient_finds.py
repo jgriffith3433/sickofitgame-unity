@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from artkeep import guard  # noqa: E402
 
 PREFIX = 'find_'
-STATIC = ('ledge', 'roadSlab')               # footholds that stay where they are
+STATIC = ('ledge', 'ledgeFloor1000', 'ledgeFloor999', 'ledgeFloor998', 'ledgeFloor997', 'roadSlab')               # footholds that stay where they are
 SIDE_HOSTS = {910, 909, 908, 907, 906, 905, 904, 903}
 BOSSES = {1000, 991, 951, 901, 891, 851, 801, 802}
 

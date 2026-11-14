@@ -1020,6 +1020,11 @@ namespace SickOfIt.Playtest
                 "behind it and he shoots along the ground: the shots pass the soul and it flinches (the witness trigger, ShotPassed), then settles back; the imp's shots hurt him " +
                 "and the soul flinches and speaks again (HeroHurt; a scene rule hurts him if the imp hasn't in 15 s). Last, hold R back to before it noticed him: its facing and place " +
                 "are restored. Each beat is a check event; bystander events log the actions and signals", BystanderSeconds, "level"));
+            list.Add(new PlaytestScenario(StoryPropsId, "Tilesets and story props (Docs/Story.md \"Hell's furniture\"): the Meadow and Floors 1000-997 each opened directly (setup shortcut) and played by the bot " +
+                "through real input for 35 s (a phone-sized screen switches the touch UI on; the bot plays through its virtual pad). Per level, from its data: 8+ story props, 2+ of them reacting, each resting on its " +
+                "surface within 2 px, 3+ drawn tile variants chosen by place (Entity.PlaceHash). Live: every prop that streams in is drawn behind the hero and every hostile shot (never over a bullet at 390x844), " +
+                "rests on the collider below it, and two react to a hostile shot passing (the bot's own play, else a named setup shortcut spawns an ember beside two props) each with its audio.json sound. " +
+                "`check`, `storyprops` events, `storyProps.*` metrics. Run it at 390x844 too. ~4 min", StoryPropsSeconds, "level", "props"));
             list.Add(new PlaytestScenario("analytics", $"Hawkes Analytics (AGENTS.md \"Analytics\"): the SDK's debug log on, then Level {AnalyticsLevel} " +
                 "(the Meadow, loaded directly) played until Hell kills the hero three times (the bot holds R once early on for a rewind, then plays to " +
                 "lose): each death screen, and on the third one the feedback card (\"Too hard? Not fun?\", thumbs and a comment) over it, held while it's " +
@@ -1489,6 +1494,8 @@ namespace SickOfIt.Playtest
                 yield return session.ReplayModesRun();
             else if (id == BystanderId)
                 yield return session.BystanderRun();
+            else if (id == StoryPropsId)
+                yield return session.StoryPropsRun();
             else if (id == OverlordCameosId)
                 yield return session.OverlordCameosRun();
             else if (id == CastId)
@@ -6565,7 +6572,8 @@ namespace SickOfIt.Playtest
             /// <summary>The pieces whose painted art the climb checks (entity id → beat).</summary>
             static readonly Dictionary<string, string> ClimbArtPieces = new Dictionary<string, string>
             {
-                { "ledge", "art ledge" }, { "sinkingStone", "art sinkingStone" }, { "crumblingStone", "art crumblingStone" },
+                { "ledge", "art ledge" }, { "ledgeFloor1000", "art ledge" }, { "ledgeFloor999", "art ledge" }, { "ledgeFloor998", "art ledge" }, { "ledgeFloor997", "art ledge" },
+                { "sinkingStone", "art sinkingStone" }, { "crumblingStone", "art crumblingStone" },
                 { "debrisRaft", "art raft" }, { "debrisRaftSign", "art raft" }, { "debrisRaftRoof", "art raft" }, { "debrisRaftHay", "art raft" },
                 { "chainLift", "art chainLift" }, { "floorLanding", "art floorLanding" },
             };

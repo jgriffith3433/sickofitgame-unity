@@ -1,2 +1,1 @@
-portraits
-{"device":"phone"}
+story-props

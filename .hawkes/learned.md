@@ -1,3 +1,10 @@
+- canon: Hell's furniture — Each room of the first chapter holds the dead place's furniture that nobody uses: the Meadow's mill, well, hen, wrecked cart, hay bale, scarecrow, rooster perch and fences; Floor 1000's FLOOR 1000 sign, take-a-number dispenser, service bell, cages, welcome desk and lost luggage and hats; Floor 999's furnace pipes, gauges, valve wheel, anvil and counted wall; Floor 998's bone piles, hymn board, bone chime and choir loft; Floor 997's Overlord banners, his portrait of himself, brazier and halberds.
+- canon: props answer, they are not used — A prop reacts to a shot passing (the hero's or any hostile ember) or to the hero standing close; it makes its sound, then stays changed (a sign that fell stays down) or rests 3 s; nothing in a room is ever picked up or opened.
+- Sparse checkout: this repo's checkout leaves out PNGs (`git add --sparse` to stage them; `git stash` or `git stash pop` deletes untracked-but-indexed PNGs from the worktree, restore them with `git show HEAD:<path> | git lfs smudge > <path>`).
+- A tile variant picked by place uses `initialStateByPlace` + `Entity.PlaceHash` (no random number); a floor with few ledges needs a repeat-padded `initialStates` list so all three variants show: `story_props.py` searches for it.
+- Floor writers append to a section's spawn list: any writer that inserts must put its entries next to their anchor (props go right after their ledge), or two `--check`s fight over the order.
+- Tools without Pillow: `Tools/Art/story_art.py` reads PNGs with zlib alone (RGBA 8-bit, non-interlaced).
+
 - canon: Hero portrait — his helm has a slatted mouth grille that parts with orange light when he speaks; smug is a scowl with a raised fist, laughing is both fists up and a grin, shocked is round orange eyes.
 - canon: Overlord portrait — horned, blue-black skin, red eyes, dark cape with a ring clasp; he laughs rarely, and his smug is a thin cold smile.
 - canon: Yooba portrait — green slime with two stalk eyes; smug is a cheeky half-lidded look with a curled stalk, shocked has huge round eyes.

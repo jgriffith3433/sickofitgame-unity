@@ -324,7 +324,8 @@ namespace SickOfIt.Gameplay
         {
             if (Def.initialStates.Count > 0)
             {
-                string pick = Def.initialStates[random.Range(0, Def.initialStates.Count)];
+                int at = Def.initialStateByPlace ? PlaceHash(transform.position, Def.initialStates.Count) : random.Range(0, Def.initialStates.Count);
+                string pick = Def.initialStates[at];
                 for (int i = 0; i < states.Length; i++)
                 {
                     if (states[i].Def.name == pick)
@@ -332,6 +333,23 @@ namespace SickOfIt.Gameplay
                 }
             }
             return 0;
+        }
+
+        /// <summary>A stable pick in [0, count) from a place (quarter-unit cells): the same spot always gives the same number.</summary>
+        public static int PlaceHash(Vector2 place, int count)
+        {
+            if (count <= 1)
+                return 0;
+            unchecked
+            {
+                int cx = Mathf.RoundToInt(place.x * 4f);
+                int cy = Mathf.RoundToInt(place.y * 4f);
+                uint h = (uint)cx * 73856093u ^ (uint)cy * 19349663u;
+                h ^= h >> 13;
+                h *= 0x5bd1e995u;
+                h ^= h >> 15;
+                return (int)(h % (uint)count);
+            }
         }
 
         /// <summary>The hero mid-dash: hostile shots pass through him instead of landing (or dying on him).</summary>
