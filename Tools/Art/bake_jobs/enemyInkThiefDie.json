@@ -1,0 +1,7 @@
+{"work":"/tmp/ink2/work","scale":0.65,"srcFps":16,"outFps":12,"margin":3,
+ "entities":[
+  {"folder":"Assets/Art/Enemies/LauncherThief","prefix":"LauncherThief","ppu":79.9,"anchorFrom":"/tmp/ink2/dl/thief_idle.mp4",
+   "clips":[
+    {"name":"die","video":"/tmp/ink2/dl/thief_die.mp4","from":0,"to":25}
+   ]}
+ ]}

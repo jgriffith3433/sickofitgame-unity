@@ -176,3 +176,5 @@ Spent about **$0.20** on these seven jobs (`hawkesgen_jobs`: 0.0461 + 0.0151 + 0
 | launcherThief dead pose | `a_fe5e083629cff4ba`, framed `a_83e43c82bd4a6028` | PASS (weak) | Soot-and-ember burst on the sack, shocked imp; not a chest cannon |
 
 Baked with `Tools/Art/bake_clips.mjs` (ffmpeg + node: the worktree has no Pillow/numpy/DoD checkout, so `art.mjs --build` can't run). Scale 0.65, anchor = the keyed bbox centre of each entity's first frame so clips share one pivot, `ppu` 79.9 (thief) / 85.0 (thatch) so a figure keeps the on-screen size of the held sheets it replaces (0.77 and 0.75 of the 640 frame at the old ppus).
+
+| launcherThief die clip | `a_7899998226888672` (job `j_b00c3a95acae`, from struck `a_6aaca8f81a5afad0` to dead `a_83e43c82bd4a6028`) | PASS (weak) | Launcher bursts in a yellow flash, then a soot-and-ember cloud on the sack; imp keeps its shape, shocked face, not a cannon. He never falls over (he runs through the burst). Baked whole, 19 frames at 12 fps, same pivot and ppu as the other thief clips. |

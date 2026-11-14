@@ -1,17 +1,14 @@
-# Enemy ink: launcherThief and cinderThatch motion baked; thief death clip still rendering
+# Enemy ink: launcherThief and cinderThatch fully inked (die clip landed)
 
 **Done**
-- Judged the six finished clips on mid frames and baked the passes (all through `Tools/Art/bake_clips.mjs`, new: ffmpeg + node, since this worktree has no Pillow/numpy/DoD checkout for `art.mjs --build`; keys by greenness so cyan glow stays and the paler green box in some thatch frames goes).
-  - launcherThief: idle and move (the same run loop, replacing the old painterly flying sheets), windup (cyan exhaust glow on every frame, loop), attack (glow, then the lunge; `FireProjectile` moved from frame 2 to frame 5 so the shot leaves on the lunge), hurt.
-  - cinderThatch: windup (limbless, cyan flame core; replaces the held still) and attack (limbless).
-- `launcherThief` Windup state now 12 fps. Cell sizes and `ppu` (79.9 thief, 85.0 thatch) keep each figure the on-screen size of the held sheet it replaces; every clip of an entity shares one pivot.
-- Dead pose judged (soot-and-ember burst, not a chest cannon: weak pass), framed to 640 green (`a_83e43c82bd4a6028`).
+- Judged and baked the launcherThief **Die** (`j_b00c3a95acae`, `a_7899998226888672`, ~$0.10): yellow flash from the launcher, then a soot-and-ember cloud; imp stays on-model and is not a chest cannon. Weak pass (he keeps running through the burst instead of falling), noted in `Assets/Art/EnemyInk/JUDGE.md`. 19 frames at 12 fps, non-looping, same pivot and `ppu` 79.9 as his other clips (`Tools/Art/bake_jobs/enemyInkThiefDie.json`, `Tools/Art/bake_clips.mjs`). The entity's `Die` state already pointed at the file at 12 fps, so no config change.
+- Earlier in this change (commit d3c1963): launcherThief idle/move/windup/attack/hurt and cinderThatch windup/attack baked from Gen clips, `FireProjectile` on the lunge frame, glow wind-ups of at least 0.3 s.
+- Every enemy on the Meadow and Floors 1000-997 now has 5 inked animations plus a hooked wind-up.
 
 **Not done**
-- launcherThief **Die** sheet: the die i2v `j_b00c3a95acae` was queued (cold RunPod start, several minutes) and is parked in `.hawkes/waiting-jobs.txt`. Until it lands the thief dies on the old painterly die sheet (`.hawkes/pending-gpu.txt`).
-- Couldn't run Unity here (no editor in the worktree): the config validate/import and the `enemy-ink` playtest have not been run. The entity edit is two numbers in `launcherThief.json`; sheets' sidecars follow the existing format.
-- The PR's side-by-side screenshots with the hero need the beta `enemy-ink` run (scenario already lists all seven enemies, phone device).
+- No Unity editor in this worktree: config validate/import and the `enemy-ink` playtest were not run. The die change is a sheet swap with a sidecar in the existing format.
+- The PR's side-by-side screenshots with the hero need the beta `enemy-ink` run (scenario lists all seven enemies, phone device).
 
-**GPU spend** about $0.20 for the seven finished jobs (`hawkesgen_jobs`), die clip about $0.04 more; well inside $0.86.
+**GPU spend** about $0.30 in total of the $0.86 (seven earlier jobs ~$0.20, die clip ~$0.10).
 
-**Weak spots** (see Assets/Art/EnemyInk/JUDGE.md): thief hurt clip drifts a bit off-model (baked from frame 6 on), thatch attack is a hop with an angry face more than a lunge, the dead pose is mid-burst.
+**Weak spots**: thief hurt drifts a little off-model, thatch attack is a hop with an angry face more than a lunge, thief death doesn't collapse.
