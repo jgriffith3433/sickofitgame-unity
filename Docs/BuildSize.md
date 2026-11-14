@@ -269,3 +269,10 @@ Wasm 9.6 MB + data 5.2 MB is still ~79-84 s at slow-4g, so the bytes remain the 
 Low, not Medium/High: serialised Unity value types (Vector2, Color, Rect) are read by field reflection and haven't been checked in a WebGL build.
 Not measured here (no Unity/build): beta's next `first-five@local:phone` reports `phone.secondsToGameplay`. If a content type goes missing in a build
 ("unknown type" from the importer), add its assembly to link.xml. Next levers: Medium after a checked build, Brotli (needs the hosted page).
+
+## Legacy enemy art leaves every level's scope (2026-11-14, phone 21.9 MB before gameplay)
+
+Beta v162 first-five@phone listed `playerdata_assets_images_..._level3` (1.6 MB, the legacy Sentinel's `Level3Enemy_*` sheets) among the pre-gameplay downloads:
+the old `enemyTypes` art was scope `play`, which every level loads, though every level is scripted and a script ignores the legacy list. `PlayerDataManifest` now
+gives `enemyTypes.*` its own scope `play.legacy`, added only to a level without a script (none today). The rest: wasm 10 MB + data 6.1 MB + catalog.bin 1.1 MB
+are the floor; the 20 s limit still needs a far smaller wasm (not done). Not measured here (no Unity/build): the next `first-five@local:phone` says.
