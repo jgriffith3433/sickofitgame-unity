@@ -85,7 +85,7 @@
         {
           "stateName": "Windup",
           "spriteSheet": "Art/Enemies/LauncherThief/LauncherThief_windup.png",
-          "fps": 8,
+          "fps": 12,
           "loop": true,
           "events": []
         },
@@ -96,7 +96,7 @@
           "loop": false,
           "events": [
             {
-              "frame": 2,
+              "frame": 5,
               "functionName": "FireProjectile"
             }
           ]
