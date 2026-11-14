@@ -29,6 +29,7 @@ Each: name, mood, look and sound, size, in and out. Sizes are in play time (a fl
   (`ambience_meadow_burning`). Positional one-shots on props: rooster crow, mill creak, torch crackle (4–12 s gaps, pan by screen x).
 - **Music (Nov 11):** its own track, not the film's audio: "A nice day", a plucked D-major figure over a soft drone with a soft flute (`meadow_calm`, 84 BPM), which turns to its raid (`meadow_raid`: the same tune in D minor, 128 BPM, double kicks and alarms) the moment the sky opens (`playMusic`, 6 s in). Rewinding bends whatever is playing (slowed, low-passed) and it snaps back on release.
 - **Adaptive score (Nov 12):** explore / fight / finale loops at 112 BPM, D minor (pastoral folk turned frantic), crossfading on the beat or bar with the raid; see Docs/Story.md "The adaptive score". Falls back to `meadow_calm`/`meadow_raid` until the clips are made.
+- **Place ambience clips (Nov 13):** all 7 beds (30 s loops, Gen `audio.sfx`, seam checked) and 12 prop one-shots are real Hawkes Gen takes (stable-audio), baked by `Tools/Audio/bake_gen_ambience.py`; no stand-ins left.
 - **Sound (Nov 11 / mix Nov 12):** every verb has three takes that never repeat in a row (`player_shoot`, `hit_pop` + `kill_pop` layered on the enemy's own sounds, `graze_tick`, `pickup_diamond`, jump, land, dash, rewind start and stop), Music ducks 8 dB (and Ambience 4 dB) under each voice line in 80 ms, Pause muffles Music −10 dB and mutes SFX, one heart plays a heartbeat under Music −4 dB, Rewind ducks SFX −6 dB so the whoosh leads; Settings Music/Effects/Voice are drag sliders (docs/audio-mix.md, Docs/SoundAudit.md "Takes, buses and beds").
 - **Feel VFX (Nov 12):** every shot, hit, kill, graze, dash, diamond and rewind bursts a hand-inked flipbook (`FeelVfx`); diamonds arc to the HUD gem in ≤0.6 s. Playtest `vfx-kit`.
 - **Rewind look (Nov 12):** holding R desaturates the world (~20%) while the hero and bullets stay coloured; 8 (phone: 4) ghost copies trail him; bullets streak backwards; sand/ember motes and a gold edge ripple sit only on the outer frame. A hit flashes the hero white ≤0.15 s and knocks him ≥0.3 u with a red edge pulse (no full-screen white wash). Playtest `rewind-fx`.
@@ -192,6 +193,7 @@ The named characters, each with a want, an arc, a moment the player lives, and t
 - Moment: A graze streak: he flinches, mutters a one-liner, and the HUD vessels crack or glow with what happens.
 - Personality: tired, dry, stubborn
 - Voice: `player` (lines `vo_hero_*`)
+- Barks: he comments aloud on what the player just did (first graze, graze streak of 5, kill streak of 5, down to one heart, healed, a death rewound, a dash through a bullet, 8 s idle, a new floor, the Overlord sighted, a buy at Yooba's): 45 lines `vo_hero_bark_*`, one per 15 s, none twice, in a one-line bubble above him (Story.md "The hero talks back")
 - Animations: Idle, Walk, Talk (Idle held while a voiced `vo_hero_*` line and its subtitle play), Jump, Fall, Fire, Dash, Hurt, Victory (art/hero.json)
 - Portrait: neutral/smug/laughing/shocked, closed and mouth-open (helm grille); shown on every `vo_hero_*` line (ui/portraits.json, Docs/Story.md "Portraits")
 
@@ -300,6 +302,10 @@ The announcer's frame on every floor: **ember vessels** for hearts (crack on a h
 rewind juice (spins while held, drains as juice spends), a **gem** that pulses when a diamond lands, a **brass elevator dial**
 that ticks the floor down. Two corners only (health+reel top-left, gem+dial top-right); on a phone the rewind button is the
 big bottom-right reel (≥72 px). Same game state as before; art from `HudInkAtlas` (Gen sheet under Resources/UI). Playtest `hud-ink`.
+
+### The hero talks back (built Nov 14)
+On every played floor he mutters about what the player just pulled off or messed up: *Nope. Not today.* when a rewind takes his death back, *Five. I'm basically a professional.* on a graze streak,
+*Oh, he's watching. Fantastic.* when the Overlord shows. Voiced (`player`), 45 lines over 11 events, 15 s apart at most, never over another voice, captioned in a bubble above him for 1.5 s. `HeroBarks`, playtest `hero-barks`.
 
 ### The Overlord's taunts (Floors 1000-997, built Nov 12)
 He is on screen on every one of the first four floors, small and far on the upper edge, and answers what the hero just did: the floor entered, a death

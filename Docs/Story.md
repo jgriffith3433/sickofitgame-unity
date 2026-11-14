@@ -2394,6 +2394,37 @@ ahead; the hero only sees his back by rewinding). 30 lines, each said once per s
 The figure (`overlordTaunt`, art spec `art/overlordTaunt.json`: Idle, Laugh, Point, Flee) stays on the upper edge, never over the touch stick or the
 rewind button, and his caption is one line. Code: `OverlordTaunts` (Gameplay/Presentation), lines from `Tools/Levels/overlord_taunts.py`.
 
+## The hero talks back (barks, built 2026-11-14)
+
+J (2026-11-14): *"The sarcastic hero comments out loud on what the player just pulled off or messed up."* Bastion's narrator, but the narrator is the
+hero himself: deadpan, tired, petty, never cheerful, and never a speech (a bark is three to eight words and a bubble of one line). He talks to nobody;
+he is muttering. Same voice as every hero line (`audio.json` voice `player`, ElevenLabs `DzkD7I4tf5i3KSaB4cz5`); each line carries a direction tag
+(`[deadpan]`, `[exhausted]`, `[annoyed]`, `[smug]`) that the clip is made with and the subtitle drops.
+
+45 lines (`vo_hero_bark_<event>_<n>`), written in `Tools/Audio/hero_barks.py` (`--write`, `--check`):
+
+| Event (priority) | What triggers it | Lines | Sample |
+|---|---|---|---|
+| `undo` (9) | a rewind starts while he is dying: the death is taken back | 5 | *Nope. Not today.* |
+| `lastHeart` (8) | hearts fall to one | 5 | *I'm held together by spite.* |
+| `graze5` (7) | a graze streak of 5 (`graze` telemetry, streak 5) | 4 | *Five. I'm basically a professional.* |
+| `kill5` (6) | five named enemies killed without a hit | 4 | *Five down. Zero feelings.* |
+| `dashThrough` (6) | a hostile shot overlaps him while the dash phases him | 4 | *Bullet? What bullet?* |
+| `overlord` (5) | the Overlord is sighted (his taunt, or an `overlordFar*` spawn), once a floor | 4 | *Stare all you want. I'm busy.* |
+| `healed` (5) | hearts go up | 4 | *A free heart? Suspicious.* |
+| `shop` (4) | a buy at Yooba's, after Yooba finishes his own line | 3 | *Slime-made. Hope it holds.* |
+| `firstGraze` (3) | the first graze of a floor | 4 | *Oh, it missed. Cute.* |
+| `floor` (2) | a new floor (3.2 s after it opens, and each floor of a stage) | 4 | *Another floor. Yay.* |
+| `idle` (1) | eight seconds without moving, shooting or dashing | 4 | *Still here. Still sick of it.* |
+
+**The rules.** Events landing in the same frame: the highest priority wins. At most one bark per **15 s** (the shop's too). **No line twice in a
+session**; an event whose lines are all said falls silent. **Never over another character's line**: a bark waits for the voice to end when it has
+patience (the Overlord and floor arrival 6-8 s, the streaks and hearts 1 s), else it is dropped; the undone death queues behind the voice instead, so it
+still answers at once. No barks in scenes, beats, locked input, or while dying (but the undone death). A rewind's replayed future never speaks again.
+**The caption** is a small bubble above his head for 1.5 s that starts on the frame the voice does, inside the safe area, moved off the hero himself,
+the rewind button and the touch stick's zone (above, beside, then below him). Code: `HeroBarks`, `GameplayHud.Bark`, `HeroBarkLines` (generated).
+Playtest `hero-barks` (run it at 390x844 on touch).
+
 ## The Overlord on the far ledge (eight glimpses, Circles X and IX, built 2026-10-25)
 
 J (2026-10-25): *"Give the Overlord (2 voice lines today) at least 8 mid-floor appearances across Circles X and IX."* Until now he is in Video1, the

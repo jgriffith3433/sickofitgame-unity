@@ -19,3 +19,12 @@
 - Hero and Overlord masters are `image.edit`s of Gen concept assets (the repo has no in-game sheet PNGs: LFS isn't checked out). Rook, Wick and Yooba were generated from the art-spec descriptions.
 - `.hawkes/pending-gpu.txt` now holds only another change's backdrop list ("Gen out of credits..."). It isn't mine and I left it. The portrait line is removed because nothing is left to paint here.
 - Merge conflicts: none. Other files touched: only `AGENTS.md` (one line).
+
+## Merge with beta (the hero-talks-back and Chapter One changes)
+
+Conflicts and how each was resolved:
+- `Assets/Scripts/Core/Audio/Sfx.cs`: both sides added a public member next to `Played` and one to `VoiceQueue`. Kept both: my `VoiceStarted` event + `VoicePlaying`/`IsPlaying`, and beta's `VoiceBusy`/`IsBusy`.
+- `.hawkes/scenario.txt`: one scenario per change; kept `portraits` with `{"device":"phone"}` (beta's `hero-barks` belongs to the change that already merged).
+- `.hawkes/learned.md`, `.hawkes/try.md`: kept both sides' entries.
+- `.hawkes/summary.md`: kept this change's summary and added this section (beta's summary belonged to the other change).
+- `AGENTS.md`, `Assets/GameConfig/audio.json`, `Assets/Scripts/Playtest/SickOfItPlaytest.cs`, `Docs/Story.md`, `docs/world-bible.md`: git merged them automatically without markers; checked that both sides' entries are present and audio.json still parses.

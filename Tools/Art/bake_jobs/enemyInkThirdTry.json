@@ -1,0 +1,15 @@
+{"scale":0.65,"srcFps":16,"outFps":12,"margin":3,
+ "entities":[
+  {"folder":"Assets/Art/Enemies/LauncherThief","prefix":"LauncherThief","ppu":79.9,"anchorFrom":"/tmp/ink/dl/thief_idle.mp4",
+   "clips":[
+    {"name":"idle","video":"/tmp/ink/dl/thief_idle.mp4","from":0,"to":32,"also":["move"]},
+    {"name":"windup","video":"/tmp/ink/dl/thief_windup.mp4","from":0,"to":24},
+    {"name":"attack","video":"/tmp/ink/dl/thief_attack.mp4","from":4,"to":24},
+    {"name":"hurt","video":"/tmp/ink/dl/thief_hurt.mp4","from":6,"to":24}
+   ]},
+  {"folder":"Assets/Art/Enemies/CinderThatch","prefix":"CinderThatch","ppu":85.0,"anchorFrom":"/tmp/ink/dl/thatch_windup.mp4",
+   "clips":[
+    {"name":"windup","video":"/tmp/ink/dl/thatch_windup.mp4","from":0,"to":24},
+    {"name":"attack","video":"/tmp/ink/dl/thatch_attack.mp4","from":8,"to":24}
+   ]}
+ ]}

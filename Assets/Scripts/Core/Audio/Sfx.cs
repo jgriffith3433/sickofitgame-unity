@@ -43,6 +43,9 @@ namespace SickOfIt.Core.Audio
         /// <summary>The voice source is playing a line right now.</summary>
         public static bool VoicePlaying => VoiceQueue.IsPlaying;
 
+        /// <summary>A spoken line is playing or waiting its turn (the hero's barks never talk over anyone: Docs/Story.md "The hero talks back").</summary>
+        public static bool VoiceBusy => VoiceQueue.IsBusy;
+
         /// <summary>For the other players of sound in this assembly (the ambience bed): report a start the same way.</summary>
         public static void Report(PlayedSound sound) => Played?.Invoke(sound);
 
@@ -389,6 +392,7 @@ namespace SickOfIt.Core.Audio
             float freeAt;
 
             public static bool IsPlaying => instance != null && instance.source != null && instance.source.isPlaying;
+            public static bool IsBusy => instance != null && (instance.source.isPlaying || instance.queue.Count > 0 || Time.unscaledTime < instance.freeAt);
 
             public static VoiceQueue Get()
             {
