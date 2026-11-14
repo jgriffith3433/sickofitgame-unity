@@ -22,7 +22,7 @@ PUSH = 'Audio/Music/wastes_push.ogg'
 FLOORS = {
     1000: dict(thing='sinking stones', start='slope', wait=1.5, glow=[1.4, 1.0], cue='lava_bubble', finale='bank',
                tint='#FF8A3D40', sting='sting_rank_b', reward='diamonds', amount=6, rflash='#FFD27A60', rtext='+6 DIAMONDS'),
-    999: dict(thing='rising lava', start=None, wait=1.2, glow=[0.0, 1.2], cue='magma_rumble', finale='chase',
+    999: dict(thing='rising lava', start='shelf', wait=0.3, glow=[0.0, 1.2], cue='magma_rumble', finale='chase',
               tint='#FF3A2440', sting='sting_rank_a', reward='rewind', amount=4, rflash='#5FE8FF50', rtext='+4s REWIND'),
     998: dict(thing='the cinder', start='river', wait=3.0, glow=[-1.4, 1.2], cue='slag_drip', finale='spire',
               tint='#FF6A1E40', sting='sting_rank_a', reward='heart', amount=1, rflash='#FF6A8A50', rtext='+1 HEART'),
@@ -77,16 +77,20 @@ def patch(n):
     s = d['script']
     rules = [r for r in s['rules'] if not r['name'].startswith('first4:')]
     # TEACH
-    if c['start'] is None:
+    if n == 999:
+        # The glow used to ride inside 'the lava starts to climb' (section climb), so it only showed once the hero got that far;
+        # it is its own rule on the shelf now, before the lava, like every other floor's. The old in-sequence copy is removed.
         for r in rules:
-            if r['name'] == 'the lava starts to climb' and 'floors:999:glow' not in json.dumps(r):
+            if r['name'] == 'the lava starts to climb':
                 steps = r['do'][0]['steps']
-                steps[:] = [x for x in steps if x.get('type') != 'playMusic']   # the push track is the finale's now
+                steps[:] = [x for x in steps if not (x.get('type') in ('spawn', 'playSound', 'emit') and ('teach' in json.dumps(x) or 'floors:999:' in json.dumps(x) or x.get('sound') == c['cue']))]
+                if steps and steps[0].get('type') == 'wait':
+                    steps.pop(0)
+                steps[:] = [x for x in steps if x.get('type') != 'playMusic']
                 for x in steps:
                     if x.get('type') == 'setCounter' and x.get('name') == 'lavaSpeed':
-                        x['value'] = 0.5                                         # slow while it is learned
-                steps[:0] = teach_steps(n, c)
-    else:
+                        x['value'] = 0.5
+    if True:
         rules.append({"name": f"first4: teach {c['thing']}", "when": {"type": "sectionReached", "section": c['start']}, "maxTimes": 1,
                       "do": [{"type": "runSequence", "steps": [{"type": "wait", "seconds": c['wait']}] + teach_steps(n, c)}]})
     # FINALE
