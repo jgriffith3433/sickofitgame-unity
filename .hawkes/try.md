@@ -1,1 +1,5 @@
-Play Floor 997 to its end (or run the `chapter-one` playtest, also at 390x844 touch). After the finale the camera finds the Overlord on his ledge; you dodge his three phrases while he and the hero trade six voiced lines. He escapes up the Shaft laughing, the sting plays, and the CHAPTER ONE card shows time, deaths, rewinds and diamonds, ending on the hero's line about daylight. Continue goes on as before. A replay offers Skip.
+- Play the Meadow's portal scene, then Floors 1000-997: each time the hero, the Overlord, Yooba, Rook or Wick speaks, a painted card slides in from the left (right if the hero is standing there) and flaps its mouth with the voice.
+- Visit Yooba on the Shaft or the main menu: his shop frame shows the painted slime and his four moods.
+- Die on any floor: the hero's lines on the death screen show his card too.
+- On a phone (390x844): the card is about 117 px tall, in a corner clear of the hero and the touch stick.
+- Run the `portraits` playtest at 390x844 touch.

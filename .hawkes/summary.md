@@ -1,13 +1,21 @@
-# Chapter One payoff, end of Floor 997
+# Speaker portraits: the paintings are in and wired
 
-Last step done: the Gen output is in and wired.
+**What a player gets.** Whenever the hero, the Overlord, Yooba, Rook or Wick speaks a voiced line, their painted portrait slides in (0.12 s), wears the line's mood, flaps its mouth with the clip's loudness, shuts within 0.2 s of the line ending and slides away. The code was committed earlier (`SpeakerPortraits`, `PortraitVoice`, 604 `mood` fields in `audio.json`, Yooba's shop frame, playtest `portraits`). This pass adds the art.
 
-- Overlord lens exchange on Floor 997 and the CHAPTER ONE card (time, deaths, rewinds, diamonds, a voiced hook, Continue of at least 48 px) were committed earlier, with the seen-flag and Skip. Story text is in `Docs/Story.md` ("Chapter One closes on Floor 997").
-- **Voice (Gen job `j_ad4c415941d4`, audio.dialogue, one take, 18.9 s, $0.06):** the six lines were made as one exchange so the two voices react to each other, then split into stems. The segment timings are sensible: 2-4 s per line, hero lines shorter than the Overlord's. I imported each stem to `Assets/Audio/Generated/vo_ch1_*.mp3` and set `clip` and `generatedFrom` in `audio.json`.
-- **Sting (Gen job `j_e12c9c974e58`, audio.music, 10 s):** imported as `music_chapter_one_sting.mp3` and set in `audio.json`.
-- I removed all seven ids from `Tools/Audio/pending_clips.json`. `sound_audit.py --check` shows nothing for `ch1` or the sting. The remaining errors are older: missing ambience beds and `vo_stop853_pitch1`.
-- `.meta` files are new, with fresh GUIDs, copied from the existing voice import settings.
-- **Not listened to:** I have no way to play audio here, so the clips are judged from the job's timings and transcripts only. Listen for the Overlord's bored read and the sting's brass-to-major resolve on beta.
-- **Not run:** no Unity import or playtest (Studio runs those). Scenario for beta: `chapter-one`, run at 390x844 touch too.
-- GPU spend is about $0.06 for the dialogue plus the sting, within the $0.47 budget; the sting's cost isn't in the job output I read, so check `hawkesgen_jobs` for the exact total.
-- No merge conflicts.
+**This pass**
+- Judged all 20 mouth-open frames (Gen jobs `j_ab44c910e9fb` ... `j_21aced7a7652`). Every one keeps the face, pose and outfit of its closed frame, the mouth is clearly open, and there is no stray text or bubble. No redo was needed.
+- Cut out all 40 frames (20 closed, 20 open) with `image.remove-background`, then trimmed each closed/open pair to one shared box so the flap doesn't shift the bust. Each is 512x512 and the bust sits on the card's bottom edge. They are `Assets/Art/Portraits/<char>_<mood>[_open].png` with `.meta` files (single sprite, no mipmaps, fresh GUIDs).
+- `Assets/GameConfig/ui/portraits.json`: every character now has its four frames (neutral, smug, laughing, shocked), each with closed and open sprites. The stand-in bust stays only as a fallback in code.
+- AGENTS.md "Speaker portraits" notes where the paintings live.
+
+**GPU spend (estimate, from the jobs' own costs): about $0.58 of $0.75.** The masters and closed edits cost about $0.27. The 20 open edits cost about $0.23, most of it two model loads at about $0.07 each. The 40 cutouts cost about $0.08 (the first $0.008, then $0.0018 each).
+
+**Not run here (no Unity or browser in this session)**
+- The C# and the JSON import have not been compiled or imported: Studio's build does the config import. Check `Logs/GameConfig.log` for the 40 sprite paths if the build complains.
+- The `portraits` playtest is in `.hawkes/scenario.txt`. Run it at 390x844 touch. It checks size >= 72 px (117 px at that size), slide <= 0.15 s, clear of the hero and touch stick, mouth flaps, shut within 0.2 s and 4 expressions per character.
+- I judged the art by eye on contact sheets only. Check the cards in the game: the Overlord's and Rook's laughing frames fill the whole width of the card, and Wick is a small figure (he is trimmed tight, but he is drawn small).
+
+**Caveats**
+- Hero and Overlord masters are `image.edit`s of Gen concept assets (the repo has no in-game sheet PNGs: LFS isn't checked out). Rook, Wick and Yooba were generated from the art-spec descriptions.
+- `.hawkes/pending-gpu.txt` now holds only another change's backdrop list ("Gen out of credits..."). It isn't mine and I left it. The portrait line is removed because nothing is left to paint here.
+- Merge conflicts: none. Other files touched: only `AGENTS.md` (one line).
