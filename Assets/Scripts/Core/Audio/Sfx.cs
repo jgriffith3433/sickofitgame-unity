@@ -37,6 +37,9 @@ namespace SickOfIt.Core.Audio
         /// <summary>Raised for every sound that really starts (effects when they begin, voice lines when the queue says them, the ambience bed).</summary>
         public static event System.Action<PlayedSound> Played;
 
+        /// <summary>A spoken line is playing or waiting its turn (the hero's barks never talk over anyone: Docs/Story.md "The hero talks back").</summary>
+        public static bool VoiceBusy => VoiceQueue.IsBusy;
+
         /// <summary>For the other players of sound in this assembly (the ambience bed): report a start the same way.</summary>
         public static void Report(PlayedSound sound) => Played?.Invoke(sound);
 
@@ -381,6 +384,8 @@ namespace SickOfIt.Core.Audio
             readonly Queue<(SoundDef sound, float volume, float queuedAt)> queue = new Queue<(SoundDef, float, float)>();
             AudioSource source;
             float freeAt;
+
+            public static bool IsBusy => instance != null && (instance.source.isPlaying || instance.queue.Count > 0 || Time.unscaledTime < instance.freeAt);
 
             public static VoiceQueue Get()
             {
